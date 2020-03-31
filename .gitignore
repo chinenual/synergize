@@ -1,3 +1,6 @@
+synergize.app/Contents/MacOS
+.DS_Store
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
