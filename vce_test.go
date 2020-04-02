@@ -22,7 +22,26 @@ func testParseVCE(t *testing.T, path string) {
 	}
 }
 
+func TestVerboseParse(t *testing.T) {
+	// abuse of the test framework to create some adhoc tests while
+	// debugging the parser
+	if testing.Short() {
+		path := "public/VOICES/INTERNAL/G7S.VCE"
+		vce, err := ReadVCEFile(path);
+		if err != nil {
+			t.Errorf("error parsing %s: %v", path, err)
+			return
+		}
+		log.Printf("%+v\n", vce)
+	}
+	return
+}
+
 func TestAllVCE(t *testing.T) {
+	if testing.Short() {
+		t.Skip()
+		return
+	}
 	fileList := []string{}
 	filepath.Walk("public/VOICES",
 		func(path string, f os.FileInfo, err error) error {
