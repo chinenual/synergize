@@ -22,6 +22,8 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// get source locations in log
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 }
 
 func main() {
