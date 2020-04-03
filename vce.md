@@ -1,5 +1,6 @@
 # VCE file format
 
+## Header
 
 | Type   | Count | Name   | Description 
 |--------|-------|--------|-----
@@ -18,3 +19,39 @@
 | uint8  | 24    | KPROP  | key based proportion table
 | uint8  | 1     | APVIB  | depth control for random vibrato
 | int8   | 16    |        | filter assignment for each osc. - =AFILT, 0=NONE, + =BFILT
+
+## Envelopes
+
+One pair of Frequency and Amplitude envelopes for each Oscillator
+
+### Frequency Envelope
+| Type   | Count | Name   | Description 
+|--------|-------|--------|-----
+| uint8  | 	1    | OPTCH | 
+| int8   | 	1    | OHARM | 
+| int8   | 	1    | FDETUN | 
+| uint8  | 	1    | FENVL | 
+| uint8  | 	1    | ENVTYPE | 
+| uint8  | 	1    | NPOINTS | 
+| uint8  | 	1    | SUSTAINPT | 
+| uint8  | 	1    | LOOPPT |
+| uint8  |  4    | <elements> | 4 bytes per point
+
+
+### Amplitude Envelope
+| Type   | Count | Name   | Description 
+|--------|-------|--------|-----
+| uint8 | 	1 | ENVTYPE | 
+| uint8 | 	1 | NPOINTS | 
+| uint8 | 	1 | SUSTAINPT | 
+| uint8 | 	1 | LOOPPT | 
+| uint8  |  4    | <elements> | 4 bytes per point
+
+## Filters
+
+One filter for any non-zero entry in the header FILTER array
+
+| Type   | Count | Name   | Description 
+|--------|-------|--------|-----
+| uint8  | 32    | <elements>  | each filter table is 32 bytes long
+
