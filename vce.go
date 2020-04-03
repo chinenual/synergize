@@ -47,7 +47,7 @@ type VCEHead struct {
 	VTSENS uint8
 	UNUSED uint8
 	VEQ    [24]int8
-	VNAME  [8]uint8
+	VNAME  SpaceEncodedString // force string encoding for the name
 	VACENT uint8
 	VASENS uint8
 	VIBRAT uint8

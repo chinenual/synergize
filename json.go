@@ -10,13 +10,21 @@ import (
 
 type ArrayOfUint8 []uint8
 
+type SpaceEncodedString [8]uint8
+
 func (u ArrayOfUint8) MarshalJSON() ([]byte, error) {
-    var result string
-    if u == nil {
-        result = "null"
-    } else {
-        result = strings.Join(strings.Fields(fmt.Sprintf("%d", u)), ",")
-    }
-    return []byte(result), nil
+	var result string
+	if u == nil {
+		result = "null"
+	} else {
+		result = strings.Join(strings.Fields(fmt.Sprintf("%d", u)), ",")
+	}
+	return []byte(result), nil
+}
+
+func (u SpaceEncodedString) MarshalJSON() ([]byte, error) {
+	var result string
+	result = "\"" + string(u[:]) + "\""
+	return []byte(result), nil
 }
 
