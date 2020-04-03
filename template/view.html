@@ -39,6 +39,14 @@ document.getElementById("vibRate").innerHTML = vce.Head.VIBRAT;
 document.getElementById("vibDelay").innerHTML = vce.Head.VIBDEL;
 document.getElementById("vibDepth").innerHTML = vce.Head.VIBDEP;
 document.getElementById("transpose").innerHTML = vce.Head.VTRANS;
+var i;
+var count = 0;
+for (i = 0; i < vce.Head.FILTER.length; i++) {
+if (vce.Head.FILTER[i] != 0) {
+count++;
+}
+}
+document.getElementById("nFilter").innerHTML = count;
 }
 
 </script>
@@ -84,6 +92,11 @@ document.getElementById("transpose").innerHTML = vce.Head.VTRANS;
   <tr>
     <td>Transpose</td>
     <td><span id="transpose"/></td>
+  </tr>
+  <tr> <td>&nbsp;</td> <td></td>  </tr>
+  <tr>
+    <td>Filters Used</td>
+    <td><span id="nFilter"/></td>
   </tr>
 </table>
   
