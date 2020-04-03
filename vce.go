@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/json"
 	"log"
 	"io/ioutil"
 )
@@ -16,7 +17,7 @@ type FreqEnvelopeTable struct {
 	NPOINTS   uint8
 	SUSTAINPT uint8
 	LOOPPT    uint8
-	Table     []uint8
+	Table     ArrayOfUint8 // force proper JSON encoding
 }
 
 type AmpEnvelopeTable struct {
@@ -24,7 +25,7 @@ type AmpEnvelopeTable struct {
 	NPOINTS   uint8
 	SUSTAINPT uint8
 	LOOPPT    uint8
-	Table     []uint8
+	Table     ArrayOfUint8 // force proper JSON encoding
 }
 
 type Envelope struct {
@@ -179,11 +180,19 @@ func ReadVCEFile(filename string) (vce VCE, err error) {
 		for j := 0; j < 32; j++ {
 			err = binary.Read(buf, binary.LittleEndian, &vce.Filters[i][j])
 			if err != nil {
-				log.Println("binary.Read failed:", err)
+				log.Println(VCEToString(vce))
+				log.Println("binary.Read failed:", i, " ", j, " ", err)
 				return
 			}			
 		}
 	}
+	return
+}
+
+func VCEToString(vce VCE) (result string) {
+	b,_ := json.MarshalIndent(vce, "", " ")
+	result = string(b)
+
 	return
 }
 
@@ -193,6 +202,6 @@ func PrintVCEFile(filename string) (err error) {
 	if err != nil {
 		return
 	}
-	log.Printf("%+v\n", vce)
+	log.Println(VCEToString(vce))
 	return
 }
