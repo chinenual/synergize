@@ -16,7 +16,7 @@
 | uint8  | 1     | VASENS | amplitude sensitivity
 | uint8  | 1     | VIBRAT | default vibrato rate (0..127)
 | int8   | 1     | VIBDEL | default vibrato delay (0..127)
-| int8   | 1     | VIBDEP | default vibrato depth (0..32)
+| int8   | 1     | VIBDEP | default vibrato depth (-127..127)
 | uint8  | 24    | KPROP  | key based proportion table
 | uint8  | 1     | APVIB  | depth control for random vibrato
 | int8   | 16    | FILTER | filter assignment for each osc. - =AFILT, 0=NONE, + =BFILT
