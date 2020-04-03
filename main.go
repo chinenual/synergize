@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/zserge/webview"
 
+	"html/template"
 	"log"
 	"net"
 	"net/http"
@@ -40,14 +41,17 @@ func main() {
 
 	w.SetTitle(appName);
 	w.SetSize(windowWidth, windowHeight, webview.HintNone);
-	w.Navigate(prefix + "/public/html/index.html")
+	w.Navigate(prefix + "/template/index.html")
 	w.Run();
 
 }
 
+
 func app(prefixChannel chan string) {
 	mux := http.NewServeMux()
-	mux.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir(rootDir+"/public"))))
+
+	mux.HandleFunc("/template/index.html", indexHandler);
+	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir(rootDir+"/static"))))
 //	mux.HandleFunc("/start", start)
 //	mux.HandleFunc("/frame", getFrame)
 	//	mux.HandleFunc("/key", captureKeys)
@@ -64,4 +68,14 @@ func app(prefixChannel chan string) {
 		Handler: mux,
 	}
 	server.ListenAndServe()
+}
+
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+ log.Println("a ", r)
+	t,err := template.ParseFiles("template/index.html")
+	if err != nil {
+		log.Println("err: ", err)
+	}
+ log.Println("b ", t)
+	t.Execute(w, nil)
 }
