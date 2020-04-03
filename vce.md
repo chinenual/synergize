@@ -9,7 +9,7 @@
 | uint8  | 1     | VTRANS | current transpose (+/- semitone) 
 | uint8  | 1     | VTCENT | envelope center (0 .. 32)
 | uint8  | 1     | VTSENS | envelope sensitivity
-| uint8  | 1     |        | $lt;unused - always 0$gt;
+| uint8  | 1     |        | \<unused - always 0\>
 | uint8  | 24    | VEQ    | array of voice amplitude for each key (one value per every 4 keys)
 | uint8  | 8     | VNAME  | voice name. left justified, blank padded
 | uint8  | 1     | VACENT | amplitude center
@@ -35,7 +35,7 @@ One pair of Frequency and Amplitude envelopes for each Oscillator
 | uint8  | 	1    | NPOINTS | 
 | uint8  | 	1    | SUSTAINPT | 
 | uint8  | 	1    | LOOPPT |
-| uint8  |  4    | $lt;elements$gt; | 4 bytes per point
+| uint8  |  4    | \<elements\> | 4 bytes per point
 
 
 ### Amplitude Envelope
@@ -45,7 +45,7 @@ One pair of Frequency and Amplitude envelopes for each Oscillator
 | uint8 | 	1 | NPOINTS | 
 | uint8 | 	1 | SUSTAINPT | 
 | uint8 | 	1 | LOOPPT | 
-| uint8  |  4    | $lt;elements$gt; | 4 bytes per point
+| uint8  |  4    | \<elements\> | 4 bytes per point
 
 ## Filters
 
@@ -53,5 +53,5 @@ One filter for any non-zero entry in the header FILTER array
 
 | Type   | Count | Name   | Description 
 |--------|-------|--------|-----
-| uint8  | 32    | $lt;elements$gt;  | each filter table is 32 bytes long
+| uint8  | 32    | \<elements\>  | each filter table is 32 bytes long
 
