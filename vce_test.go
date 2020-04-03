@@ -25,7 +25,7 @@ func testParseVCE(t *testing.T, path string) {
 
 func TestAllVCE(t *testing.T) {
 	fileList := []string{}
-	filepath.Walk("public/VOICES",
+	filepath.Walk("VOICES",
 		func(path string, f os.FileInfo, err error) error {
 			if (filepath.Ext(path) == ".VCE") {
 				fileList = append(fileList, path)

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/zserge/webview"
 
+//	"encoding/json"
 	"html/template"
 	"log"
 	"net"
@@ -41,7 +42,7 @@ func main() {
 
 	w.SetTitle(appName);
 	w.SetSize(windowWidth, windowHeight, webview.HintNone);
-	w.Navigate(prefix + "/template/index.html")
+	w.Navigate(prefix + "/index")
 	w.Run();
 
 }
@@ -50,7 +51,8 @@ func main() {
 func app(prefixChannel chan string) {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/template/index.html", indexHandler);
+	mux.HandleFunc("/index", indexHandler);
+	mux.HandleFunc("/view", viewHandler);
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir(rootDir+"/static"))))
 //	mux.HandleFunc("/start", start)
 //	mux.HandleFunc("/frame", getFrame)
@@ -71,11 +73,33 @@ func app(prefixChannel chan string) {
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
- log.Println("a ", r)
+ log.Println("indexHandler")
 	t,err := template.ParseFiles("template/index.html")
 	if err != nil {
 		log.Println("err: ", err)
 	}
- log.Println("b ", t)
 	t.Execute(w, nil)
+}
+
+func viewHandler(w http.ResponseWriter, r *http.Request) {
+ log.Println("viewHandler")
+	t,err := template.ParseFiles("template/view.html")
+	if err != nil {
+		log.Println("err: ", err)
+	}
+	var vce VCE
+	vce,err = ReadVCEFile("VOICES/INTERNAL/G7S.VCE")
+	if err != nil {
+		log.Println("err: ", err)
+	}
+ log.Println("viewHandler ", vce)
+
+/*	b,_ := json.Marshal(vce)
+	json := string(b)
+
+	data := struct {
+		Json string
+	}{ Json: json}
+*/
+	t.Execute(w, vce)
 }

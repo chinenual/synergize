@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title>SYNERGIZE</title>
+</head>
+
+<style>
+body {
+background-color : black;
+color : white;
+font-family: sans-serif;
+}
+#header {
+clear: both;
+}
+#logo {
+position: relative;
+float: right;
+}
+.button {
+height: 2em;
+}
+</style>
+<script src="/static/js/canvasjs.min.js"></script>
+
+<script>
+var vce = {{.}};
+
+window.onload = (function() {
+console.log( "document loaded" );
+refreshText();
+});
+
+function refreshText () {
+document.getElementById("name").innerHTML = vce.Head.VNAME;
+document.getElementById("nOsc").innerHTML = vce.Head.VOITAB + 1;
+document.getElementById("keysPlayable").innerHTML = 32 / (vce.Head.VOITAB + 1);
+document.getElementById("vibType").innerHTML = (vce.Head.VIBDEL >= 0) ? "Sine" : "Random";
+document.getElementById("vibRate").innerHTML = vce.Head.VIBRAT;
+document.getElementById("vibDelay").innerHTML = vce.Head.VIBDEL;
+document.getElementById("vibDepth").innerHTML = vce.Head.VIBDEP;
+document.getElementById("transpose").innerHTML = vce.Head.VTRANS;
+}
+
+</script>
+
+<body>
+
+<div id="header">
+<img id="logo" src="/static/images/logo.png" width="300">
+</div>
+
+<table>
+  <tr>
+    <td>Voice Name</td>
+    <td><span id="name"/></td>
+  </tr>
+  <tr> <td>&nbsp;</td> <td></td>  </tr>
+  <tr>
+    <td>Oscillators</td>
+    <td><span id="nOsc"/></td>
+  </tr>
+  <tr>
+    <td>Keys Playable</td>
+    <td><span id="keysPlayable"/></td>
+  </tr>
+  <tr> <td>&nbsp;</td> <td></td>  </tr>
+  <tr>
+    <td>Vibrato Type</td>
+    <td><span id="vibType"/></td>
+  </tr>
+  <tr>
+    <td>Vibrato Depth</td>
+    <td><span id="vibDepth"/></td>
+  </tr>
+  <tr>
+    <td>Vibrato Rate</td>
+    <td><span id="vibRate"/></td>
+  </tr>
+  <tr>
+    <td>Vibrato Delay</td>
+    <td><span id="vibDelay"/></td>
+  </tr>
+  <tr> <td>&nbsp;</td> <td></td>  </tr>
+  <tr>
+    <td>Transpose</td>
+    <td><span id="transpose"/></td>
+  </tr>
+</table>
+  
+</body>
+</html>
