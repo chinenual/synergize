@@ -30,19 +30,42 @@
 	refreshText();
     });
     
-    function computeProportionCurve(center, sensativity) {
-	if (sensativity == 0) {
-	    return [center, center];
+    function timbreProportionCurve(center, sensitivity) {
+	var result = [];
+	if (sensitivity == 0) {
+	    for (v = 0; v < 32; v++) {
+		result[v] = center;
+	    }
 	}
 	// center = 0..32
-	// sensativity = 1..31
-	var result = [];
+	// sensitivity = 1..31
 	for (v = 0; v < 32; v++) {
 	    // this appears to be what the z80 code is doing for timbre PROPC:
-	    var p = (center * 2) - 15 + (v * sensativity) - (2* sensativity);
+	    // HACK: the division by 10 is a hack - makes the graphs "look" ok but i can't account for why
+	    var p = (center * 2) - 15 + (v/10 * sensitivity) - (2* sensitivity);
 	    if (p > 31) p = 31;
 	    if (p < 0)  p = 0;
 	    result[v] = p;
+	}
+	return result;
+    }
+    
+    function ampProportionCurve(center, sensitivity) {
+	var result = [];
+	if (sensitivity == 0) {
+	    for (v = 0; v < 32; v++) {
+		result[v] = center;
+	    }
+	}
+	// center = 0..32
+	// sensitivity = 1..31
+	for (v = 0; v < 32; v++) {
+	    // this appears to be what the z80 code is doing for timbre PROPC:
+	    // HACK: the division by 10 is a hack - makes the graphs "look" ok but i can't account for why
+	    var p = (((v/10 * sensitivity)/2 - sensitivity) / 2) + center - 24
+	    if (p > 6) p = 6;
+	    if (p < -24)  p = -24;
+	    result[v] = p+25;
 	}
 	return result;
     }
@@ -68,8 +91,8 @@
 	Chart.defaults.global.defaultFontColor = 'white';
 	Chart.defaults.global.defaultFontSize  = 14;
 	
-	var ampData = computeProportionCurve(vce.Head.VACENT, vce.Head.VASENS);
-	var timbreData = computeProportionCurve(vce.Head.VTCENT, vce.Head.VTSENS);
+	var ampData = ampProportionCurve(vce.Head.VACENT, vce.Head.VASENS);
+	var timbreData = timbreProportionCurve(vce.Head.VTCENT, vce.Head.VTSENS);
 	
 	console.log("ampData: " + ampData);
 	console.log("timbreData: " + timbreData);
@@ -80,6 +103,7 @@
 	    type: 'line',
 	    data: {
 		labels: ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
+		//labels: ['','','',''],
 		datasets: [{
 		    fill: false,
 		    lineTension: 0,
@@ -104,18 +128,34 @@
 	    options: {
 		scales: {
 		    xAxes: [{
+			gridlines: {
+			    color: '#666',
+			    display: true,
+			    drawBorder: true,
+			    drawOnChartArea: false
+			},
 			scaleLabel: {
 			    display: true,
 			    labelString: "Velocity"
+			},
+			ticks: {
+			    display: true
 			}
 		    }],
 		    yAxes: [{
+			gridlines: {
+			    color: '#666',
+			    display: true,
+			    drawBorder: true,
+			    drawOnChartArea: false
+			},
 			scaleLabel: {
 			    display: true,
 			    labelString: "Proportion"
 			},
 			ticks: {
-			    display: false
+			    display: true,
+			    callback: function(dataLabel, index) { return ''; }
 			}
 		    }],
 		},
@@ -127,7 +167,8 @@
   </script>
   
   <body>
-    
+
+    <!-- Old School - table layout -->
     <table style="width:100%">
       <tr>
 	<td></td>

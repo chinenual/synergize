@@ -88,7 +88,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("err: ", err)
 	}
 	var vce VCE
-	vce,err = ReadVCEFile("VOICES/CARLOS1/CHIM1.VCE")
+	vce,err = ReadVCEFile("VOICES/CARLOS1/CLIK.VCE")
 	if err != nil {
 		log.Println("err: ", err)
 	}
