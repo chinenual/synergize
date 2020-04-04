@@ -13,7 +13,7 @@ import (
 )
 
 var appName = "Synergize"
-var windowWidth, windowHeight = 1024, 1024
+var windowWidth, windowHeight = 1024, 700
 
 var rootDir string                           // current directory
 
@@ -88,11 +88,11 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("err: ", err)
 	}
 	var vce VCE
-	vce,err = ReadVCEFile("VOICES/INTERNAL/G7S.VCE")
+	vce,err = ReadVCEFile("VOICES/CARLOS1/CHIM1.VCE")
 	if err != nil {
 		log.Println("err: ", err)
 	}
- log.Println("viewHandler ", vce)
+ log.Println("viewHandler ", VCEToJSON(vce))
 
 /*	b,_ := json.Marshal(vce)
 	json := string(b)

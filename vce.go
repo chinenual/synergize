@@ -42,7 +42,7 @@ type VCE struct {
 type VCEHead struct {
 	VOITAB uint8
 	OSCPTR [16]uint16
-	VTRANS uint8
+	VTRANS int8
 	VTCENT uint8
 	VTSENS uint8
 	UNUSED uint8
@@ -191,6 +191,12 @@ func ReadVCEFile(filename string) (vce VCE, err error) {
 
 func VCEToString(vce VCE) (result string) {
 	b,_ := json.MarshalIndent(vce, "", " ")
+	result = string(b)
+
+	return
+}
+func VCEToJSON(vce VCE) (result string) {
+	b,_ := json.Marshal(vce)
 	result = string(b)
 
 	return

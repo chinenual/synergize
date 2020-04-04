@@ -6,7 +6,7 @@
 |--------|-------|--------|-----
 | uint8  | 1     | VOITAB | index of last oscillator (osc count minus 1) 
 | uint16 | 16    | OSCPTR | array of 16 offsets (one for each osc table (zero based)) 
-| uint8  | 1     | VTRANS | current transpose (+/- semitone) 
+| int8  | 1     | VTRANS | current transpose (+/- semitone) 
 | uint8  | 1     | VTCENT | envelope center (0 .. 32)
 | uint8  | 1     | VTSENS | envelope sensitivity
 | uint8  | 1     |        | \<unused - always 0\>
