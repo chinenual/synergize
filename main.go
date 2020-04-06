@@ -1,105 +1,86 @@
 package main
 
 import (
-	"github.com/zserge/webview"
-
-//	"encoding/json"
-	"html/template"
+	"flag"
+	"fmt"
 	"log"
-	"net"
-	"net/http"
-	"os"
-	"path/filepath"
+	
+	"github.com/asticode/go-astikit"
+	"github.com/asticode/go-astilectron"
+	bootstrap "github.com/asticode/go-astilectron-bootstrap"
 )
 
-var appName = "Synergize"
-var windowWidth, windowHeight = 1024, 700
+// Vars injected via ldflags by bundler
+var (
+	AppName            string
+	BuiltAt            string
+	VersionAstilectron string
+	VersionElectron    string
+)
 
-var rootDir string                           // current directory
-
-
-func init() {
-	var err error
-	rootDir, err = filepath.Abs(filepath.Dir(os.Args[0]))
-	if err != nil {
-		log.Fatal(err)
-	}
-	// get source locations in log
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
-}
+// Application Vars
+var (
+	debug = flag.Bool("d", true, "enables the debug mode")
+	w     *astilectron.Window
+)
 
 func main() {
-	// channel to get the web prefix
-	prefixChannel := make(chan string)
-	// run the web server in a separate goroutine
-	go app(prefixChannel)
-	prefix := <- prefixChannel
+	// Parse flags
+	flag.Parse()
 
-	// create a web view
-	debug := true
-	w := webview.New(debug)
-	defer w.Destroy()
+	// Create logger
+	l := log.New(log.Writer(), log.Prefix(), log.Flags() | log.Lshortfile)
+	
+	// Run bootstrapls
+	
+	l.Printf("Running app built at %s\n", BuiltAt)
 
-	w.SetTitle(appName);
-	w.SetSize(windowWidth, windowHeight, webview.HintNone);
-	w.Navigate(prefix + "/index")
-	w.Run();
-
-}
-
-
-func app(prefixChannel chan string) {
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/index", indexHandler);
-	mux.HandleFunc("/view", viewHandler);
-	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir(rootDir+"/static"))))
-//	mux.HandleFunc("/start", start)
-//	mux.HandleFunc("/frame", getFrame)
-	//	mux.HandleFunc("/key", captureKeys)
-	// get an ephemeral port, so we're guaranteed not to conflict with anything else
-	listener, err := net.Listen("tcp", "127.0.0.1:0")
-	if err != nil {
-		panic(err)
+	if err := bootstrap.Run(bootstrap.Options{
+		Asset:    Asset,
+		AssetDir: AssetDir,
+		AstilectronOptions: astilectron.Options{
+			AppName:            AppName,
+			AppIconDarwinPath:  "resources/icon.icns",
+			AppIconDefaultPath: "resources/icon.png",
+			SingleInstance:     true,
+			VersionAstilectron: VersionAstilectron,
+			VersionElectron:    VersionElectron,
+		},
+		Debug:  *debug,
+		Logger: l,
+		MenuOptions: []*astilectron.MenuItemOptions{{
+			Label: astikit.StrPtr("File"),
+			SubMenu: []*astilectron.MenuItemOptions{
+				{
+					Label: astikit.StrPtr("About"),
+					OnClick: func(e astilectron.Event) (deleteListener bool) {
+						err := bootstrap.SendMessage(w, "about", BuiltAt, func(m *bootstrap.MessageIn){}) 
+						if err != nil {
+							l.Println(fmt.Errorf("sending about event failed: %w", err))
+						}
+						return
+					},
+				},
+				{Role: astilectron.MenuItemRoleClose},
+			},
+		}},
+		OnWait: func(_ *astilectron.Astilectron, ws []*astilectron.Window, _ *astilectron.Menu, _ *astilectron.Tray, _ *astilectron.Menu) error {
+                        w = ws[0]
+                        return nil
+                },
+		RestoreAssets: RestoreAssets,
+		
+		Windows: []*bootstrap.Window{{
+			Homepage:       "index.html",
+			MessageHandler: handleMessages,
+			Options: &astilectron.WindowOptions{
+				BackgroundColor: astikit.StrPtr("black"),
+				Center:          astikit.BoolPtr(true),
+				Height:          astikit.IntPtr(700),
+				Width:           astikit.IntPtr(1024),
+			},
+		}},
+	}); err != nil {
+		l.Fatal(fmt.Errorf("running bootstrap failed: %w", err))
 	}
-	portAddress := listener.Addr().String()
-	prefixChannel <- "http://" + portAddress
-	listener.Close()
-	server := &http.Server{
-		Addr:    portAddress,
-		Handler: mux,
-	}
-	server.ListenAndServe()
-}
-
-func indexHandler(w http.ResponseWriter, r *http.Request) {
- log.Println("indexHandler")
-	t,err := template.ParseFiles("template/index.html")
-	if err != nil {
-		log.Println("err: ", err)
-	}
-	t.Execute(w, nil)
-}
-
-func viewHandler(w http.ResponseWriter, r *http.Request) {
- log.Println("viewHandler")
-	t,err := template.ParseFiles("template/view.html")
-	if err != nil {
-		log.Println("err: ", err)
-	}
-	var vce VCE
-	vce,err = ReadVCEFile("VOICES/CARLOS1/CLIK.VCE")
-	if err != nil {
-		log.Println("err: ", err)
-	}
- log.Println("viewHandler ", VCEToJSON(vce))
-
-/*	b,_ := json.Marshal(vce)
-	json := string(b)
-
-	data := struct {
-		Json string
-	}{ Json: json}
-*/
-	t.Execute(w, vce)
 }

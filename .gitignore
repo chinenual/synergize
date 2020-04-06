@@ -1,6 +1,7 @@
 VOICES
-synergize
-synergize.app/Contents/MacOS
+bind*
+output
+windows.syso
 .DS_Store
 
 # Binaries for programs and plugins
