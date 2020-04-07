@@ -1,4 +1,8 @@
-let index = {
+let about = {
+    setVersion: function(versionString) {
+	console.log("top of about " + versionString);
+	document.getElementById("version").innerHTML = versionString;
+    },
     init: function() {
         // Init
         asticode.loader.init();
@@ -8,22 +12,16 @@ let index = {
         // Wait for astilectron to be ready
         document.addEventListener('astilectron-ready', function() {
             // Listen
-            index.listen();
-	    
-            // Explore default path
-	    //            index.explore();
-	    
-	    
-	    
+            about.listen();
         })
     },
     listen: function() {
         astilectron.onMessage(function(message) {
             switch (message.name) {
-            case "about":
-//		
-//                index.about(message.payload);
-//                return {payload: "payload"};
+            case "setVersion":
+		
+                about.setVersion(message.payload);
+                return {payload: "payload"};
                 break;
             }
         });
