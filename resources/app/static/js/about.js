@@ -16,6 +16,7 @@ let about = {
         })
     },
     listen: function() {
+	console.log("index listening...")
         astilectron.onMessage(function(message) {
             switch (message.name) {
             case "setVersion":

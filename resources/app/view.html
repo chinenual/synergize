@@ -1,29 +1,17 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
-<html> <head>
+<html> 
+  <head>
     <title>SYNERGIZE</title>
+    <meta charset="UTF-8">
+    
+    <link rel="stylesheet" href="static/css/base.css">
+    <link rel="stylesheet" href="static/lib/astiloader/astiloader.css">
+    <link rel="stylesheet" href="static/lib/astimodaler/astimodaler.css">
+    <link rel="stylesheet" href="static/lib/astinotifier/astinotifier.css">
   </head>
-  
-  <style>
-    body {
-    background-color : black;
-    color : white;
-    font-family: sans-serif;
-    }
-    #header {
-	clear: both;
-    }
-    #logo {
-	position: relative;
-	float: right;
-    }
-    .button {
-	height: 2em;
-    }
-  </style>
-  <script src="/static/js/Chart.bundle.min.js"></script>
-  
+
   <script>
-    var vce = {{.}};
+    var vce = {};
     
     window.onload = (function() {
 	console.log( "document loaded" );
@@ -174,7 +162,7 @@
 	<td></td>
 	<td>	  
 	  <div id="header">
-	    <img id="logo" src="/static/images/logo.png" width="400">
+	    <img id="logo" src="static/images/logo.png" width="300">
 	  </div>
 	</td>
       </tr>
@@ -228,5 +216,15 @@
 	</td>
       </tr>
       
+      <script src="static/js/Chart.bundle.min.js"></script>
+      
+      <script src="static/js/view.js"></script>
+      <script src="static/lib/astiloader/astiloader.js"></script>
+      <script src="static/lib/astimodaler/astimodaler.js"></script>
+      <script src="static/lib/astinotifier/astinotifier.js"></script>
+      <script type="text/javascript">
+    	index.init();
+      </script>
+            
   </body>
 </html>
