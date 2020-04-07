@@ -53,6 +53,53 @@ func main() {
 	
 	l.Printf("Running app version %s\n", AppVersion)
 
+
+	macOSMenus := []*astilectron.MenuItemOptions{{
+			Label: astikit.StrPtr("Synergize"),
+			SubMenu: []*astilectron.MenuItemOptions{
+				{
+					Label: astikit.StrPtr("About Synergize"),
+					OnClick: func(e astilectron.Event) (deleteListener bool) {
+						err := bootstrap.SendMessage(about_w, "setVersion", AppVersion, func(m *bootstrap.MessageIn){}) 
+						if err != nil {
+							l.Println(fmt.Errorf("sending about event failed: %w", err))
+						}
+						about_w.Show()
+						return
+					},
+				},
+				{ Type: astilectron.MenuItemTypeSeparator },
+				{
+					Label: astikit.StrPtr("Preferences..."),
+					Accelerator: astilectron.NewAccelerator("CommandOrControl+P"),
+				},
+				{Role: astilectron.MenuItemRoleServices},
+				{ Type: astilectron.MenuItemTypeSeparator },
+				{
+					// Override the "Hide Electron" label
+					Label: astikit.StrPtr("Hide Synergize"),
+					Role: astilectron.MenuItemRoleHide,
+				},
+				{Role: astilectron.MenuItemRoleHideOthers},
+				{Role: astilectron.MenuItemRoleUnhide},
+				{ Type: astilectron.MenuItemTypeSeparator },
+				{
+					// Override the "Quit Electron" label
+					Label: astikit.StrPtr("Quit Synergize"),
+					Role: astilectron.MenuItemRoleQuit,
+				},
+			},
+		},{
+			Label: astikit.StrPtr("File"),
+			SubMenu: []*astilectron.MenuItemOptions{
+				{
+					Label: astikit.StrPtr("Open..."),
+				},
+			},
+		},
+	}
+	menuOptions := macOSMenus
+	
 	if err := bootstrap.Run(bootstrap.Options{
 		Asset:    Asset,
 		AssetDir: AssetDir,
@@ -66,23 +113,7 @@ func main() {
 		},
 		Debug:  *debug,
 		Logger: l,
-		MenuOptions: []*astilectron.MenuItemOptions{{
-			Label: astikit.StrPtr("File"),
-			SubMenu: []*astilectron.MenuItemOptions{
-				{
-					Label: astikit.StrPtr("About"),
-					OnClick: func(e astilectron.Event) (deleteListener bool) {
-						err := bootstrap.SendMessage(about_w, "setVersion", AppVersion, func(m *bootstrap.MessageIn){}) 
-						if err != nil {
-							l.Println(fmt.Errorf("sending about event failed: %w", err))
-						}
-						about_w.Show()
-						return
-					},
-				},
-				{Role: astilectron.MenuItemRoleClose},
-			},
-		}},
+		MenuOptions: menuOptions,
 		OnWait: func(_ *astilectron.Astilectron, ws []*astilectron.Window, _ *astilectron.Menu, _ *astilectron.Tray, _ *astilectron.Menu) error {
                         w = ws[0]
 			about_w = ws[1]
