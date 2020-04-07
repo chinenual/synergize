@@ -17,14 +17,49 @@ let index = {
 	    
         })
     },
+    fileDialog: function () {
+	const {dialog} = require('electron').remote;
+
+	files = dialog.showOpenDialogSync({
+//electron bug? filter files cause the dialog to look wonky
+//	    filters: [
+//		{ name: 'Voice', extensions: ['vce'] },
+//		{ name: 'Cartridge', extensions: ['crt'] },
+//		{ name: 'All Files', extensions: ['*'] }],
+            properties: ['openFile']
+	});
+	console.log("in fileDialog: " + files);
+	return files;	
+    },
+    load: function(url, element) {
+	console.log("load " + url + " into " + element);
+	req = new XMLHttpRequest();
+
+	req.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+		element.innerHTML = req.responseText;
+            }
+	};
+
+	req.open("GET", url, false);
+	req.send(null); 
+    },
     listen: function() {
 	console.log("index listening...")
         astilectron.onMessage(function(message) {
             switch (message.name) {
-            case "about":
-//		
-//                index.about(message.payload);
-//                return {payload: "payload"};
+            case "fileDialog":
+                f = index.fileDialog(message.payload);
+		console.log("onMessage: " + f);
+                return {payload: f};
+                break;
+            case "viewVCE":
+		console.log("viewVCE: " + message.payload);
+		vce = message.payload;
+		index.load("view.html", document.getElementById("content"));
+		view.refreshText();
+		
+                return {payload: "ok"};
                 break;
             }
         });

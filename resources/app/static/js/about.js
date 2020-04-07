@@ -8,7 +8,14 @@ let about = {
         asticode.loader.init();
         asticode.modaler.init();
         asticode.notifier.init();
-	
+
+	// "close" means hide for the about frame - don't destroy the window itself
+	window.onbeforeunload = (e) => {
+	    console.log("close (HIDE) about window");
+	    window.hide();
+	    e.returnValue = false;
+	}
+				  
         // Wait for astilectron to be ready
         document.addEventListener('astilectron-ready', function() {
             // Listen

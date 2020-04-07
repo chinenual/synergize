@@ -1,230 +1,54 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
-<html> 
-  <head>
-    <title>SYNERGIZE</title>
-    <meta charset="UTF-8">
-    
-    <link rel="stylesheet" href="static/css/base.css">
-    <link rel="stylesheet" href="static/lib/astiloader/astiloader.css">
-    <link rel="stylesheet" href="static/lib/astimodaler/astimodaler.css">
-    <link rel="stylesheet" href="static/lib/astinotifier/astinotifier.css">
-  </head>
 
-  <script>
-    var vce = {};
-    
-    window.onload = (function() {
-	console.log( "document loaded" );
-	refreshText();
-    });
-    
-    function timbreProportionCurve(center, sensitivity) {
-	var result = [];
-	if (sensitivity == 0) {
-	    for (v = 0; v < 32; v++) {
-		result[v] = center;
-	    }
-	}
-	// center = 0..32
-	// sensitivity = 1..31
-	for (v = 0; v < 32; v++) {
-	    // this appears to be what the z80 code is doing for timbre PROPC:
-	    // HACK: the division by 10 is a hack - makes the graphs "look" ok but i can't account for why
-	    var p = (center * 2) - 15 + (v/10 * sensitivity) - (2* sensitivity);
-	    if (p > 31) p = 31;
-	    if (p < 0)  p = 0;
-	    result[v] = p;
-	}
-	return result;
-    }
-    
-    function ampProportionCurve(center, sensitivity) {
-	var result = [];
-	if (sensitivity == 0) {
-	    for (v = 0; v < 32; v++) {
-		result[v] = center;
-	    }
-	}
-	// center = 0..32
-	// sensitivity = 1..31
-	for (v = 0; v < 32; v++) {
-	    // this appears to be what the z80 code is doing for timbre PROPC:
-	    // HACK: the division by 10 is a hack - makes the graphs "look" ok but i can't account for why
-	    var p = (((v/10 * sensitivity)/2 - sensitivity) / 2) + center - 24
-	    if (p > 6) p = 6;
-	    if (p < -24)  p = -24;
-	    result[v] = p+25;
-	}
-	return result;
-    }
-    
-    function refreshText () {
-	document.getElementById("name").innerHTML = vce.Head.VNAME;
-	document.getElementById("nOsc").innerHTML = vce.Head.VOITAB + 1;
-	document.getElementById("keysPlayable").innerHTML = Math.floor(32 / (vce.Head.VOITAB + 1));
-	document.getElementById("vibType").innerHTML = (vce.Head.VIBDEL >= 0) ? "Sine" : "Random";
-	document.getElementById("vibRate").innerHTML = vce.Head.VIBRAT;
-	document.getElementById("vibDelay").innerHTML = vce.Head.VIBDEL;
-	document.getElementById("vibDepth").innerHTML = vce.Head.VIBDEP;
-	document.getElementById("transpose").innerHTML = vce.Head.VTRANS;
-	var i;
-	var count = 0;
-	for (i = 0; i < vce.Head.FILTER.length; i++) {
-	    if (vce.Head.FILTER[i] != 0) {
-		count++;
-	    }
-	}
-	document.getElementById("nFilter").innerHTML = count;
-	
-	Chart.defaults.global.defaultFontColor = 'white';
-	Chart.defaults.global.defaultFontSize  = 14;
-	
-	var ampData = ampProportionCurve(vce.Head.VACENT, vce.Head.VASENS);
-	var timbreData = timbreProportionCurve(vce.Head.VTCENT, vce.Head.VTSENS);
-	
-	console.log("ampData: " + ampData);
-	console.log("timbreData: " + timbreData);
-	
-	var ctx = document.getElementById('velocityChart').getContext('2d');
-	var chart = new Chart(ctx, {
-	    
-	    type: 'line',
-	    data: {
-		labels: ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''],
-		//labels: ['','','',''],
-		datasets: [{
-		    fill: false,
-		    lineTension: 0,
-		    pointRadius: 0,
-		    label: 'Amplitude',
-		    // https://www.color-hex.com/color-palette/89750
-		    backgroundColor: 'rgb(255,215,0)',
-		    borderColor: 'rgb(255,215,0)',
-		    data: ampData
-		},{
-		    fill: false,
-		    lineTension: 0,
-		    pointRadius: 0,
-		    label: 'Timbre',
-		    backgroundColor: 'rgb(79,156,244)',
-		    borderColor: 'rgb(79,156,244)',
-		    data: timbreData
-		}]
-	    },
-	    
-	    // Configuration options go here
-	    options: {
-		scales: {
-		    xAxes: [{
-			gridlines: {
-			    color: '#666',
-			    display: true,
-			    drawBorder: true,
-			    drawOnChartArea: false
-			},
-			scaleLabel: {
-			    display: true,
-			    labelString: "Velocity"
-			},
-			ticks: {
-			    display: true
-			}
-		    }],
-		    yAxes: [{
-			gridlines: {
-			    color: '#666',
-			    display: true,
-			    drawBorder: true,
-			    drawOnChartArea: false
-			},
-			scaleLabel: {
-			    display: true,
-			    labelString: "Proportion"
-			},
-			ticks: {
-			    display: true,
-			    callback: function(dataLabel, index) { return ''; }
-			}
-		    }],
-		},
-		responsive: false,
-		maintainAspectRatio: false
-	    }
-	});
-    }
-  </script>
+<!-- Old School - table layout -->
+<table style="width:100%">
+  <tr>
+    <td>
+      <table>
+	<tr>
+	  <td>Voice Name</td>
+	  <td><span id="name"/></td>
+	</tr>
+	<tr> <td>&nbsp;</td> <td></td>  </tr>
+	<tr>
+	  <td>Oscillators</td>
+	  <td><span id="nOsc"/></td>
+	</tr>
+	<tr>
+	  <td>Keys Playable</td>
+	  <td><span id="keysPlayable"/></td>
+	</tr>
+	<tr> <td>&nbsp;</td> <td></td>  </tr>
+	<tr>
+	  <td>Vibrato Type</td>
+	  <td><span id="vibType"/></td>
+	</tr>
+	<tr>
+	  <td>Vibrato Depth</td>
+	  <td><span id="vibDepth"/></td>
+	</tr>
+	<tr>
+	  <td>Vibrato Rate</td>
+	  <td><span id="vibRate"/></td>
+	</tr>
+	<tr>
+	  <td>Vibrato Delay</td>
+	  <td><span id="vibDelay"/></td>
+	</tr>
+	<tr> <td>&nbsp;</td> <td></td>  </tr>
+	<tr>
+	  <td>Transpose</td>
+	  <td><span id="transpose"/></td>
+	</tr>
+	<tr> <td>&nbsp;</td> <td></td>  </tr>
+	<tr>
+	  <td>Filters Used</td>
+	  <td><span id="nFilter"/></td>
+	</tr>
+      </table>
+    </td>
+    <td>
+      <canvas id="velocityChart" height="300" width="400" style="border:solid #666;"></canvas>
+    </td>
+  </tr>
+</table>
   
-  <body>
-
-    <!-- Old School - table layout -->
-    <table style="width:100%">
-      <tr>
-	<td></td>
-	<td>	  
-	  <div id="header">
-	    <img id="logo" src="static/images/logo.png" width="300">
-	  </div>
-	</td>
-      </tr>
-      <tr>
-	<td>
-	  <table>
-	    <tr>
-	      <td>Voice Name</td>
-	      <td><span id="name"/></td>
-	    </tr>
-	    <tr> <td>&nbsp;</td> <td></td>  </tr>
-	    <tr>
-	      <td>Oscillators</td>
-	      <td><span id="nOsc"/></td>
-	    </tr>
-	    <tr>
-	      <td>Keys Playable</td>
-	      <td><span id="keysPlayable"/></td>
-	    </tr>
-	    <tr> <td>&nbsp;</td> <td></td>  </tr>
-	    <tr>
-	      <td>Vibrato Type</td>
-	      <td><span id="vibType"/></td>
-	    </tr>
-	    <tr>
-	      <td>Vibrato Depth</td>
-	      <td><span id="vibDepth"/></td>
-	    </tr>
-	    <tr>
-	      <td>Vibrato Rate</td>
-	      <td><span id="vibRate"/></td>
-	    </tr>
-	    <tr>
-	      <td>Vibrato Delay</td>
-	      <td><span id="vibDelay"/></td>
-	    </tr>
-	    <tr> <td>&nbsp;</td> <td></td>  </tr>
-	    <tr>
-	      <td>Transpose</td>
-	      <td><span id="transpose"/></td>
-	    </tr>
-	    <tr> <td>&nbsp;</td> <td></td>  </tr>
-	    <tr>
-	      <td>Filters Used</td>
-	      <td><span id="nFilter"/></td>
-	    </tr>
-	  </table>
-	</td>
-	<td>
-	  <canvas id="velocityChart" height="300" width="400" style="border:solid #666;"></canvas>
-	</td>
-      </tr>
-      
-      <script src="static/js/Chart.bundle.min.js"></script>
-      
-      <script src="static/js/view.js"></script>
-      <script src="static/lib/astiloader/astiloader.js"></script>
-      <script src="static/lib/astimodaler/astimodaler.js"></script>
-      <script src="static/lib/astinotifier/astinotifier.js"></script>
-      <script type="text/javascript">
-    	index.init();
-      </script>
-            
-  </body>
-</html>

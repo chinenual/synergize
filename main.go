@@ -1,6 +1,7 @@
 package main
 
 import (
+        "encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -93,7 +94,35 @@ func main() {
 			Label: astikit.StrPtr("File"),
 			SubMenu: []*astilectron.MenuItemOptions{
 				{
-					Label: astikit.StrPtr("Open..."),
+					Label: astikit.StrPtr("Open File..."),
+					Accelerator: astilectron.NewAccelerator("CommandOrControl+O"),
+                                        OnClick: func(e astilectron.Event) (deleteListener bool) {
+                                                if err := bootstrap.SendMessage(w, "fileDialog", "", func(m *bootstrap.MessageIn) {
+                                                        // Unmarshal payload
+                                                        var s []string
+                                                        if err := json.Unmarshal(m.Payload, &s); err != nil {
+                                                                l.Println(fmt.Errorf("unmarshaling payload failed: %s : %w", m.Payload, err))
+                                                                return
+                                                        }
+                                                        l.Printf("fileDialog payload is %s!\n", s)
+
+							vce,_ := ReadVCEFile(s[0]);
+							if err := bootstrap.SendMessage(w, "viewVCE", vce, func(m *bootstrap.MessageIn) {
+								// Unmarshal payload
+								var s string
+								if err := json.Unmarshal(m.Payload, &s); err != nil {
+									l.Println(fmt.Errorf("unmarshaling payload failed: %s : %w", m.Payload, err))
+									return
+								}
+								l.Printf("viewVCE payload is %s!\n", s)							
+							}); err != nil {
+								l.Println(fmt.Errorf("sending viewVCE event failed: %w", err))
+							}
+						}); err != nil {
+							l.Println(fmt.Errorf("sending fileDialog event failed: %w", err))
+						}
+						return
+					},
 				},
 			},
 		},
