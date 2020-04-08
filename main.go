@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	
 	"github.com/asticode/go-astikit"
@@ -23,6 +24,7 @@ var (
 
 // Application Vars
 var (
+	comtst = flag.Bool("COMTST", true, "run command line diagnostics rather than the GUI")
 	debug = flag.Bool("d", true, "enables the debug mode")
 	w        *astilectron.Window
 	about_w  *astilectron.Window
@@ -47,6 +49,12 @@ func main() {
 	// Parse flags
 	flag.Parse()
 
+	if *comtst {
+		// run the command line diagnostics instead of the Electron app:
+		DiagMain();
+		os.Exit(0);
+	}
+	
 	// Create logger
 	l := log.New(log.Writer(), log.Prefix(), log.Flags() | log.Lshortfile)
 	

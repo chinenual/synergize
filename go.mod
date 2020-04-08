@@ -8,4 +8,6 @@ require (
 	github.com/asticode/go-astilectron v0.13.0
 	github.com/asticode/go-astilectron-bootstrap v0.3.3
 	github.com/elazarl/go-bindata-assetfs v1.0.0
+	github.com/jacobsa/go-serial v0.0.0-20180131005756-15cf729a72d4
+	github.com/pkg/errors v0.9.1
 )
