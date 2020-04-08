@@ -29,7 +29,15 @@ let index = {
             properties: ['openFile']
 	});
 	console.log("in fileDialog: " + files);
-	return files;	
+	return files;
+    },
+    runCOMTST: function() {
+	document.getElementById("testProgress").innerHTML = "Running...";
+	let message = {"name" : "runCOMTST"};
+	astilectron.sendMessage(message, function(message) {
+	    console.log("runCOMTST returned: " + message);
+	    document.getElementById("testProgress").innerHTML = message.payload;
+	});
     },
     load: function(url, element) {
 	console.log("load " + url + " into " + element);
@@ -58,6 +66,13 @@ let index = {
 		vce = message.payload;
 		index.load("view.html", document.getElementById("content"));
 		view.refreshText();
+		
+                return {payload: "ok"};
+                break;
+            case "runDiag":
+		console.log("runDiag: " + message.payload);
+		vce = message.payload;
+		index.load("diag.html", document.getElementById("content"));
 		
                 return {payload: "ok"};
                 break;

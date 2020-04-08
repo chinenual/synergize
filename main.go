@@ -24,7 +24,7 @@ var (
 
 // Application Vars
 var (
-	comtst = flag.Bool("COMTST", true, "run command line diagnostics rather than the GUI")
+	comtst = flag.Bool("COMTST", false, "run command line diagnostics rather than the GUI")
 	debug = flag.Bool("d", true, "enables the debug mode")
 	w        *astilectron.Window
 	about_w  *astilectron.Window
@@ -128,6 +128,28 @@ func main() {
 							}
 						}); err != nil {
 							l.Println(fmt.Errorf("sending fileDialog event failed: %w", err))
+						}
+						return
+					},
+				},
+			},
+		},
+		{
+			Label: astikit.StrPtr("Diagnostics"),
+			SubMenu: []*astilectron.MenuItemOptions{
+				{
+					Label: astikit.StrPtr("Sanity Test..."),
+					OnClick: func(e astilectron.Event) (deleteListener bool) {
+						if err := bootstrap.SendMessage(w, "runDiag", nil, func(m *bootstrap.MessageIn) {
+							// Unmarshal payload
+							var s string
+							if err := json.Unmarshal(m.Payload, &s); err != nil {
+								l.Println(fmt.Errorf("unmarshaling payload failed: %s : %w", m.Payload, err))
+								return
+							}
+							l.Printf("diag payload is %s!\n", s)							
+						}); err != nil {
+							l.Println(fmt.Errorf("sending viewVCE event failed: %w", err))
 						}
 						return
 					},

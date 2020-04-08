@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"io"
 	"flag"
 	"github.com/pkg/errors"
 )
@@ -18,12 +17,7 @@ func DiagMain() {
 
 	log.Printf("%s\n", *port);
 
-	stream,err := SerialInit(*port);
-	if err != nil {
-		log.Fatal("Could not open serial port: ",err)
-	}
-
-	err = DiagCOMTST(stream);
+	err := DiagCOMTST();
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		log.Printf("Note:\n\tThe Synergy must be running in COMTST mode before executing this test.\n\tPress RESTORE + PROGRAM 4 on the Synergy then rerun this program.\n");
@@ -32,7 +26,12 @@ func DiagMain() {
 	}
 }
 
-func DiagCOMTST(stream io.ReadWriteCloser) (err error) {	
+func DiagCOMTST() (err error) {	
+	stream,err := SerialInit(*port);
+	if err != nil {
+		log.Fatal("Could not open serial port: ",err)
+	}
+
 	var i int
 	for i = 0; i < 256; i++ {
 		b := byte(i)
