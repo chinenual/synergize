@@ -73,3 +73,25 @@ func SerialWriteByte(stream io.ReadWriteCloser, timeoutMS uint, b byte) (err err
 	}
 	return nil
 }
+
+func SerialWriteBytes(stream io.ReadWriteCloser, timeoutMS uint, arr []byte) (err error) {
+	// use goroutines to handle timeout of synchronous IO.
+	// See https://github.com/golang/go/wiki/Timeouts
+
+	c := make(chan error, 1)
+	go func() {
+		_,writeerr := stream.Write(arr); 
+		c <- writeerr
+	} ()
+	
+	select {
+	case err := <-c:
+		if err != nil {
+			return errors.Wrap(err, "failed to write bytes")
+		}
+	case <-time.After(time.Millisecond * time.Duration(timeoutMS)):
+		// call timed out
+		return errors.Errorf("write timed out at %d ms", timeoutMS)
+	}
+	return nil
+}

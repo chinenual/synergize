@@ -3,21 +3,24 @@ package main
 import (
 	"log"
 	"flag"
-	"github.com/pkg/errors"
+	"io/ioutil"
 )
 
 var (
 	port = flag.String("port", "/dev/tty.usbserial-AL05OC8S", "the serial port")
 )
 
-const TIMEOUT_MS = 5000
-
 func DiagMain() {
 	flag.Parse()
 
 	log.Printf("%s\n", *port);
 
-	err := DiagCOMTST();
+	err := SynioInit(*port)
+	if err != nil {
+		log.Printf("ERROR: %s\n", err)
+		return
+	}
+	err = SynioDiagCOMTST()
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		log.Printf("Note:\n\tThe Synergy must be running in COMTST mode before executing this test.\n\tPress RESTORE + PROGRAM 4 on the Synergy then rerun this program.\n");
@@ -26,29 +29,41 @@ func DiagMain() {
 	}
 }
 
-func DiagCOMTST() (err error) {	
-	stream,err := SerialInit(*port);
+func DiagPrintFirmwareID() {
+
+	version,err := SynioGetID()
 	if err != nil {
-		log.Fatal("Could not open serial port: ",err)
+		log.Printf("ERROR: %s\n", err)
+		return
+	}
+	log.Printf("Synergy is running firmware version %d.%d\n", version[0],version[1]);
+}
+
+func DiagLoadVCE(path string) {
+	flag.Parse()
+
+	log.Printf("%s\n", *port);
+	err := SynioInit(*port)
+	if err != nil {
+		log.Printf("ERROR: %s\n", err)
+		return
 	}
 
-	var i int
-	for i = 0; i < 256; i++ {
-		b := byte(i)
-		log.Printf("%d ...\n", b)
-
-		err = SerialWriteByte(stream, TIMEOUT_MS, b);
-		if err != nil {
-			return errors.Wrapf(err, "failed to write byte %d", b)
-		}
-		var read_b byte
-		read_b,err = SerialReadByte(stream, TIMEOUT_MS);
-		if err != nil {
-			return errors.Wrapf(err, "failed to read byte %d", b)
-		}
-		if read_b != b {
-			return errors.Errorf("read byte (%d) does not match what we sent (%d)", read_b, b)
-		}
+	DiagPrintFirmwareID()
+	
+	var vce_bytes []byte
+	vce_bytes,err = ioutil.ReadFile(path)
+	if err != nil {
+		log.Printf("ERROR: %s\n", err)
+		return
 	}
-	return nil
+	var voicenum byte = 24
+	log.Printf("VCE %s -- %d bytes into voice %d\n", path, len(vce_bytes), voicenum)
+
+	err = SynioLoadVCE(voicenum, vce_bytes)
+	if err != nil {
+		log.Printf("ERROR: %s\n", err)
+		return
+	}
+	
 }
