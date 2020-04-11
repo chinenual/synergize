@@ -39,6 +39,8 @@ func DiagPrintFirmwareID() {
 	log.Printf("Synergy is running firmware version %d.%d\n", version[0],version[1]);
 }
 
+var slotnum byte = 1
+
 func DiagLoadVCE(path string) {
 	flag.Parse()
 
@@ -50,20 +52,24 @@ func DiagLoadVCE(path string) {
 	}
 
 	DiagPrintFirmwareID()
-	
+
 	var vce_bytes []byte
 	vce_bytes,err = ioutil.ReadFile(path)
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
 	}
-	var voicenum byte = 24
-	log.Printf("VCE %s -- %d bytes into voice %d\n", path, len(vce_bytes), voicenum)
 
-	err = SynioLoadVCE(voicenum, vce_bytes)
+	log.Printf("VCE %s -- %d bytes into slotnum %d\n", path, len(vce_bytes), slotnum)
+
+	err = SynioLoadVCE(slotnum, vce_bytes)
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
 	}
+	
+	// load the next one in the next slot
+	slotnum++
+	
 	
 }

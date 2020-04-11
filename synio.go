@@ -16,6 +16,8 @@ const ACK byte = 0x06
 const DC1 byte = 0x11
 const NAK byte = 0x15
 
+var vramInitialized bool = false
+
 var (
 	stream io.ReadWriteCloser
 )
@@ -50,13 +52,25 @@ func command(opcode byte) (err error) {
 	return
 }
 
-
-func SynioLoadVCE(slotnum byte, vce []byte) (err error) {
+func SynioInitVRAM() (err error) {
+	if vramInitialized {
+		return
+	}
 	err = command(OP_ENABLEVRAM)
 	if err != nil {
 		err = errors.Wrap(err, "error sending ENABLEVRAM opcode")
 		return 
 	}
+	return
+}
+
+func SynioLoadVCE(slotnum byte, vce []byte) (err error) {
+	err = SynioInitVRAM()
+	if err != nil {
+		err = errors.Wrap(err, "Failed to initialize Synergy VRAM")
+		return 
+	}
+	
 	err = command(OP_VCELOD)
 	if err != nil {
 		err = errors.Wrap(err, "error sending VCELOD opcode")
@@ -95,7 +109,8 @@ func SynioLoadVCE(slotnum byte, vce []byte) (err error) {
 	err = errors.Errorf("Cant handle filters upload yet")
 	return
 }
-	
+
+
 func SynioGetID() (versionID [2]byte, err error) {
 	err = command(OP_GETID)
 	if err != nil {
