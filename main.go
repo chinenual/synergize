@@ -36,12 +36,12 @@ func setVersion() {
 	// convert the BuiltAt string to something more useful as a version id.
 	// BuiltAt looks like:
 	//    "2020-04-07 09:56:14.790283 -0400 EDT m=+9.882658457"
-	AppVersion = strings.Split(BuiltAt,".")[0];
-	// now:   "2020-04-07 09:56:14"
-	AppVersion = strings.ReplaceAll(AppVersion, ":","")
-	AppVersion = strings.ReplaceAll(AppVersion, "-","")
-	AppVersion = strings.ReplaceAll(AppVersion, " ","")
-	// now:   "20200407095614"
+	timestamp := strings.Split(BuiltAt," ")[0];
+	// now:   "2020-04-07"
+	timestamp = strings.ReplaceAll(timestamp, "-","")
+	// now:   "20200407"
+	AppVersion = Version + " (" + timestamp + ")"
+	// now:   " 0.1.0 (20200407)"
 }
 
 func main() {
