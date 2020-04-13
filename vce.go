@@ -9,23 +9,23 @@ import (
 )
 
 type FreqEnvelopeTable struct {
-	OPTCH     uint8
+	OPTCH     byte
 	OHARM     int8
 	FDETUN    int8
-	FENVL     uint8
-	ENVTYPE   uint8
-	NPOINTS   uint8
-	SUSTAINPT uint8
-	LOOPPT    uint8
-	Table     ArrayOfUint8 // force proper JSON encoding
+	FENVL     byte
+	ENVTYPE   byte
+	NPOINTS   byte
+	SUSTAINPT byte
+	LOOPPT    byte
+	Table     ArrayOfByte // force proper JSON encoding
 }
 
 type AmpEnvelopeTable struct {
-	ENVTYPE   uint8
-	NPOINTS   uint8
-	SUSTAINPT uint8
-	LOOPPT    uint8
-	Table     ArrayOfUint8 // force proper JSON encoding
+	ENVTYPE   byte
+	NPOINTS   byte
+	SUSTAINPT byte
+	LOOPPT    byte
+	Table     ArrayOfByte // force proper JSON encoding
 }
 
 type Envelope struct {
@@ -36,25 +36,25 @@ type Envelope struct {
 type VCE struct {
 	Head VCEHead
 	Envelopes []Envelope
-	Filters [][32]uint8;
+	Filters [][32]byte;
 }
 
 type VCEHead struct {
-	VOITAB uint8
+	VOITAB byte
 	OSCPTR [16]uint16
 	VTRANS int8
-	VTCENT uint8
-	VTSENS uint8
-	UNUSED uint8
+	VTCENT byte
+	VTSENS byte
+	UNUSED byte
 	VEQ    [24]int8
 	VNAME  SpaceEncodedString // force string encoding for the name
-	VACENT uint8
-	VASENS uint8
-	VIBRAT uint8
-	VIBDEL uint8
-	VIBDEP uint8
-	KPROP  [24]uint8
-	APVIB  uint8
+	VACENT byte
+	VASENS byte
+	VIBRAT byte
+	VIBDEL byte
+	VIBDEP byte
+	KPROP  [24]byte
+	APVIB  byte
 	FILTER [16]int8
 }
 
@@ -85,7 +85,7 @@ func ReadVCEFile(filename string) (vce VCE, err error) {
 	}
 
 	vce.Envelopes = make ([]Envelope,vce.Head.VOITAB+1)
-	for i := uint8(0); i <= vce.Head.VOITAB; i++ {
+	for i := byte(0); i <= vce.Head.VOITAB; i++ {
 		var e Envelope
 	
 		err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.OPTCH)
@@ -129,8 +129,8 @@ func ReadVCEFile(filename string) (vce VCE, err error) {
 			return
 		}
 		// 4 values per point:
-		e.FreqEnvelope.Table = make([]uint8, e.FreqEnvelope.NPOINTS*4)
-		for k := uint8(0); k < e.FreqEnvelope.NPOINTS*4; k++ {
+		e.FreqEnvelope.Table = make([]byte, e.FreqEnvelope.NPOINTS*4)
+		for k := byte(0); k < e.FreqEnvelope.NPOINTS*4; k++ {
 			err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.Table[k])
 			if err != nil {
 				log.Println("binary.Read failed:", err)
@@ -158,8 +158,8 @@ func ReadVCEFile(filename string) (vce VCE, err error) {
 			return
 		}
 		// 4 values per point:
-		e.AmpEnvelope.Table = make([]uint8, e.AmpEnvelope.NPOINTS*4)
-		for k := uint8(0); k < e.AmpEnvelope.NPOINTS*4; k++ {
+		e.AmpEnvelope.Table = make([]byte, e.AmpEnvelope.NPOINTS*4)
+		for k := byte(0); k < e.AmpEnvelope.NPOINTS*4; k++ {
 			err = binary.Read(buf, binary.LittleEndian, &e.AmpEnvelope.Table[k])
 			if err != nil {
 				log.Println("binary.Read failed:", err)
@@ -174,7 +174,7 @@ func ReadVCEFile(filename string) (vce VCE, err error) {
 			filterCount++
 		}
 	}
-	vce.Filters = make ([][32]uint8,filterCount);
+	vce.Filters = make ([][32]byte,filterCount);
 
 	for i := 0; i < filterCount; i++ {
 		for j := 0; j < 32; j++ {

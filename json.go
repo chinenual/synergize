@@ -1,6 +1,6 @@
 package main
 
-// JSON workarounds for []uint8 encoding - default go marshaller encodes as Base64
+// JSON workarounds for []byte encoding - default go marshaller encodes as Base64
 
 import (
 	"strings"
@@ -8,11 +8,11 @@ import (
 )
 
 
-type ArrayOfUint8 []uint8
+type ArrayOfByte []byte
 
-type SpaceEncodedString [8]uint8
+type SpaceEncodedString [8]byte
 
-func (u ArrayOfUint8) MarshalJSON() ([]byte, error) {
+func (u ArrayOfByte) MarshalJSON() ([]byte, error) {
 	var result string
 	if u == nil {
 		result = "null"
