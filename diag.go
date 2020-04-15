@@ -73,3 +73,31 @@ func DiagLoadVCE(path string) {
 	
 	
 }
+
+func DiagLoadCRT(path string) {
+	flag.Parse()
+
+	log.Printf("%s\n", *port);
+	err := SynioInit(*port)
+	if err != nil {
+		log.Printf("ERROR: %s\n", err)
+		return
+	}
+
+	DiagPrintFirmwareID()
+
+	var crt_bytes []byte
+	crt_bytes,err = ioutil.ReadFile(path)
+	if err != nil {
+		log.Printf("ERROR: %s\n", err)
+		return
+	}
+
+	log.Printf("CRT %s -- %d bytes \n", path, len(crt_bytes))
+
+	err = SynioLoadCRT(crt_bytes)
+	if err != nil {
+		log.Printf("ERROR: %s\n", err)
+		return
+	}
+}

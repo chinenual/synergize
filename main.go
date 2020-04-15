@@ -26,6 +26,7 @@ var (
 var (
 	comtst = flag.Bool("COMTST", false, "run command line diagnostics rather than the GUI")
 	loadvce = flag.String("LOADVCE", "", "load the named VCE file into Synergy")
+	loadcrt = flag.String("LOADCRT", "", "load the named CRT file into Synergy")
 	debug = flag.Bool("d", true, "enables the debug mode")
 	w        *astilectron.Window
 	about_w  *astilectron.Window
@@ -60,7 +61,11 @@ func main() {
 		DiagLoadVCE(*loadvce);
 		os.Exit(0);
 	}
-	
+	if *loadcrt != "" {
+		DiagLoadCRT(*loadcrt);
+		os.Exit(0);
+	}
+
 	// Create logger
 	l := log.New(log.Writer(), log.Prefix(), log.Flags() | log.Lshortfile)
 	
