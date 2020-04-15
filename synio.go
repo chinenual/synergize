@@ -5,6 +5,7 @@ import (
 	"log"
 	"strings"
 	"github.com/pkg/errors"
+	"github.com/snksoft/crc"
 )
 
 const VERBOSE = true
@@ -12,7 +13,7 @@ const TIMEOUT_MS = 5000
 
 const OP_GETID = byte(0x74)
 const OP_VCELOD = byte(0x6e)
-const OP_VRLOD = byte(0x68)
+const OP_VRLOD = byte(0x6b)
 const OP_ENABLEVRAM = byte(0x70)
 
 const ACK byte = 0x06
@@ -20,6 +21,8 @@ const DC1 byte = 0x11
 const NAK byte = 0x15
 
 var vramInitialized bool = false
+
+var crcHash *crc.Hash
 
 var (
 	stream io.ReadWriteCloser
@@ -30,6 +33,15 @@ func SynioInit(port string) (err error) {
 	if err != nil {
 		return errors.Wrap(err, "Could not open serial port")
 	}
+
+	// From SYN-V322/CRCSET64.Z80:
+	// ;       CYCLIC REDUNDANCY CHECK CHARACTER CHALCULATOR
+	// ;       BASED ON X**16 + X**15 + X**2 +1 POLYNOMIAL
+	//
+	// which means "1100000000000101" (binary) or 0x8005
+	// otherwise known as CRC-16/ARC (might be CRC-16/BUYPASS)
+	crcHash = crc.NewHash(crc.CRC16)
+	
 	return 
 }
 
@@ -42,10 +54,15 @@ func command(opcode byte, name string) (err error) {
 	//  loop until no pending input
 	// then send our opcode and loop until ACK'd
 
-	if VERBOSE { log.Printf("send opcode %2x - %s\n", opcode, name); }
+	if VERBOSE { log.Printf("send opcode %02x - %s\n", opcode, name); }
 	
 	var status byte
-	var retry = false;//true;
+	
+	// FIXME:
+	// this drain the input loop doesnt work yet - can work on other opcode support
+	// as long as the synergy hasnt queued up a bunch of output
+//	var retry = true;
+	var retry = false;
 	for retry {
 		// use the short timeout for reads that may or may not have any data
 		const SHORT_TIMEOUT_MS = 5000
@@ -88,28 +105,29 @@ func command(opcode byte, name string) (err error) {
 	var countdown = 3
 	for status == NAK && countdown > 0 {
 		countdown = countdown-1
-		// FIXME: this seems to be what SYNHCS does, but it can lead to infinite loops/hangs.  We will only try N times
- log.Printf("aaa %x\n",err)
+		// SYNHCS doesnt limit the number of retries, but it can lead to infinite loops/hangs.
+		// We will only try N times
+ log.Printf("aaa %v\n",err)
 		err = SerialWriteByte(stream, TIMEOUT_MS, opcode, "write opcode")
 		if err != nil {
 			err = errors.Wrap(err, "error sending opcode")
 			return 
 		}
- log.Printf("bbb %x\n",err)
+ log.Printf("bbb %v\n",err)
 		status,err = SerialReadByte(stream, TIMEOUT_MS, "read opcode ACK/NAK")
- log.Printf("ccc %x\n",err)
+ log.Printf("ccc %02x %v\n",status,err)
 		if err != nil {
 			err = errors.Wrap(err, "error reading opcode ACK/NAK")
- log.Printf("ddd %x\n",err)
+ log.Printf("ddd %v\n",err)
 			return 
 		}
- log.Printf("eee %x\n",err)
+ log.Printf("eee %v\n",err)
 	}
- log.Printf("fff %x\n",err)
+ log.Printf("fff %v\n",err)
 	if status != ACK {
-		err = errors.Errorf("com error sending opcode %2x - did not get ACK/NAK, got %2x",opcode,status)
+		err = errors.Errorf("com error sending opcode %02x - did not get ACK/NAK, got %02x",opcode,status)
 	}
- log.Printf("ggg %x\n",err)
+ log.Printf("ggg %v\n",err)
 	return
 }
 
@@ -185,26 +203,27 @@ func SynioLoadCRT(crt []byte) (err error) {
 		return 
 	}
 
-	var crc uint16 = 0
+	crcHash.Reset()
+
 	var length = uint16(len(crt))
+	if verbose {log.Printf("length: %d (dec) %x (hex)\n", length, length)}
 	
 	// LOB of the length
-	calcCRC(&crc, byte(0xff & length))
+	calcCRCByte(byte(0xff & length))
 	err = SerialWriteByte(stream, TIMEOUT_MS, byte(0xff & length), "write length LOB")
 	if err != nil {
 		err = errors.Wrap(err, "error sending length LOB")
 		return 
 	}
 	// HOB of the length
-	calcCRC(&crc, byte(0xff & (length>>8)))
+	calcCRCByte(byte(0xff & (length>>8)))
 	err = SerialWriteByte(stream, TIMEOUT_MS, byte(0xff & (length>>8)), "write length HOB")
 	if err != nil {
 		err = errors.Wrap(err, "error sending length HOB")
 		return 
 	}
-	for _,b := range(crt) {
-		calcCRC(&crc, b)
-	}
+
+	calcCRCBytes(crt)
 	
 	err = SerialWriteBytes(stream, TIMEOUT_MS, crt, "write CRT bytes")
 	if err != nil {
@@ -212,6 +231,9 @@ func SynioLoadCRT(crt []byte) (err error) {
 		return 
 	}
 
+	crc := crcHash.CRC16()
+	if verbose {log.Printf("CRC: %d (dec) %x (hex) %x\n", crc, crc, crcHash.CRC())}
+	
 	// LOB of the crc
 	err = SerialWriteByte(stream, TIMEOUT_MS, byte(0xff & crc), "write CRC LOB")
 	if err != nil {
@@ -263,25 +285,30 @@ func SynioDiagCOMTST() (err error) {
 	var i int
 	for i = 0; i < 256; i++ {
 		b := byte(i)
-		log.Printf("%d (%2x) ...\n", b, b)
+		log.Printf("%d (%02x) ...\n", b, b)
 
 		err = SerialWriteByte(stream, TIMEOUT_MS, b, "write test byte");
 		if err != nil {
-			return errors.Wrapf(err, "failed to write byte %2x", b)
+			return errors.Wrapf(err, "failed to write byte %02x", b)
 		}
 		var read_b byte
 		read_b,err = SerialReadByte(stream, TIMEOUT_MS, "read test byte");
 		if err != nil {
-			return errors.Wrapf(err, "failed to read byte %2x", b)
+			return errors.Wrapf(err, "failed to read byte %02x", b)
 		}
 		if read_b != b {
-			return errors.Errorf("read byte (%2x) does not match what we sent (%2x)", read_b, b)
+			return errors.Errorf("read byte (%02x) does not match what we sent (%02x)", read_b, b)
 		}
 	}
 	return nil
 }
 
-func calcCRC(crc *uint16, val byte)  {
-	// TBD
-	*crc += uint16(val)
+func calcCRCByte(b byte)  {
+	var arr []byte = make([]byte,1)
+	arr[0] = b;
+	calcCRCBytes(arr)
+}
+
+func calcCRCBytes(bytes []byte)  {
+	crcHash.Update(bytes);
 }
