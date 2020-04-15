@@ -36,23 +36,24 @@ func SerialReadByte(stream io.ReadWriteCloser, timeoutMS uint, purpose string) (
 	// use goroutines to handle timeout of synchronous IO.
 	// See https://github.com/golang/go/wiki/Timeouts
 
+	if verbose {log.Printf("       serial.Read (%d ms) - %s\n",timeoutMS,purpose)}
+	
 	c := make(chan error, 1)
 	go func() {
-		if verbose {log.Printf("       serial.Read (%d ms) - %s\n",timeoutMS,purpose)}
 		_,readerr := stream.Read(arr); 
-		if verbose {log.Printf(" %2x <-- serial.Read (%d ms)\n",arr[0],timeoutMS)}
 		c <- readerr
 	} ()
 	
 	select {
 	case err := <-c:
 		if err != nil {
-			return 0,errors.Wrap(err, "failed to read byte")
+			return arr[0],errors.Wrap(err, "failed to read byte")
 		}
+		if verbose {log.Printf(" %02x <-- serial.Read (%d ms)\n",arr[0],timeoutMS)}
 	case <-time.After(time.Millisecond * time.Duration(timeoutMS)):
 		// call timed out
-		if verbose {log.Printf("   read TIMEOUT at %d ms\n", timeoutMS)}
-		return 0,errors.Errorf("TIMEOUT: read timed out at %d ms", timeoutMS)
+		if verbose {log.Printf("   read TIMEOUT at %d ms (%x)\n", timeoutMS,arr[0])}
+		return arr[0],errors.Errorf("TIMEOUT: read timed out at %d ms", timeoutMS)
 	}
 	return arr[0], nil
 }
@@ -64,9 +65,10 @@ func SerialWriteByte(stream io.ReadWriteCloser, timeoutMS uint, b byte, purpose 
 	// use goroutines to handle timeout of synchronous IO.
 	// See https://github.com/golang/go/wiki/Timeouts
 
+	if verbose {log.Printf(" --> %02x serial.Write (%d ms) - %s\n",arr[0], timeoutMS,purpose)}
+
 	c := make(chan error, 1)
 	go func() {
-		if verbose {log.Printf(" --> %2x serial.Write (%d ms) - %s\n",arr[0], timeoutMS,purpose)}
 		_,writeerr := stream.Write(arr); 
 		c <- writeerr
 	} ()
@@ -88,9 +90,10 @@ func SerialWriteBytes(stream io.ReadWriteCloser, timeoutMS uint, arr []byte, pur
 	// use goroutines to handle timeout of synchronous IO.
 	// See https://github.com/golang/go/wiki/Timeouts
 
+	if verbose {log.Printf(" --> %02x serial.Write (%d ms) - %s\n",arr,timeoutMS,purpose)}
+
 	c := make(chan error, 1)
 	go func() {
-		if verbose {log.Printf(" --> %2x serial.Write (%d ms) - %s\n",arr,timeoutMS,purpose)}
 		_,writeerr := stream.Write(arr); 
 		c <- writeerr
 	} ()
