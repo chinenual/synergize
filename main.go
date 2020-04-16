@@ -209,6 +209,9 @@ func main() {
 				Show:            astikit.BoolPtr(false),
 				Height:          astikit.IntPtr(300),
 				Width:           astikit.IntPtr(400),
+				Custom: &astilectron.WindowCustomOptions{
+					HideOnClose:	astikit.BoolPtr(true),
+				},
 			},
 		}},
 	}); err != nil {
