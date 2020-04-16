@@ -17,6 +17,9 @@ import (
 // handleMessages handles messages
 func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload interface{}, err error) {
 	switch m.Name {
+	case "getVersion":
+		payload = AppVersion
+		
 	case "runCOMTST":
 		// nothing interesting in the payload - just start the test and return results
 		err = SynioDiagCOMTST()
