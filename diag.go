@@ -10,7 +10,7 @@ var (
 	port = flag.String("port", "/dev/tty.usbserial-AL05OC8S", "the serial port")
 )
 
-func DiagMain() {
+func DiagCOMTST() {
 	flag.Parse()
 
 	log.Printf("%s\n", *port);
@@ -26,6 +26,26 @@ func DiagMain() {
 		log.Printf("Note:\n\tThe Synergy must be running in COMTST mode before executing this test.\n\tPress RESTORE + PROGRAM 4 on the Synergy then rerun this program.\n");
 	} else {
 		log.Printf("SUCCESS!\n")
+	}
+}
+
+func DiagLOOPTST() {
+	flag.Parse()
+
+	log.Printf("%s\n", *port);
+
+	err := SynioInit(*port)
+	if err != nil {
+		log.Printf("ERROR: %s\n", err)
+		return
+	}
+
+	log.Printf("Entering LOOPBACK mode - any byte recieved from the Synergy is echo'd back\n")
+	log.Printf("Start the test by pressing RESTORE + RESTORE + PROGRAM 1 on the Synergy\n")
+
+	err = SynioDiagLOOPTST()
+	if err != nil {
+		log.Printf("ERROR: %s\n", err)
 	}
 }
 

@@ -306,6 +306,27 @@ func SynioDiagCOMTST() (err error) {
 	return nil
 }
 
+func SynioDiagLOOPTST() (err error) {	
+
+	// infinite loop
+	for true {
+
+		var b byte
+		b,err = SerialReadByte(stream, 1000 * 60 * 5, "read test byte");
+		if err != nil {
+			return errors.Wrapf(err, "failed to read byte %02x", b)
+		}
+
+		log.Printf("%d (%02x) ...\n", b, b)
+
+		err = SerialWriteByte(stream, TIMEOUT_MS, b, "write test byte");
+		if err != nil {
+			return errors.Wrapf(err, "failed to write byte %02x", b)
+		}
+	}
+	return nil
+}
+
 func calcCRCByte(b byte)  {
 	var arr []byte = make([]byte,1)
 	arr[0] = b;

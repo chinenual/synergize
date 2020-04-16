@@ -25,8 +25,10 @@ var (
 // Application Vars
 var (
 	comtst = flag.Bool("COMTST", false, "run command line diagnostics rather than the GUI")
+	looptst = flag.Bool("LOOPTST", false, "run command line diagnostics rather than the GUI")
 	loadvce = flag.String("LOADVCE", "", "load the named VCE file into Synergy")
 	loadcrt = flag.String("LOADCRT", "", "load the named CRT file into Synergy")
+	
 	debug = flag.Bool("d", true, "enables the debug mode")
 	w        *astilectron.Window
 	about_w  *astilectron.Window
@@ -53,7 +55,13 @@ func main() {
 
 	if *comtst {
 		// run the command line diagnostics instead of the Electron app:
-		DiagMain();
+		DiagCOMTST();
+		os.Exit(0);
+	}
+	
+	if *looptst {
+		// run the command line diagnostics instead of the Electron app:
+		DiagLOOPTST();
 		os.Exit(0);
 	}
 	
