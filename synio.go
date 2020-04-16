@@ -38,9 +38,12 @@ func SynioInit(port string) (err error) {
 	// ;       CYCLIC REDUNDANCY CHECK CHARACTER CHALCULATOR
 	// ;       BASED ON X**16 + X**15 + X**2 +1 POLYNOMIAL
 	//
-	// which means "1100000000000101" (binary) or 0x8005
-	// otherwise known as CRC-16/ARC (might be CRC-16/BUYPASS)
-	crcHash = crc.NewHash(crc.CRC16)
+	// which means "1100000000000101" (binary) or 0x8005.
+	// In the Z80 code, I see left shifts which implies CRC16-BUYPASS rather than CRC16-ARC. 
+
+	CRC16_BUYPASS := &crc.Parameters{Width: 16, Polynomial: 0x8005, Init: 0x0000, ReflectIn: false, ReflectOut: false, FinalXor: 0x0}
+	
+	crcHash = crc.NewHash(CRC16_BUYPASS)
 	
 	return 
 }
