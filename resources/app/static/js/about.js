@@ -1,23 +1,19 @@
 let about = {
-    setVersion: function(versionString) {
-	console.log("top of about " + versionString);
-	document.getElementById("version").innerHTML = versionString;
-    },
     init: function() {
         // Init
         asticode.loader.init();
         asticode.modaler.init();
         asticode.notifier.init();
 
-	// "close" means hide for the about frame - don't destroy the window itself
-	window.onbeforeunload = (e) => {
-	    console.log("close (HIDE) about window");
-	    window.hide();
-	    e.returnValue = false;
-	}
-				  
         // Wait for astilectron to be ready
         document.addEventListener('astilectron-ready', function() {
+
+	    let json = {"name" : "getVersion"};
+	    astilectron.sendMessage(json, function(message) {
+		console.log("getVersion returned: " + message);
+		document.getElementById("version").innerHTML = message.payload;
+	    });
+	    
             // Listen
             about.listen();
         })
@@ -25,13 +21,9 @@ let about = {
     listen: function() {
 	console.log("index listening...")
         astilectron.onMessage(function(message) {
-            switch (message.name) {
-            case "setVersion":
-		
-                about.setVersion(message.payload);
-                return {payload: "payload"};
-                break;
-            }
+	    console.log("got message: " + message);
+//            switch (message.name) {
+//            }
         });
     }
 };
