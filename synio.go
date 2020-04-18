@@ -11,10 +11,11 @@ import (
 const VERBOSE = true
 const TIMEOUT_MS = 5000
 
-const OP_GETID = byte(0x74)
-const OP_VCELOD = byte(0x6e)
-const OP_VRLOD = byte(0x6b)
+const OP_VRLOD      = byte(0x6b)
+const OP_VCELOD     = byte(0x6e)
 const OP_ENABLEVRAM = byte(0x70)
+const OP_GETID      = byte(0x74)
+const OP_STDUMP     = byte(0x79)
 
 const ACK byte = 0x06
 const DC1 byte = 0x11
@@ -210,17 +211,18 @@ func SynioLoadCRT(crt []byte) (err error) {
 
 	var length = uint16(len(crt))
 	if verbose {log.Printf("length: %d (dec) %x (hex)\n", length, length)}
-	
+
+	lenHob,lenLob := wordToBytes(length)
 	// LOB of the length
-	calcCRCByte(byte(0xff & length))
-	err = SerialWriteByte(stream, TIMEOUT_MS, byte(0xff & length), "write length LOB")
+	calcCRCByte(lenLob)
+	err = SerialWriteByte(stream, TIMEOUT_MS, lenLob, "write length LOB")
 	if err != nil {
 		err = errors.Wrap(err, "error sending length LOB")
 		return 
 	}
 	// HOB of the length
-	calcCRCByte(byte(0xff & (length>>8)))
-	err = SerialWriteByte(stream, TIMEOUT_MS, byte(0xff & (length>>8)), "write length HOB")
+	calcCRCByte(lenHob)
+	err = SerialWriteByte(stream, TIMEOUT_MS, lenHob, "write length HOB")
 	if err != nil {
 		err = errors.Wrap(err, "error sending length HOB")
 		return 
@@ -237,14 +239,15 @@ func SynioLoadCRT(crt []byte) (err error) {
 	crc := crcHash.CRC16()
 	if verbose {log.Printf("CRC: %d (dec) %x (hex) %x\n", crc, crc, crcHash.CRC())}
 	
+	crcHob,crcLob := wordToBytes(crc)
 	// LOB of the crc
-	err = SerialWriteByte(stream, TIMEOUT_MS, byte(0xff & crc), "write CRC LOB")
+	err = SerialWriteByte(stream, TIMEOUT_MS, crcLob, "write CRC LOB")
 	if err != nil {
 		err = errors.Wrap(err, "error sending crc LOB")
 		return 
 	}
 	// HOB of the crc
-	err = SerialWriteByte(stream, TIMEOUT_MS, byte(0xff & (crc>>8)), "write CRC HOB")
+	err = SerialWriteByte(stream, TIMEOUT_MS, crcHob, "write CRC HOB")
 	if err != nil {
 		err = errors.Wrap(err, "error sending crc HOB")
 		return 
@@ -263,6 +266,41 @@ func SynioLoadCRT(crt []byte) (err error) {
 	return
 }
 
+
+// Retrieve Synergy "state" (STDUMP in the Z80 sources)
+func SynioSaveSYN() (bytes []byte, err error) {
+	err = command(OP_STDUMP, "STDUMP")
+	if err != nil {
+		err = errors.Wrap(err, "error sending opcode")
+		return 
+	}
+
+	// read CMOS data length (2 bytes)
+	var lob byte
+	var hob byte
+	lob,err = SerialReadByte(stream, TIMEOUT_MS, "LOB CMOS length")
+	if err != nil {
+		err = errors.Wrap(err, "error reading LOB of CMOS length")
+		return 
+	}
+	hob,err = SerialReadByte(stream, TIMEOUT_MS, "HOB CMOS length")
+	if err != nil {
+		err = errors.Wrap(err, "error reading HOB of CMOS length")
+		return 
+	}
+
+	cmos_len := bytesToWord(hob,lob)
+	
+	// read two CMOS data banks and the length of the sequencer (2 more bytes);
+	
+	if verbose {log.Printf("CMOS LEN %d so read %d\n", cmos_len, cmos_len * 2 + 2)}
+	
+	var buf []byte
+	buf,err = SerialReadBytes(stream, TIMEOUT_MS, cmos_len * 2 + 2, "read CMOS")
+
+	bytes = buf
+	return
+}
 
 func SynioGetID() (versionID [2]byte, err error) {
 	err = command(OP_GETID, "GETID")
@@ -325,6 +363,16 @@ func SynioDiagLOOPTST() (err error) {
 		}
 	}
 	return nil
+}
+
+func bytesToWord(hob byte, lob byte) uint16 {
+	return uint16(hob) << 8 + uint16(lob)
+}
+
+func wordToBytes(word uint16) (hob byte, lob byte) {
+	hob = byte(word >> 8)
+	lob = byte(word)
+	return
 }
 
 func calcCRCByte(b byte)  {
