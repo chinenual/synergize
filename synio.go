@@ -296,8 +296,20 @@ func SynioSaveSYN() (bytes []byte, err error) {
 		return 
 	}
 
-	// FIXME: decode sequencer length and possibly grab more
+	// decode sequencer length and possibly grab more
+	seq_len := bytesToWord(cmos_buf[len(cmos_buf)-1], cmos_buf[len(cmos_buf)-2])
+	if verbose {log.Printf("SEQ LEN from synergy %d\n", seq_len)}
+
+	// empty buf unless we have non-zero length to read
+	seq_buf := []byte{}
 	
+	if seq_len != 0 {
+		seq_buf,err = SerialReadBytes(stream, TIMEOUT_MS, seq_len, "read SEQ")
+		if err != nil {
+			err = errors.Wrap(err, "error reading SEQ")
+			return 
+		} 
+	}
 	var crc_buf []byte
 	crc_buf,err = SerialReadBytes(stream, TIMEOUT_MS, 2, "read CRC")
 	if err != nil {
@@ -312,7 +324,7 @@ func SynioSaveSYN() (bytes []byte, err error) {
 
 	calcCRCBytes(len_buf)
 	calcCRCBytes(cmos_buf)
-//	calcCRCBytes(crc_buf)
+	calcCRCBytes(seq_buf)
 	if verbose {log.Printf("CRC from synergy %x - our calculation %x\n", crcFromSynergy, crcHash.CRC16())}
 
 	if crcFromSynergy != crcHash.CRC16() {
@@ -321,6 +333,7 @@ func SynioSaveSYN() (bytes []byte, err error) {
 		return
 	}
 	bytes = append(len_buf, cmos_buf...)
+	bytes = append(bytes, seq_buf...)
 	bytes = append(bytes, crc_buf...)
 	return
 }
