@@ -45,7 +45,8 @@ func SynioInit(port string) (err error) {
 	CRC16_BUYPASS := &crc.Parameters{Width: 16, Polynomial: 0x8005, Init: 0x0000, ReflectIn: false, ReflectOut: false, FinalXor: 0x0}
 	
 	crcHash = crc.NewHash(CRC16_BUYPASS)
-	
+
+//	crcHash = crc.NewHash(crc.CRC16)
 	return 
 }
 
@@ -275,30 +276,52 @@ func SynioSaveSYN() (bytes []byte, err error) {
 		return 
 	}
 
-	// read CMOS data length (2 bytes)
-	var lob byte
-	var hob byte
-	lob,err = SerialReadByte(stream, TIMEOUT_MS, "LOB CMOS length")
+	var len_buf []byte
+	len_buf,err = SerialReadBytes(stream, TIMEOUT_MS, 2, "read CRC")
 	if err != nil {
-		err = errors.Wrap(err, "error reading LOB of CMOS length")
-		return 
-	}
-	hob,err = SerialReadByte(stream, TIMEOUT_MS, "HOB CMOS length")
-	if err != nil {
-		err = errors.Wrap(err, "error reading HOB of CMOS length")
+		err = errors.Wrap(err, "error reading CMOS length")
 		return 
 	}
 
-	cmos_len := bytesToWord(hob,lob)
+	cmos_len := bytesToWord(len_buf[1],len_buf[0])
 	
 	// read two CMOS data banks and the length of the sequencer (2 more bytes);
 	
 	if verbose {log.Printf("CMOS LEN %d so read %d\n", cmos_len, cmos_len * 2 + 2)}
 	
-	var buf []byte
-	buf,err = SerialReadBytes(stream, TIMEOUT_MS, cmos_len * 2 + 2, "read CMOS")
+	var cmos_buf []byte
+	cmos_buf,err = SerialReadBytes(stream, TIMEOUT_MS, cmos_len * 2 + 2, "read CMOS")
+	if err != nil {
+		err = errors.Wrap(err, "error reading CMOS length")
+		return 
+	}
 
-	bytes = buf
+	// FIXME: decode sequencer length and possibly grab more
+	
+	var crc_buf []byte
+	crc_buf,err = SerialReadBytes(stream, TIMEOUT_MS, 2, "read CRC")
+	if err != nil {
+		err = errors.Wrap(err, "error reading CMOS length")
+		return 
+	}
+
+	// FIXME: these bytes seem out of order vs the length HOB/LOB yet seem to be transmitted the same from INTF.Z80 firmware sourcecode - I dont understand something..
+	crcFromSynergy := bytesToWord(crc_buf[0], crc_buf[1])
+
+	crcHash.Reset();
+
+	calcCRCBytes(len_buf)
+	calcCRCBytes(cmos_buf)
+//	calcCRCBytes(crc_buf)
+	if verbose {log.Printf("CRC from synergy %x - our calculation %x\n", crcFromSynergy, crcHash.CRC16())}
+
+	if crcFromSynergy != crcHash.CRC16() {
+		err = errors.Errorf("STDUMP CRC does not match got %x, expected %x",
+			crcFromSynergy, crcHash.CRC16())
+		return
+	}
+	bytes = append(len_buf, cmos_buf...)
+	bytes = append(bytes, crc_buf...)
 	return
 }
 
