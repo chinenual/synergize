@@ -22,10 +22,11 @@ let index = {
 
 	files = dialog.showOpenDialogSync({
 //electron bug? filter files cause the dialog to look wonky
-//	    filters: [
-//		{ name: 'Voice', extensions: ['vce'] },
-//		{ name: 'Cartridge', extensions: ['crt'] },
-//		{ name: 'All Files', extensions: ['*'] }],
+	    filters: [
+		{ name: 'Voice', extensions: ['vce'] },
+		{ name: 'Cartridge', extensions: ['crt'] },
+		{ name: 'State', extensions: ['syn'] },
+		{ name: 'All Files', extensions: ['*'] }],
             properties: ['openFile']
 	});
 	console.log("in fileDialog: " + files);
