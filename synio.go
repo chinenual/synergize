@@ -243,13 +243,13 @@ func synioLoadCRT(crt []byte) (err error) {
 	
 	crcHob,crcLob := wordToBytes(crc)
 	// LOB of the crc
-	err = serialWriteByte(stream, TIMEOUT_MS, crcLob, "write CRC LOB")
+	err = serialWriteByte(stream, TIMEOUT_MS, crcHob, "write CRC LOB")
 	if err != nil {
 		err = errors.Wrap(err, "error sending crc LOB")
 		return 
 	}
 	// HOB of the crc
-	err = serialWriteByte(stream, TIMEOUT_MS, crcHob, "write CRC HOB")
+	err = serialWriteByte(stream, TIMEOUT_MS, crcLob, "write CRC HOB")
 	if err != nil {
 		err = errors.Wrap(err, "error sending crc HOB")
 		return 
