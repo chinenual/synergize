@@ -4,11 +4,29 @@ import (
 	"log"
 	"flag"
 	"io/ioutil"
+	"runtime"
+	"path/filepath"
+
 )
 
 var (
-	port = flag.String("port", "/dev/tty.usbserial-AL05OC8S", "the serial port")
+	defaultPort string = getDefaultPort()
+	port = flag.String("port", defaultPort, "the serial device")
 )
+
+func getDefaultPort() string {
+	if runtime.GOOS == "darwin" {
+		files, _ := filepath.Glob("/dev/tty.usbserial*")
+		for _,f := range(files) {
+			return f
+		}
+		
+	} else {
+		// windows
+		return "COM1"
+	}
+	return ""
+}
 
 func diagCOMTST() {
 	flag.Parse()

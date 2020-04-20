@@ -34,6 +34,7 @@ var (
 	debug = flag.Bool("d", true, "enables the debug mode")
 	w        *astilectron.Window
 	about_w  *astilectron.Window
+	l 	 *log.Logger
 	AppVersion string
 )
 
@@ -49,9 +50,18 @@ func setVersion() {
 	// now:   " 0.1.0 (20200407)"
 }
 
-func main() {
+func init() {
 	setVersion()
+
+	// Create logger
+	l := log.New(log.Writer(), log.Prefix(), log.Flags() | log.Lshortfile)
 	
+	l.Printf("Running app version %s\n", AppVersion)
+	l.Printf("Default serial device is %s\n", defaultPort)
+	
+}
+
+func main() {	
 	// Parse flags
 	flag.Parse()
 
@@ -76,12 +86,8 @@ func main() {
 		os.Exit(0);
 	}
 
-	// Create logger
-	l := log.New(log.Writer(), log.Prefix(), log.Flags() | log.Lshortfile)
-	
 	// Run bootstrapls
 	
-	l.Printf("Running app version %s\n", AppVersion)
 
 
 	macOSMenus := []*astilectron.MenuItemOptions{{
