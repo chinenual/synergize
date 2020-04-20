@@ -22,7 +22,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		
 	case "runCOMTST":
 		// nothing interesting in the payload - just start the test and return results
-		err = SynioDiagCOMTST()
+		err = synioDiagCOMTST()
 		if err != nil {
 			payload = "ERROR: " + err.Error()
 			return

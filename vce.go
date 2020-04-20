@@ -58,7 +58,7 @@ type VCEHead struct {
 	FILTER [16]int8
 }
 
-func Name(vce VCE) (name string) {
+func vceName(vce VCE) (name string) {
 	name=""
 	for i := 0; i < 8; i++ {
 		if vce.Head.VNAME[i] == ' ' {
@@ -69,7 +69,7 @@ func Name(vce VCE) (name string) {
 	return
 }
 
-func ReadVCEFile(filename string) (vce VCE, err error) {
+func vceReadFile(filename string) (vce VCE, err error) {
 	var b []byte
 
 	b,err = ioutil.ReadFile(filename)
@@ -180,7 +180,7 @@ func ReadVCEFile(filename string) (vce VCE, err error) {
 		for j := 0; j < 32; j++ {
 			err = binary.Read(buf, binary.LittleEndian, &vce.Filters[i][j])
 			if err != nil {
-				log.Println(VCEToString(vce))
+				log.Println(vceToString(vce))
 				log.Println("binary.Read failed:", i, " ", j, " ", err)
 				return
 			}			
@@ -189,25 +189,15 @@ func ReadVCEFile(filename string) (vce VCE, err error) {
 	return
 }
 
-func VCEToString(vce VCE) (result string) {
+func vceToString(vce VCE) (result string) {
 	b,_ := json.MarshalIndent(vce, "", " ")
 	result = string(b)
 
 	return
 }
-func VCEToJSON(vce VCE) (result string) {
+func vceToJson(vce VCE) (result string) {
 	b,_ := json.Marshal(vce)
 	result = string(b)
 
-	return
-}
-
-func PrintVCEFile(filename string) (err error) {
-	var vce VCE
-	vce, err = ReadVCEFile(filename);
-	if err != nil {
-		return
-	}
-	log.Println(VCEToString(vce))
 	return
 }

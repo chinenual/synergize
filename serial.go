@@ -11,7 +11,7 @@ import (
 
 var verbose = false
 
-func SerialInit(port string, v bool) (stream io.ReadWriteCloser, err error) {
+func serialInit(port string, v bool) (stream io.ReadWriteCloser, err error) {
 	verbose = v
 	options := serial.OpenOptions{
 		PortName: port,
@@ -31,7 +31,7 @@ func SerialInit(port string, v bool) (stream io.ReadWriteCloser, err error) {
 	return stream, nil
 }
 	
-func SerialReadByte(stream io.ReadWriteCloser, timeoutMS uint, purpose string) (b byte, err error) {
+func serialReadByte(stream io.ReadWriteCloser, timeoutMS uint, purpose string) (b byte, err error) {
 	var arr []byte = make([]byte,1);
 	
 	// use goroutines to handle timeout of synchronous IO.
@@ -60,12 +60,12 @@ func SerialReadByte(stream io.ReadWriteCloser, timeoutMS uint, purpose string) (
 }
 
 
-func SerialReadBytes(stream io.ReadWriteCloser, timeoutMS uint, num_bytes uint16, purpose string) (bytes []byte, err error) {
+func serialReadBytes(stream io.ReadWriteCloser, timeoutMS uint, num_bytes uint16, purpose string) (bytes []byte, err error) {
 	var arr []byte = make([]byte,num_bytes);
 
 
 	for i:= uint16(0); i < num_bytes; i++ {
-		arr[i],err = SerialReadByte(stream, timeoutMS, fmt.Sprintf("%s: %d",purpose,i))
+		arr[i],err = serialReadByte(stream, timeoutMS, fmt.Sprintf("%s: %d",purpose,i))
 		if err != nil {
 			bytes = arr[0:i]
 			err = errors.Wrap(err, "failed to read all bytes")
@@ -75,7 +75,7 @@ func SerialReadBytes(stream io.ReadWriteCloser, timeoutMS uint, num_bytes uint16
 	return
 }
 	
-func bugSerialReadBytes(stream io.ReadWriteCloser, timeoutMS uint, num_bytes uint16, purpose string) (bytes []byte, err error) {
+func bugserialReadBytes(stream io.ReadWriteCloser, timeoutMS uint, num_bytes uint16, purpose string) (bytes []byte, err error) {
 	var arr []byte = make([]byte,num_bytes);
 	
 	// use goroutines to handle timeout of synchronous IO.
@@ -107,7 +107,7 @@ func bugSerialReadBytes(stream io.ReadWriteCloser, timeoutMS uint, num_bytes uin
 	return arr, nil
 }
 
-func SerialWriteByte(stream io.ReadWriteCloser, timeoutMS uint, b byte, purpose string) (err error) {
+func serialWriteByte(stream io.ReadWriteCloser, timeoutMS uint, b byte, purpose string) (err error) {
 	var arr []byte = make([]byte,1);
 	arr[0] = b;
 	
@@ -135,7 +135,7 @@ func SerialWriteByte(stream io.ReadWriteCloser, timeoutMS uint, b byte, purpose 
 	return nil
 }
 
-func SerialWriteBytes(stream io.ReadWriteCloser, timeoutMS uint, arr []byte, purpose string) (err error) {
+func serialWriteBytes(stream io.ReadWriteCloser, timeoutMS uint, arr []byte, purpose string) (err error) {
 	// use goroutines to handle timeout of synchronous IO.
 	// See https://github.com/golang/go/wiki/Timeouts
 

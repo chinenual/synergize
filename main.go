@@ -57,26 +57,26 @@ func main() {
 
 	if *comtst {
 		// run the command line diagnostics instead of the Electron app:
-		DiagCOMTST();
+		diagCOMTST();
 		os.Exit(0);
 	}
 	
 	if *looptst {
 		// run the command line diagnostics instead of the Electron app:
-		DiagLOOPTST();
+		diagLOOPTST();
 		os.Exit(0);
 	}
 	
 	if *loadvce != "" {
-		DiagLoadVCE(*loadvce);
+		diagLoadVCE(*loadvce);
 		os.Exit(0);
 	}
 	if *loadcrt != "" {
-		DiagLoadCRT(*loadcrt);
+		diagLoadCRT(*loadcrt);
 		os.Exit(0);
 	}
 	if *savesyn != "" {
-		DiagSaveSYN(*savesyn);
+		diagSaveSYN(*savesyn);
 		os.Exit(0);
 	}
 
@@ -139,7 +139,7 @@ func main() {
                                                         }
                                                         l.Printf("fileDialog payload is %s!\n", s)
 
-							vce,_ := ReadVCEFile(s[0]);
+							vce,_ := vceReadFile(s[0]);
 							if err := bootstrap.SendMessage(w, "viewVCE", vce, func(m *bootstrap.MessageIn) {
 								// Unmarshal payload
 								var s string

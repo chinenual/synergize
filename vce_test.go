@@ -11,14 +11,14 @@ import (
 func testParseVCE(t *testing.T, path string) {
 	log.Println("test ", path);
 	
-	vce, err := ReadVCEFile(path);
+	vce, err := vceReadFile(path);
 	if err != nil {
 		t.Errorf("error parsing %s: %v", path, err)
 		return
 	}
 	base := filepath.Base(path)
-	if base != Name(vce)+".VCE" {
-		t.Errorf("name doesnt match file - expected %s, got %s", base, Name(vce))
+	if base != vceName(vce)+".VCE" {
+		t.Errorf("name doesnt match file - expected %s, got %s", base, vceName(vce))
 	}
 }
 
