@@ -55,28 +55,24 @@ func main() {
 	// Parse flags
 	flag.Parse()
 
+	// run the command line tests instead of the Electron app:
 	if *comtst {
-		// run the command line diagnostics instead of the Electron app:
 		diagCOMTST();
 		os.Exit(0);
-	}
-	
-	if *looptst {
-		// run the command line diagnostics instead of the Electron app:
+	} else if *looptst {
 		diagLOOPTST();
 		os.Exit(0);
-	}
-	
-	if *loadvce != "" {
+	} else if *loadvce != "" {
 		diagLoadVCE(*loadvce);
 		os.Exit(0);
-	}
-	if *loadcrt != "" {
+	} else if *loadcrt != "" {
 		diagLoadCRT(*loadcrt);
 		os.Exit(0);
-	}
-	if *savesyn != "" {
+	} else if *savesyn != "" {
 		diagSaveSYN(*savesyn);
+		os.Exit(0);
+	} else if *loadsyn != "" {
+		diagLoadSYN(*loadsyn);
 		os.Exit(0);
 	}
 

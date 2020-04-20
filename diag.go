@@ -151,3 +151,33 @@ func diagSaveSYN(path string) {
 		return
 	}
 }
+
+func diagLoadSYN(path string) {
+	flag.Parse()
+
+	log.Printf("%s\n", *port);
+	err := synioInit(*port)
+	if err != nil {
+		log.Printf("ERROR: %s\n", err)
+		return
+	}
+
+	diagPrintFirmwareID()
+
+
+	var syn_bytes []byte
+	syn_bytes, err = ioutil.ReadFile(path)
+
+	if err != nil {
+		log.Printf("ERROR: %s\n", err)
+		return
+	}
+
+
+	err = synioLoadSYN(syn_bytes)
+	
+	if err != nil {
+		log.Printf("ERROR: %s\n", err)
+		return
+	}
+}

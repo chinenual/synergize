@@ -16,6 +16,7 @@ const OP_VCELOD     = byte(0x6e)
 const OP_ENABLEVRAM = byte(0x70)
 const OP_GETID      = byte(0x74)
 const OP_STDUMP     = byte(0x79)
+const OP_STLOAD     = byte(0x7a)
 
 const ACK byte = 0x06
 const DC1 byte = 0x11
@@ -264,6 +265,36 @@ func synioLoadCRT(crt []byte) (err error) {
 		return
 	}
 	err = errors.Errorf("Invalid CRC ACK from CRT upload")
+	return
+}
+
+
+// Send Synergy "state" (STLOAD in the Z80 sources)
+func synioLoadSYN(bytes []byte) (err error) {
+	err = command(OP_STLOAD, "STLOAD")
+	if err != nil {
+		err = errors.Wrap(err, "error sending opcode")
+		return 
+	}
+	// the SYN file actually has everything we need to send to the Synergy:
+	// the initial byte count, the SEQ byte count and buffer and the final CRC.
+	// Just send it as a block 
+	err = serialWriteBytes(stream, TIMEOUT_MS, bytes, "SYN bytes")
+	if err != nil {
+		err = errors.Wrap(err, "error sending SYN bytes")
+		return 
+	}
+	// expect an ACK:
+	var status byte
+	status,err = serialReadByte(stream, TIMEOUT_MS, "read SYN ACK")
+	if err != nil {
+		err = errors.Wrap(err, "error reading SYN ack")
+		return 
+	}
+	if status == ACK {
+		return
+	}
+	err = errors.Errorf("Invalid CRC ACK from SYN upload")
 	return
 }
 
