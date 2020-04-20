@@ -30,6 +30,7 @@ var (
 	loadcrt = flag.String("LOADCRT", "", "load the named CRT file into Synergy")
 	savesyn = flag.String("SAVESYN", "", "save the Synergy state to the named SYN file")
 	loadsyn = flag.String("LOADSYN", "", "load the named SYN file into Synergy")
+	synver  = flag.Bool("SYNVER", false, "Print the firmware version of the connected Synergy")
 	
 	debug = flag.Bool("d", true, "enables the debug mode")
 	w        *astilectron.Window
@@ -66,7 +67,10 @@ func main() {
 	flag.Parse()
 
 	// run the command line tests instead of the Electron app:
-	if *comtst {
+	if *synver {
+		diagInitAndPrintFirmwareID();
+		os.Exit(0);
+	} else if *comtst {
 		diagCOMTST();
 		os.Exit(0);
 	} else if *looptst {

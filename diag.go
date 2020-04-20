@@ -67,30 +67,31 @@ func diagLOOPTST() {
 	}
 }
 
-func diagPrintFirmwareID() {
+func diagInitAndPrintFirmwareID() (err error) {
+	flag.Parse()
+	
+	log.Printf("%s\n", *port);
+	err = synioInit(*port)
+	if err != nil {
+		log.Printf("ERROR: %s\n", err)
+		return
+	}
 
-	version,err := synioGetID()
+	var version [2]byte
+	version,err = synioGetID()
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
 	}
 	log.Printf("Synergy is running firmware version %d.%d\n", version[0],version[1]);
+	return
 }
 
 var slotnum byte = 1
 
 func diagLoadVCE(path string) {
-	flag.Parse()
-
-	log.Printf("%s\n", *port);
-	err := synioInit(*port)
-	if err != nil {
-		log.Printf("ERROR: %s\n", err)
-		return
-	}
-
-	diagPrintFirmwareID()
-
+	err := diagInitAndPrintFirmwareID()
+		
 	var vce_bytes []byte
 	vce_bytes,err = ioutil.ReadFile(path)
 	if err != nil {
@@ -113,16 +114,7 @@ func diagLoadVCE(path string) {
 }
 
 func diagLoadCRT(path string) {
-	flag.Parse()
-
-	log.Printf("%s\n", *port);
-	err := synioInit(*port)
-	if err != nil {
-		log.Printf("ERROR: %s\n", err)
-		return
-	}
-
-	diagPrintFirmwareID()
+	err := diagInitAndPrintFirmwareID()
 
 	var crt_bytes []byte
 	crt_bytes,err = ioutil.ReadFile(path)
@@ -141,16 +133,7 @@ func diagLoadCRT(path string) {
 }
 
 func diagSaveSYN(path string) {
-	flag.Parse()
-
-	log.Printf("%s\n", *port);
-	err := synioInit(*port)
-	if err != nil {
-		log.Printf("ERROR: %s\n", err)
-		return
-	}
-
-	diagPrintFirmwareID()
+	err := diagInitAndPrintFirmwareID()
 
 	var syn_bytes []byte
 	syn_bytes, err = synioSaveSYN()
@@ -171,18 +154,8 @@ func diagSaveSYN(path string) {
 }
 
 func diagLoadSYN(path string) {
-	flag.Parse()
-
-	log.Printf("%s\n", *port);
-	err := synioInit(*port)
-	if err != nil {
-		log.Printf("ERROR: %s\n", err)
-		return
-	}
-
-	diagPrintFirmwareID()
-
-
+	err := diagInitAndPrintFirmwareID()
+	
 	var syn_bytes []byte
 	syn_bytes, err = ioutil.ReadFile(path)
 
