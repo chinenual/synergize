@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io"
 	"log"
 	"strings"
 	"github.com/pkg/errors"
@@ -26,12 +25,8 @@ var vramInitialized bool = false
 
 var crcHash *crc.Hash
 
-var (
-	stream io.ReadWriteCloser
-)
-
 func synioInit(port string) (err error) {
-	stream,err = serialInit(port, VERBOSE);
+	err = serialInit(port, VERBOSE);
 	if err != nil {
 		return errors.Wrap(err, "Could not open serial port")
 	}
@@ -69,7 +64,7 @@ func command(opcode byte, name string) (err error) {
 	for retry {
 		// use the short timeout for reads that may or may not have any data
 		const SHORT_TIMEOUT_MS = 1000
-		status,err = serialReadByte(stream, SHORT_TIMEOUT_MS, "test for avail bytes")
+		status,err = serialReadByte(SHORT_TIMEOUT_MS, "test for avail bytes")
 		if err != nil && (!strings.Contains(err.Error(), "TIMEOUT:")) {
 			err = errors.Wrap(err, "error syncing command comm")
 			return 
@@ -88,14 +83,14 @@ func command(opcode byte, name string) (err error) {
 			case 1, 2, 3:
 				// KEY OR POT msg; consume 2 more bytes
 				for i := 0; i < 3; i++ {
-					_,err = serialReadByte(stream, TIMEOUT_MS, "read key/pot data")
+					_,err = serialReadByte(TIMEOUT_MS, "read key/pot data")
 					if err != nil {
 						err = errors.Wrap(err, "error syncing command key/pot comm")
 					}
 				}
 			default:
 				// otherwise, we need to send a NAK
-				err = serialWriteByte(stream, TIMEOUT_MS, NAK, "write NAK")
+				err = serialWriteByte(TIMEOUT_MS, NAK, "write NAK")
 				if err != nil {
 					err = errors.Wrap(err, "error sending NAK during command sync")
 					return 
@@ -110,12 +105,12 @@ func command(opcode byte, name string) (err error) {
 		countdown = countdown-1
 		// SYNHCS doesnt limit the number of retries, but it can lead to infinite loops/hangs.
 		// We will only try N times
-		err = serialWriteByte(stream, TIMEOUT_MS, opcode, "write opcode")
+		err = serialWriteByte(TIMEOUT_MS, opcode, "write opcode")
 		if err != nil {
 			err = errors.Wrap(err, "error sending opcode")
 			return 
 		}
-		status,err = serialReadByte(stream, TIMEOUT_MS, "read opcode ACK/NAK")
+		status,err = serialReadByte(TIMEOUT_MS, "read opcode ACK/NAK")
 		if err != nil {
 			err = errors.Wrap(err, "error reading opcode ACK/NAK")
 			return 
@@ -124,7 +119,7 @@ func command(opcode byte, name string) (err error) {
 	if status != ACK {
 		for {
 		// TEMP: DRAIN
-		status,err = serialReadByte(stream, TIMEOUT_MS, "DRAIN")
+		status,err = serialReadByte(TIMEOUT_MS, "DRAIN")
 			if err != nil {
 				log.Println("error while draining",err)
 				break;
@@ -165,13 +160,13 @@ func synioLoadVCE(slotnum byte, vce []byte) (err error) {
 		return 
 	}
 
-	err = serialWriteByte(stream, TIMEOUT_MS, slotnum, "write slotnum")
+	err = serialWriteByte(TIMEOUT_MS, slotnum, "write slotnum")
 	if err != nil {
 		err = errors.Wrap(err, "error sending slotnum")
 		return 
 	}
 	var status byte
-	status,err = serialReadByte(stream, TIMEOUT_MS, "read slotnum ACK")
+	status,err = serialReadByte(TIMEOUT_MS, "read slotnum ACK")
 	if err != nil {
 		err = errors.Wrap(err, "error reading slotnum ack")
 		return 
@@ -181,12 +176,12 @@ func synioLoadVCE(slotnum byte, vce []byte) (err error) {
 		err = errors.Errorf("Invalid slotnum error")
 		return
 	}
-	err = serialWriteBytes(stream, TIMEOUT_MS, vce, "write VCE")
+	err = serialWriteBytes(TIMEOUT_MS, vce, "write VCE")
 	if err != nil {
 		err = errors.Wrap(err, "error writing vce ")
 		return 
 	}
-	status,err = serialReadByte(stream, TIMEOUT_MS, "read VCE ACK")
+	status,err = serialReadByte(TIMEOUT_MS, "read VCE ACK")
 	if err != nil {
 		err = errors.Wrap(err, "error reading vce ack")
 		return 
@@ -220,14 +215,14 @@ func synioLoadCRT(crt []byte) (err error) {
 	lenHob,lenLob := wordToBytes(length)
 	// LOB of the length
 	calcCRCByte(lenLob)
-	err = serialWriteByte(stream, TIMEOUT_MS, lenLob, "write length LOB")
+	err = serialWriteByte(TIMEOUT_MS, lenLob, "write length LOB")
 	if err != nil {
 		err = errors.Wrap(err, "error sending length LOB")
 		return 
 	}
 	// HOB of the length
 	calcCRCByte(lenHob)
-	err = serialWriteByte(stream, TIMEOUT_MS, lenHob, "write length HOB")
+	err = serialWriteByte(TIMEOUT_MS, lenHob, "write length HOB")
 	if err != nil {
 		err = errors.Wrap(err, "error sending length HOB")
 		return 
@@ -235,7 +230,7 @@ func synioLoadCRT(crt []byte) (err error) {
 
 	calcCRCBytes(crt)
 	
-	err = serialWriteBytes(stream, TIMEOUT_MS, crt, "write CRT bytes")
+	err = serialWriteBytes(TIMEOUT_MS, crt, "write CRT bytes")
 	if err != nil {
 		err = errors.Wrap(err, "error writing crt bytes ")
 		return 
@@ -246,20 +241,20 @@ func synioLoadCRT(crt []byte) (err error) {
 	
 	crcHob,crcLob := wordToBytes(crc)
 	// HOB of the crc
-	err = serialWriteByte(stream, TIMEOUT_MS, crcHob, "write CRC HOB")
+	err = serialWriteByte(TIMEOUT_MS, crcHob, "write CRC HOB")
 	if err != nil {
 		err = errors.Wrap(err, "error sending crc HOB")
 		return 
 	}
 	// LOB of the crc
-	err = serialWriteByte(stream, TIMEOUT_MS, crcLob, "write CRC LOB")
+	err = serialWriteByte(TIMEOUT_MS, crcLob, "write CRC LOB")
 	if err != nil {
 		err = errors.Wrap(err, "error sending crc LOB")
 		return 
 	}
 
 	var status byte
-	status,err = serialReadByte(stream, TIMEOUT_MS, "read CRT ACK")
+	status,err = serialReadByte(TIMEOUT_MS, "read CRT ACK")
 	if err != nil {
 		err = errors.Wrap(err, "error reading crt ack")
 		return 
@@ -282,14 +277,14 @@ func synioLoadSYN(bytes []byte) (err error) {
 	// the SYN file actually has everything we need to send to the Synergy:
 	// the initial byte count, the SEQ byte count and buffer and the final CRC.
 	// Just send it as a block 
-	err = serialWriteBytes(stream, TIMEOUT_MS, bytes, "SYN bytes")
+	err = serialWriteBytes(TIMEOUT_MS, bytes, "SYN bytes")
 	if err != nil {
 		err = errors.Wrap(err, "error sending SYN bytes")
 		return 
 	}
 	// expect an ACK:
 	var status byte
-	status,err = serialReadByte(stream, TIMEOUT_MS, "read SYN ACK")
+	status,err = serialReadByte(TIMEOUT_MS, "read SYN ACK")
 	if err != nil {
 		err = errors.Wrap(err, "error reading SYN ack")
 		return 
@@ -311,7 +306,7 @@ func synioSaveSYN() (bytes []byte, err error) {
 	}
 
 	var len_buf []byte
-	len_buf,err = serialReadBytes(stream, TIMEOUT_MS, 2, "read CRC")
+	len_buf,err = serialReadBytes(TIMEOUT_MS, 2, "read CRC")
 	if err != nil {
 		err = errors.Wrap(err, "error reading CMOS length")
 		return 
@@ -324,7 +319,7 @@ func synioSaveSYN() (bytes []byte, err error) {
 	if verbose {log.Printf("CMOS LEN %d so read %d\n", cmos_len, cmos_len * 2 + 2)}
 	
 	var cmos_buf []byte
-	cmos_buf,err = serialReadBytes(stream, TIMEOUT_MS, cmos_len * 2 + 2, "read CMOS")
+	cmos_buf,err = serialReadBytes(TIMEOUT_MS, cmos_len * 2 + 2, "read CMOS")
 	if err != nil {
 		err = errors.Wrap(err, "error reading CMOS length")
 		return 
@@ -338,14 +333,14 @@ func synioSaveSYN() (bytes []byte, err error) {
 	seq_buf := []byte{}
 	
 	if seq_len != 0 {
-		seq_buf,err = serialReadBytes(stream, TIMEOUT_MS, seq_len, "read SEQ")
+		seq_buf,err = serialReadBytes(TIMEOUT_MS, seq_len, "read SEQ")
 		if err != nil {
 			err = errors.Wrap(err, "error reading SEQ")
 			return 
 		} 
 	}
 	var crc_buf []byte
-	crc_buf,err = serialReadBytes(stream, TIMEOUT_MS, 2, "read CRC")
+	crc_buf,err = serialReadBytes(TIMEOUT_MS, 2, "read CRC")
 	if err != nil {
 		err = errors.Wrap(err, "error reading CMOS length")
 		return 
@@ -378,12 +373,12 @@ func synioGetID() (versionID [2]byte, err error) {
 		err = errors.Wrap(err, "error sending opcode")
 		return 
 	}
-	versionID[0],err = serialReadByte(stream, TIMEOUT_MS, "read id HB")
+	versionID[0],err = serialReadByte(TIMEOUT_MS, "read id HB")
 	if err != nil {
 		err = errors.Wrap(err, "error reading HB")
 		return 
 	}
-	versionID[1],err = serialReadByte(stream, TIMEOUT_MS, "read id LB")
+	versionID[1],err = serialReadByte(TIMEOUT_MS, "read id LB")
 	if err != nil {
 		err = errors.Wrap(err, "error reading LB")
 		return 
@@ -398,12 +393,12 @@ func synioDiagCOMTST() (err error) {
 		b := byte(i)
 		log.Printf("%d (%02x) ...\n", b, b)
 
-		err = serialWriteByte(stream, TIMEOUT_MS, b, "write test byte");
+		err = serialWriteByte(TIMEOUT_MS, b, "write test byte");
 		if err != nil {
 			return errors.Wrapf(err, "failed to write byte %02x", b)
 		}
 		var read_b byte
-		read_b,err = serialReadByte(stream, TIMEOUT_MS, "read test byte");
+		read_b,err = serialReadByte(TIMEOUT_MS, "read test byte");
 		if err != nil {
 			return errors.Wrapf(err, "failed to read byte %02x", b)
 		}
@@ -420,14 +415,14 @@ func synioDiagLOOPTST() (err error) {
 	for true {
 
 		var b byte
-		b,err = serialReadByte(stream, 1000 * 60 * 5, "read test byte");
+		b,err = serialReadByte(1000 * 60 * 5, "read test byte");
 		if err != nil {
 			return errors.Wrapf(err, "failed to read byte %02x", b)
 		}
 
 		log.Printf("%d (%02x) ...\n", b, b)
 
-		err = serialWriteByte(stream, TIMEOUT_MS, b, "write test byte");
+		err = serialWriteByte(TIMEOUT_MS, b, "write test byte");
 		if err != nil {
 			return errors.Wrapf(err, "failed to write byte %02x", b)
 		}
