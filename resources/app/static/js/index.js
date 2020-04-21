@@ -7,15 +7,17 @@ let index = {
 	
         // Wait for astilectron to be ready
         document.addEventListener('astilectron-ready', function() {
+
+	    let json = {"name" : "getFirmwareVersion"};
+	    astilectron.sendMessage(json, function(message) {
+		console.log("getFirmwareVersion returned: " + message);
+		document.getElementById("firmwareVersion").innerHTML = message.payload;
+	    });
+	    
             // Listen
-            index.listen();
-	    
-            // Explore default path
-	    //            index.explore();
-	    
-	    
-	    
+            about.listen();
         })
+
     },
     fileDialog: function () {
 	const {dialog} = require('electron').remote;

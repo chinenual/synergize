@@ -6,16 +6,17 @@
 *   log location
 *   serial port selection
 
-* make sure logger works even in gui mode
+* DONE make sure logger works even in gui mode
+** find platform specific default locations for log (currently just CWD)
 
 * remove Debug option from menus
 
 * windows variant for main menus
 
-* auto select a serial port
+* DONE - auto select a serial port
 * connect all functionality into GUI
-* serial timeout behavior - review goroutines
-* opcode "drain" input logic
+* DONE - serial timeout behavior - review goroutines
+* DONE - opcode "drain" input logic
 
 * Test on windows
 

@@ -1,15 +1,18 @@
 package main
 
 import (
-        "encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
+	"runtime"
 	"strings"
+        "encoding/json"
 	
 	"github.com/asticode/go-astikit"
 	"github.com/asticode/go-astilectron"
+	"gopkg.in/natefinch/lumberjack.v2"
 	bootstrap "github.com/asticode/go-astilectron-bootstrap"
 )
 
@@ -37,6 +40,7 @@ var (
 	about_w  *astilectron.Window
 	l 	 *log.Logger
 	AppVersion string
+	FirmwareVersion string
 )
 
 func setVersion() {
@@ -54,12 +58,38 @@ func setVersion() {
 func init() {
 	setVersion()
 
+	multi := io.MultiWriter(os.Stderr,
+		&lumberjack.Logger{
+			Filename:   "./synergize.log",
+			MaxSize:    5, // megabytes
+			MaxBackups: 2,
+			Compress:   false, 
+		})
+	log.SetOutput(multi)
 	// Create logger
-	l := log.New(log.Writer(), log.Prefix(), log.Flags() | log.Lshortfile)
+	l = log.New(log.Writer(), log.Prefix(), log.Flags() | log.Lshortfile)
 	
 	l.Printf("Running app version %s\n", AppVersion)
 	l.Printf("Default serial device is %s\n", defaultPort)
 	
+}
+
+func connectToSynergy() {
+	FirmwareVersion = "Not Connected"
+	err := synioInit(*port)
+	if err != nil {
+		l.Printf("Cannot connect to synergy on port %s: %x\n", *port, err)
+		return
+	}
+	var bytes [2]byte
+	bytes,err = synioGetID()
+	if err != nil {
+		l.Printf("Cannot connect get firmware version: %x\n", err)
+		return
+	}
+	FirmwareVersion = fmt.Sprintf("%d.%d", bytes[0],bytes[1])
+	
+	l.Printf("Connected to Synergy, firmware version: %s\n", FirmwareVersion)
 }
 
 func main() {	
@@ -90,10 +120,11 @@ func main() {
 		os.Exit(0);
 	}
 
+	if runtime.GOOS == "darwin" {
+		connectToSynergy()
+	}
+
 	// Run bootstrapls
-	
-
-
 	macOSMenus := []*astilectron.MenuItemOptions{{
 			Label: astikit.StrPtr("Synergize"),
 			SubMenu: []*astilectron.MenuItemOptions{

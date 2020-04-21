@@ -42,7 +42,6 @@ func synioInit(port string) (err error) {
 	
 	crcHash = crc.NewHash(CRC16_BUYPASS)
 
-//	crcHash = crc.NewHash(crc.CRC16)
 	return 
 }
 

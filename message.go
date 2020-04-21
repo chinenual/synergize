@@ -20,6 +20,9 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 	case "getVersion":
 		payload = AppVersion
 		
+	case "getFirmwareVersion":
+		payload = FirmwareVersion
+		
 	case "runCOMTST":
 		// nothing interesting in the payload - just start the test and return results
 		err = synioDiagCOMTST()
