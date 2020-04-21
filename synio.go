@@ -60,18 +60,15 @@ func command(opcode byte, name string) (err error) {
 	//  loop until no pending input
 	// then send our opcode and loop until ACK'd
 
-	if VERBOSE { log.Printf("send opcode %02x - %s\n", opcode, name); }
+	if VERBOSE { log.Printf("send command opcode %02x - %s\n", opcode, name); }
 	
 	var status byte
 	
-	// FIXME:
-	// this drain the input loop doesnt work yet - can work on other opcode support
-	// as long as the synergy hasnt queued up a bunch of output
-//	var retry = true;
-	var retry = false;
+	var retry = true;
+
 	for retry {
 		// use the short timeout for reads that may or may not have any data
-		const SHORT_TIMEOUT_MS = 5000
+		const SHORT_TIMEOUT_MS = 1000
 		status,err = serialReadByte(stream, SHORT_TIMEOUT_MS, "test for avail bytes")
 		if err != nil && (!strings.Contains(err.Error(), "TIMEOUT:")) {
 			err = errors.Wrap(err, "error syncing command comm")
@@ -113,27 +110,33 @@ func command(opcode byte, name string) (err error) {
 		countdown = countdown-1
 		// SYNHCS doesnt limit the number of retries, but it can lead to infinite loops/hangs.
 		// We will only try N times
- log.Printf("aaa %v\n",err)
 		err = serialWriteByte(stream, TIMEOUT_MS, opcode, "write opcode")
 		if err != nil {
 			err = errors.Wrap(err, "error sending opcode")
 			return 
 		}
- log.Printf("bbb %v\n",err)
 		status,err = serialReadByte(stream, TIMEOUT_MS, "read opcode ACK/NAK")
- log.Printf("ccc %02x %v\n",status,err)
 		if err != nil {
 			err = errors.Wrap(err, "error reading opcode ACK/NAK")
- log.Printf("ddd %v\n",err)
 			return 
 		}
- log.Printf("eee %v\n",err)
 	}
- log.Printf("fff %v\n",err)
 	if status != ACK {
+		for {
+		// TEMP: DRAIN
+		status,err = serialReadByte(stream, TIMEOUT_MS, "DRAIN")
+			if err != nil {
+				log.Println("error while draining",err)
+				break;
+			}
+			log.Printf("DRAIN: %x\n",status)
+		}
+
+
 		err = errors.Errorf("com error sending opcode %02x - did not get ACK/NAK, got %02x",opcode,status)
+
+		
 	}
- log.Printf("ggg %v\n",err)
 	return
 }
 

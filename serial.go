@@ -10,6 +10,13 @@ import (
 )
 
 var verbose = false
+var readerChannel chan serialReadResponse
+var readerChannelQuit chan bool
+
+type serialReadResponse struct {
+	data byte
+	err error
+}
 
 func serialInit(port string, v bool) (stream io.ReadWriteCloser, err error) {
 	verbose = v
@@ -28,41 +35,60 @@ func serialInit(port string, v bool) (stream io.ReadWriteCloser, err error) {
 	if err != nil {
 		return nil, errors.Wrapf(err,"Could not open serial port")
 	}
-	return stream, nil
+	if readerChannel != nil {
+		readerChannelQuit <- true
+	}
+
+	// long lived reader goroutine so we retain state of the stream across individual "reads"
+	readerChannel = make(chan serialReadResponse)
+	readerChannelQuit = make(chan bool)
+	go func () {
+		var arr []byte = make([]byte,1);
+		for {
+			select {
+			case <- readerChannelQuit:
+				close(readerChannelQuit)
+				close(readerChannel)
+				return
+			default:
+				var response serialReadResponse
+				var n int
+				n, response.err = stream.Read(arr);
+				if n == 1 {
+					response.data = arr[0]
+				}
+				readerChannel <- response
+			}
+		}
+	}()
+	
+	return stream,nil
 }
 	
 func serialReadByte(stream io.ReadWriteCloser, timeoutMS uint, purpose string) (b byte, err error) {
-	var arr []byte = make([]byte,1);
-	
 	// use goroutines to handle timeout of synchronous IO.
 	// See https://github.com/golang/go/wiki/Timeouts
 
 	if verbose {log.Printf("       serial.Read (%d ms) - %s\n",timeoutMS,purpose)}
 	
-	c := make(chan error, 1)
-	go func() {
-		_,readerr := stream.Read(arr); 
-		c <- readerr
-	} ()
-	
 	select {
-	case err := <-c:
-		if err != nil {
-			return arr[0],errors.Wrap(err, "failed to read byte")
+	case response := <-readerChannel:
+		if response.err != nil {
+			return response.data,errors.Wrap(err, "failed to read byte")
 		}
-		if verbose {log.Printf(" %02x <-- serial.Read (%d ms)\n",arr[0],timeoutMS)}
+		if verbose {log.Printf(" %02x <-- serial.Read (%d ms)\n",response.data,timeoutMS)}
+		return response.data, nil
 	case <-time.After(time.Millisecond * time.Duration(timeoutMS)):
 		// call timed out
-		if verbose {log.Printf("   read TIMEOUT at %d ms (%x)\n", timeoutMS,arr[0])}
-		return arr[0],errors.Errorf("TIMEOUT: read timed out at %d ms", timeoutMS)
+		if verbose {log.Printf("   read TIMEOUT at %d ms (%x)\n", timeoutMS,0)}
+		return 0,errors.Errorf("TIMEOUT: read timed out at %d ms", timeoutMS)
 	}
-	return arr[0], nil
+	return 0, nil
 }
 
 
 func serialReadBytes(stream io.ReadWriteCloser, timeoutMS uint, num_bytes uint16, purpose string) (bytes []byte, err error) {
 	var arr []byte = make([]byte,num_bytes);
-
 
 	for i:= uint16(0); i < num_bytes; i++ {
 		arr[i],err = serialReadByte(stream, timeoutMS, fmt.Sprintf("%s: %d",purpose,i))
@@ -75,37 +101,6 @@ func serialReadBytes(stream io.ReadWriteCloser, timeoutMS uint, num_bytes uint16
 	return
 }
 	
-func bugserialReadBytes(stream io.ReadWriteCloser, timeoutMS uint, num_bytes uint16, purpose string) (bytes []byte, err error) {
-	var arr []byte = make([]byte,num_bytes);
-	
-	// use goroutines to handle timeout of synchronous IO.
-	// See https://github.com/golang/go/wiki/Timeouts
-
-	if verbose {log.Printf("       serial.ReadBytes (%d ms) %d - %s\n",timeoutMS,num_bytes,purpose)}
-
-	var num_read int
-	c := make(chan error, 1)
-	go func() {
-		var readerr error
-		num_read, readerr = stream.Read(arr); 
-		c <- readerr
-	} ()
-	
-	select {
-	case err := <-c:
-		if err != nil {
-			// truncate the array in case fewer than requested were read
-			arr = arr[0:num_read]
-			return arr,errors.Wrap(err, "failed to read byte")
-		}
-		if verbose {log.Printf(" %02x <-- serial.Read %d (%d ms)\n",arr,num_read,timeoutMS)}
-	case <-time.After(time.Millisecond * time.Duration(timeoutMS)):
-		// call timed out
-		if verbose {log.Printf("   read TIMEOUT at %d ms (%x)\n", timeoutMS,arr)}
-		return arr,errors.Errorf("TIMEOUT: read timed out at %d ms", timeoutMS)
-	}
-	return arr, nil
-}
 
 func serialWriteByte(stream io.ReadWriteCloser, timeoutMS uint, b byte, purpose string) (err error) {
 	var arr []byte = make([]byte,1);

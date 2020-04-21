@@ -27,3 +27,6 @@
 
 * github "release"
 
+* unit tests
+
+* error handling - do reasonable things if synergy not connected/io fails
