@@ -1,8 +1,11 @@
+TAGS
 VOICES
 bind*
 output
 windows.syso
 .DS_Store
+*.syn
+*.log
 
 # Binaries for programs and plugins
 *.exe
