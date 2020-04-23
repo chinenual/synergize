@@ -9,7 +9,7 @@ import (
 	"github.com/jacobsa/go-serial/serial"
 )
 
-var verbose = false
+var serialVerbose = false
 var readerChannel chan serialReadResponse
 var readerChannelQuit chan bool
 
@@ -22,8 +22,8 @@ var (
        stream io.ReadWriteCloser
 )
 
-func serialInit(port string, v bool) (err error) {
-	verbose = v
+func serialInit(port string, verbose bool) (err error) {
+	serialVerbose = verbose
 	options := serial.OpenOptions{
 		PortName: port,
 		BaudRate: 9600,
@@ -34,7 +34,7 @@ func serialInit(port string, v bool) (err error) {
 		DataBits: 8,
 		StopBits: 1,
 	}
-	if verbose {log.Printf(" --> serial.Open(%#v)\n",options)}
+	log.Printf(" --> serial.Open(%#v)\n",options)
 	stream,err = serial.Open(options);
 	if err != nil {
 		return errors.Wrapf(err,"Could not open serial port")
@@ -73,18 +73,18 @@ func serialReadByte(timeoutMS uint, purpose string) (b byte, err error) {
 	// use goroutines to handle timeout of synchronous IO.
 	// See https://github.com/golang/go/wiki/Timeouts
 
-	if verbose {log.Printf("       serial.Read (%d ms) - %s\n",timeoutMS,purpose)}
+	if serialVerbose {log.Printf("       serial.Read (%d ms) - %s\n",timeoutMS,purpose)}
 	
 	select {
 	case response := <-readerChannel:
 		if response.err != nil {
 			return response.data,errors.Wrap(err, "failed to read byte")
 		}
-		if verbose {log.Printf(" %02x <-- serial.Read (%d ms)\n",response.data,timeoutMS)}
+		if serialVerbose {log.Printf(" %02x <-- serial.Read (%d ms)\n",response.data,timeoutMS)}
 		return response.data, nil
 	case <-time.After(time.Millisecond * time.Duration(timeoutMS)):
 		// call timed out
-		if verbose {log.Printf("   read TIMEOUT at %d ms (%x)\n", timeoutMS,0)}
+		if serialVerbose {log.Printf("   read TIMEOUT at %d ms (%x)\n", timeoutMS,0)}
 		return 0,errors.Errorf("TIMEOUT: read timed out at %d ms", timeoutMS)
 	}
 	return 0, nil
@@ -113,7 +113,7 @@ func serialWriteByte(timeoutMS uint, b byte, purpose string) (err error) {
 	// use goroutines to handle timeout of synchronous IO.
 	// See https://github.com/golang/go/wiki/Timeouts
 
-	if verbose {log.Printf(" --> %02x serial.Write (%d ms) - %s\n",arr[0], timeoutMS,purpose)}
+	if serialVerbose {log.Printf(" --> %02x serial.Write (%d ms) - %s\n",arr[0], timeoutMS,purpose)}
 
 	c := make(chan error, 1)
 	go func() {
@@ -128,7 +128,7 @@ func serialWriteByte(timeoutMS uint, b byte, purpose string) (err error) {
 		}
 	case <-time.After(time.Millisecond * time.Duration(timeoutMS)):
 		// call timed out
-		if verbose {log.Printf("   write TIMEOUT at %d ms\n", timeoutMS)}
+		if serialVerbose {log.Printf("   write TIMEOUT at %d ms\n", timeoutMS)}
 		return errors.Errorf("TIMEOUT: write timed out at %d ms", timeoutMS)
 	}
 	return nil
@@ -138,7 +138,7 @@ func serialWriteBytes(timeoutMS uint, arr []byte, purpose string) (err error) {
 	// use goroutines to handle timeout of synchronous IO.
 	// See https://github.com/golang/go/wiki/Timeouts
 
-	if verbose {log.Printf(" --> %02x serial.WriteBytes (%d ms) - %s\n",arr,timeoutMS,purpose)}
+	if serialVerbose {log.Printf(" --> %02x serial.WriteBytes (%d ms) - %s\n",arr,timeoutMS,purpose)}
 
 	c := make(chan error, 1)
 	go func() {
@@ -153,7 +153,7 @@ func serialWriteBytes(timeoutMS uint, arr []byte, purpose string) (err error) {
 		}
 	case <-time.After(time.Millisecond * time.Duration(timeoutMS)):
 		// call timed out
-		if verbose {log.Printf("   write TIMEOUT at %d ms\n", timeoutMS)}
+		if serialVerbose {log.Printf("   write TIMEOUT at %d ms\n", timeoutMS)}
 		return errors.Errorf("TIMEOUT: write timed out at %d ms", timeoutMS)
 	}
 	return nil

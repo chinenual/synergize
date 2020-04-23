@@ -33,7 +33,7 @@ func diagCOMTST() {
 
 	log.Printf("%s\n", *port);
 
-	err := synioInit(*port)
+	err := synioInit(*port, true, *serialVerboseFlag)
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
@@ -52,7 +52,7 @@ func diagLOOPTST() {
 
 	log.Printf("%s\n", *port);
 
-	err := synioInit(*port)
+	err := synioInit(*port, true, *serialVerboseFlag)
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
@@ -71,7 +71,7 @@ func diagInitAndPrintFirmwareID() (err error) {
 	flag.Parse()
 	
 	log.Printf("%s\n", *port);
-	err = synioInit(*port)
+	err = synioInit(*port, true, *serialVerboseFlag)
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return

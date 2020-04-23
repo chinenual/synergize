@@ -8,16 +8,22 @@ let index = {
         // Wait for astilectron to be ready
         document.addEventListener('astilectron-ready', function() {
 
-	    let json = {"name" : "getFirmwareVersion"};
+	    /*
+	    json = {"name" : "getCWD"};
 	    astilectron.sendMessage(json, function(message) {
-		console.log("getFirmwareVersion returned: " + message);
-		document.getElementById("firmwareVersion").innerHTML = message.payload;
+		console.log("getCwd returned: " + message);
+		document.getElementById("cwd").innerHTML = message.payload;
 	    });
+	    */
 	    
             // Listen
-            about.listen();
+            index.listen();
         })
 
+    },
+    updateConnectionStatus: function (status) {
+	console.log("update status: " + status);
+	document.getElementById("firmwareVersion").innerHTML = status;
     },
     fileDialog: function () {
 	const {dialog} = require('electron').remote;
@@ -59,9 +65,11 @@ let index = {
 	console.log("index listening...")
         astilectron.onMessage(function(message) {
             switch (message.name) {
+	    case "updateConnectionStatus":
+		index.updateConnectionStatus(message.payload);
+		return {payload: "ok"};
             case "fileDialog":
                 f = index.fileDialog(message.payload);
-		console.log("onMessage: " + f);
                 return {payload: f};
                 break;
             case "viewVCE":

@@ -7,7 +7,6 @@ import (
 	"github.com/snksoft/crc"
 )
 
-const VERBOSE = true
 const TIMEOUT_MS = 5000
 
 const OP_VRLOD      = byte(0x6b)
@@ -22,11 +21,12 @@ const DC1 byte = 0x11
 const NAK byte = 0x15
 
 var vramInitialized bool = false
-
+var synioVerbose bool = false
 var crcHash *crc.Hash
 
-func synioInit(port string) (err error) {
-	err = serialInit(port, VERBOSE);
+func synioInit(port string, synVerbose bool, serialVerbose bool) (err error) {
+	synioVerbose = synVerbose
+	err = serialInit(port, serialVerbose);
 	if err != nil {
 		return errors.Wrap(err, "Could not open serial port")
 	}
@@ -54,11 +54,11 @@ func command(opcode byte, name string) (err error) {
 	//  loop until no pending input
 	// then send our opcode and loop until ACK'd
 
-	if VERBOSE { log.Printf("send command opcode %02x - %s\n", opcode, name); }
+	if synioVerbose { log.Printf("send command opcode %02x - %s\n", opcode, name); }
 	
 	var status byte
 	
-	var retry = true;
+	var retry = false;//true;
 
 	for retry {
 		// use the short timeout for reads that may or may not have any data
@@ -209,7 +209,7 @@ func synioLoadCRT(crt []byte) (err error) {
 	crcHash.Reset()
 
 	var length = uint16(len(crt))
-	if verbose {log.Printf("length: %d (dec) %x (hex)\n", length, length)}
+	if synioVerbose {log.Printf("length: %d (dec) %x (hex)\n", length, length)}
 
 	lenHob,lenLob := wordToBytes(length)
 	// LOB of the length
@@ -236,7 +236,7 @@ func synioLoadCRT(crt []byte) (err error) {
 	}
 
 	crc := crcHash.CRC16()
-	if verbose {log.Printf("CRC: %d (dec) %x (hex) %x\n", crc, crc, crcHash.CRC())}
+	if synioVerbose {log.Printf("CRC: %d (dec) %x (hex) %x\n", crc, crc, crcHash.CRC())}
 	
 	crcHob,crcLob := wordToBytes(crc)
 	// HOB of the crc
@@ -315,7 +315,7 @@ func synioSaveSYN() (bytes []byte, err error) {
 	
 	// read two CMOS data banks and the length of the sequencer (2 more bytes);
 	
-	if verbose {log.Printf("CMOS LEN %d so read %d\n", cmos_len, cmos_len * 2 + 2)}
+	if synioVerbose {log.Printf("CMOS LEN %d so read %d\n", cmos_len, cmos_len * 2 + 2)}
 	
 	var cmos_buf []byte
 	cmos_buf,err = serialReadBytes(TIMEOUT_MS, cmos_len * 2 + 2, "read CMOS")
@@ -326,7 +326,7 @@ func synioSaveSYN() (bytes []byte, err error) {
 
 	// decode sequencer length and possibly grab more
 	seq_len := bytesToWord(cmos_buf[len(cmos_buf)-1], cmos_buf[len(cmos_buf)-2])
-	if verbose {log.Printf("SEQ LEN from synergy %d\n", seq_len)}
+	if synioVerbose {log.Printf("SEQ LEN from synergy %d\n", seq_len)}
 
 	// empty buf unless we have non-zero length to read
 	seq_buf := []byte{}
@@ -353,7 +353,7 @@ func synioSaveSYN() (bytes []byte, err error) {
 	calcCRCBytes(len_buf)
 	calcCRCBytes(cmos_buf)
 	calcCRCBytes(seq_buf)
-	if verbose {log.Printf("CRC from synergy %x - our calculation %x\n", crcFromSynergy, crcHash.CRC16())}
+	if synioVerbose {log.Printf("CRC from synergy %x - our calculation %x\n", crcFromSynergy, crcHash.CRC16())}
 
 	if crcFromSynergy != crcHash.CRC16() {
 		err = errors.Errorf("STDUMP CRC does not match got %x, expected %x",

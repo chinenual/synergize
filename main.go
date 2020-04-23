@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"runtime"
 	"strings"
         "encoding/json"
 	
@@ -27,6 +26,7 @@ var (
 
 // Application Vars
 var (
+	serialVerboseFlag = flag.Bool("SERIALVERBOSE", false, "Show each byte operation through the serial port")
 	comtst = flag.Bool("COMTST", false, "run command line diagnostics rather than the GUI")
 	looptst = flag.Bool("LOOPTST", false, "run command line diagnostics rather than the GUI")
 	loadvce = flag.String("LOADVCE", "", "load the named VCE file into Synergy")
@@ -58,25 +58,25 @@ func setVersion() {
 func init() {
 	setVersion()
 
-	multi := io.MultiWriter(os.Stderr,
+	multi := io.MultiWriter(
 		&lumberjack.Logger{
-			Filename:   "./synergize.log",
+			Filename:   "synergize.log",
 			MaxSize:    5, // megabytes
 			MaxBackups: 2,
 			Compress:   false, 
-		})
+		},
+		os.Stderr)
 	log.SetOutput(multi)
 	// Create logger
 	l = log.New(log.Writer(), log.Prefix(), log.Flags() | log.Lshortfile)
 	
 	l.Printf("Running app version %s\n", AppVersion)
 	l.Printf("Default serial device is %s\n", defaultPort)
-	
 }
 
 func connectToSynergy() {
 	FirmwareVersion = "Not Connected"
-	err := synioInit(*port)
+	err := synioInit(*port, true, *serialVerboseFlag)
 	if err != nil {
 		l.Printf("Cannot connect to synergy on port %s: %x\n", *port, err)
 		return
@@ -120,10 +120,6 @@ func main() {
 		os.Exit(0);
 	}
 
-	if runtime.GOOS == "darwin" {
-		connectToSynergy()
-	}
-
 	// Run bootstrapls
 	macOSMenus := []*astilectron.MenuItemOptions{{
 			Label: astikit.StrPtr("Synergize"),
@@ -163,6 +159,25 @@ func main() {
 		},{
 			Label: astikit.StrPtr("File"),
 			SubMenu: []*astilectron.MenuItemOptions{
+				{
+					Label: astikit.StrPtr("Connect to Synergy..."),
+                                        OnClick: func(e astilectron.Event) (deleteListener bool) {
+						// FIXME: show errors on the GUI:
+						connectToSynergy()
+						if err := bootstrap.SendMessage(w, "updateConnectionStatus", FirmwareVersion, func(m *bootstrap.MessageIn) {
+							// Unmarshal payload
+							var s string
+							if err := json.Unmarshal(m.Payload, &s); err != nil {
+								l.Println(fmt.Errorf("unmarshaling payload failed: %s : %w", m.Payload, err))
+								return
+							}
+							l.Printf("updateConnectionStatus is %s!\n", s)							
+						}); err != nil {
+							l.Println(fmt.Errorf("sending updateConnectionStatus event failed: %w", err))
+						}
+						return
+					},
+				},
 				{
 					Label: astikit.StrPtr("Open File..."),
 					Accelerator: astilectron.NewAccelerator("CommandOrControl+O"),
@@ -237,7 +252,7 @@ func main() {
 		MenuOptions: menuOptions,
 		OnWait: func(_ *astilectron.Astilectron, ws []*astilectron.Window, _ *astilectron.Menu, _ *astilectron.Tray, _ *astilectron.Menu) error {
                         w = ws[0]
-			about_w = ws[1]
+			about_w = ws[0] //[1]
                         return nil
                 },
 		RestoreAssets: RestoreAssets,
@@ -251,7 +266,7 @@ func main() {
 				Height:          astikit.IntPtr(700),
 				Width:           astikit.IntPtr(700),
 			},
-		},{
+/*		},{
 			Homepage:       "about.html",
 			MessageHandler: handleMessages,
 			Options: &astilectron.WindowOptions{
@@ -264,7 +279,7 @@ func main() {
 					HideOnClose:	astikit.BoolPtr(true),
 				},
 			},
-		}},
+*/		}},
 	}); err != nil {
 		l.Fatal(fmt.Errorf("running bootstrap failed: %w", err))
 	}

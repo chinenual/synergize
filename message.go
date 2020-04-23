@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strconv"
+	"log"
 
 	"github.com/asticode/go-astichartjs"
 	"github.com/asticode/go-astilectron"
@@ -22,6 +23,10 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		
 	case "getFirmwareVersion":
 		payload = FirmwareVersion
+
+	case "getCWD":
+		payload,_ = os.Getwd()
+		log.Printf("CWD: %s\n",payload)
 		
 	case "runCOMTST":
 		// nothing interesting in the payload - just start the test and return results
