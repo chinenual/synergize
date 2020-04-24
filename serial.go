@@ -58,10 +58,19 @@ func serialInit(port string, verbose bool) (err error) {
 				var response serialReadResponse
 				var n int
 				n, response.err = stream.Read(arr);
-				if n == 1 {
+				if err != nil {
+					response.data = 0
+					readerChannel <- response
+				} else if n == 1 {
 					response.data = arr[0]
+					readerChannel <- response
+				} else if err == nil {
+					// on windows, despite asking for blocking IO
+					// the Read is returning immediately with
+					// n == 0, but no error.  Sleep for a
+					// while so we don't chew up infinite CPU
+					time.Sleep(time.Duration(500) * time.Millisecond)
 				}
-				readerChannel <- response
 			}
 		}
 	}()
