@@ -38,6 +38,7 @@ var (
 	debug = flag.Bool("d", true, "enables the debug mode")
 	w        *astilectron.Window
 	about_w  *astilectron.Window
+	a        *astilectron.Astilectron
 	l 	 *log.Logger
 	AppVersion string
 	FirmwareVersion string
@@ -250,9 +251,17 @@ func main() {
 		Debug:  *debug,
 		Logger: l,
 		MenuOptions: menuOptions,
-		OnWait: func(_ *astilectron.Astilectron, ws []*astilectron.Window, _ *astilectron.Menu, _ *astilectron.Tray, _ *astilectron.Menu) error {
+		OnWait: func(as *astilectron.Astilectron, ws []*astilectron.Window, _ *astilectron.Menu, _ *astilectron.Tray, _ *astilectron.Menu) error {
+			a = as
                         w = ws[0]
-			about_w = ws[0] //[1]
+			about_w = ws[1]
+			
+			// Need to explicitly intercept Closed event on the main
+			// window since the about window is never closed - only hidden.
+			w.On(astilectron.EventNameWindowEventClosed, func(e astilectron.Event) (deleteListener bool) {
+				a.Quit()
+				return true
+			})
                         return nil
                 },
 		RestoreAssets: RestoreAssets,
@@ -266,7 +275,7 @@ func main() {
 				Height:          astikit.IntPtr(700),
 				Width:           astikit.IntPtr(700),
 			},
-/*		},{
+		},{
 			Homepage:       "about.html",
 			MessageHandler: handleMessages,
 			Options: &astilectron.WindowOptions{
@@ -279,7 +288,7 @@ func main() {
 					HideOnClose:	astikit.BoolPtr(true),
 				},
 			},
-*/		}},
+		}},
 	}); err != nil {
 		l.Fatal(fmt.Errorf("running bootstrap failed: %w", err))
 	}
