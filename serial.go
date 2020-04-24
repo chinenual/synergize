@@ -34,23 +34,29 @@ func serialInit(port string, verbose bool) (err error) {
 		DataBits: 8,
 		StopBits: 1,
 	}
+	if readerChannel != nil {
+		readerChannelQuit <- true
+	}
 	log.Printf(" --> serial.Open(%#v)\n",options)
 	stream,err = serial.Open(options);
 	if err != nil {
 		return errors.Wrapf(err,"Could not open serial port")
-	}
-	if readerChannel != nil {
-		readerChannelQuit <- true
 	}
 
 	// long lived reader goroutine so we retain state of the stream across individual "reads"
 	readerChannel = make(chan serialReadResponse)
 	readerChannelQuit = make(chan bool)
 	go func () {
+		defer stream.Close()
+		
 		var arr []byte = make([]byte,1);
+		var emptyCount = 0
+		var sleepCount = 0
+		var EMPTY_PER_SLEEP = 5
 		for {
 			select {
 			case <- readerChannelQuit:
+				log.Printf(" closing serial channel\n")
 				close(readerChannelQuit)
 				close(readerChannel)
 				return
@@ -59,17 +65,32 @@ func serialInit(port string, verbose bool) (err error) {
 				var n int
 				n, response.err = stream.Read(arr);
 				if err != nil {
+					sleepCount = 0
+					emptyCount = 0
 					response.data = 0
 					readerChannel <- response
 				} else if n == 1 {
+					log.Printf("got %d empties before this read\n",emptyCount + sleepCount*EMPTY_PER_SLEEP)
+					sleepCount = 0
+					emptyCount = 0
 					response.data = arr[0]
 					readerChannel <- response
 				} else if err == nil {
-					// on windows, despite asking for blocking IO
-					// the Read is returning immediately with
-					// n == 0, but no error.  Sleep for a
-					// while so we don't chew up infinite CPU
-					time.Sleep(time.Duration(500) * time.Millisecond)
+					emptyCount = emptyCount + 1
+
+					if emptyCount > EMPTY_PER_SLEEP {					
+						// HACK: on windows, despite asking for blocking IO
+						// the Read is returning immediately with
+						// n == 0, but no error.  Sleep for a
+						// while so we don't chew up infinite CPU.
+						// However, if we sleep each time, we get REALLY SLOW IO.
+						//
+						// FIXME: I dont like picking magic numbers to tune performance
+						// need to fix the underlying serial library instead.
+						sleepCount = sleepCount + 1
+						time.Sleep(time.Duration(10) * time.Millisecond)
+						emptyCount = 0
+					}
 				}
 			}
 		}
