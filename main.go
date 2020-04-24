@@ -79,13 +79,13 @@ func connectToSynergy() {
 	FirmwareVersion = "Not Connected"
 	err := synioInit(*port, true, *serialVerboseFlag)
 	if err != nil {
-		l.Printf("Cannot connect to synergy on port %s: %x\n", *port, err)
+		l.Printf("Cannot connect to synergy on port %s: %v\n", *port, err)
 		return
 	}
 	var bytes [2]byte
 	bytes,err = synioGetID()
 	if err != nil {
-		l.Printf("Cannot connect get firmware version: %x\n", err)
+		l.Printf("Cannot connect get firmware version: vx\n", err)
 		return
 	}
 	FirmwareVersion = fmt.Sprintf("%d.%d", bytes[0],bytes[1])
