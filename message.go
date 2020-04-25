@@ -6,11 +6,9 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
-	"sort"
-	"strconv"
+	"strings"
 	"log"
 
-	"github.com/asticode/go-astichartjs"
 	"github.com/asticode/go-astilectron"
 	bootstrap "github.com/asticode/go-astilectron-bootstrap"
 )
@@ -20,6 +18,30 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 	switch m.Name {
 	case "getVersion":
 		payload = AppVersion
+
+	case "loadSYN":
+		payload = "error"
+		
+	case "loadCRT":
+		payload = "error"
+		
+	case "loadVCE":
+		var vce VCE
+		var path string
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &path); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		vce,err = vceReadFile(path);
+		if err != nil {
+			payload = err.Error()
+			return
+		} else {
+			payload = vce
+		}
 		
 	case "getFirmwareVersion":
 		payload = FirmwareVersion
@@ -32,7 +54,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		// nothing interesting in the payload - just start the test and return results
 		err = synioDiagCOMTST()
 		if err != nil {
-			payload = "ERROR: " + err.Error()
+			payload = err.Error()
 			return
 		} else {
 			payload = "Success!"
@@ -61,9 +83,9 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 // Exploration represents the results of an exploration
 type Exploration struct {
 	Dirs       []Dir              `json:"dirs"`
-	Files      *astichartjs.Chart `json:"files,omitempty"`
-	FilesCount int                `json:"files_count"`
-	FilesSize  string             `json:"files_size"`
+	SYNFiles   []Dir              `json:"SYNfiles"`
+	CRTFiles   []Dir              `json:"CRTfiles"`
+	VCEFiles   []Dir              `json:"VCEfiles"`
 	Path       string             `json:"path"`
 }
 
@@ -93,8 +115,11 @@ func explore(path string) (e Exploration, err error) {
 
 	// Init exploration
 	e = Exploration{
-		Dirs: []Dir{},
-		Path: path,
+		Dirs:     []Dir{},
+		SYNFiles: []Dir{},
+		CRTFiles: []Dir{},
+		VCEFiles: []Dir{},
+		Path:     path,
 	}
 
 	// Add previous dir
@@ -106,9 +131,6 @@ func explore(path string) (e Exploration, err error) {
 	}
 
 	// Loop through files
-	var sizes []int
-	var sizesMap = make(map[int][]string)
-	var filesSize int64
 	for _, f := range files {
 		if f.IsDir() {
 			e.Dirs = append(e.Dirs, Dir{
@@ -116,62 +138,29 @@ func explore(path string) (e Exploration, err error) {
 				Path: filepath.Join(path, f.Name()),
 			})
 		} else {
-			var s = int(f.Size())
-			sizes = append(sizes, s)
-			sizesMap[s] = append(sizesMap[s], f.Name())
-			e.FilesCount++
-			filesSize += f.Size()
-		}
-	}
-
-	// Prepare files size
-	if filesSize < 1e3 {
-		e.FilesSize = strconv.Itoa(int(filesSize)) + "b"
-	} else if filesSize < 1e6 {
-		e.FilesSize = strconv.FormatFloat(float64(filesSize)/float64(1024), 'f', 0, 64) + "kb"
-	} else if filesSize < 1e9 {
-		e.FilesSize = strconv.FormatFloat(float64(filesSize)/float64(1024*1024), 'f', 0, 64) + "Mb"
-	} else {
-		e.FilesSize = strconv.FormatFloat(float64(filesSize)/float64(1024*1024*1024), 'f', 0, 64) + "Gb"
-	}
-
-	// Prepare files chart
-	sort.Ints(sizes)
-	if len(sizes) > 0 {
-		e.Files = &astichartjs.Chart{
-			Data: &astichartjs.Data{Datasets: []astichartjs.Dataset{{
-				BackgroundColor: []string{
-					astichartjs.ChartBackgroundColorYellow,
-					astichartjs.ChartBackgroundColorGreen,
-					astichartjs.ChartBackgroundColorRed,
-					astichartjs.ChartBackgroundColorBlue,
-					astichartjs.ChartBackgroundColorPurple,
-				},
-				BorderColor: []string{
-					astichartjs.ChartBorderColorYellow,
-					astichartjs.ChartBorderColorGreen,
-					astichartjs.ChartBorderColorRed,
-					astichartjs.ChartBorderColorBlue,
-					astichartjs.ChartBorderColorPurple,
-				},
-			}}},
-			Type: astichartjs.ChartTypePie,
-		}
-		var sizeOther int
-		for i := len(sizes) - 1; i >= 0; i-- {
-			for _, l := range sizesMap[sizes[i]] {
-				if len(e.Files.Data.Labels) < 4 {
-					e.Files.Data.Datasets[0].Data = append(e.Files.Data.Datasets[0].Data, sizes[i])
-					e.Files.Data.Labels = append(e.Files.Data.Labels, l)
-				} else {
-					sizeOther += sizes[i]
-				}
+			
+			// Only collect files with Synergy related extensions
+			switch strings.ToLower(filepath.Ext(f.Name())) {
+			case ".syn":
+				e.SYNFiles = append(e.SYNFiles, Dir{
+					Name: f.Name(),
+					Path: filepath.Join(path, f.Name()),
+				})
+			case ".crt":
+				e.CRTFiles = append(e.CRTFiles, Dir{
+					Name: f.Name(),
+					Path: filepath.Join(path, f.Name()),
+				})
+			case ".vce" :
+				e.VCEFiles = append(e.VCEFiles, Dir{
+					Name: f.Name(),
+					Path: filepath.Join(path, f.Name()),
+				})
+			default:
+				// ignore
 			}
 		}
-		if sizeOther > 0 {
-			e.Files.Data.Datasets[0].Data = append(e.Files.Data.Datasets[0].Data, sizeOther)
-			e.Files.Data.Labels = append(e.Files.Data.Labels, "other")
-		}
 	}
+
 	return
 }

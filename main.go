@@ -273,7 +273,7 @@ func main() {
 				BackgroundColor: astikit.StrPtr("black"),
 				Center:          astikit.BoolPtr(true),
 				Height:          astikit.IntPtr(700),
-				Width:           astikit.IntPtr(700),
+				Width:           astikit.IntPtr(1000),
 			},
 		},{
 			Homepage:       "about.html",

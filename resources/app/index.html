@@ -18,86 +18,26 @@
   </style>
   
   <body>
+
+    <div class="header">
+      <div class="connectionStatus">
+	Synergy: <span id="firmwareVersion">Not Connected</span>
+      </div>
+      <div class="logo">
+	<img id="logo" src="static/images/logo.png" width="200">
+      </div>
+    </div>
     
+    <div class="left">
+      <div id="path"></div>
+      <div id="dirs"></div>
+      <div id="CRTfiles"></div>
+      <div id="SYNfiles"></div>
+      <div id="VCEfiles"></div>      
+    </div>
+    <div class="right" id="content"> Some text in the right</div>
+
   
-    <!-- Old School - table layout -->
-    <table style="width:100%">
-      <tr>
-	<td>
-	  Synergy: <span id="firmwareVersion">Not Connected</span><br>
-	</td>
-	<td> 
-	  <div id="header">
-	    <img id="logo" src="static/images/logo.png" width="300">
-	  </div>
-	</td>
-      </tr>
-      <tr>
-	<td>
-	  <div id="content">
-
-
-
-	    
-	  <img class="button" src="static/images/button-off.png"> CRT: XXXXXXXX
-    
-	  <table>
-	    <tr>
-	      <td><img class="button" src="static/images/button-off.png"> 1: XXXXXXXX</td>
-	      <td><img class="button" src="static/images/button-off.png"> 13: XXXXXXXX</td>
-	    </tr>
-	    <tr>
-	      <td><img class="button" src="static/images/button-off.png"> 2: XXXXXXXX</td>
-	      <td><img class="button" src="static/images/button-off.png"> 14: XXXXXXXX</td>
-	    </tr>
-	    <tr>
-	      <td><img class="button" src="static/images/button-off.png"> 3: XXXXXXXX</td>
-	      <td><img class="button" src="static/images/button-off.png"> 15: XXXXXXXX</td>
-	    </tr>
-	    <tr>
-	      <td><img class="button" src="static/images/button-off.png"> 4: XXXXXXXX</td>
-	      <td><img class="button" src="static/images/button-off.png"> 16: XXXXXXXX</td>
-	    </tr>
-	    <tr>
-	      <td><img class="button" src="static/images/button-off.png"> 5: XXXXXXXX</td>
-	      <td><img class="button" src="static/images/button-off.png"> 17: XXXXXXXX</td>
-	    </tr>
-	    <tr>
-	      <td><img class="button" src="static/images/button-off.png"> 6: XXXXXXXX</td>
-	      <td><img class="button" src="static/images/button-off.png"> 18: XXXXXXXX</td>
-	    </tr>
-	    <tr>
-	      <td><img class="button" src="static/images/button-off.png"> 7: XXXXXXXX</td>
-	      <td><img class="button" src="static/images/button-off.png"> 19: XXXXXXXX</td>
-	    </tr>
-	    <tr>
-	      <td><img class="button" src="static/images/button-off.png"> 8: XXXXXXXX</td>
-	      <td><img class="button" src="static/images/button-off.png"> 20: XXXXXXXX</td>
-	    </tr>
-	    <tr>
-	      <td><img class="button" src="static/images/button-off.png"> 9: XXXXXXXX</td>
-	      <td><img class="button" src="static/images/button-off.png"> 21: XXXXXXXX</td>
-	    </tr>
-	    <tr>
-	      <td><img class="button" src="static/images/button-off.png"> 10: XXXXXXXX</td>
-	      <td><img class="button" src="static/images/button-off.png"> 22: XXXXXXXX</td>
-	    </tr>
-	    <tr>
-	      <td><img class="button" src="static/images/button-off.png"> 11: XXXXXXXX</td>
-	      <td><img class="button" src="static/images/button-off.png"> 23: XXXXXXXX</td>
-	    </tr>
-	    <tr>
-	      <td><img class="button" src="static/images/button-off.png"> 12: XXXXXXXX</td>
-	      <td><img class="button" src="static/images/button-off.png"> 24: XXXXXXXX</td>
-	    </tr>
-	  </table>
-
-
-
-	  </div>
-	</td>
-      </tr>
-    </table>
     
     <script src="static/js/Chart.bundle.min.js"></script>
     <script src="static/js/index.js"></script>
