@@ -89,13 +89,10 @@ func diagInitAndPrintFirmwareID() (err error) {
 
 var slotnum byte = 1
 
-func diagLoadVCE(path string) {
-	err := diagInitAndPrintFirmwareID()
-		
+func diagLoadVCE(path string) (err error) {
 	var vce_bytes []byte
 	vce_bytes,err = ioutil.ReadFile(path)
 	if err != nil {
-		log.Printf("ERROR: %s\n", err)
 		return
 	}
 
@@ -103,72 +100,51 @@ func diagLoadVCE(path string) {
 
 	err = synioLoadVCE(slotnum, vce_bytes)
 	if err != nil {
-		log.Printf("ERROR: %s\n", err)
 		return
 	}
 	
 	// load the next one in the next slot
 	slotnum++
-	
+	return
 	
 }
 
-func diagLoadCRT(path string) {
-	err := diagInitAndPrintFirmwareID()
-
+func diagLoadCRT(path string) (err error) {
 	var crt_bytes []byte
 	crt_bytes,err = ioutil.ReadFile(path)
 	if err != nil {
-		log.Printf("ERROR: %s\n", err)
 		return
 	}
 
 	log.Printf("CRT %s -- %d bytes \n", path, len(crt_bytes))
 
 	err = synioLoadCRT(crt_bytes)
-	if err != nil {
-		log.Printf("ERROR: %s\n", err)
-		return
-	}
+	return
 }
 
-func diagSaveSYN(path string) {
-	err := diagInitAndPrintFirmwareID()
-
+func diagSaveSYN(path string) (err error) {
 	var syn_bytes []byte
 	syn_bytes, err = synioSaveSYN()
 	
 	if err != nil {
-		log.Printf("ERROR: %s\n", err)
 		return
 	}
 
 	log.Printf("SYN %s -- %d bytes \n", path, len(syn_bytes))
 
 	err = ioutil.WriteFile(path, syn_bytes, 0644)
-
-	if err != nil {
-		log.Printf("ERROR: %s\n", err)
-		return
-	}
+	return
 }
 
-func diagLoadSYN(path string) {
-	err := diagInitAndPrintFirmwareID()
-	
+func diagLoadSYN(path string) (err error) {	
 	var syn_bytes []byte
 	syn_bytes, err = ioutil.ReadFile(path)
 
 	if err != nil {
-		log.Printf("ERROR: %s\n", err)
 		return
 	}
 
 
 	err = synioLoadSYN(syn_bytes)
-	
-	if err != nil {
-		log.Printf("ERROR: %s\n", err)
-		return
-	}
+	return
 }

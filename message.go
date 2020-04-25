@@ -20,10 +20,39 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		payload = AppVersion
 
 	case "loadSYN":
-		payload = "error"
+		var path string
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &path); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		err = diagLoadSYN(path)
+		if err != nil {
+			payload = err.Error()
+			return
+		} else {
+			payload = "ok"
+		}
+		
 		
 	case "loadCRT":
-		payload = "error"
+		var path string
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &path); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		err = diagLoadCRT(path)
+		if err != nil {
+			payload = err.Error()
+			return
+		} else {
+			payload = "ok"
+		}
 		
 	case "loadVCE":
 		var vce VCE
@@ -143,17 +172,17 @@ func explore(path string) (e Exploration, err error) {
 			switch strings.ToLower(filepath.Ext(f.Name())) {
 			case ".syn":
 				e.SYNFiles = append(e.SYNFiles, Dir{
-					Name: f.Name(),
+					Name: strings.TrimSuffix(f.Name(), filepath.Ext(f.Name())),
 					Path: filepath.Join(path, f.Name()),
 				})
 			case ".crt":
 				e.CRTFiles = append(e.CRTFiles, Dir{
-					Name: f.Name(),
+					Name: strings.TrimSuffix(f.Name(), filepath.Ext(f.Name())),
 					Path: filepath.Join(path, f.Name()),
 				})
 			case ".vce" :
 				e.VCEFiles = append(e.VCEFiles, Dir{
-					Name: f.Name(),
+					Name: strings.TrimSuffix(f.Name(), filepath.Ext(f.Name())),
 					Path: filepath.Join(path, f.Name()),
 				})
 			default:

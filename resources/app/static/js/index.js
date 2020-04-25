@@ -37,6 +37,9 @@ let index = {
 		if (message.name === "error") {
                     asticode.notifier.error(message.payload);
                     return
+		} else {
+		    asticode.notifier.info("Successfully loaded " + path + " to Synergy")
+		    return
 		}
 	    });
 	}
@@ -55,6 +58,9 @@ let index = {
 		if (message.name === "error") {
                     asticode.notifier.error(message.payload);
                     return
+		} else {
+		    asticode.notifier.info("Successfully loaded " + path + " to Synergy")
+		    return
 		}
 	    });
 	}
@@ -146,6 +152,7 @@ let index = {
 		}
 	    }
 
+	    document.getElementById("SYNfiles").innerHTML = ""
 	    if (message.payload.SYNfiles.length > 0) {
 		let div = document.createElement("div")
 		div.innerHTML = "<b>Synergy State (.SYN)</b>";
@@ -155,6 +162,7 @@ let index = {
 		}
 	    }
 	    
+	    document.getElementById("VCEfiles").innerHTML = ""
 	    if (message.payload.VCEfiles.length > 0) {
 		let div = document.createElement("div")
 		div.innerHTML = "<b>Voice Files (.VCE)</b>";

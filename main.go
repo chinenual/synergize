@@ -97,9 +97,11 @@ func main() {
 	// Parse flags
 	flag.Parse()
 
+	var err error
 	// run the command line tests instead of the Electron app:
 	if *synver {
-		diagInitAndPrintFirmwareID();
+		err = diagInitAndPrintFirmwareID();
+		if err != nil { log.Println(err) }
 		os.Exit(0);
 	} else if *comtst {
 		diagCOMTST();
@@ -108,16 +110,20 @@ func main() {
 		diagLOOPTST();
 		os.Exit(0);
 	} else if *loadvce != "" {
-		diagLoadVCE(*loadvce);
+		err = diagLoadVCE(*loadvce);
+		if err != nil { log.Println(err) }
 		os.Exit(0);
 	} else if *loadcrt != "" {
-		diagLoadCRT(*loadcrt);
+		err = diagLoadCRT(*loadcrt);
+		if err != nil { log.Println(err) }
 		os.Exit(0);
 	} else if *savesyn != "" {
-		diagSaveSYN(*savesyn);
+		err = diagSaveSYN(*savesyn);
+		if err != nil { log.Println(err) }
 		os.Exit(0);
 	} else if *loadsyn != "" {
-		diagLoadSYN(*loadsyn);
+		err = diagLoadSYN(*loadsyn);
+		if err != nil { log.Println(err) }
 		os.Exit(0);
 	}
 
