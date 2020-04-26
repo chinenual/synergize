@@ -43,7 +43,7 @@ html, body {
     position: fixed;
     top: 0px;
     left: 0px;
-    width: 100vw;
+    width: 98vw; /* HACK:  should be able to specify 100vw */
     margin: 10px;
     height: 60px;
 
