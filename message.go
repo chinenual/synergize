@@ -148,7 +148,7 @@ func explore(path string) (e Exploration, err error) {
 		SYNFiles: []Dir{},
 		CRTFiles: []Dir{},
 		VCEFiles: []Dir{},
-		Path:     path,
+		Path:     filepath.Base(path),
 	}
 
 	// Add previous dir

@@ -4,10 +4,10 @@
     <title>SYNERGIZE</title>
     <meta charset="UTF-8">
     
-    <link rel="stylesheet" href="static/css/base.css">
     <link rel="stylesheet" href="static/lib/astiloader/astiloader.css">
     <link rel="stylesheet" href="static/lib/astimodaler/astimodaler.css">
     <link rel="stylesheet" href="static/lib/astinotifier/astinotifier.css">
+    <link rel="stylesheet" href="static/css/base.css">
     
   </head>
   
@@ -18,26 +18,30 @@
   </style>
   
   <body>
-
-    <div class="header">
-      <div class="connectionStatus">
-	Synergy: <span id="firmwareVersion">Not Connected</span>
-      </div>
-      <div class="logo">
-	<img id="logo" src="static/images/logo.png" width="200">
+    <div class="headerContainer">
+      <div class="header">
+	<div class="connectionStatus">
+	  Synergy: <span id="firmwareVersion">Not Connected</span>
+	</div>
+	<span class="headerSeparator"></span>
+	<div class="logo">
+	  <img id="logo" src="static/images/logo-transparent.png" width="200">
+	</div>
       </div>
     </div>
-    
-    <div class="left">
-      <div id="path"></div>
-      <div id="dirs"></div>
-      <div id="CRTfiles"></div>
-      <div id="SYNfiles"></div>
-      <div id="VCEfiles"></div>      
+<!--
+    <div class="contentContainer">
+      
+      <div class="left">
+	<div id="path"></div>
+	<div id="dirs"></div>
+	<div id="CRTfiles"></div>
+	<div id="SYNfiles"></div>
+	<div id="VCEfiles"></div>      
+      </div>
+      <div class="right" id="content"> Some text in the right</div>
     </div>
-    <div class="right" id="content"> Some text in the right</div>
-
-  
+  -->
     
     <script src="static/js/Chart.bundle.min.js"></script>
     <script src="static/js/index.js"></script>

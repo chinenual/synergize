@@ -9,35 +9,77 @@
 }
 
 html, body {
-    background-color: black;
+    background-color: #333;
     color: #fff;
-    height: 100%;
-    margin: 0;
+/*    height: 100%;
     width: 100%;
+*/
+    margin: 0;
     font-family: sans-serif;
     font-weight: 200;
+
+    scrollbar-color: red yellow;
+    scrollbar-width: thin;
 }
 
-.header {
-    float: top;
-    width: 100%;
-    height: 60px;
+.headerSeparator {
+    height: 40px;
+    margin: 10px;
+    position: absolute;
+    border-right: 1px solid #fff;
 }
+
+.aboutbox {
+    margin: 10px;
+    padding: 10px;
+    /* simulate the inset, rounded main panel on the Synergy */
+    border-radius: 20px 20px 20px 20px;
+    -moz-border-radius: 20px 20px 20px 20px;
+    -webkit-border-radius: 20px 20px 20px 20px;
+    border: 3px groove #666;
+}
+
+.headerContainer {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100vw;
+    margin: 10px;
+    height: 60px;
+
+    /* simulate the inset, rounded main panel on the Synergy */
+    border-radius: 20px 20px 20px 20px;
+    -moz-border-radius: 20px 20px 20px 20px;
+    -webkit-border-radius: 20px 20px 20px 20px;
+    border: 3px groove #666;
+}
+.header {
+    /*    float: top;*/
+    margin: 0px;
+
+}
+.contentContainer {
+    position: fixed;
+    top: 90px;
+    width: 100%;
+    height: 100%;
+}
+
 .logo {
     float: right;
     overflow: auto;
-    padding: 15px;
+    padding: 8px;
 }
 
 .connectionStatus {
     float: left;
     height: 100%;
     overflow: auto;
-    padding: 15px;
+    padding: 18px;
 }
 
 .left {
-    background-color: #333;
+/*    background-color: #333;*/
     color: #fff;
     float: left;
     height: 100%;
@@ -101,3 +143,5 @@ html, body {
 .chart_title {
     margin-bottom: 5px;
 }
+
+  

@@ -38,7 +38,7 @@ let index = {
                     asticode.notifier.error(message.payload);
                     return
 		} else {
-		    asticode.notifier.info("Successfully loaded " + path + " to Synergy")
+		    asticode.notifier.info("Successfully loaded " + name + " to Synergy")
 		    return
 		}
 	    });
@@ -59,7 +59,7 @@ let index = {
                     asticode.notifier.error(message.payload);
                     return
 		} else {
-		    asticode.notifier.info("Successfully loaded " + path + " to Synergy")
+		    asticode.notifier.info("Successfully loaded " + name + " to Synergy")
 		    return
 		}
 	    });

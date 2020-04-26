@@ -9,6 +9,7 @@ import (
 	"strings"
         "encoding/json"
 	
+	"github.com/pkg/errors"
 	"github.com/asticode/go-astikit"
 	"github.com/asticode/go-astilectron"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -75,22 +76,25 @@ func init() {
 	l.Printf("Default serial device is %s\n", defaultPort)
 }
 
-func connectToSynergy() {
+func connectToSynergy() (err error) {
 	FirmwareVersion = "Not Connected"
-	err := synioInit(*port, true, *serialVerboseFlag)
+	err = synioInit(*port, true, *serialVerboseFlag)
 	if err != nil {
-		l.Printf("Cannot connect to synergy on port %s: %v\n", *port, err)
+		err = errors.Wrapf(err, "Cannot connect to synergy on port %s\n", *port)
+		l.Printf(err.Error())
 		return
 	}
 	var bytes [2]byte
 	bytes,err = synioGetID()
 	if err != nil {
-		l.Printf("Cannot connect get firmware version: vx\n", err)
+		err = errors.Wrap(err, "Cannot get firmware version")
+		l.Printf(err.Error())
 		return
 	}
 	FirmwareVersion = fmt.Sprintf("%d.%d", bytes[0],bytes[1])
 	
 	l.Printf("Connected to Synergy, firmware version: %s\n", FirmwareVersion)
+	return
 }
 
 func main() {	
@@ -170,8 +174,8 @@ func main() {
 					Label: astikit.StrPtr("Connect to Synergy..."),
                                         OnClick: func(e astilectron.Event) (deleteListener bool) {
 						// FIXME: show errors on the GUI:
-						connectToSynergy()
-						if err := bootstrap.SendMessage(w, "updateConnectionStatus", FirmwareVersion, func(m *bootstrap.MessageIn) {
+						err := connectToSynergy()
+						if err = bootstrap.SendMessage(w, "updateConnectionStatus", FirmwareVersion, func(m *bootstrap.MessageIn) {
 							// Unmarshal payload
 							var s string
 							if err := json.Unmarshal(m.Payload, &s); err != nil {
@@ -288,8 +292,8 @@ func main() {
 				BackgroundColor: astikit.StrPtr("black"),
 				Center:          astikit.BoolPtr(true),
 				Show:            astikit.BoolPtr(false),
-				Height:          astikit.IntPtr(300),
-				Width:           astikit.IntPtr(400),
+				Height:          astikit.IntPtr(320),
+				Width:           astikit.IntPtr(500),
 				Custom: &astilectron.WindowCustomOptions{
 					HideOnClose:	astikit.BoolPtr(true),
 				},
