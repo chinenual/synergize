@@ -4,11 +4,16 @@
     <title>SYNERGIZE</title>
     <meta charset="UTF-8">
     
-    <link rel="stylesheet" href="static/lib/astiloader/astiloader.css">
-    <link rel="stylesheet" href="static/lib/astimodaler/astimodaler.css">
-    <link rel="stylesheet" href="static/lib/astinotifier/astinotifier.css">
+    <link rel="stylesheet" href="static/css/bootstrap.min-darkly.css">
     <link rel="stylesheet" href="static/css/base.css">
-    
+
+    <script src="static/js/jquery-3.4.1.slim.js"></script>
+    <script src="static/js/popper.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/js/Chart.bundle.min.js"></script>
+    <script src="static/js/index.js"></script>
+    <script src="static/js/view.js"></script>
+
   </head>
   
   <style>
@@ -17,37 +22,39 @@
     }
   </style>
   
-  <body>
-    <div class="headerContainer">
-      <div class="header">
-	<div class="connectionStatus">
-	  Synergy: <span id="firmwareVersion">Not Connected</span>
+  <body>    
+    <div class="container d-flex flex-column h-100" style="padding:0px;">
+      <div class="row flex-shrink-0 navbar">
+	<div class="headerContainer">
+	  <div class="header d-flex">
+	    <div class="navbar-text p-2">
+	      Synergy:<br>&nbsp;&nbsp;<span style="color: --light;" id="firmwareVersion">Not Connected</span>
+	    </div>
+	    <div class="headerSeparator p-2"></div>
+	    <div class="flex-grow-1 p-2"></div>
+	    <div class="navbar-brand p-2">
+	      <img id="logo" src="static/images/logo-transparent.png" width="200">
+	    </div>
+	  </div>
 	</div>
-	<span class="headerSeparator"></span>
-	<div class="logo">
-	  <img id="logo" src="static/images/logo-transparent.png" width="200">
+      </div>
+      
+      
+      <div class="row flex-fill" style="min-height:0">
+	<div class="col-3 mh-100 hiddenscroll" >
+	  <div id="path"></div>
+	  <div id="dirs"></div>
+	  <div id="CRTfiles"></div>
+	  <div id="SYNfiles"></div>
+	  <div id="VCEfiles"></div>      
+	</div>
+	<div class="col mh-100 mainSeparator"></div>
+	<div class="col mh-100">
+	  <div class="right" id="content"> </div>
 	</div>
       </div>
     </div>
 
-    <div class="contentContainer">
-      
-      <div class="left">
-	<div id="path"></div>
-	<div id="dirs"></div>
-	<div id="CRTfiles"></div>
-	<div id="SYNfiles"></div>
-	<div id="VCEfiles"></div>      
-      </div>
-      <div class="right" id="content"> Some text in the right</div>
-    </div>
-    
-    <script src="static/js/Chart.bundle.min.js"></script>
-    <script src="static/js/index.js"></script>
-    <script src="static/js/view.js"></script>
-    <script src="static/lib/astiloader/astiloader.js"></script>
-    <script src="static/lib/astimodaler/astimodaler.js"></script>
-    <script src="static/lib/astinotifier/astinotifier.js"></script>
     <script type="text/javascript">
       index.init();
     </script>

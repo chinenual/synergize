@@ -1,32 +1,30 @@
-#logo {
-    position: relative;
-    float: right;
-}
-
-
-* {
-    box-sizing:  border-box;
-}
-
-html, body {
-    background-color: #333;
+body {
+    background-color: #222;
     color: #fff;
-/*    height: 100%;
-    width: 100%;
-*/
-    margin: 0;
-    font-family: sans-serif;
-    font-weight: 200;
-
-    scrollbar-color: red yellow;
-    scrollbar-width: thin;
 }
 
 .headerSeparator {
     height: 40px;
     margin: 10px;
-    position: absolute;
     border-right: 1px solid #fff;
+}
+.mainSeparator {
+    /* control width - override all the bootstrappiness */
+    width: 40px;
+    flex-grow: 0;
+    max-width: 40px;
+    -webkit-box-flex: 0;
+    padding: 0px;
+    
+    margin: 10px;
+    border-right: 1px solid #fff;
+}
+
+.horizSeparator {
+    width: 80%;
+    
+    margin: 5px;
+    border-bottom: 1px solid #fff;
 }
 
 .aboutbox {
@@ -40,35 +38,13 @@ html, body {
 }
 
 .headerContainer {
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    width: 98vw; /* HACK:  should be able to specify 100vw */
-    margin: 10px;
-    height: 60px;
-
+    height: 100%;
+    width: 100%;
     /* simulate the inset, rounded main panel on the Synergy */
     border-radius: 20px 20px 20px 20px;
     -moz-border-radius: 20px 20px 20px 20px;
     -webkit-border-radius: 20px 20px 20px 20px;
     border: 3px groove #666;
-}
-.header {
-    /*    float: top;*/
-    margin: 0px;
-
-}
-.contentContainer {
-    position: fixed;
-    top: 90px;
-    width: 100%;
-    height: 100%;
-}
-
-.logo {
-    float: right;
-    overflow: auto;
-    padding: 8px;
 }
 
 .connectionStatus {
@@ -78,19 +54,17 @@ html, body {
     padding: 18px;
 }
 
-.left {
-/*    background-color: #333;*/
-    color: #fff;
-    float: left;
-    height: 100%;
-    overflow: auto;
-    padding: 15px;
-    width: 20em;
-}
-
 .dir {
     cursor: pointer;
     padding: 3px;
+}
+
+.hiddenscroll {
+    overflow:hidden;
+}
+
+.hiddenscroll:hover {
+    overflow:auto;
 }
 
 .file {
@@ -106,20 +80,6 @@ html, body {
     margin-right: 10px;
 }
 
-.right {
-    float: right;
-    height: 100%;
-    overflow: auto;
-    padding: 15px;
-    /*width: 60%;*/
-}
-
-.title {
-    font-size: 1.5em;
-    text-align: center;
-    word-wrap: break-word;
-}
-
 #path {
     font-size: 1.1em;
     text-align: center;
@@ -127,21 +87,21 @@ html, body {
     font-weight: 1000;
 }
 
-.panel {
-    background-color: #f1f1f1;
-    border: solid 1px #e1e1e1;
-    border-radius: 4px;
-    margin-top: 15px;
-    padding: 15px;
-    text-align: center;
+hr {
+    color: white;
+}
+	       
+::-webkit-scrollbar {
+    width: 9px;
 }
 
-.stat {
-    font-weight: bold;
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 4px rgba(200,200,200,1);
+    border-radius: 7px;
 }
 
-.chart_title {
-    margin-bottom: 5px;
+::-webkit-scrollbar-thumb {
+    border-radius: 7px;
+    background-color: #adb5bd;
+    -webkit-box-shadow: inset 0 0 4px rgba(90,90,90,0.7);
 }
-
-  

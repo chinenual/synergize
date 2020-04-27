@@ -1,10 +1,5 @@
 let index = {
     init: function() {
-        // Init
-        asticode.loader.init();
-        asticode.modaler.init();
-        asticode.notifier.init();
-	
         // Wait for astilectron to be ready
         document.addEventListener('astilectron-ready', function() {
 
@@ -28,11 +23,7 @@ let index = {
             let message = {"name": "loadSYN",
 			   "payload": path};
             // Send message
-            asticode.loader.show();
-            astilectron.sendMessage(message, function(message) {
-		// Init
-		asticode.loader.hide();
-		
+            astilectron.sendMessage(message, function(message) {		
 		// Check error
 		if (message.name === "error") {
                     asticode.notifier.error(message.payload);
@@ -48,12 +39,7 @@ let index = {
 	if (confirm("Load Voice Cartridge file " + path)) {
             let message = {"name": "loadCRT",
 			   "payload": path};
-            // Send message
-            asticode.loader.show();
             astilectron.sendMessage(message, function(message) {
-		// Init
-		asticode.loader.hide();
-		
 		// Check error
 		if (message.name === "error") {
                     asticode.notifier.error(message.payload);
@@ -69,11 +55,7 @@ let index = {
         let message = {"name": "loadVCE",
 		       "payload": path};
         // Send message
-        asticode.loader.show();
         astilectron.sendMessage(message, function(message) {
-	    // Init
-	    asticode.loader.hide();
-
 	    // Check error
 	    if (message.name === "error") {
                 asticode.notifier.error(message.payload);
@@ -121,11 +103,7 @@ let index = {
         }
 
         // Send message
-        asticode.loader.show();
         astilectron.sendMessage(message, function(message) {
-            // Init
-            asticode.loader.hide();
-
             // Check error
             if (message.name === "error") {
                 asticode.notifier.error(message.payload);
@@ -144,7 +122,7 @@ let index = {
 	    document.getElementById("CRTfiles").innerHTML = ""
 	    if (message.payload.CRTfiles.length > 0) {
 		let div = document.createElement("div")
-		div.innerHTML = "<b>Cartridge Files (.CRT)</b>";
+		div.innerHTML = "<div class='horizSeparator'></div><b>Cartridge Files (.CRT)</b>";
 		document.getElementById("CRTfiles").appendChild(div);
 
 		for (let i = 0; i < message.payload.CRTfiles.length; i++) {
@@ -155,7 +133,7 @@ let index = {
 	    document.getElementById("SYNfiles").innerHTML = ""
 	    if (message.payload.SYNfiles.length > 0) {
 		let div = document.createElement("div")
-		div.innerHTML = "<b>Synergy State (.SYN)</b>";
+		div.innerHTML = "<div class='horizSeparator'></div><b>Synergy State (.SYN)</b>";
 		document.getElementById("SYNfiles").appendChild(div);
 		for (let i = 0; i < message.payload.SYNfiles.length; i++) {
                     index.addSYNFile(message.payload.SYNfiles[i].name, message.payload.SYNfiles[i].path);
@@ -165,7 +143,7 @@ let index = {
 	    document.getElementById("VCEfiles").innerHTML = ""
 	    if (message.payload.VCEfiles.length > 0) {
 		let div = document.createElement("div")
-		div.innerHTML = "<b>Voice Files (.VCE)</b>";
+		div.innerHTML = "<div class='horizSeparator'></div><b>Voice Files (.VCE)</b>";
 		document.getElementById("VCEfiles").appendChild(div);
 		for (let i = 0; i < message.payload.VCEfiles.length; i++) {
                     index.addVCEFile(message.payload.VCEfiles[i].name, message.payload.VCEfiles[i].path);
