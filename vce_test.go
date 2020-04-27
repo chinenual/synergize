@@ -17,15 +17,15 @@ func testParseVCE(t *testing.T, path string) {
 		return
 	}
 	base := filepath.Base(path)
-	if base != vceName(vce)+".VCE" {
-		t.Errorf("name doesnt match file - expected %s, got %s", base, vceName(vce))
+	if base != vceName(vce.Head)+".VCE" {
+		t.Errorf("name doesnt match file - expected %s, got %s", base, vceName(vce.Head))
 	}
 }
 
 
 func TestAllVCE(t *testing.T) {
 	fileList := []string{}
-	filepath.Walk("VOICES",
+	filepath.Walk("testfiles",
 		func(path string, f os.FileInfo, err error) error {
 			if (filepath.Ext(path) == ".VCE") {
 				fileList = append(fileList, path)

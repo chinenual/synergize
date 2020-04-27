@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"log"
+	"io"
 	"io/ioutil"
 )
 
@@ -58,14 +59,19 @@ type VCEHead struct {
 	FILTER [16]int8
 }
 
-func vceName(vce VCE) (name string) {
+func vceName(vceHead VCEHead) (name string) {
 	name=""
 	for i := 0; i < 8; i++ {
-		if vce.Head.VNAME[i] == ' ' {
+		if vceHead.VNAME[i] == ' ' {
 			break;
 		}
-		name = name + string(vce.Head.VNAME[i]);
+		name = name + string(vceHead.VNAME[i]);
 	}
+	return
+}
+
+func vceReadHead(buf io.Reader, head *VCEHead) (err error) {
+	err = binary.Read(buf, binary.LittleEndian, head)
 	return
 }
 
@@ -78,7 +84,8 @@ func vceReadFile(filename string) (vce VCE, err error) {
 	}
 	buf := bytes.NewReader(b)
 
-	err = binary.Read(buf, binary.LittleEndian, &vce.Head)
+	err = vceReadHead(buf, &vce.Head)
+
 	if err != nil {
 		log.Println("binary.Read failed:", err)
 		return

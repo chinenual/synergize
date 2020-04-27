@@ -6,6 +6,9 @@
 *   log location
 *   serial port selection
 
+* windows file browser needs to be able to change drives
+drives
+
 * CRT - parse at least enough to be able to display voice assignments
 
 * DONE make sure logger works even in gui mode
