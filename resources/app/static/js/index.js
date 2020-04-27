@@ -51,8 +51,23 @@ let index = {
 	    });
 	}
     },
-    loadVCE(name, path) {	
-        let message = {"name": "loadVCE",
+    viewCRT(name, path) {
+        let message = {"name": "readCRT",
+		       "payload": path};
+        astilectron.sendMessage(message, function(message) {
+	    // Check error
+	    if (message.name === "error") {
+                asticode.notifier.error(message.payload);
+                return
+	    }
+	    crt_path = path;
+	    crt = message.payload;
+	    index.load("viewCRT.html", document.getElementById("content"));
+	    viewCRT.refreshText();
+	});
+    },
+    viewVCE(name, path) {	
+        let message = {"name": "readVCE",
 		       "payload": path};
         // Send message
         astilectron.sendMessage(message, function(message) {
@@ -62,8 +77,8 @@ let index = {
                 return
 	    }
 	    vce = message.payload;
-	    index.load("view.html", document.getElementById("content"));
-	    view.refreshText();
+	    index.load("viewVCE.html", document.getElementById("content"));
+	    viewVCE.refreshText();
 	});
     },
     addFolder(name, path) {
@@ -84,14 +99,14 @@ let index = {
     addCRTFile(name, path) {
         let div = document.createElement("div");
         div.className = "file";
-        div.onclick = function() { index.loadCRT(name,path) };
+        div.onclick = function() { index.viewCRT(name,path) };
         div.innerHTML = `<i class="fa fa-file"></i><span>` + name + `</span>`;
         document.getElementById("CRTfiles").appendChild(div)
     },
     addVCEFile(name, path) {
         let div = document.createElement("div");
         div.className = "file";
-        div.onclick = function() { index.loadVCE(name,path) };
+        div.onclick = function() { index.viewVCE(name,path) };
         div.innerHTML = `<i class="fa fa-file"></i><span>` + name + `</span>`;
         document.getElementById("VCEfiles").appendChild(div)
     },
@@ -216,7 +231,7 @@ let index = {
 		console.log("viewVCE: " + message.payload);
 		vce = message.payload;
 		index.load("view.html", document.getElementById("content"));
-		view.refreshText();
+		viewVCE.refreshText();
 		
                 return {payload: "ok"};
                 break;

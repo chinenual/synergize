@@ -54,7 +54,26 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = "ok"
 		}
 		
-	case "loadVCE":
+
+	case "readCRT":
+		var crt CRT
+		var path string
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &path); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		crt,err = crtReadFile(path);
+		if err != nil {
+			payload = err.Error()
+			return
+		} else {
+			payload = crt
+		}
+		
+	case "readVCE":
 		var vce VCE
 		var path string
 		if len(m.Payload) > 0 {

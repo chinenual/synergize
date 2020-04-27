@@ -1,6 +1,6 @@
 let vce = {};
 
-let view = {
+let viewVCE = {
     timbreProportionCurve: function(center, sensitivity) {
 	var result = [];
 	if (sensitivity == 0) {
@@ -60,8 +60,8 @@ let view = {
 	Chart.defaults.global.defaultFontColor = 'white';
 	Chart.defaults.global.defaultFontSize  = 14;
 	
-	var ampData = view.ampProportionCurve(vce.Head.VACENT, vce.Head.VASENS);
-	var timbreData = view.timbreProportionCurve(vce.Head.VTCENT, vce.Head.VTSENS);
+	var ampData = viewVCE.ampProportionCurve(vce.Head.VACENT, vce.Head.VASENS);
+	var timbreData = viewVCE.timbreProportionCurve(vce.Head.VTCENT, vce.Head.VTSENS);
 	
 	console.log("ampData: " + ampData);
 	console.log("timbreData: " + timbreData);
