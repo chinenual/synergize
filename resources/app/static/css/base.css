@@ -3,6 +3,17 @@ body {
     color: #fff;
 }
 
+.navbar {
+    padding-top: 0px;
+}
+
+.topContainer {
+    padding: 10px; 
+    margin: 0px;
+    max-width: 100%;
+    overflow-x: hidden; /* hack to get rid of scrollbar for a few unknown pixels*/
+}
+
 .headerSeparator {
     height: 40px;
     margin: 10px;
