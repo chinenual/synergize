@@ -44,22 +44,24 @@ func crtReadFile(filename string) (crt CRT, err error) {
 		return
 	}
 
-	//	log.Println(crt.Head)
+//	log.Println(crt.Head)
 
 	// Offsets are from the VOIDTAB field
  	var startOffset uint16 = 50
 	for i,offset := range(crt.Head.VOIPTR) {
+		if offset != 0 {
 //		log.Printf("seek to %d\n",startOffset + offset)
 		
-		_,err = buf.Seek(int64(startOffset+offset), io.SeekStart)
-		if err != nil {
-			log.Printf("failed to seek to voice #%d start: %v\n", i, err)
-			return
-		}
-		var vceHead VCEHead
-		err = vceReadHead(buf, &vceHead)
+			_,err = buf.Seek(int64(startOffset+offset), io.SeekStart)
+			if err != nil {
+				log.Printf("failed to seek to voice #%d start: %v\n", i, err)
+				return
+			}
+			var vceHead VCEHead
+			err = vceReadHead(buf, &vceHead)
 //		log.Printf("  HEAD: %v:  NAME: %s\n",vceHead, vceName(vceHead))
-		crt.Voices = append(crt.Voices, vceHead)
+			crt.Voices = append(crt.Voices, vceHead)
+		}
 	}
 	
 	return
