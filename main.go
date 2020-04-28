@@ -99,6 +99,11 @@ func connectToSynergy() (err error) {
 
 func main() {
 	prefsLoadPreferences()
+	if len(prefsUserPreferences.Port) != 0 {
+		// rebuild the flag
+		defaultPort = prefsUserPreferences.Port
+		flag.Lookup("port").DefValue = defaultPort
+	}
 	
 	// Parse flags
 	flag.Parse()
