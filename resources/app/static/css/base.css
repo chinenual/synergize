@@ -98,6 +98,13 @@ body {
     font-weight: 1000;
 }
 
+#crt_path {
+    font-size: 1.1em;
+    text-align: center;
+    word-wrap: break-word;
+    font-weight: 1000;
+}
+
 hr {
     color: white;
 }
@@ -115,4 +122,15 @@ hr {
     border-radius: 7px;
     background-color: #adb5bd;
     -webkit-box-shadow: inset 0 0 4px rgba(90,90,90,0.7);
+}
+
+td.centered img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+td.centered span {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }

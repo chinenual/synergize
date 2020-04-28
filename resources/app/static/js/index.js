@@ -61,10 +61,15 @@ let index = {
                 return
 	    }
 	    crt_path = path;
+	    crt_name = name;
 	    crt = message.payload;
 	    index.load("viewCRT.html", document.getElementById("content"));
 	    viewCRT.refreshText();
 	});
+    },
+    viewLoadedCRT() {
+	index.load("viewCRT.html", document.getElementById("content"));
+	viewCRT.refreshText();
     },
     viewVCE(name, path) {	
         let message = {"name": "readVCE",
@@ -76,10 +81,18 @@ let index = {
                 asticode.notifier.error(message.payload);
                 return
 	    }
-	    vce = message.payload;
+	    vceHead = message.payload.Head;
+	    crt_name = null;
+	    crt_path = null;
 	    index.load("viewVCE.html", document.getElementById("content"));
 	    viewVCE.refreshText();
 	});
+    },
+    viewVCESlot(slot) {
+	vceHead = crt.Voices[slot];
+	console.log("view voice slot " + slot + " : " + vceHead);
+	index.load("viewVCE.html", document.getElementById("content"));
+	viewVCE.refreshText();
     },
     addFolder(name, path) {
         let div = document.createElement("div");
