@@ -144,9 +144,13 @@ type Dir struct {
 }
 
 // explore explores a path.
-// If path is empty, it explores the user's home directory
+// If path is empty, it explores preference's library; if that's empty the user's home directory
 func explore(path string) (e Exploration, err error) {
-	// If no path is provided, use the user's home dir
+	// If no path is provided, use the preference library path
+	if len(path) == 0 {
+		path = prefsUserPreferences.LibraryPath
+	}
+	// if still no path, then use the user's home directory
 	if len(path) == 0 {
 		var u *user.User
 		if u, err = user.Current(); err != nil {

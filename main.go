@@ -97,7 +97,9 @@ func connectToSynergy() (err error) {
 	return
 }
 
-func main() {	
+func main() {
+	prefsLoadPreferences()
+	
 	// Parse flags
 	flag.Parse()
 
