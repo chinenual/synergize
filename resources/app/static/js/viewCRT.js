@@ -1,28 +1,14 @@
 let crt = {};
 let crt_path = "";
-let crt_name = "";
 
 let viewCRT = {
-    makeSlotOnclick(slot) {
-	return function() {
-	    index.viewVCESlot(slot);
-	}
-    },
     refreshText: function () {
-	document.getElementById("crt_path").innerHTML = crt_name;
-	// clear everything
+	document.getElementById("crt_path").innerHTML = crt_path;
 	for (i = 0; i < 24; i++) {
-	    var ele = document.getElementById("crt_voicename_" + (i+1));
-	    ele.innerHTML = "";
-	    ele.onclick = function() {
-		// nop
-	    };
+	    document.getElementById("crt_voicename_" + (i+1)).innerHTML = "";
 	}
-	// set active voices
 	for (i = 0; i < crt.Voices.length; i++) {
-	    var ele = document.getElementById("crt_voicename_" + (i+1));
-	    ele.innerHTML = crt.Voices[i].VNAME;
-	    ele.onclick = viewCRT.makeSlotOnclick(i);
+	    document.getElementById("crt_voicename_" + (i+1)).innerHTML = crt.Voices[i].VNAME;
 	}
     }
 };
