@@ -7,7 +7,8 @@ import (
 )
 	
 type Preferences struct {
-	Port string
+	SerialPort string
+	SerialBaud uint
 	LibraryPath string
 }
 
@@ -32,7 +33,11 @@ func prefsLoadPreferences() (err error) {
 }
 
 func prefsSavePreferences() (err error) {
-	b,_ := json.MarshalIndent(prefsUserPreferences, "", " ")
+	var b []byte
+	b,err = json.MarshalIndent(prefsUserPreferences, "", " ")
+	if err != nil {
+		log.Println("Error saving preferences", err)
+	}
 	log.Printf("Save preferences %v to file %s\n", prefsUserPreferences, preferencesPathname)
 	err = ioutil.WriteFile(preferencesPathname, b, 0644)
 	if err != nil {

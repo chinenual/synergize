@@ -79,9 +79,9 @@ func init() {
 
 func connectToSynergy() (err error) {
 	FirmwareVersion = "Not Connected"
-	err = synioInit(*port, true, *serialVerboseFlag)
+	err = synioInit(*port, *baud, true, *serialVerboseFlag)
 	if err != nil {
-		err = errors.Wrapf(err, "Cannot connect to synergy on port %s\n", *port)
+		err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n", *port,*baud)
 		l.Printf(err.Error())
 		return
 	}
@@ -100,10 +100,16 @@ func connectToSynergy() (err error) {
 
 func main() {
 	prefsLoadPreferences()
-	if len(prefsUserPreferences.Port) != 0 {
+	if len(prefsUserPreferences.SerialPort) != 0 {
 		// rebuild the flag
-		defaultPort = prefsUserPreferences.Port
+		defaultPort = prefsUserPreferences.SerialPort
 		flag.Lookup("port").DefValue = defaultPort
+	}
+	
+	if prefsUserPreferences.SerialBaud != 0 {
+		// rebuild the flag
+		defaultBaud = prefsUserPreferences.SerialBaud
+		flag.Lookup("baud").DefValue = string(defaultBaud)
 	}
 	
 	// Parse flags

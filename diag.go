@@ -12,6 +12,9 @@ import (
 var (
 	defaultPort string = getDefaultPort()
 	port = flag.String("port", defaultPort, "the serial device")
+
+	defaultBaud uint = 9600
+	baud = flag.Uint("baud", defaultBaud, "the serial baud rate")
 )
 
 func getDefaultPort() string {
@@ -33,7 +36,7 @@ func diagCOMTST() {
 
 	log.Printf("%s\n", *port);
 
-	err := synioInit(*port, true, *serialVerboseFlag)
+	err := synioInit(*port, *baud, true, *serialVerboseFlag)
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
@@ -52,7 +55,7 @@ func diagLOOPTST() {
 
 	log.Printf("%s\n", *port);
 
-	err := synioInit(*port, true, *serialVerboseFlag)
+	err := synioInit(*port, *baud, true, *serialVerboseFlag)
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
@@ -71,7 +74,7 @@ func diagInitAndPrintFirmwareID() (err error) {
 	flag.Parse()
 	
 	log.Printf("%s\n", *port);
-	err = synioInit(*port, true, *serialVerboseFlag)
+	err = synioInit(*port, *baud, true, *serialVerboseFlag)
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return

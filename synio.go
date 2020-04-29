@@ -24,9 +24,9 @@ var vramInitialized bool = false
 var synioVerbose bool = false
 var crcHash *crc.Hash
 
-func synioInit(port string, synVerbose bool, serialVerbose bool) (err error) {
+func synioInit(port string, baud uint, synVerbose bool, serialVerbose bool) (err error) {
 	synioVerbose = synVerbose
-	err = serialInit(port, serialVerbose);
+	err = serialInit(port, baud, serialVerbose);
 	if err != nil {
 		return errors.Wrap(err, "Could not open serial port")
 	}

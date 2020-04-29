@@ -19,6 +19,22 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 	case "getVersion":
 		payload = AppVersion
 
+	case "getPreferences":
+		payload = prefsUserPreferences
+		
+	case "savePreferences":
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &prefsUserPreferences); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = prefsSavePreferences(); err != nil {
+			payload = err.Error()
+			return
+		}
+		
 	case "loadSYN":
 		var path string
 		if len(m.Payload) > 0 {

@@ -22,11 +22,11 @@ var (
        stream io.ReadWriteCloser
 )
 
-func serialInit(port string, verbose bool) (err error) {
+func serialInit(port string, baudRate uint, verbose bool) (err error) {
 	serialVerbose = verbose
 	options := serial.OpenOptions{
 		PortName: port,
-		BaudRate: 9600,
+		BaudRate: baudRate,
 		ParityMode: serial.PARITY_NONE,
 		RTSCTSFlowControl: true,
 		InterCharacterTimeout: 500,
