@@ -39,6 +39,7 @@ var (
 	debug = flag.Bool("d", true, "enables the debug mode")
 	w        *astilectron.Window
 	about_w  *astilectron.Window
+	prefs_w  *astilectron.Window
 	a        *astilectron.Astilectron
 	l 	 *log.Logger
 	AppVersion string
@@ -157,6 +158,10 @@ func main() {
 				{
 					Label: astikit.StrPtr("Preferences..."),
 					Accelerator: astilectron.NewAccelerator("CommandOrControl+P"),
+					OnClick: func(e astilectron.Event) (deleteListener bool) {
+						prefs_w.Show()
+						return
+					},
 				},
 				{Role: astilectron.MenuItemRoleServices},
 				{ Type: astilectron.MenuItemTypeSeparator },
@@ -272,6 +277,7 @@ func main() {
 			a = as
                         w = ws[0]
 			about_w = ws[1]
+			prefs_w = ws[2]
 			
 			// Need to explicitly intercept Closed event on the main
 			// window since the about window is never closed - only hidden.
@@ -305,8 +311,22 @@ func main() {
 					HideOnClose:	astikit.BoolPtr(true),
 				},
 			},
+		},{
+			Homepage:       "prefs.html",
+			MessageHandler: handleMessages,
+			Options: &astilectron.WindowOptions{
+				BackgroundColor: astikit.StrPtr("#ccc"),
+				Center:          astikit.BoolPtr(true),
+				Show:            astikit.BoolPtr(false),
+				Height:          astikit.IntPtr(500),
+				Width:           astikit.IntPtr(500),
+				Custom: &astilectron.WindowCustomOptions{
+					HideOnClose:	astikit.BoolPtr(true),
+				},
+			},
 		}},
 	}); err != nil {
 		l.Fatal(fmt.Errorf("running bootstrap failed: %w", err))
 	}
 }
+

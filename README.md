@@ -1,6 +1,6 @@
 # synergize
 
-A portable voice librarian and editor for the DKI Synergy synthesizer
+A portable voice librarian for the DKI Synergy synthesizer
 
 ## Features
 
@@ -33,4 +33,5 @@ available via the above links.
 ## TODO
 
 Currently, Synergize can load VCE and CRT files from a preexisting
-library and upload them to the Synergy. It cannot (yet) edit them.
+library and upload them to the Synergy. It can load and save SYN files
+to and from the Synergy.  It cannot (yet) edit CRT's or VCE's.
