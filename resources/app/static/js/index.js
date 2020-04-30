@@ -15,6 +15,76 @@ let index = {
     infoNotification(message) {
 	alert("INFO: " + message);
     },
+    saveSYNDialog() {
+	const {dialog} = require('electron').remote;
+	
+	path = dialog.showSaveDialogSync({
+	    filters: [
+		{ name: 'State', extensions: ['syn'] },
+		{ name: 'All Files', extensions: ['*'] }],
+            properties: ['openFile', 'promptToCreate']
+	});
+	console.log("in fileDialog: " + path);
+
+	if (path != undefined) {
+
+            let message = {"name": "saveSYN",
+			   "payload": path};
+            // Send message
+            astilectron.sendMessage(message, function(message) {		
+		// Check error
+		if (message.name === "error") {
+                    index.errorNotification(message.payload);
+                    return
+		} else {
+		    index.infoNotification("Successfully saved Synergy state to " + path);
+		    return
+		}
+	    });
+	}
+    },
+    loadSYNDialog() {
+	const {dialog} = require('electron').remote;
+	
+	path = dialog.showOpenDialogSync({
+	    filters: [
+		{ name: 'State', extensions: ['syn'] },
+		{ name: 'All Files', extensions: ['*'] }],
+            properties: ['openFile']
+	});
+	console.log("in fileDialog: " + path);
+	if (path != undefined) {
+	    index.loadSYN(path[0],path[0]);
+	}
+    },
+    loadCRTDialog() {
+	const {dialog} = require('electron').remote;
+	
+	path = dialog.showOpenDialogSync({
+	    filters: [
+		{ name: 'Cartridge', extensions: ['crt'] },
+		{ name: 'All Files', extensions: ['*'] }],
+            properties: ['openFile']
+	});
+	console.log("in fileDialog: " + path);
+	if (path != undefined) {
+	    index.viewCRT(path[0],path[0]);
+	}
+    },
+    loadVCEDialog() {
+	const {dialog} = require('electron').remote;
+	
+	path = dialog.showOpenDialogSync({
+	    filters: [
+		{ name: 'Voice', extensions: ['vce'] },
+		{ name: 'All Files', extensions: ['*'] }],
+            properties: ['openFile']
+	});
+	console.log("in fileDialog: " + path);
+	if (path != undefined) {
+	    index.viewVCE(path[0],path[0]);
+	}
+    },
     loadSYN(name, path) {
 	if (confirm("Load Synergy state file " + path)) {
             let message = {"name": "loadSYN",
@@ -217,6 +287,22 @@ let index = {
 	req.open("GET", url, false);
 	req.send(null); 
     },
+    dropdownMenu(contentId) {
+	//console.log("toggle display on " + contentId);
+	document.getElementById(contentId).style.display = "block";
+    },
+    connectMenu() {
+	alert("connectMenu");
+    },
+    helpMenu() {
+	alert("helpMenu");
+    },
+    loadSaveMenu() {
+	alert("loadSaveMenu");
+    },
+    viewDiag() {
+	index.load("diag.html", document.getElementById("content"));
+    },
     listen: function() {
 	console.log("index listening...")
         astilectron.onMessage(function(message) {
@@ -237,13 +323,37 @@ let index = {
                 return {payload: "ok"};
                 break;
             case "runDiag":
-		console.log("runDiag: " + message.payload);
-		vce = message.payload;
-		index.load("diag.html", document.getElementById("content"));
-		
+		index.viewDiag();		
                 return {payload: "ok"};
                 break;
             }
         });
     }
 };
+
+function inDropbtn(ele) {
+    if (ele == null) {
+	//console.log("ele is null");
+	return false
+    } else if (ele.classList.contains('dropbtn')) {
+	//console.log("ele has dropbtn " + ele);
+	return true;
+    }
+    //console.log("ele doesnt have dropbtn - try parent " + ele + " " + ele.parentElement);
+    return inDropbtn(ele.parentElement);
+}
+	
+/* close dropdowns if user clicks outside the menu */
+window.onclick = function(event) {
+    if (!inDropbtn(event.target)) {
+	var dropdowns = document.getElementsByClassName("dropdown-content");
+	var i;
+	for (i = 0; i < dropdowns.length; i++) {
+	    var openDropdown = dropdowns[i];
+	    if (openDropdown.style.display === "block") {
+		//console.log("toggle display off " + openDropdown.id);
+		openDropdown.style.display = "none";
+	    }
+	}
+    }
+}

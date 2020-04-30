@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"os"
 	"os/user"
@@ -45,6 +46,23 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			}
 		}
 		err = diagLoadSYN(path)
+		if err != nil {
+			payload = err.Error()
+			return
+		} else {
+			payload = "ok"
+		}
+		
+	case "saveSYN":
+		var path string
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &path); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		err = diagSaveSYN(path)
 		if err != nil {
 			payload = err.Error()
 			return
@@ -140,6 +158,9 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = err.Error()
 			return
 		}
+
+	default:
+		payload = errors.New("Unhandled message " + m.Name)
 	}
 	return
 }
