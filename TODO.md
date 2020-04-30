@@ -41,3 +41,7 @@ drives
 * unit tests
 
 * error handling - do reasonable things if synergy not connected/io fails
+
+BUGS:
+second attempt to connect "hangs"
+CARLOS4 always times out?
