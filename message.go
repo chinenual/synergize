@@ -17,9 +17,29 @@ import (
 // handleMessages handles messages
 func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload interface{}, err error) {
 	switch m.Name {
+	case "connectToSynergy":
+		err = connectToSynergy()
+		if err != nil {
+			payload = err.Error()
+		} else {
+			payload = FirmwareVersion
+		}
+		
+	case "disableVRAM":
+		err = synioDisableVRAM()
+		if err != nil {
+			payload = err.Error()
+		}
+		
 	case "getVersion":
 		payload = AppVersion
 
+	case "showAbout":
+		about_w.Show()
+		
+	case "showPreferences":
+		prefs_w.Show()
+		
 	case "getPreferences":
 		payload = prefsUserPreferences
 		

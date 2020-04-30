@@ -52,8 +52,8 @@
 		<tr><td class="centered"><span>Help</span></td></tr>
 	      </table>
 	      <div class="dropdown-content" id="helpDropdown-content">
-		<a href="#" onclick="index.about();">About</a>
-		<a href="#" onclick="index.preferences();">Preferences</a>
+		<a href="#" onclick="index.showAbout();">About</a>
+		<a href="#" onclick="index.showPreferences();">Preferences</a>
 	      </div>
 	    </form>
 
@@ -64,7 +64,7 @@
 	      </table>
 	      <div class="dropdown-content" id="connectDropdown-content">
 		<a href="#" onclick="index.connectToSynergy();">Connect to Synergy</a>
-		<a href="#" onclick="index.disableVRAM();">Turn off Synergy VRAM</a>
+		<a href="#" onclick="index.disableVRAM();">Disable Synergy VRAM</a>
 		<a href="#" onclick="index.viewDiag();">Serial Diagnostics</a>
 	      </div>
 	    </form>
@@ -78,7 +78,6 @@
 	</div>
       </div>
       
-      
       <div class="row flex-fill" style="min-height:0">
 	<div class="col-3 mh-100 hiddenscroll" >
 	  <div id="path"></div>
@@ -87,8 +86,18 @@
 	  <div id="SYNfiles"></div>
 	  <div id="VCEfiles"></div>      
 	</div>
+	
 	<div class="col mh-100 mainSeparator"></div>
+
 	<div class="col mh-100">
+
+	  <div id="spinner" style="display:none;">
+	    <div class="spinner-border" role="status">
+  <span class="sr-only">Loading...</span>
+	    </div>
+	    
+	  </div>
+
 	  <div class="right" id="content"> </div>
 	</div>
       </div>

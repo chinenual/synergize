@@ -9,12 +9,13 @@ import (
 
 const TIMEOUT_MS = 5000
 
-const OP_VRLOD      = byte(0x6b)
-const OP_VCELOD     = byte(0x6e)
-const OP_ENABLEVRAM = byte(0x70)
-const OP_GETID      = byte(0x74)
-const OP_STDUMP     = byte(0x79)
-const OP_STLOAD     = byte(0x7a)
+const OP_VRLOD       = byte(0x6b)
+const OP_VCELOD      = byte(0x6e)
+const OP_DISABLEVRAM = byte(0x6f)
+const OP_ENABLEVRAM  = byte(0x70)
+const OP_GETID       = byte(0x74)
+const OP_STDUMP      = byte(0x79)
+const OP_STLOAD      = byte(0x7a)
 
 const ACK byte = 0x06
 const DC1 byte = 0x11
@@ -383,6 +384,11 @@ func synioGetID() (versionID [2]byte, err error) {
 		return 
 	}
 	return 
+}
+
+func synioDisableVRAM() (err error) {
+	err = command(OP_DISABLEVRAM, "DISABLEVRAM")
+	return
 }
 
 func synioDiagCOMTST() (err error) {	

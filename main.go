@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"strings"
-        "encoding/json"
 	
 	"github.com/pkg/errors"
 	"github.com/asticode/go-astikit"
@@ -185,7 +184,14 @@ func main() {
 					Role: astilectron.MenuItemRoleQuit,
 				},
 			},
-		},{
+	}}
+		/*
+*********
+Bare minimum Mac menu - on all functionality is reachable from the main app menu 
+and easier to document if same on both Mac and Windows.
+*********
+
+ ,{
 			Label: astikit.StrPtr("File"),
 			SubMenu: []*astilectron.MenuItemOptions{
 				{
@@ -262,7 +268,9 @@ func main() {
 				},
 			},
 		},
-	}
+*/
+
+	
 	menuOptions := macOSMenus
 	
 	if err := bootstrap.Run(bootstrap.Options{

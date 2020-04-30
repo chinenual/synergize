@@ -9,13 +9,19 @@ let index = {
         })
 
     },
-    errorNotification(message) {
+    spinnerOn: function() {
+	document.getElementById("spinner").style.display="block";
+    },
+    spinnerOff: function() {
+	document.getElementById("spinner").style.display="none";
+    },
+    errorNotification: function(message) {
 	alert("ERROR: " + message);
     },
-    infoNotification(message) {
+    infoNotification: function(message) {
 	alert("INFO: " + message);
     },
-    saveSYNDialog() {
+    saveSYNDialog: function() {
 	const {dialog} = require('electron').remote;
 	
 	path = dialog.showSaveDialogSync({
@@ -31,7 +37,9 @@ let index = {
             let message = {"name": "saveSYN",
 			   "payload": path};
             // Send message
+	    index.spinnerOn();
             astilectron.sendMessage(message, function(message) {		
+		index.spinnerOff();
 		// Check error
 		if (message.name === "error") {
                     index.errorNotification(message.payload);
@@ -43,7 +51,7 @@ let index = {
 	    });
 	}
     },
-    loadSYNDialog() {
+    loadSYNDialog: function() {
 	const {dialog} = require('electron').remote;
 	
 	path = dialog.showOpenDialogSync({
@@ -57,7 +65,7 @@ let index = {
 	    index.loadSYN(path[0],path[0]);
 	}
     },
-    loadCRTDialog() {
+    loadCRTDialog: function() {
 	const {dialog} = require('electron').remote;
 	
 	path = dialog.showOpenDialogSync({
@@ -71,7 +79,7 @@ let index = {
 	    index.viewCRT(path[0],path[0]);
 	}
     },
-    loadVCEDialog() {
+    loadVCEDialog: function() {
 	const {dialog} = require('electron').remote;
 	
 	path = dialog.showOpenDialogSync({
@@ -85,12 +93,14 @@ let index = {
 	    index.viewVCE(path[0],path[0]);
 	}
     },
-    loadSYN(name, path) {
+    loadSYN: function(name, path) {
 	if (confirm("Load Synergy state file " + path)) {
             let message = {"name": "loadSYN",
 			   "payload": path};
             // Send message
+	    index.spinnerOn();
             astilectron.sendMessage(message, function(message) {		
+		index.spinnerOff();
 		// Check error
 		if (message.name === "error") {
                     index.errorNotification(message.payload);
@@ -102,11 +112,13 @@ let index = {
 	    });
 	}
     },
-    loadCRT(name, path) {
+    loadCRT: function(name, path) {
 	if (confirm("Load Voice Cartridge file " + path)) {
             let message = {"name": "loadCRT",
 			   "payload": path};
+	    index.spinnerOn();
             astilectron.sendMessage(message, function(message) {
+		index.spinnerOff();
 		// Check error
 		if (message.name === "error") {
                     index.errorNotification(message.payload);
@@ -118,7 +130,7 @@ let index = {
 	    });
 	}
     },
-    viewCRT(name, path) {
+    viewCRT: function(name, path) {
         let message = {"name": "readCRT",
 		       "payload": path};
         astilectron.sendMessage(message, function(message) {
@@ -134,15 +146,17 @@ let index = {
 	    viewCRT.refreshText();
 	});
     },
-    viewLoadedCRT() {
+    viewLoadedCRT: function() {
 	index.load("viewCRT.html", document.getElementById("content"));
 	viewCRT.refreshText();
     },
-    viewVCE(name, path) {	
+    viewVCE: function(name, path) {	
         let message = {"name": "readVCE",
 		       "payload": path};
         // Send message
+	index.spinnerOn();
         astilectron.sendMessage(message, function(message) {
+	    index.spinnerOff();
 	    // Check error
 	    if (message.name === "error") {
                 index.errorNotification(message.payload);
@@ -155,13 +169,13 @@ let index = {
 	    viewVCE.refreshText();
 	});
     },
-    viewVCESlot(slot) {
+    viewVCESlot: function(slot) {
 	vceHead = crt.Voices[slot];
 	console.log("view voice slot " + slot + " : " + vceHead);
 	index.load("viewVCE.html", document.getElementById("content"));
 	viewVCE.refreshText();
     },
-    addFolder(name, path) {
+    addFolder: function(name, path) {
         let div = document.createElement("div");
         div.className = "dir";
         div.onclick = function() { index.explore(path) };
@@ -169,21 +183,21 @@ let index = {
         div.innerHTML = `<i class="fa fa-folder"></i><span>` + name + `</span>`;
         document.getElementById("dirs").appendChild(div)
     },
-    addSYNFile(name, path) {
+    addSYNFile: function(name, path) {
         let div = document.createElement("div");
         div.className = "file";
         div.onclick = function() { index.loadSYN(name,path) };
         div.innerHTML = `<i class="fa fa-file"></i><span>` + name + `</span>`;
         document.getElementById("SYNfiles").appendChild(div)
     },
-    addCRTFile(name, path) {
+    addCRTFile: function(name, path) {
         let div = document.createElement("div");
         div.className = "file";
         div.onclick = function() { index.viewCRT(name,path) };
         div.innerHTML = `<i class="fa fa-file"></i><span>` + name + `</span>`;
         document.getElementById("CRTfiles").appendChild(div)
     },
-    addVCEFile(name, path) {
+    addVCEFile: function(name, path) {
         let div = document.createElement("div");
         div.className = "file";
         div.onclick = function() { index.viewVCE(name,path) };
@@ -246,6 +260,35 @@ let index = {
 	    }
         })
     },
+    connectToSynergy: function () {
+	let message = {"name" : "connectToSynergy"};
+	index.spinnerOn();
+	astilectron.sendMessage(message, function(message) {
+	    index.spinnerOff();
+	    if (message.name === "error") {
+                index.errorNotification(message.payload);
+                return
+	    } else {
+		index.updateConnectionStatus(message.payload);
+		index.infoNotification("Successfully connected to Synergy - firmware version " + message.payload);
+		return
+	    }
+	});
+    },
+    disableVRAM: function () {
+	let message = {"name" : "disableVRAM"};
+	index.spinnerOn();
+	astilectron.sendMessage(message, function(message) {
+	    index.spinnerOff();
+	    if (message.name === "error") {
+                index.errorNotification(message.payload);
+                return
+	    } else {
+		index.infoNotification("Successfully disabled Synergy's VRAM")
+		return
+	    }
+	});
+    },
     updateConnectionStatus: function (status) {
 	console.log("update status: " + status);
 	document.getElementById("firmwareVersion").innerHTML = status;
@@ -266,14 +309,15 @@ let index = {
 	return files;
     },
     runCOMTST: function() {
-	document.getElementById("testProgress").innerHTML = "Running...";
 	let message = {"name" : "runCOMTST"};
+	index.spinnerOn();
 	astilectron.sendMessage(message, function(message) {
+	    index.spinnerOff();
 	    console.log("runCOMTST returned: " + message);
 	    index.infoNotifcation(message);
-	    document.getElementById("testProgress").innerHTML = message.payload;
 	});
     },
+    
     load: function(url, element) {
 	console.log("load " + url + " into " + element);
 	req = new XMLHttpRequest();
@@ -287,21 +331,24 @@ let index = {
 	req.open("GET", url, false);
 	req.send(null); 
     },
-    dropdownMenu(contentId) {
+    dropdownMenu: function(contentId) {
 	//console.log("toggle display on " + contentId);
 	document.getElementById(contentId).style.display = "block";
     },
-    connectMenu() {
-	alert("connectMenu");
-    },
-    helpMenu() {
-	alert("helpMenu");
-    },
-    loadSaveMenu() {
-	alert("loadSaveMenu");
-    },
-    viewDiag() {
+    viewDiag: function() {
 	index.load("diag.html", document.getElementById("content"));
+    },
+    showAbout: function() {
+	let message = {"name" : "showAbout"};
+	astilectron.sendMessage(message, function(message) {
+	    // nop
+	});
+    },
+    showPreferences: function() {
+	let message = {"name" : "showPreferences"};
+	astilectron.sendMessage(message, function(message) {
+	    // nop
+	});
     },
     listen: function() {
 	console.log("index listening...")
