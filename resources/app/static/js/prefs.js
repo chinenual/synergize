@@ -11,7 +11,7 @@ let prefs = {
             astilectron.sendMessage(message, function(message) {		
 		// Check error
 		if (message.name === "error") {
-                    asticode.notifier.error(message.payload);
+                    index.errorNotification(message.payload);
                     return
 		}
 		preferences = message.payload
@@ -79,9 +79,9 @@ let prefs = {
             astilectron.sendMessage(message, function(message) {		
 		// Check error
 		if (message.name === "error") {
-                    asticode.notifier.error(message.payload);
+                    index.errorNotification(message.payload);
                     return
-		}
+		} 
 	    });
     },
     listen: function() {

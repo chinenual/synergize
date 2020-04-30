@@ -2,21 +2,18 @@ let index = {
     init: function() {
         // Wait for astilectron to be ready
         document.addEventListener('astilectron-ready', function() {
-
-	    /*
-	    json = {"name" : "getCWD"};
-	    astilectron.sendMessage(json, function(message) {
-		console.log("getCwd returned: " + message);
-		document.getElementById("cwd").innerHTML = message.payload;
-	    });
-	    */
-	    
             // Listen
             index.listen();
             // Explore default path
             index.explore();
         })
 
+    },
+    errorNotification(message) {
+	alert("ERROR: " + message);
+    },
+    infoNotification(message) {
+	alert("INFO: " + message);
     },
     loadSYN(name, path) {
 	if (confirm("Load Synergy state file " + path)) {
@@ -26,10 +23,10 @@ let index = {
             astilectron.sendMessage(message, function(message) {		
 		// Check error
 		if (message.name === "error") {
-                    asticode.notifier.error(message.payload);
+                    index.errorNotification(message.payload);
                     return
 		} else {
-		    asticode.notifier.info("Successfully loaded " + name + " to Synergy")
+		    index.infoNotification("Successfully loaded " + name + " to Synergy")
 		    return
 		}
 	    });
@@ -42,10 +39,10 @@ let index = {
             astilectron.sendMessage(message, function(message) {
 		// Check error
 		if (message.name === "error") {
-                    asticode.notifier.error(message.payload);
+                    index.errorNotification(message.payload);
                     return
 		} else {
-		    asticode.notifier.info("Successfully loaded " + name + " to Synergy")
+		    index.infoNotification("Successfully loaded " + name + " to Synergy")
 		    return
 		}
 	    });
@@ -57,7 +54,7 @@ let index = {
         astilectron.sendMessage(message, function(message) {
 	    // Check error
 	    if (message.name === "error") {
-                asticode.notifier.error(message.payload);
+                index.errorNotification(message.payload);
                 return
 	    }
 	    crt_path = path;
@@ -78,7 +75,7 @@ let index = {
         astilectron.sendMessage(message, function(message) {
 	    // Check error
 	    if (message.name === "error") {
-                asticode.notifier.error(message.payload);
+                index.errorNotification(message.payload);
                 return
 	    }
 	    vceHead = message.payload.Head;
@@ -134,7 +131,7 @@ let index = {
         astilectron.sendMessage(message, function(message) {
             // Check error
             if (message.name === "error") {
-                asticode.notifier.error(message.payload);
+                index.errorNotification(message.payload);
                 return
             }
 
@@ -177,16 +174,6 @@ let index = {
                     index.addVCEFile(message.payload.VCEfiles[i].name, message.payload.VCEfiles[i].path);
 		}
 	    }
-	    /**
-            if (typeof message.payload.files !== "undefined") {
-                document.getElementById("files_panel").style.display = "block";
-                let canvas = document.createElement("canvas");
-                document.getElementById("files").append(canvas);
-                new Chart(canvas, message.payload.files);
-            } else {
-                document.getElementById("files_panel").style.display = "none";
-            }
-	    **/
         })
     },
     updateConnectionStatus: function (status) {
@@ -213,6 +200,7 @@ let index = {
 	let message = {"name" : "runCOMTST"};
 	astilectron.sendMessage(message, function(message) {
 	    console.log("runCOMTST returned: " + message);
+	    index.infoNotifcation(message);
 	    document.getElementById("testProgress").innerHTML = message.payload;
 	});
     },
