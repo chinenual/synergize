@@ -70,7 +70,9 @@ func serialInit(port string, baudRate uint, verbose bool) (err error) {
 					response.data = 0
 					readerChannel <- response
 				} else if n == 1 {
-					log.Printf("got %d empties before this read\n",emptyCount + sleepCount*EMPTY_PER_SLEEP)
+					if (emptyCount + sleepCount*EMPTY_PER_SLEEP)>0 {
+						log.Printf("got %d empties before this read\n",emptyCount + sleepCount*EMPTY_PER_SLEEP)
+					}
 					sleepCount = 0
 					emptyCount = 0
 					response.data = arr[0]
