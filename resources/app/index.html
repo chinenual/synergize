@@ -27,13 +27,13 @@
     <div class="container d-flex flex-column h-100 w-100 topContainer">
       <div class="row flex-shrink-0 navbar">
 	<div class="headerContainer">
-	  <div class="header d-flex">
+	  <div class="header d-flex vertical-align-center">
 	    <div class="navbar-text p-2">
 	      Synergy:<br>&nbsp;&nbsp;<span style="color: --light;" id="firmwareVersion">Not Connected</span>
 	    </div>
 	    <div class="headerSeparator p-2"></div>
 
-	    <form class="form-inline dropdown" style="width:30em;">
+	    <div class="navbar-text dropdown" style="width:30em;">
 	      <table onclick="index.dropdownMenu('loadSaveDropdown-content');" class="dropbtn">
 		<tr><td class="centered"><img src="static/images/grey-button-off-full.png" height="35"></td></tr>
 		<tr><td class="centered"><span>Load/Save</span></td></tr>
@@ -44,9 +44,9 @@
 		<a href="#" onclick="index.loadCRTDialog();">Load Cartridge file (CRT)</a>
 		<a href="#" onclick="index.loadVCEDialog();">Load Voice file (VCE)</a>
 	      </div>
-	    </form>
+	    </div>
 
-	    <form class="form-inline dropdown" style="width:30em;">
+	    <div class="navbar-text dropdown" style="width:30em;">
 	      <table onclick="index.dropdownMenu('helpDropdown-content');" class="dropbtn">
 		<tr><td class="centered"><img src="static/images/grey-button-off-full.png" height="35"></td></tr>
 		<tr><td class="centered"><span>Help</span></td></tr>
@@ -55,9 +55,9 @@
 		<a href="#" onclick="index.showAbout();">About</a>
 		<a href="#" onclick="index.showPreferences();">Preferences</a>
 	      </div>
-	    </form>
+	    </div>
 
-	    <form class="form-inline dropdown" style="width:30em;">
+	    <div class="navbar-text dropdown" style="width:30em;">
 	      <table onclick="index.dropdownMenu('connectDropdown-content');" class="dropbtn">
 		<tr><td class="centered"><img src="static/images/grey-button-off-full.png" height="35"></td></tr>
 		<tr><td class="centered"><span>Connect</span></td></tr>
@@ -67,7 +67,7 @@
 		<a href="#" onclick="index.disableVRAM();">Disable Synergy VRAM</a>
 		<a href="#" onclick="index.viewDiag();">Serial Diagnostics</a>
 	      </div>
-	    </form>
+	    </div>
 
 
 	    <div class="flex-grow-1 p-2"></div>
