@@ -20,13 +20,15 @@
       <form>
 	<div class="form-group">
 	  <label for="serialPort">Serial Port</label>
-	  <input type="string" class="form-control" id="serialPort"
-		 onclick="prefs.serialPortDialog(this,this.value);">
+	  <!-- HACK: want a file dialog on Mac; a straight text box on
+	  * windows -  make a straight text box and add the onclick
+	  * via javascript at initialization.
+	  -->
+	  <input type="string" class="form-control" id="serialPort">
 	</div>
 	<div class="form-group">
 	  <label for="serialBaud">Serial Baud Rate</label>
-	  <select type="string" class="form-control" id="serialBaud" 
-		 oninput="prefs.save();">
+	  <select type="string" class="form-control" id="serialBaud">
 	    <option value="19200">19200</option>
 	    <option value="9600">9600</option>
 	    <option value="4800">4800</option>
@@ -40,7 +42,9 @@
 	  <input type="string" class="form-control" id="libraryPath"
 		 onclick="prefs.libraryFolderDialog(this,this.value);" >
 	</div>
-      </form>
+	<button type="cancel" onclick="prefs.cancelAndClose();">Cancel</button>
+	<button type="submit" class="btn btn-primary" onclick="prefs.saveAndClose();">Save</button>
+      </form>      
     </div>
     
     <script type="text/javascript">

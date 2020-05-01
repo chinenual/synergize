@@ -14,12 +14,23 @@ let prefs = {
                     index.errorNotification(message.payload);
                     return
 		}
-		preferences = message.payload
-		console.log("loaded preferences: " + preferences)
+		var os = message.payload.Os
+		preferences = message.payload.Preferences
+		
+		console.log("loaded preferences: " + os + ": " + preferences)
 
 		document.getElementById("serialPort").value = preferences.SerialPort;
 		document.getElementById("serialBaud").value = preferences.SerialBaud;
 		document.getElementById("libraryPath").value = preferences.LibraryPath;
+		if (os === "darwin") {
+		    // add an onclick handler to popup a file dialog
+		    var ele = document.getElementById("serialPort");
+		    ele.onclick = function() {
+			prefs.serialPortDialog(this,this.value);
+		    }
+		} else {
+		    // on windows, use a straight text box 
+		}
 	    });
 	    
             // Listen
@@ -39,12 +50,7 @@ let prefs = {
 	});
 	console.log("in fileDialog: " + file);
 	if (file != undefined && ele != undefined && ele != null) {
-	    ele.value = file;
-	    /* HACK: onchange and oninput dont fire because we use onclick
-	     * this works, but would be "cleaner" to have something like
-	     * onchange monitoring the changes. 
-	     */
-	    prefs.save();
+            ele.value = file;
 	}
 	return file;
     },
@@ -58,17 +64,24 @@ let prefs = {
 	});
 	console.log("in folderDialog: " + folder);
 	if (folder != undefined && ele != undefined && ele != null) {
-	    ele.value = folder;
-	    /* HACK: onchange and oninput dont fire because we use onclick
-	     * this works, but would be "cleaner" to have something like
-	     * onchange monitoring the changes. 
-	     */
-	    prefs.save();
+            ele.value = folder;
 	}
 	return folder;
     },
 
-    save: function() {
+    cancelAndClose: function() {
+	let message = {"name" : "cancelPreferences",
+		       payload: ""};
+	    // Send message
+            astilectron.sendMessage(message, function(message) {		
+		// Check error
+		if (message.name === "error") {
+                    index.errorNotification(message.payload);
+		}
+	    });	
+    },
+    
+    saveAndClose: function() {
 	let message = {"name" : "savePreferences",
 		       "payload": {
 			   "SerialPort" : document.getElementById("serialPort").value,
@@ -80,8 +93,7 @@ let prefs = {
 		// Check error
 		if (message.name === "error") {
                     index.errorNotification(message.payload);
-                    return
-		} 
+		}
 	    });
     },
     listen: function() {

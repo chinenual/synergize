@@ -43,11 +43,10 @@ let index = {
 		// Check error
 		if (message.name === "error") {
                     index.errorNotification(message.payload);
-                    return
 		} else {
 		    index.infoNotification("Successfully saved Synergy state to " + path);
-		    return
 		}
+		index.refreshConnectionStatus();
 	    });
 	}
     },
@@ -104,11 +103,10 @@ let index = {
 		// Check error
 		if (message.name === "error") {
                     index.errorNotification(message.payload);
-                    return
 		} else {
 		    index.infoNotification("Successfully loaded " + name + " to Synergy")
-		    return
 		}
+		index.refreshConnectionStatus();
 	    });
 	}
     },
@@ -122,11 +120,10 @@ let index = {
 		// Check error
 		if (message.name === "error") {
                     index.errorNotification(message.payload);
-                    return
 		} else {
 		    index.infoNotification("Successfully loaded " + name + " to Synergy")
-		    return
 		}
+		index.refreshConnectionStatus();
 	    });
 	}
     },
@@ -144,6 +141,7 @@ let index = {
 	    crt = message.payload;
 	    index.load("viewCRT.html", document.getElementById("content"));
 	    viewCRT.refreshText();
+	    index.refreshConnectionStatus();
 	});
     },
     viewLoadedCRT: function() {
@@ -167,6 +165,7 @@ let index = {
 	    crt_path = null;
 	    index.load("viewVCE.html", document.getElementById("content"));
 	    viewVCE.refreshText();
+	    index.refreshConnectionStatus();
 	});
     },
     viewVCESlot: function(slot) {
@@ -281,11 +280,24 @@ let index = {
 	astilectron.sendMessage(message, function(message) {
 	    index.spinnerOff();
 	    if (message.name === "error") {
-                index.errorNotification(message.payload);
-                return
+                index.errorNotification(message.payload);		
 	    } else {
 		index.infoNotification("Successfully disabled Synergy's VRAM")
-		return
+	    }
+	    index.refreshConnectionStatus();
+	});
+    },
+    refreshConnectionStatus: function() {
+        let message = {"name": "getFirmwareVersion",
+		       "payload": "DummyPayload"};
+        // Send message
+	console.log("refreshing connection status");
+        astilectron.sendMessage(message, function(message) {		
+	    // Check error
+	    if (message.name === "error") {
+                index.errorNotification(message.payload);
+	    } else {
+		index.updateConnectionStatus(message.payload);
 	    }
 	});
     },
@@ -314,8 +326,14 @@ let index = {
 	astilectron.sendMessage(message, function(message) {
 	    index.spinnerOff();
 	    console.log("runCOMTST returned: " + message);
-	    index.infoNotifcation(message);
+	    // Check error
+	    if (message.name === "error") {
+                index.errorNotification(message.payload);
+	    } else {
+		index.infoNotification(message.payload);
+	    }
 	});
+	index.refreshConnectionStatus();
     },
     
     load: function(url, element) {
@@ -336,6 +354,7 @@ let index = {
 	document.getElementById(contentId).style.display = "block";
     },
     viewDiag: function() {
+	
 	index.load("diag.html", document.getElementById("content"));
     },
     showAbout: function() {
@@ -346,6 +365,7 @@ let index = {
     },
     showPreferences: function() {
 	let message = {"name" : "showPreferences"};
+	console.log("show preferences javascript");
 	astilectron.sendMessage(message, function(message) {
 	    // nop
 	});

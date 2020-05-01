@@ -11,12 +11,19 @@
 	    <li>First put the Synergy into COMTST
 	      mode by pressing RESTORE, then PROGRAM 4.</li>
 	    <li>The press "RUN COMTST" to start the test</li>
+	    <li>To return the Synergy to normal state, power cycle it</li>
 	  </td>	  
 	</tr>
 	<tr> <td>&nbsp;</td> <td></td>  </tr>
 	<tr>
 	  <td></td>
-	  <td><input type="button" id="runCOMTST" value="Run COMTST" onclick="index.runCOMTST();"/></td>
+	  <td>
+	    <table onclick="index.runCOMTST();" class="dropbtn">
+	      <tr><td class="centered"><img src="static/images/red-button-off-full.png" height="30"></td></tr>
+	      <tr><td class="centered"><span class="buttonText">Run COMTST</span></td></tr>
+	    </table>
+
+	  </td>
 	</tr>
 	<tr>
 	  <td></td>

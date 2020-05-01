@@ -1,15 +1,16 @@
 package main
 
-import (
+import (		
 	"encoding/json"
-	"errors"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/user"
 	"path/filepath"
+	"runtime"
 	"strings"
-	"log"
-
+	
+	"github.com/pkg/errors"
 	"github.com/asticode/go-astilectron"
 	bootstrap "github.com/asticode/go-astilectron-bootstrap"
 )
@@ -26,9 +27,17 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		}
 		
 	case "disableVRAM":
+		err = connectToSynergyIfNotConnected();
+		if err != nil {
+			payload = err.Error()
+			return
+		} 
 		err = synioDisableVRAM()
 		if err != nil {
 			payload = err.Error()
+			return
+		} else {
+			payload = "ok"
 		}
 		
 	case "getVersion":
@@ -38,10 +47,14 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		about_w.Show()
 		
 	case "showPreferences":
+		log.Printf("Show Preferences (from messages)\n");
 		prefs_w.Show()
 		
 	case "getPreferences":
-		payload = prefsUserPreferences
+		payload = struct {
+			Os string
+			Preferences Preferences
+		} {runtime.GOOS, prefsUserPreferences}
 		
 	case "savePreferences":
 		if len(m.Payload) > 0 {
@@ -55,6 +68,10 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = err.Error()
 			return
 		}
+		prefs_w.Hide()
+
+	case "cancelPreferences":
+		prefs_w.Hide()
 		
 	case "loadSYN":
 		var path string
@@ -65,6 +82,11 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
+		err = connectToSynergyIfNotConnected();
+		if err != nil {
+			payload = err.Error()
+			return
+		} 
 		err = diagLoadSYN(path)
 		if err != nil {
 			payload = err.Error()
@@ -82,6 +104,11 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
+		err = connectToSynergyIfNotConnected();
+		if err != nil {
+			payload = err.Error()
+			return
+		} 
 		err = diagSaveSYN(path)
 		if err != nil {
 			payload = err.Error()
@@ -100,6 +127,11 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
+		err = connectToSynergyIfNotConnected();
+		if err != nil {
+			payload = err.Error()
+			return
+		} 
 		err = diagLoadCRT(path)
 		if err != nil {
 			payload = err.Error()
@@ -154,6 +186,23 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		
 	case "runCOMTST":
 		// nothing interesting in the payload - just start the test and return results
+		if FirmwareVersion == "" {
+			// not yet connected to the Synergy.
+			// A conundrum: if user has already put the synergy into
+			// test mode, we can't query the firmware.  If we just
+			// initialize the serial connection and dont update
+			// firmware version, the UI will continue to show
+			// "not connected".
+			//
+			// Run the serial init without querying the firmware version
+			err = synioInit(*port, *baud, true, *serialVerboseFlag)
+			if err != nil {
+				err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n", *port,*baud)
+				payload = err.Error()
+				return
+			}
+			FirmwareVersion = "Connected"
+		}
 		err = synioDiagCOMTST()
 		if err != nil {
 			payload = err.Error()
