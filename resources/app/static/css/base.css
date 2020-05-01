@@ -1,6 +1,11 @@
 body {
     background-color: #222;
     color: #fff;
+    font-size: 0.8rem;
+}
+
+table {
+    font-size: small;
 }
 
 .navbar {

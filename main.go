@@ -309,8 +309,8 @@ and easier to document if same on both Mac and Windows.
 			Options: &astilectron.WindowOptions{
 				BackgroundColor: astikit.StrPtr("black"),
 				Center:          astikit.BoolPtr(true),
-				Height:          astikit.IntPtr(700),
-				Width:           astikit.IntPtr(1000),
+				Height:          astikit.IntPtr(620),
+				Width:           astikit.IntPtr(890),
 			},
 		},{
 			Homepage:       "about.html",
