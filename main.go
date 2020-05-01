@@ -76,6 +76,13 @@ func init() {
 	l.Printf("Default serial device is %s\n", defaultPort)
 }
 
+func connectToSynergyIfNotConnected() (err error) {
+	if FirmwareVersion == "" {
+		err = connectToSynergy();
+	}
+	return
+}
+
 func connectToSynergy() (err error) {
 	FirmwareVersion = "Not Connected"
 	err = synioInit(*port, *baud, true, *serialVerboseFlag)
@@ -114,6 +121,8 @@ func main() {
 	// Parse flags
 	flag.Parse()
 
+
+	
 	var err error
 	// run the command line tests instead of the Electron app:
 	if *synver {
