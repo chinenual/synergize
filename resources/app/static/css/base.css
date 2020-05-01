@@ -140,6 +140,10 @@ td.centered span {
     margin-right: auto;
 }
 
+.buttonText {
+    font-size: x-small;
+}
+
 /* Dropdown menu support */
 .dropbtn {
     cursor: pointer;
