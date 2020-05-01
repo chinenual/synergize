@@ -5,6 +5,7 @@ import (
 	"io"
 	"time"
 	"log"
+	"runtime"
 	"github.com/pkg/errors"
 	"github.com/jacobsa/go-serial/serial"
 )
@@ -35,6 +36,16 @@ func serialInit(port string, baudRate uint, verbose bool) (err error) {
 		StopBits: 1,
 	}
 	if readerChannel != nil {
+		if runtime.GOOS == "darwin" {
+			// FIXME: can't find a way to interrupt the blocking
+			// read in the goroutine; until that's changed, just
+			// throw an error if user tries to reopen the serial port
+			//
+			// This "works" on Windows due to the bug that is causing
+			// the Read to be non-blocking
+			err = errors.New("Cannot re-open the serial connection.  To reinitialize with a new port or baud rate you must restart the Synergize application.")
+			return
+		}
 		readerChannelQuit <- true
 	}
 	log.Printf(" --> serial.Open(%#v)\n",options)
@@ -43,9 +54,11 @@ func serialInit(port string, baudRate uint, verbose bool) (err error) {
 		return errors.Wrapf(err,"Could not open serial port")
 	}
 
+	log.Printf(" make new channels \n")
 	// long lived reader goroutine so we retain state of the stream across individual "reads"
 	readerChannel = make(chan serialReadResponse)
 	readerChannelQuit = make(chan bool)
+	log.Printf(" make new goroutine \n")
 	go func () {
 		defer stream.Close()
 		
@@ -59,7 +72,8 @@ func serialInit(port string, baudRate uint, verbose bool) (err error) {
 				log.Printf(" closing serial channel\n")
 				close(readerChannelQuit)
 				close(readerChannel)
-				return
+				log.Printf(" ending goroutine\n")
+				return				
 			default:
 				var response serialReadResponse
 				var n int
