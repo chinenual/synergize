@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+  <?ifndef var.VERSION?>
+  <?error VERSION must be defined via command line argument?>
+  <?endif?>
+
+  <?ifndef var.ManSourceDir?>
+  <?define ManSourceDir = "bin/windows" ?>
+  <?endif?>
+
+  <!-- Change Product Id GUID for major release or change in components -->
+  <!-- Change Product UpgradeCode GUID for major release  -->
+  <Product Name="Synergize $(var.VERSION)"
+	   Id="68081C43-F5C9-412F-9A0A-7BF4B5D3AFA3"
+	   UpgradeCode="E4D363A2-2847-47CA-AA16-C9D2B6478A14"
+	   Version="$(var.VERSION)" Language="1033" Manufacturer="Chinenual">
+
+    <Package Id="*" Keywords="Installer" Description="Synergize $(var.VERSION) Installer" Comments="MIT License" Manufacturer="Chinenual" InstallScope="perMachine" InstallerVersion="100" Compressed="yes"/>
+    <Media Id="1" Cabinet="Synergize.cab" EmbedCab="yes"/>
+    <Property Id="DiskPrompt" Value="Synergize $(var.VERSION) Installation"/>
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+
+      <Directory Id="ProgramFilesFolder" Name="PFiles">
+        <Directory Id="ChinenualPFiles" Name="Chinenual">
+          <Directory Id="INSTALLDIR" Name="Synergize">
+	    <!-- constant GUID -->
+            <Component Id="INSTALLDIR_Component"
+		       Guid="FE9BDC25-5037-48D0-B477-CAE0B1177581">
+              <CreateFolder/>
+            </Component>
+	    <!-- constant GUID -->
+            <Component Id="MainExecutable"
+		       Guid="A1C41EF0-6558-4795-A69B-0AD587CCEE06">
+	      <!-- constant GUID -->
+	      <File
+		  Id="2634660E-DF2D-4479-A9A0-8DC1C714A0DF"
+		  Name="Synergize.exe"
+		  Source="output/windows-386/Synergize.exe">
+		<Shortcut Id="startmenuSynergize" Directory="ProgramMenuFolder" Name="Synergize"
+			  WorkingDirectory='INSTALLDIR'
+			  Icon="Synergize.ico" 
+			  Advertise="yes" />
+	      </File>
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <Property Id="setx" Value="setx.exe"/>
+    <CustomAction Id="ChangePath" ExeCommand="PATH &quot;%PATH%;[INSTALLDIR] &quot;" Property="setx" Execute="deferred" Impersonate="yes" Return="check"/>
+
+    <Feature Id="Complete" Level="1">
+      <ComponentRef Id="INSTALLDIR_Component"/>
+      <ComponentRef Id="MainExecutable"/>
+<!--      <ComponentRef Id="ProgramMenuDir"/>-->
+    </Feature>
+
+    <Icon Id="Synergize.ico" SourceFile="resources/icon.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="Synergize.ico"/>
+
+    <InstallExecuteSequence>
+      <RemoveExistingProducts Before="InstallInitialize"/>
+    </InstallExecuteSequence>
+
+  </Product>
+</Wix>

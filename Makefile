@@ -1,6 +1,7 @@
 include VERSION
 
-SRCS=*.md LICENSE [c-z]*.go resources/app/*html resources/app/static/css/*.css  resources/app/static/js/*js
+DOCS=*.md LICENSE
+SRCS=[c-z]*.go resources/app/*html resources/app/static/css/*.css  resources/app/static/js/*js
 
 all: TAGS output 
 
@@ -23,14 +24,22 @@ release/Synergize-Installer-$(VERSION).dmg : output
 		"release/Synergize-Installer-$(VERSION).dmg" \
 		output/darwin-amd64
 
-packageWindows: output
+# uses msitools (installed via "brew install msitools"):
+packageWindows: release/Synergize-Installer-$(VERSION).msi
+release/Synergize-Installer-$(VERSION).msi : output
+	wixl -v \
+		-a x86 \
+		-D VERSION=$(VERSION) \
+		-D SourceDir=output/windows-386/ \
+		-o release/Synergize-Installer-$(VERSION).msi \
+		windows-installer.wxs
 
 version.go : VERSION
 	echo package main > version.go
 	echo const Version = \"$(VERSION)\" >> version.go
 
-TAGS: $(SRCS)
-	etags $(SRCS)
+TAGS: $(SRCS) $(DOCS)
+	etags $(SRCS) $(DOCS)
 
 clean:
 	rm -rf release output bind_*.go *.log
