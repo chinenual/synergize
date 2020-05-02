@@ -10,6 +10,7 @@ type Preferences struct {
 	SerialPort string
 	SerialBaud uint
 	LibraryPath string
+	HTTPDebug bool
 }
 
 var preferencesPathname string = "preferences.json"

@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"runtime"
 	"strings"
 	
 	"github.com/pkg/errors"
@@ -35,7 +36,6 @@ var (
 	loadsyn = flag.String("LOADSYN", "", "load the named SYN file into Synergy")
 	synver  = flag.Bool("SYNVER", false, "Print the firmware version of the connected Synergy")
 	
-	debug = flag.Bool("d", true, "enables the debug mode")
 	w        *astilectron.Window
 	about_w  *astilectron.Window
 	prefs_w  *astilectron.Window
@@ -269,8 +269,16 @@ and easier to document if same on both Mac and Windows.
 		},
 */
 
+
 	
-	menuOptions := macOSMenus
+	var menuOptions = []*astilectron.MenuItemOptions{};
+	if (runtime.GOOS == "darwin") {
+		menuOptions = macOSMenus
+	} else {
+		// leave empty for windows
+		// FIXME: empty menus causes the bootstrap to crash - so add the menus as a workaround
+		menuOptions = macOSMenus
+	}
 	
 	if err := bootstrap.Run(bootstrap.Options{
 		Asset:    Asset,
@@ -283,7 +291,7 @@ and easier to document if same on both Mac and Windows.
 			VersionAstilectron: VersionAstilectron,
 			VersionElectron:    VersionElectron,
 		},
-		Debug:  *debug,
+		Debug:  prefsUserPreferences.HTTPDebug,
 		Logger: l,
 		MenuOptions: menuOptions,
 		OnWait: func(as *astilectron.Astilectron, ws []*astilectron.Window, _ *astilectron.Menu, _ *astilectron.Tray, _ *astilectron.Menu) error {
