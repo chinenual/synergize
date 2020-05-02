@@ -1,5 +1,7 @@
 # synergize
 
+![logo](https://github.com/chinenual/synergize/raw/master/resources/app/static/images/logo.png?raw=true)
+
 A portable voice librarian for the DKI Synergy synthesizer
 
 ## Features
@@ -15,6 +17,25 @@ manner similar to the original SYNHCS ".DOC" format.
 
 * Load and save synergy "state" (SYN files).  This preserves
 sequencer, portamento, vibrato and other performance customizations.
+
+Note: Synergize does not itself include the original voice libraries -- download a copy from one of the links below.
+
+## Download
+
+Download the beta release:
+[Release Binaries](https://github.com/chinenual/synergize/releases)
+
+See links below for sites containing the original DK/Mulogix voice library.
+
+## Issues / Bugs
+
+Please report problems via a [github issue](https://github.com/chinenual/synergize/issues).  If you dont have a github account, send a bug report email to "support at chinenual.com"
+
+## Screenshots
+
+![logo](https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE.png?raw=true)
+
+![logo](https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewCRT.png?raw=true)
 
 ## Thank you!
 
