@@ -10,14 +10,27 @@ import (
 )
 
 var (
-	defaultPort string = getDefaultPort()
-	port = flag.String("port", defaultPort, "the serial device")
-
-	defaultBaud uint = 9600
-	baud = flag.Uint("baud", defaultBaud, "the serial baud rate")
+	port = flag.String("port", getDefaultPort(), "the serial device")
+	baud = flag.Uint("baud", getDefaultBaud(), "the serial baud rate")
 )
 
+func getDefaultBaud() uint {
+	// FIXME: loads the prefs twice - harmless, but annoying
+	prefsLoadPreferences()
+	
+	if prefsUserPreferences.SerialBaud != 0 {
+		return prefsUserPreferences.SerialBaud
+	}
+	return 9600
+}
+
 func getDefaultPort() string {
+	// FIXME: loads the prefs twice - harmless, but annoying
+	prefsLoadPreferences()
+	
+	if prefsUserPreferences.SerialPort != "" {
+		return prefsUserPreferences.SerialPort
+	}
 	if runtime.GOOS == "darwin" {
 		files, _ := filepath.Glob("/dev/tty.usbserial*")
 		for _,f := range(files) {

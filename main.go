@@ -58,6 +58,7 @@ func setVersion() {
 }
 
 func init() {
+	
 	setVersion()
 
 	multi := io.MultiWriter(
@@ -73,7 +74,6 @@ func init() {
 	l = log.New(log.Writer(), log.Prefix(), log.Flags() | log.Lshortfile)
 	
 	l.Printf("Running app version %s\n", AppVersion)
-	l.Printf("Default serial device is %s\n", defaultPort)
 }
 
 func connectToSynergyIfNotConnected() (err error) {
@@ -105,22 +105,12 @@ func connectToSynergy() (err error) {
 }
 
 func main() {
-	prefsLoadPreferences()
-	if len(prefsUserPreferences.SerialPort) != 0 {
-		// rebuild the flag
-		defaultPort = prefsUserPreferences.SerialPort
-		flag.Lookup("port").DefValue = defaultPort
-	}
-	
-	if prefsUserPreferences.SerialBaud != 0 {
-		// rebuild the flag
-		defaultBaud = prefsUserPreferences.SerialBaud
-		flag.Lookup("baud").DefValue = string(defaultBaud)
-	}
+	l.Printf("Default serial device is %s at %d baud\n", *port, *baud)
 	
 	// Parse flags
 	flag.Parse()
 
+	l.Printf("Default serial device is %s at %d baud\n", *port, *baud)
 
 	
 	var err error
@@ -311,7 +301,11 @@ and easier to document if same on both Mac and Windows.
                         return nil
                 },
 		RestoreAssets: RestoreAssets,
-		
+
+		// Suppress warnings about "signal urgent I/O condition"
+		// (https://github.com/asticode/go-astilectron/issues/239):
+		//IgnoredSignals: []os.Signal{syscall.SIGURG},
+
 		Windows: []*bootstrap.Window{{
 			Homepage:       "index.html",
 			MessageHandler: handleMessages,

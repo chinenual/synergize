@@ -28,7 +28,7 @@ func prefsLoadPreferences() (err error) {
 		log.Println("Error parsing preferences", err)
 		return
 	}
-	log.Println("Loaded preferences %v from file %s\n", prefsUserPreferences, preferencesPathname)
+	log.Printf("Loaded preferences %#v from file %s\n", prefsUserPreferences, preferencesPathname)
 	return
 }
 
@@ -38,7 +38,7 @@ func prefsSavePreferences() (err error) {
 	if err != nil {
 		log.Println("Error saving preferences", err)
 	}
-	log.Printf("Save preferences %v to file %s\n", prefsUserPreferences, preferencesPathname)
+	log.Printf("Save preferences %#v to file %s\n", prefsUserPreferences, preferencesPathname)
 	err = ioutil.WriteFile(preferencesPathname, b, 0644)
 	if err != nil {
 		log.Println("Error saving preferences", err)
