@@ -11,3 +11,11 @@ When version is bumped (minor release), the Package GUID has to change
 
 When version is bumped (major release), both Product ID and Package GUID has to change
 
+## Update RELEASE_NOTES.md
+
+## tag
+
+git tag -a vX.Y.Z
+git push --tags
+
+## make release on github
