@@ -70,7 +70,7 @@ NOTE: once the Synergy is in this test state, it will remain there until it is p
 
 * If you have problems connecting, try a slower baud rate.  While documentation suggests that the Synergy can support 19,200 baud, mine is more reliable at 9600.
 
-* On MacOS, if you change serial parameters, you will need to restart the application in order to "reconnect" to the synergy with those parameters. One Windows, you can directly re-connect via the Connect->Connect to Synergy menu.
+* On MacOS, if you change serial parameters, you will need to restart the application in order to "reconnect" to the synergy with those parameters. On Windows, you can directly re-connect via the Connect->Connect to Synergy menu.
 
 * Due to the mysteries of serial port communication, attempts to save or load files to the Synergy will sometimes fail (often reporting a TIMEOUT).  If this happens, a second try will usually succeed.
 
