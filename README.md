@@ -18,14 +18,14 @@ manner similar to the original SYNHCS ".DOC" format.
 * Load and save synergy "state" (SYN files).  This preserves
 sequencer, portamento, vibrato and other performance customizations.
 
-Note: Synergize does not itself include the original voice libraries -- download a copy from one of the links below.
+Note: Synergize does not itself include the original voice libraries -- download a copy from one of the [links below](https://chinenual.github.io/synergize/#thank-you).
 
 ## Download
 
 Download the beta release:
 [Release Binaries](https://github.com/chinenual/synergize/releases)
 
-See links below for sites containing the original DK/Mulogix voice library.
+See [links below](https://chinenual.github.io/synergize/#thank-you) for sites containing the original DK/Mulogix voice library.
 
 ## Issues / Bugs
 
@@ -68,7 +68,7 @@ NOTE: once the Synergy is in this test state, it will remain there until it is p
 
 * On MacOS, if you change serial parameters, you will need to restart the application in order to "reconnect" to the synergy with those parameters. One Windows, you can directly re-connect via the Connect->Connect to Synergy menu.
 
-* Due to the mysteries of serial port communication, attempts to save or load files to the Synergy will sometimes fail (often reporting a TIMEOUT).  IF this happens, a second try will usually succeed.
+* Due to the mysteries of serial port communication, attempts to save or load files to the Synergy will sometimes fail (often reporting a TIMEOUT).  If this happens, a second try will usually succeed.
 
 ## Thank you!
 
