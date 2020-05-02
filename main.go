@@ -277,7 +277,7 @@ and easier to document if same on both Mac and Windows.
 	} else {
 		// leave empty for windows
 		// FIXME: empty menus causes the bootstrap to crash - so add the menus as a workaround
-		menuOptions = macOSMenus
+//		menuOptions = macOSMenus
 	}
 	
 	if err := bootstrap.Run(bootstrap.Options{
