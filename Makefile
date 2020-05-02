@@ -1,7 +1,7 @@
 include VERSION
 
 DOCS=*.md LICENSE
-SRCS=[c-z]*.go resources/app/*html resources/app/static/css/*.css  resources/app/static/js/*js
+SRCS=[c-z]*.go resources/app/*html resources/app/static/css/*.css  resources/app/static/js/*js 
 
 all: TAGS output 
 
@@ -9,6 +9,7 @@ output: $(SRCS)
 	astilectron-bundler
 
 package: packageMac packageWindows
+
 
 # uses create-dmg (installed via "brew install create-dmg"):
 packageMac: release/Synergize-Installer-$(VERSION).dmg
@@ -26,7 +27,7 @@ release/Synergize-Installer-$(VERSION).dmg : output
 
 # uses msitools (installed via "brew install msitools"):
 packageWindows: release/Synergize-Installer-$(VERSION).msi
-release/Synergize-Installer-$(VERSION).msi : output
+release/Synergize-Installer-$(VERSION).msi : windows-installer.wxs output
 	wixl -v \
 		-a x86 \
 		-D VERSION=$(VERSION) \
