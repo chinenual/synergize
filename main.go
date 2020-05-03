@@ -58,31 +58,28 @@ func setVersion() {
 }
 
 // platform specific config to ensure logs and preferences go to reasonable locations
-func setWorkingDirectory() {
+func getWorkingDirectory() (path string) {
 	// don't do this if we are running from the source tree
 	_, err := os.Stat("synio.go")
 	if !os.IsNotExist(err) {
+		path="."
 		return
 	}
 	
-	var path string
 	path,_ = os.UserConfigDir()
 	path = path + "/Synergize"
 
 	// create it if necessary
 	_ = os.MkdirAll(path, os.ModePerm)
-	// switch to it
-	_ = os.Chdir(path)
+	return
 }
 
-func init() {
-	setWorkingDirectory()
-	
+func init() {	
 	setVersion()
 
 	multi := io.MultiWriter(
 		&lumberjack.Logger{
-			Filename:   "synergize.log",
+			Filename:   getWorkingDirectory() + "/synergize.log",
 			MaxSize:    5, // megabytes
 			MaxBackups: 2,
 			Compress:   false, 

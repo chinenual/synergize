@@ -13,7 +13,7 @@ type Preferences struct {
 	HTTPDebug bool
 }
 
-var preferencesPathname string = "preferences.json"
+var preferencesPathname string = getWorkingDirectory() + "/preferences.json"
 
 var prefsUserPreferences Preferences
 
