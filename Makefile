@@ -8,12 +8,12 @@ EXE_WINDOWS=output/windows-386/Synergize.exe
 
 # NOTE: must build the exes before we can run the test since some variables 
 # used in main.go are generated as side-effects of the astielectron-bundler
-all: TAGS $(EXES) test
+all: TAGS $(EXES)
 
 $(EXE_MAC) $(EXE_WINDOWS): $(SRCS)
 	astilectron-bundler
 
-package: packageMac packageWindows
+package: test packageMac packageWindows
 
 
 # uses create-dmg (installed via "brew install create-dmg"):

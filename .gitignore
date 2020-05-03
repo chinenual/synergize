@@ -2,9 +2,10 @@ TAGS
 VOICES
 bind*
 output
-release
+packages
 windows.syso
 .DS_Store
+sdt-*md
 *.syn
 *.log
 

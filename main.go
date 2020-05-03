@@ -1,6 +1,7 @@
 package main
 
 import (
+	"path/filepath"
 	"flag"
 	"fmt"
 	"io"
@@ -9,9 +10,9 @@ import (
 	"runtime"
 	"strings"
 	
-	"github.com/pkg/errors"
 	"github.com/asticode/go-astikit"
 	"github.com/asticode/go-astilectron"
+	"github.com/pkg/errors"
 	"gopkg.in/natefinch/lumberjack.v2"
 	bootstrap "github.com/asticode/go-astilectron-bootstrap"
 )
@@ -57,7 +58,26 @@ func setVersion() {
 	// now:   " 0.1.0 (20200407)"
 }
 
+// platform specific config to ensure logs and preferences go to reasonable locations
+func setWorkingDirectory() {
+	// don't do this if we are running from the source tree
+	_, err := os.Stat("synio.go")
+	if !os.IsNotExist(err) {
+		return
+	}
+	
+	var path string
+	path,_ = os.UserConfigDir()
+	path = path + "/Synergize"
+
+	// create it if necessary
+	_ = os.MkdirAll(path, os.ModePerm)
+	// switch to it
+	_ = os.Chdir(path)
+}
+
 func init() {
+	setWorkingDirectory()
 	
 	setVersion()
 
@@ -74,6 +94,7 @@ func init() {
 	l = log.New(log.Writer(), log.Prefix(), log.Flags() | log.Lshortfile)
 	
 	l.Printf("Running app version %s\n", AppVersion)
+	l.Printf("Logging to %s\n", filepath.Abs("synergy.log"))
 }
 
 func connectToSynergyIfNotConnected() (err error) {
