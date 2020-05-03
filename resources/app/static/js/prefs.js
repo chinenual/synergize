@@ -23,11 +23,19 @@ let prefs = {
 		document.getElementById("serialBaud").value = preferences.SerialBaud;
 		document.getElementById("libraryPath").value = preferences.LibraryPath;
 		if (os === "darwin") {
+		    /*
+		      * as nice as this would be, macos hides the /dev directory
+		      * from the UI dialogs.  Best to just let folk type it in...
+		      *
+
 		    // add an onclick handler to popup a file dialog
 		    var ele = document.getElementById("serialPort");
 		    ele.onclick = function() {
 			prefs.serialPortDialog(this,this.value);
 		    }
+
+		    *
+		    */
 		} else {
 		    // on windows, use a straight text box 
 		}
