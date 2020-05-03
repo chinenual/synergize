@@ -2,19 +2,25 @@ include VERSION
 
 DOCS=*.md LICENSE
 SRCS=[c-z]*.go resources/app/*html resources/app/static/css/*.css  resources/app/static/js/*js 
+EXES=$(EXE_MAC) $(EXE_WINDOWS)
+EXE_MAC=output/darwin-amd64/Synergize.app/Contents/MacOS/Synergize 
+EXE_WINDOWS=output/windows-386/Synergize.exe
 
-all: TAGS output 
+# NOTE: must build the exes before we can run the test since some variables 
+# used in main.go are generated as side-effects of the astielectron-bundler
+all: TAGS $(EXES) test
 
-output: $(SRCS)
+$(EXE_MAC) $(EXE_WINDOWS): $(SRCS)
 	astilectron-bundler
 
 package: packageMac packageWindows
 
 
 # uses create-dmg (installed via "brew install create-dmg"):
-packageMac: release/Synergize-Installer-$(VERSION).dmg
-release/Synergize-Installer-$(VERSION).dmg : output
-	mkdir release
+packageMac: packages/Synergize-Installer-$(VERSION).dmg
+packages/Synergize-Installer-$(VERSION).dmg : $(EXE_MAC) 
+	mkdir -p packages
+	rm -f packages/Synergize-Installer-$(VERSION).dmg
 	create-dmg \
 		--volname "Synergize Installer" \
 		--volicon resources/icon.icns \
@@ -22,17 +28,19 @@ release/Synergize-Installer-$(VERSION).dmg : output
 		--window-size 450 400 \
 		--icon "Synergize.app" 100 120 \
 		--app-drop-link 300 120 \
-		"release/Synergize-Installer-$(VERSION).dmg" \
+		"packages/Synergize-Installer-$(VERSION).dmg" \
 		output/darwin-amd64
 
 # uses msitools (installed via "brew install msitools"):
-packageWindows: release/Synergize-Installer-$(VERSION).msi
-release/Synergize-Installer-$(VERSION).msi : windows-installer.wxs output
+packageWindows: packages/Synergize-Installer-$(VERSION).msi
+packages/Synergize-Installer-$(VERSION).msi : windows-installer.wxs $(EXE_WINDOWS)
+	mkdir -p packages
+	rm -f packages/Synergize-Installer-$(VERSION).msi
 	wixl -v \
 		-a x86 \
 		-D VERSION=$(VERSION) \
 		-D SourceDir=output/windows-386/ \
-		-o release/Synergize-Installer-$(VERSION).msi \
+		-o packages/Synergize-Installer-$(VERSION).msi \
 		windows-installer.wxs
 
 test:
@@ -54,4 +62,4 @@ updateAstilectron:
 	go install github.com/asticode/go-astilectron-bootstrap
 
 clean:
-	rm -rf release output bind_*.go *.log
+	rm -rf packages output bind_*.go *.log
