@@ -94,7 +94,6 @@ func init() {
 	l = log.New(log.Writer(), log.Prefix(), log.Flags() | log.Lshortfile)
 	
 	l.Printf("Running app version %s\n", AppVersion)
-	l.Printf("Logging to %s\n", filepath.Abs("synergy.log"))
 }
 
 func connectToSynergyIfNotConnected() (err error) {
