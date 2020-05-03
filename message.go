@@ -57,6 +57,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		} {runtime.GOOS, prefsUserPreferences}
 		
 	case "savePreferences":
+		oldPath := prefsUserPreferences.LibraryPath
 		if len(m.Payload) > 0 {
 			// Unmarshal payload
 			if err = json.Unmarshal(m.Payload, &prefsUserPreferences); err != nil {
@@ -67,6 +68,9 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		if err = prefsSavePreferences(); err != nil {
 			payload = err.Error()
 			return
+		}
+		if oldPath != prefsUserPreferences.LibraryPath {
+			refreshNavPane(prefsUserPreferences.LibraryPath)
 		}
 		prefs_w.Hide()
 
@@ -195,9 +199,9 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			// "not connected".
 			//
 			// Run the serial init without querying the firmware version
-			err = synioInit(*port, *baud, true, *serialVerboseFlag)
+			err = synioInit(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag)
 			if err != nil {
-				err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n", *port,*baud)
+				err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n", prefsUserPreferences.SerialPort,prefsUserPreferences.SerialBaud)
 				payload = err.Error()
 				return
 			}

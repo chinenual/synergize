@@ -374,6 +374,9 @@ let index = {
 	console.log("index listening...")
         astilectron.onMessage(function(message) {
             switch (message.name) {
+	    case "explore":
+		index.explore(message.payload);
+		return {payload: "ok"};
 	    case "updateConnectionStatus":
 		index.updateConnectionStatus(message.payload);
 		return {payload: "ok"};
@@ -423,4 +426,25 @@ window.onclick = function(event) {
 	    }
 	}
     }
+}
+
+
+// Electron paste bug: https://github.com/electron/electron/issues/2591
+
+const { clipboard } = require('electron')
+const keyCodes = {
+	V: 86,
+}
+
+document.onkeydown = function(event){
+	let toReturn = true
+	if(event.ctrlKey || event.metaKey){  // detect ctrl or cmd
+		if(event.which == keyCodes.V){
+			document.activeElement.value += clipboard.readText()
+			document.activeElement.dispatchEvent(new Event('input'))
+			toReturn = false
+		}
+	}
+
+	return toReturn
 }
