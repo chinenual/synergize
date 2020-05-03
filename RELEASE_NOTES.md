@@ -2,6 +2,9 @@
 
 * Beta test release.
 * Supports both Windows and MacOS.
+    * Note: the mac release is not "signed", so you will need to
+      explicitly allow the app from an "unidentified developer" to run on
+      your machine (see https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unidentified-developer-mh40616/mac).
 * Basic librarian functionality:
     * Save and Load "Synergy State" (.SYN) files
     * View and Load "Cartridge" (.CRT) files, including voice details

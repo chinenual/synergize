@@ -158,47 +158,62 @@ func main() {
 		os.Exit(0);
 	}
 
-	// Run bootstrapls
 	macOSMenus := []*astilectron.MenuItemOptions{{
-			Label: astikit.StrPtr("Synergize"),
-			SubMenu: []*astilectron.MenuItemOptions{
-				{
-					Label: astikit.StrPtr("About Synergize"),
-					OnClick: func(e astilectron.Event) (deleteListener bool) {
-						err := bootstrap.SendMessage(about_w, "setVersion", AppVersion, func(m *bootstrap.MessageIn){}) 
-						if err != nil {
-							l.Println(fmt.Errorf("sending about event failed: %w", err))
-						}
-						about_w.Show()
-						return
-					},
-				},
-				{ Type: astilectron.MenuItemTypeSeparator },
-				{
-					Label: astikit.StrPtr("Preferences..."),
-					Accelerator: astilectron.NewAccelerator("CommandOrControl+P"),
-					OnClick: func(e astilectron.Event) (deleteListener bool) {
-						prefs_w.Show()
-						return
-					},
-				},
-				{Role: astilectron.MenuItemRoleServices},
-				{ Type: astilectron.MenuItemTypeSeparator },
-				{
-					// Override the "Hide Electron" label
-					Label: astikit.StrPtr("Hide Synergize"),
-					Role: astilectron.MenuItemRoleHide,
-				},
-				{Role: astilectron.MenuItemRoleHideOthers},
-				{Role: astilectron.MenuItemRoleUnhide},
-				{ Type: astilectron.MenuItemTypeSeparator },
-				{
-					// Override the "Quit Electron" label
-					Label: astikit.StrPtr("Quit Synergize"),
-					Role: astilectron.MenuItemRoleQuit,
+		Label: astikit.StrPtr("Synergize"),
+		SubMenu: []*astilectron.MenuItemOptions{
+			{
+				Label: astikit.StrPtr("About Synergize"),
+				OnClick: func(e astilectron.Event) (deleteListener bool) {
+					err := bootstrap.SendMessage(about_w, "setVersion", AppVersion, func(m *bootstrap.MessageIn){}) 
+					if err != nil {
+						l.Println(fmt.Errorf("sending about event failed: %w", err))
+					}
+					about_w.Show()
+					return
 				},
 			},
-	}}
+			{ Type: astilectron.MenuItemTypeSeparator },
+			{
+				Label: astikit.StrPtr("Preferences..."),
+				Accelerator: astilectron.NewAccelerator("CommandOrControl+P"),
+				OnClick: func(e astilectron.Event) (deleteListener bool) {
+					prefs_w.Show()
+					return
+				},
+			},
+			{Role: astilectron.MenuItemRoleServices},
+			{ Type: astilectron.MenuItemTypeSeparator },
+			{
+				// Override the "Hide Electron" label
+				Label: astikit.StrPtr("Hide Synergize"),
+				Role: astilectron.MenuItemRoleHide,
+			},
+			{Role: astilectron.MenuItemRoleHideOthers},
+			{Role: astilectron.MenuItemRoleUnhide},
+			{ Type: astilectron.MenuItemTypeSeparator },
+			{
+				// Override the "Quit Electron" label
+				Label: astikit.StrPtr("Quit Synergize"),
+				Role: astilectron.MenuItemRoleQuit,
+			},
+		},
+	},
+		
+		{Role: astilectron.MenuItemRoleEditMenu},
+		{Role: astilectron.MenuItemRoleWindowMenu},
+		/*
+			Label: astikit.StrPtr("Edit"),
+			SubMenu: []*astilectron.MenuItemOptions{
+				{Role: astilectron.MenuItemRoleUndo},
+				{Role: astilectron.MenuItemRoleRedo},
+				{ Type: astilectron.MenuItemTypeSeparator },
+				{Role: astilectron.MenuItemRoleCut},
+				{Role: astilectron.MenuItemRoleCopy},
+				{Role: astilectron.MenuItemRolePaste},
+				{Role: astilectron.MenuItemRoleSelectAll},`
+			},
+*/
+	}
 		/*
 *********
 Bare minimum Mac menu - on all functionality is reachable from the main app menu 
