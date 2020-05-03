@@ -3,6 +3,7 @@ module github.com/chinenual/synergize
 go 1.14
 
 require (
+	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/akavel/rsrc v0.9.0 // indirect
 	github.com/asticode/go-astichartjs v0.1.0
 	github.com/asticode/go-astikit v0.6.0
