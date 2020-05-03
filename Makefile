@@ -35,12 +35,23 @@ release/Synergize-Installer-$(VERSION).msi : windows-installer.wxs output
 		-o release/Synergize-Installer-$(VERSION).msi \
 		windows-installer.wxs
 
+test:
+	go test
+
 version.go : VERSION
 	echo package main > version.go
 	echo const Version = \"$(VERSION)\" >> version.go
 
 TAGS: $(SRCS) $(DOCS)
 	etags $(SRCS) $(DOCS)
+
+updateAstilectron:
+	go get -u github.com/asticode/go-astilectron
+	go get -u github.com/asticode/go-astilectron-bundler
+	go get -u github.com/asticode/go-astilectron-bootstrap
+	go install github.com/asticode/go-astilectron
+	go install github.com/asticode/go-astilectron-bundler
+	go install github.com/asticode/go-astilectron-bootstrap
 
 clean:
 	rm -rf release output bind_*.go *.log

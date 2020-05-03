@@ -294,7 +294,7 @@ and easier to document if same on both Mac and Windows.
 		// FIXME: empty menus causes the bootstrap to crash - so add the menus as a workaround
 //		menuOptions = macOSMenus
 	}
-	
+
 	if err := bootstrap.Run(bootstrap.Options{
 		Asset:    Asset,
 		AssetDir: AssetDir,
@@ -327,7 +327,7 @@ and easier to document if same on both Mac and Windows.
 
 		// Suppress warnings about "signal urgent I/O condition"
 		// (https://github.com/asticode/go-astilectron/issues/239):
-		//IgnoredSignals: []os.Signal{syscall.SIGURG},
+		IgnoredSignals: ignoredSignals,
 
 		Windows: []*bootstrap.Window{{
 			Homepage:       "index.html",
