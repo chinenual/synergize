@@ -47,9 +47,11 @@ func getDefaultPort() string {
 func diagCOMTST() {
 	flag.Parse()
 
-	log.Printf("%s\n", *port);
+	log.Printf("%s at %d baud\n",
+		prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud);
 
-	err := synioInit(*port, *baud, true, *serialVerboseFlag)
+	err := synioInit(prefsUserPreferences.SerialPort,
+		prefsUserPreferences.SerialBaud, true, *serialVerboseFlag)
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
@@ -66,9 +68,10 @@ func diagCOMTST() {
 func diagLOOPTST() {
 	flag.Parse()
 
-	log.Printf("%s\n", *port);
+	log.Printf("%s at %d baud\n",
+		prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud);
 
-	err := synioInit(*port, *baud, true, *serialVerboseFlag)
+	err := synioInit(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag)
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
@@ -86,8 +89,10 @@ func diagLOOPTST() {
 func diagInitAndPrintFirmwareID() (err error) {
 	flag.Parse()
 	
-	log.Printf("%s\n", *port);
-	err = synioInit(*port, *baud, true, *serialVerboseFlag)
+	log.Printf("%s at %d baud\n",
+		prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud);
+	
+	err = synioInit(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag)
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return

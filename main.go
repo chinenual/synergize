@@ -85,9 +85,12 @@ func connectToSynergyIfNotConnected() (err error) {
 
 func connectToSynergy() (err error) {
 	FirmwareVersion = "Not Connected"
-	err = synioInit(*port, *baud, true, *serialVerboseFlag)
+	err = synioInit(prefsUserPreferences.SerialPort,
+		prefsUserPreferences.SerialBaud, true, *serialVerboseFlag)
 	if err != nil {
-		err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n", *port,*baud)
+		err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n",
+			prefsUserPreferences.SerialPort,
+			prefsUserPreferences.SerialBaud)
 		l.Printf(err.Error())
 		return
 	}
@@ -104,13 +107,25 @@ func connectToSynergy() (err error) {
 	return
 }
 
+func refreshNavPane(path string) {
+	err := bootstrap.SendMessage(w, "explore", path, func(m *bootstrap.MessageIn){}) 
+	if err != nil {
+		l.Println(fmt.Errorf("sending refreshNav event failed: %w", err))
+	}
+}
+
 func main() {
-	l.Printf("Default serial device is %s at %d baud\n", *port, *baud)
-	
 	// Parse flags
 	flag.Parse()
 
-	l.Printf("Default serial device is %s at %d baud\n", *port, *baud)
+	// if we read something different off the command line, set it
+	// (but dont persist it) in the preferences object:
+	prefsUserPreferences.SerialPort = *port
+	prefsUserPreferences.SerialBaud = *baud
+
+	l.Printf("Default serial device is %s at %d baud\n", 
+		prefsUserPreferences.SerialPort,
+		prefsUserPreferences.SerialBaud)
 
 	
 	var err error
