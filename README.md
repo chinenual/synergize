@@ -86,7 +86,9 @@ several locations:
 * Aaron Lanterman's [Synergy Preservation Page](https://lanterman.ece.gatech.edu/synergy/)
 
 Full sets of the DK and Mulogix library CRT and VCE files are also
-available via the above links.
+available via the above links.  The set I'm using is available at:
+
+* https://groups.io/g/synergy-synth/files/SynergyVoiceLibrary.zip
 
 ## TODO
 
