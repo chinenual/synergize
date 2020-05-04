@@ -86,11 +86,6 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		err = connectToSynergyIfNotConnected();
-		if err != nil {
-			payload = err.Error()
-			return
-		} 
 		err = diagLoadSYN(path)
 		if err != nil {
 			payload = err.Error()
@@ -108,11 +103,6 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		err = connectToSynergyIfNotConnected();
-		if err != nil {
-			payload = err.Error()
-			return
-		} 
 		err = diagSaveSYN(path)
 		if err != nil {
 			payload = err.Error()
@@ -131,11 +121,6 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		err = connectToSynergyIfNotConnected();
-		if err != nil {
-			payload = err.Error()
-			return
-		} 
 		err = diagLoadCRT(path)
 		if err != nil {
 			payload = err.Error()

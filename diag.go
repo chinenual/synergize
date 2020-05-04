@@ -116,6 +116,10 @@ func diagInitAndPrintFirmwareID() (err error) {
 var slotnum byte = 1
 
 func diagLoadVCE(path string) (err error) {
+	err = connectToSynergyIfNotConnected();
+	if err != nil {
+		return
+	} 
 	var vce_bytes []byte
 	vce_bytes,err = ioutil.ReadFile(path)
 	if err != nil {
@@ -136,6 +140,10 @@ func diagLoadVCE(path string) (err error) {
 }
 
 func diagLoadCRT(path string) (err error) {
+	err = connectToSynergyIfNotConnected();
+	if err != nil {
+		return
+	} 
 	var crt_bytes []byte
 	crt_bytes,err = ioutil.ReadFile(path)
 	if err != nil {
@@ -149,6 +157,10 @@ func diagLoadCRT(path string) (err error) {
 }
 
 func diagSaveSYN(path string) (err error) {
+	err = connectToSynergyIfNotConnected();
+	if err != nil {
+		return
+	} 
 	var syn_bytes []byte
 	syn_bytes, err = synioSaveSYN()
 	
@@ -163,6 +175,10 @@ func diagSaveSYN(path string) (err error) {
 }
 
 func diagLoadSYN(path string) (err error) {	
+	err = connectToSynergyIfNotConnected();
+	if err != nil {
+		return
+	} 
 	var syn_bytes []byte
 	syn_bytes, err = ioutil.ReadFile(path)
 
