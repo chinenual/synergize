@@ -74,6 +74,13 @@ NOTE: once the Synergy is in this test state, it will remain there until it is p
 
 * Due to the mysteries of serial port communication, attempts to save or load files to the Synergy will sometimes fail (often reporting a TIMEOUT).  If this happens, a second try will usually succeed.
 
+## Voice Library
+
+Full sets of the DK and Mulogix library CRT and VCE files are also
+available via the below links.  The set I'm using includes the Internal voices, the 6 standard Carts and additional "Library" voices -- it is available at:
+
+* https://groups.io/g/synergy-synth/files/SynergyVoiceLibrary.zip
+
 ## Thank you!
 
 This would not have be possible without access to the copious
@@ -85,10 +92,7 @@ several locations:
 * [Synergy groups.io group](https://groups.io/g/synergy-synth)
 * Aaron Lanterman's [Synergy Preservation Page](https://lanterman.ece.gatech.edu/synergy/)
 
-Full sets of the DK and Mulogix library CRT and VCE files are also
-available via the above links.  The set I'm using is available at:
 
-* https://groups.io/g/synergy-synth/files/SynergyVoiceLibrary.zip
 
 ## TODO
 
