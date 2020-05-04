@@ -1,3 +1,8 @@
+# 0.1.1
+
+* Adds preliminary support for Linux
+    * Note: the tar.gz contains only an executable, not meta files for desktop menu setup.
+
 # 0.1.0
 
 * Beta test release.

@@ -36,6 +36,11 @@ func getDefaultPort() string {
 		for _,f := range(files) {
 			return f
 		}
+	} else if runtime.GOOS == "linux" {
+		files, _ := filepath.Glob("/dev/ttyUSB*")
+		for _,f := range(files) {
+			return f
+		}
 		
 	} else {
 		// windows

@@ -321,7 +321,7 @@ and easier to document if same on both Mac and Windows.
 	if (runtime.GOOS == "darwin") {
 		menuOptions = macOSMenus
 	} else {
-		// leave empty for windows
+		// leave empty for windows and linux
 		// FIXME: empty menus causes the bootstrap to crash - so add the menus as a workaround
 //		menuOptions = macOSMenus
 	}

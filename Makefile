@@ -2,18 +2,19 @@ include VERSION
 
 DOCS=*.md LICENSE
 SRCS=[c-z]*.go resources/app/*html resources/app/static/css/*.css  resources/app/static/js/*js 
-EXES=$(EXE_MAC) $(EXE_WINDOWS)
+EXES=$(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX)
 EXE_MAC=output/darwin-amd64/Synergize.app/Contents/MacOS/Synergize 
 EXE_WINDOWS=output/windows-386/Synergize.exe
+EXE_LINUX=output/linux-386/Synergize
 
 # NOTE: must build the exes before we can run the test since some variables 
 # used in main.go are generated as side-effects of the astielectron-bundler
 all: TAGS $(EXES)
 
-$(EXE_MAC) $(EXE_WINDOWS): $(SRCS)
+$(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX): $(SRCS)
 	astilectron-bundler
 
-package: test packageMac packageWindows
+package: test packageMac packageWindows packageLinux
 
 
 # uses create-dmg (installed via "brew install create-dmg"):
@@ -42,6 +43,11 @@ packages/Synergize-Installer-$(VERSION).msi : windows-installer.wxs $(EXE_WINDOW
 		-D SourceDir=output/windows-386/ \
 		-o packages/Synergize-Installer-$(VERSION).msi \
 		windows-installer.wxs
+
+packageLinux: packages/Synergize-linux-386-$(VERSION).tar.gz
+packages/Synergize-linux-386-$(VERSION).tar.gz:
+	mkdir -p packages
+	cd output/linux-386 && tar czvf ../../packages/Synergize-linux-386-$(VERSION).tar.gz .
 
 test:
 	go test
