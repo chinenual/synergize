@@ -81,6 +81,9 @@ func serialInit(port string, baudRate uint, verbose bool) (err error) {
 				if response.err != nil {
 					sleepCount = 0
 					emptyCount = 0
+					// if response.data==0  && serialVerbose {
+					//	 log.Printf("   **** error %v\n",err)
+					// }
 					readerChannel <- response
 				} else if n == 1 {
 					if (emptyCount + sleepCount*EMPTY_PER_SLEEP)>0 {
@@ -89,6 +92,9 @@ func serialInit(port string, baudRate uint, verbose bool) (err error) {
 					sleepCount = 0
 					emptyCount = 0
 					response.data = arr[0]
+					// if response.data==0  && serialVerbose {
+					//	 log.Printf("   **** Zero w/ n=1 and no error\n")
+					// }
 					readerChannel <- response
 				} else {
 					emptyCount = emptyCount + 1
@@ -123,6 +129,7 @@ func serialReadByte(timeoutMS uint, purpose string) (b byte, err error) {
 	select {
 	case response := <-readerChannel:
 		if response.err != nil {
+			if serialVerbose {log.Printf(" %v <-- serial.Read (%d ms)\n",response.err,timeoutMS)}
 			return response.data,errors.Wrap(err, "failed to read byte")
 		}
 		if serialVerbose {log.Printf(" %02x <-- serial.Read (%d ms)\n",response.data,timeoutMS)}
@@ -132,6 +139,7 @@ func serialReadByte(timeoutMS uint, purpose string) (b byte, err error) {
 		if serialVerbose {log.Printf("   read TIMEOUT at %d ms (%x)\n", timeoutMS,0)}
 		return 0,errors.Errorf("TIMEOUT: read timed out at %d ms", timeoutMS)
 	}
+	if serialVerbose {log.Printf("   Unexpected read error\n")}
 	return 0, errors.Errorf("Unexpected read error")
 }
 
