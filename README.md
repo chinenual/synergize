@@ -68,7 +68,7 @@ NOTE: once the Synergy is in this test state, it will remain there until it is p
 
 ## Known Issues
 
-* If you have problems connecting, try a slower baud rate.  While documentation suggests that the Synergy can support 19,200 baud, mine is more reliable at 9600.
+* If you have problems connecting, be sure to match the baud rate on your Synergy. Checking this requires opening up and looking at a jumper on the interface daughter board.  Mine was set to 9600 (not sure if this was the "factory default" or if it was tweaked by a previous owner). As long as Synergize is configured with the same rate, all is good. I've since set mine to 19,200 and things work fine.
 
 * On MacOS, if you change serial parameters, you will need to restart the application in order to "reconnect" to the synergy with those parameters. On Windows, you can directly re-connect via the Connect->Connect to Synergy menu.
 
