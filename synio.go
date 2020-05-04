@@ -7,6 +7,7 @@ import (
 	"github.com/snksoft/crc"
 )
 
+const LONG_TIMEOUT_MS = 10000 // after large amounts of IO, give the synergy more time to ack
 const TIMEOUT_MS = 5000
 
 const OP_VRLOD       = byte(0x6b)
@@ -183,7 +184,7 @@ func synioLoadVCE(slotnum byte, vce []byte) (err error) {
 		err = errors.Wrap(err, "error writing vce ")
 		return 
 	}
-	status,err = serialReadByte(TIMEOUT_MS, "read VCE ACK")
+	status,err = serialReadByte(LONG_TIMEOUT_MS, "read VCE ACK")
 	if err != nil {
 		err = errors.Wrap(err, "error reading vce ack")
 		return 
@@ -258,7 +259,7 @@ func synioLoadCRT(crt []byte) (err error) {
 	}
 
 	var status byte
-	status,err = serialReadByte(TIMEOUT_MS, "read CRT ACK")
+	status,err = serialReadByte(LONG_TIMEOUT_MS, "read CRT ACK")
 	if err != nil {
 		err = errors.Wrap(err, "error reading crt ack")
 		return 
@@ -290,7 +291,7 @@ func synioLoadSYN(bytes []byte) (err error) {
 	}
 	// expect an ACK:
 	var status byte
-	status,err = serialReadByte(TIMEOUT_MS, "read SYN ACK")
+	status,err = serialReadByte(LONG_TIMEOUT_MS, "read SYN ACK")
 	if err != nil {
 		err = errors.Wrap(err, "error reading SYN ack")
 		return 
