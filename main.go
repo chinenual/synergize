@@ -149,7 +149,7 @@ func main() {
 	if *synver {
 		err = diagInitAndPrintFirmwareID();
 		if err != nil { log.Println(err) }
-		os.Exit(0);
+		os.Exit(err != nil ? 1 : 0);
 	} else if *comtst {
 		diagCOMTST();
 		os.Exit(0);
@@ -159,19 +159,19 @@ func main() {
 	} else if *loadvce != "" {
 		err = diagLoadVCE(*loadvce);
 		if err != nil { log.Println(err) }
-		os.Exit(0);
+		os.Exit(err != nil ? 1 : 0);
 	} else if *loadcrt != "" {
 		err = diagLoadCRT(*loadcrt);
 		if err != nil { log.Println(err) }
-		os.Exit(0);
+		os.Exit(err != nil ? 1 : 0);
 	} else if *savesyn != "" {
 		err = diagSaveSYN(*savesyn);
 		if err != nil { log.Println(err) }
-		os.Exit(0);
+		os.Exit(err != nil ? 1 : 0);
 	} else if *loadsyn != "" {
 		err = diagLoadSYN(*loadsyn);
 		if err != nil { log.Println(err) }
-		os.Exit(0);
+		os.Exit(err != nil ? 1 : 0);
 	}
 
 	macOSMenus := []*astilectron.MenuItemOptions{{
