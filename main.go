@@ -35,6 +35,7 @@ var (
 	savesyn = flag.String("SAVESYN", "", "save the Synergy state to the named SYN file")
 	loadsyn = flag.String("LOADSYN", "", "load the named SYN file into Synergy")
 	synver  = flag.Bool("SYNVER", false, "Print the firmware version of the connected Synergy")
+	rawlog  = flag.Bool("RAWLOG", false, "Turn off timestamps to make logs easier to compare")
 	
 	w        *astilectron.Window
 	about_w  *astilectron.Window
@@ -143,6 +144,11 @@ func main() {
 		prefsUserPreferences.SerialPort,
 		prefsUserPreferences.SerialBaud)
 
+
+	if *rawlog {
+		l.SetFlags(0)
+		log.SetFlags(0)
+	}
 	
 	var err error
 	{
