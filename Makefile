@@ -5,6 +5,7 @@ SRCS=[c-z]*.go resources/app/*html resources/app/static/css/*.css  resources/app
 EXES=$(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX)
 EXE_MAC=output/darwin-amd64/Synergize.app/Contents/MacOS/Synergize 
 EXE_WINDOWS=output/windows-386/Synergize.exe
+EXE_WINDOWS_TEST=output/windows-386-cmd/Synergize-cmd.exe
 EXE_LINUX=output/linux-amd64/Synergize
 
 # NOTE: must build the exes before we can run the test since some variables 
@@ -14,8 +15,13 @@ all: TAGS $(EXES)
 $(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX): $(SRCS)
 	astilectron-bundler
 
+# command line friendly variant for running batch serial comms tests
+$(EXE_WINDOWS_TEST): $(SRCS)
+	mkdir -p output/windows-386-cmd
+	GOOS=windows GOARCH=386 go build -o $(EXE_WINDOWS_TEST)
+
 mac: $(EXE_MAC)
-windows : $(EXE_WINDOWS)
+windows : $(EXE_WINDOWS) $(EXE_WINDOWS_TEST)
 linux: $(EXE_LINUX)
 
 package: test packageMac packageWindows packageLinux

@@ -145,33 +145,36 @@ func main() {
 
 	
 	var err error
-	// run the command line tests instead of the Electron app:
-	if *synver {
-		err = diagInitAndPrintFirmwareID();
-		if err != nil { log.Println(err) }
-		os.Exit(err != nil ? 1 : 0);
-	} else if *comtst {
-		diagCOMTST();
-		os.Exit(0);
-	} else if *looptst {
-		diagLOOPTST();
-		os.Exit(0);
-	} else if *loadvce != "" {
-		err = diagLoadVCE(*loadvce);
-		if err != nil { log.Println(err) }
-		os.Exit(err != nil ? 1 : 0);
-	} else if *loadcrt != "" {
-		err = diagLoadCRT(*loadcrt);
-		if err != nil { log.Println(err) }
-		os.Exit(err != nil ? 1 : 0);
-	} else if *savesyn != "" {
-		err = diagSaveSYN(*savesyn);
-		if err != nil { log.Println(err) }
-		os.Exit(err != nil ? 1 : 0);
-	} else if *loadsyn != "" {
-		err = diagLoadSYN(*loadsyn);
-		if err != nil { log.Println(err) }
-		os.Exit(err != nil ? 1 : 0);
+	{
+		var code = 0
+		// run the command line tests instead of the Electron app:
+		if *synver {
+			err = diagInitAndPrintFirmwareID();
+			if err != nil { code=1; log.Println(err) }
+			os.Exit(code);
+		} else if *comtst {
+			diagCOMTST();
+			os.Exit(0);
+		} else if *looptst {
+			diagLOOPTST();
+			os.Exit(0);
+		} else if *loadvce != "" {
+			err = diagLoadVCE(*loadvce);
+			if err != nil { code=1; log.Println(err) }
+			os.Exit(code);
+		} else if *loadcrt != "" {
+			err = diagLoadCRT(*loadcrt);
+			if err != nil { code=1; log.Println(err) }
+			os.Exit(code);
+		} else if *savesyn != "" {
+			err = diagSaveSYN(*savesyn);
+			if err != nil { code=1; log.Println(err) }
+			os.Exit(code);
+		} else if *loadsyn != "" {
+			err = diagLoadSYN(*loadsyn);
+			if err != nil { code=1; log.Println(err) }
+			os.Exit(code);
+		}
 	}
 
 	macOSMenus := []*astilectron.MenuItemOptions{{
