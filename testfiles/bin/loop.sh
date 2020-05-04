@@ -23,7 +23,7 @@ while [ $i -lt ${n} ]; do
     fi
 done
 
-echo $passcount PASS, $failcount FAIL
+echo $passcount PASS, $failcount FAIL : ${cmd}
 
 if [ $failcount != 0 ]; then
     exit 1
