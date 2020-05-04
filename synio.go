@@ -101,7 +101,7 @@ func command(opcode byte, name string) (err error) {
 	}
 	
 	status = NAK
-	var countdown = 3
+	var countdown = 10
 	for status == NAK && countdown > 0 {
 		countdown = countdown-1
 		// SYNHCS doesnt limit the number of retries, but it can lead to infinite loops/hangs.
@@ -119,11 +119,13 @@ func command(opcode byte, name string) (err error) {
 	}
 	if status != ACK {
 		for {
-		// TEMP: DRAIN
-		status,err = serialReadByte(TIMEOUT_MS, "DRAIN")
+			// TEMP: DRAIN
+			status,err = serialReadByte(TIMEOUT_MS, "DRAIN")
 			if err != nil {
 				log.Println("error while draining",err)
 				break;
+			} else if status == ACK {
+				return
 			}
 			log.Printf("DRAIN: %x\n",status)
 		}
