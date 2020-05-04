@@ -83,7 +83,7 @@ several locations:
 
 * [Synergy Facebook Users Group](https://www.facebook.com/groups/synergysynth/)
 * [Synergy groups.io group](https://groups.io/g/synergy-synth)
-* Alex Lanterman's [Synergy Preservation Page](https://lanterman.ece.gatech.edu/synergy/)
+* Aaron Lanterman's [Synergy Preservation Page](https://lanterman.ece.gatech.edu/synergy/)
 
 Full sets of the DK and Mulogix library CRT and VCE files are also
 available via the above links.
