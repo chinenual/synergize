@@ -144,6 +144,7 @@ func serialReadBytes(timeoutMS uint, num_bytes uint16, purpose string) (bytes []
 		if err != nil {
 			bytes = arr[0:i]
 			err = errors.Wrap(err, "failed to read all bytes")
+			return
 		}
 	}
 	bytes = arr
