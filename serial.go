@@ -78,10 +78,9 @@ func serialInit(port string, baudRate uint, verbose bool) (err error) {
 				var response serialReadResponse
 				var n int
 				n, response.err = stream.Read(arr);
-				if err != nil {
+				if response.err != nil {
 					sleepCount = 0
 					emptyCount = 0
-					response.data = 0
 					readerChannel <- response
 				} else if n == 1 {
 					if (emptyCount + sleepCount*EMPTY_PER_SLEEP)>0 {
@@ -91,7 +90,7 @@ func serialInit(port string, baudRate uint, verbose bool) (err error) {
 					emptyCount = 0
 					response.data = arr[0]
 					readerChannel <- response
-				} else if err == nil {
+				} else {
 					emptyCount = emptyCount + 1
 
 					if emptyCount > EMPTY_PER_SLEEP {					
@@ -133,7 +132,7 @@ func serialReadByte(timeoutMS uint, purpose string) (b byte, err error) {
 		if serialVerbose {log.Printf("   read TIMEOUT at %d ms (%x)\n", timeoutMS,0)}
 		return 0,errors.Errorf("TIMEOUT: read timed out at %d ms", timeoutMS)
 	}
-	return 0, nil
+	return 0, errors.Errorf("Unexpected read error")
 }
 
 

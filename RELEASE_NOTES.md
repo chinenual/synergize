@@ -1,4 +1,6 @@
-# 0.1.1
+# 0.2.0
+
+* Fixed a serial IO bug that makes communications more reliable.
 
 * Adds preliminary support for Linux
     * Note: the tar.gz contains only an executable, not meta files for desktop menu setup.
