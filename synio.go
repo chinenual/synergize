@@ -144,6 +144,8 @@ func synioInitVRAM() (err error) {
 		err = errors.Wrap(err, "error sending ENABLEVRAM opcode")
 		return 
 	}
+	// errors will implicitly show  up in the log but we need to explicitly log success
+	if synioVerbose { log.Printf("ENABLEVRAM Success\n"); }	
 	return
 }
 
@@ -188,9 +190,11 @@ func synioLoadVCE(slotnum byte, vce []byte) (err error) {
 	}
 	if status == ACK {
 		// done - no filters
+		// errors will implicitly show  up in the log but we need to explicitly log success
+		if synioVerbose { log.Printf("VCELOD Success\n"); }	
 		return
 	}
-	err = errors.Errorf("Cant handle filters upload yet")
+	err = errors.Errorf("VCELOD incomplete. Can't handle filters upload yet")
 	return
 }
 
@@ -260,6 +264,8 @@ func synioLoadCRT(crt []byte) (err error) {
 		return 
 	}
 	if status == ACK {
+		// errors will implicitly show  up in the log but we need to explicitly log success
+		if synioVerbose { log.Printf("VRLOD Success\n"); }	
 		return
 	}
 	err = errors.Errorf("Invalid CRC ACK from CRT upload")
@@ -290,6 +296,8 @@ func synioLoadSYN(bytes []byte) (err error) {
 		return 
 	}
 	if status == ACK {
+		// errors will implicitly show  up in the log but we need to explicitly log success
+		if synioVerbose { log.Printf("STLOD Success\n"); }	
 		return
 	}
 	err = errors.Errorf("Invalid CRC ACK from SYN upload")
@@ -361,6 +369,9 @@ func synioSaveSYN() (bytes []byte, err error) {
 			crcFromSynergy, crcHash.CRC16())
 		return
 	}
+	// errors will implicitly show  up in the log but we need to explicitly log success
+	if synioVerbose { log.Printf("STDUMP Success\n"); }	
+
 	bytes = append(len_buf, cmos_buf...)
 	bytes = append(bytes, seq_buf...)
 	bytes = append(bytes, crc_buf...)
@@ -383,11 +394,18 @@ func synioGetID() (versionID [2]byte, err error) {
 		err = errors.Wrap(err, "error reading LB")
 		return 
 	}
+	
+	// errors will implicitly show  up in the log but we need to explicitly log success
+	if synioVerbose { log.Printf("GETID Success\n"); }	
 	return 
 }
 
 func synioDisableVRAM() (err error) {
 	err = command(OP_DISABLEVRAM, "DISABLEVRAM")
+	if err == nil {
+		// errors will implicitly show  up in the log but we need to explicitly log success
+		if synioVerbose { log.Printf("DISABLEVRAM Success\n"); }	
+	}
 	return
 }
 
@@ -411,12 +429,14 @@ func synioDiagCOMTST() (err error) {
 			return errors.Errorf("read byte (%02x) does not match what we sent (%02x)", read_b, b)
 		}
 	}
+	// errors will implicitly show  up in the log but we need to explicitly log success
+	if synioVerbose { log.Printf("COMTST Success\n"); }	
 	return nil
 }
 
 func synioDiagLOOPTST() (err error) {	
 
-	// infinite loop
+	if synioVerbose { log.Printf("WARNING: LOOPTST causes Synergize to enter an infinte loop supporting the Synergy based test.  You must explicitly kill the Synergize process to stop the test.\n"); }
 	for true {
 
 		var b byte
