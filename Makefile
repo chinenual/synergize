@@ -5,7 +5,7 @@ SRCS=[c-z]*.go resources/app/*html resources/app/static/css/*.css  resources/app
 EXES=$(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX)
 EXE_MAC=output/darwin-amd64/Synergize.app/Contents/MacOS/Synergize 
 EXE_WINDOWS=output/windows-386/Synergize.exe
-EXE_LINUX=output/linux-386/Synergize
+EXE_LINUX=output/linux-amd64/Synergize
 
 # NOTE: must build the exes before we can run the test since some variables 
 # used in main.go are generated as side-effects of the astielectron-bundler
@@ -13,6 +13,10 @@ all: TAGS $(EXES)
 
 $(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX): $(SRCS)
 	astilectron-bundler
+
+mac: $(EXE_MAC)
+windows : $(EXE_WINDOWS)
+linux: $(EXE_LINUX)
 
 package: test packageMac packageWindows packageLinux
 
@@ -33,7 +37,7 @@ packages/Synergize-Installer-$(VERSION).dmg : $(EXE_MAC)
 		output/darwin-amd64
 
 # uses msitools (installed via "brew install msitools"):
-packageWindows: packages/Synergize-Installer-$(VERSION).msi
+packageWindows: packages/Synergize-Installer-$(VERSION).msi $(EXE_WINDOWS)
 packages/Synergize-Installer-$(VERSION).msi : windows-installer.wxs $(EXE_WINDOWS)
 	mkdir -p packages
 	rm -f packages/Synergize-Installer-$(VERSION).msi
@@ -44,10 +48,10 @@ packages/Synergize-Installer-$(VERSION).msi : windows-installer.wxs $(EXE_WINDOW
 		-o packages/Synergize-Installer-$(VERSION).msi \
 		windows-installer.wxs
 
-packageLinux: packages/Synergize-linux-386-$(VERSION).tar.gz
-packages/Synergize-linux-386-$(VERSION).tar.gz:
+packageLinux: packages/Synergize-linux-amd64-$(VERSION).tar.gz
+packages/Synergize-linux-amd64-$(VERSION).tar.gz: $(EXE_LINUX)
 	mkdir -p packages
-	cd output/linux-386 && tar czvf ../../packages/Synergize-linux-386-$(VERSION).tar.gz .
+	cd output/linux-amd64 && tar czvf ../../packages/Synergize-linux-amd64-$(VERSION).tar.gz .
 
 test:
 	go test

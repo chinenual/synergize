@@ -7,7 +7,7 @@
     "environments": [
 	{"arch" : "386",
 	 "os"   : "windows"},
-	{"arch" : "386",
+	{"arch" : "amd64",
 	 "os"   : "linux"},
 	{"arch" : "amd64", 
 	 "os"   : "darwin",
