@@ -1,3 +1,5 @@
+const {dialog} = require('electron').remote;
+
 let index = {
     init: function() {
         // Wait for astilectron to be ready
@@ -22,7 +24,6 @@ let index = {
 	alert("INFO: " + message);
     },
     saveSYNDialog: function() {
-	const {dialog} = require('electron').remote;
 	
 	path = dialog.showSaveDialogSync({
 	    filters: [
@@ -51,8 +52,6 @@ let index = {
 	}
     },
     loadSYNDialog: function() {
-	const {dialog} = require('electron').remote;
-	
 	path = dialog.showOpenDialogSync({
 	    filters: [
 		{ name: 'State', extensions: ['syn'] },
@@ -65,8 +64,6 @@ let index = {
 	}
     },
     loadCRTDialog: function() {
-	const {dialog} = require('electron').remote;
-	
 	path = dialog.showOpenDialogSync({
 	    filters: [
 		{ name: 'Cartridge', extensions: ['crt'] },
@@ -79,8 +76,6 @@ let index = {
 	}
     },
     loadVCEDialog: function() {
-	const {dialog} = require('electron').remote;
-	
 	path = dialog.showOpenDialogSync({
 	    filters: [
 		{ name: 'Voice', extensions: ['vce'] },
@@ -306,8 +301,6 @@ let index = {
 	document.getElementById("firmwareVersion").innerHTML = status;
     },
     fileDialog: function () {
-	const {dialog} = require('electron').remote;
-
 	files = dialog.showOpenDialogSync({
 //electron bug? filter files cause the dialog to look wonky
 	    filters: [

@@ -47,7 +47,6 @@ let prefs = {
 
     },
     serialPortDialog: function (ele, defaultValue) {
-	const {dialog} = require('electron').remote;
 	console.log("in fileDialog default: " + defaultValue);
 
 	file = dialog.showOpenDialogSync({
@@ -63,8 +62,6 @@ let prefs = {
 	return file;
     },
     libraryFolderDialog: function (ele, defaultValue) {
-	const {dialog} = require('electron').remote;
-
 	folder = dialog.showOpenDialogSync({
             properties: ['openDirectory'],
 	    defaultPath: defaultValue,
