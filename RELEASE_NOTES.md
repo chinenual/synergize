@@ -1,9 +1,20 @@
 # 0.2.0
 
-* Fixed serial IO bugs; communications are much more reliable.
+* Fixed serial I/O bugs; communications are much more reliable.
 
 * Adds preliminary support for Linux
     * Note: the tar.gz contains only an executable, no meta files for desktop menu setup.
+    * The Linux UI exposes a bug in the underlying UI framework: when
+	invoking a file dialog, you may see a brief popup dialog saying
+	that the framework "is ready".  This is harmless, but annoying.
+	Mac and Windows do not share this problem.
+	* Serial communications behavior on Linux is suspect. In my test setup,
+	loading data to the Synergy is quite reliable, but I get frequent
+	errors when attempting to fetch data (the Save Synergy State
+	functionality).  I'm not sure if this is due to a problem with the
+	program or with the hardware in my test setup, so I'm
+	releasing this with these caveats for anyone willing to help out
+	testing on Linux.
 
 # 0.1.0
 
@@ -18,3 +29,5 @@
     * View "Voice" (.VCE) files
     * Disable VRAM
     * Run basic serial port diagnostic test ("Restore+Program 4" AKA COMTST)
+
+
