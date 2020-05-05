@@ -2,7 +2,7 @@ include VERSION
 
 DOCS=*.md LICENSE
 SRCS=bundler.json [c-z]*.go resources/app/*html resources/app/static/css/*.css  resources/app/static/js/*js 
-EXES=$(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX)
+EXES=$(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX) ${EXE_WINDOWS_TEST}
 EXE_MAC=output/darwin-amd64/Synergize.app/Contents/MacOS/Synergize 
 EXE_WINDOWS=output/windows-386/Synergize.exe
 EXE_WINDOWS_TEST=output/windows-386-cmd/Synergize-cmd.exe

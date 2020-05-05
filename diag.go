@@ -41,6 +41,8 @@ func getDefaultPort() string {
 		for _,f := range(files) {
 			return f
 		}
+		// if no USB serial, assume /dev/ttyS0
+		return "/dev/ttyS0"
 		
 	} else {
 		// windows
