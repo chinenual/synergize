@@ -57,7 +57,7 @@ packages/Synergize-Installer-$(VERSION).msi : windows-installer.wxs $(EXE_WINDOW
 packageLinux: packages/Synergize-linux-amd64-$(VERSION).tar.gz
 packages/Synergize-linux-amd64-$(VERSION).tar.gz: $(EXE_LINUX)
 	mkdir -p packages
-	cd output/linux-amd64 && tar czvf ../../packages/Synergize-linux-amd64-$(VERSION).tar.gz .
+	cd output/linux-amd64 && tar czvf ../../packages/Synergize-linux-amd64-$(VERSION).tar.gz Synergize
 
 test:
 	go test
