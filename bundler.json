@@ -2,7 +2,7 @@
     "app_name": "Synergize",
     "version_electron" : "8.2.5",
     "icon_path_darwin": "resources/icon.icns",
-    "icon_path_linux": "resources/icon.png",
+    "icon_path_linux": "resources/icon-64x64.png",
     "icon_path_windows": "resources/icon.ico",
     "ldflags":{"linkmode":["internal"]},
     "environments": [
