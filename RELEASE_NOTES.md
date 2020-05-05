@@ -1,7 +1,7 @@
 # 0.2.0
 
+* Beta test release.
 * Fixed serial I/O bugs; communications are much more reliable.
-
 * Adds preliminary support for Linux
     * Note: the tar.gz contains only an executable, no meta files for desktop menu setup.
     * The Linux UI exposes a bug in the underlying UI framework: when
