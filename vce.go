@@ -70,22 +70,21 @@ func vceName(vceHead VCEHead) (name string) {
 	return
 }
 
-func vceReadHead(buf io.Reader, head *VCEHead) (err error) {
-	err = binary.Read(buf, binary.LittleEndian, head)
-	return
-}
-
 func vceReadFile(filename string) (vce VCE, err error) {
 	var b []byte
 
-	b,err = ioutil.ReadFile(filename)
-	if err != nil {
+	if b,err = ioutil.ReadFile(filename); err != nil {
 		return 
 	}
 	buf := bytes.NewReader(b)
-
-	err = vceReadHead(buf, &vce.Head)
-
+	if vce,err = vceRead(buf, false); err != nil {
+		return
+	}
+	return
+}
+	
+func vceRead(buf io.Reader, skipFilters bool) (vce VCE, err error) {
+	err = binary.Read(buf, binary.LittleEndian, &vce.Head)
 	if err != nil {
 		log.Println("binary.Read failed:", err)
 		return

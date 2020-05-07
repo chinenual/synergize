@@ -23,7 +23,7 @@ type CRTHead struct {
 
 type CRT struct {
 	Head CRTHead
-	Voices []VCEHead
+	Voices []VCE
 }
 
 
@@ -57,10 +57,14 @@ func crtReadFile(filename string) (crt CRT, err error) {
 				log.Printf("failed to seek to voice #%d start: %v\n", i, err)
 				return
 			}
-			var vceHead VCEHead
-			err = vceReadHead(buf, &vceHead)
-//		log.Printf("  HEAD: %v:  NAME: %s\n",vceHead, vceName(vceHead))
-			crt.Voices = append(crt.Voices, vceHead)
+			var vce VCE
+			if vce,err = vceRead(buf, true); err != nil {
+				log.Printf("failed to read voice #%d start: %v\n", i, err)
+				return
+			}
+			
+			// FIXME: skipping filters
+			crt.Voices = append(crt.Voices, vce)
 		}
 	}
 	
