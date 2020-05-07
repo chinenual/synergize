@@ -21,7 +21,7 @@ let viewCRT = {
 	// set active voices
 	for (i = 0; i < crt.Voices.length; i++) {
 	    var ele = document.getElementById("crt_voicename_" + (i+1));
-	    ele.innerHTML = crt.Voices[i].VNAME;
+	    ele.innerHTML = crt.Voices[i].Head.VNAME;
 	    ele.onclick = viewCRT.makeSlotOnclick(i);
 	}
     }

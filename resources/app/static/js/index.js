@@ -155,7 +155,8 @@ let index = {
                 index.errorNotification(message.payload);
                 return
 	    }
-	    vceHead = message.payload.Head;
+	    vce = message.payload;
+	    
 	    crt_name = null;
 	    crt_path = null;
 	    index.load("viewVCE.html", document.getElementById("content"));
@@ -164,8 +165,9 @@ let index = {
 	});
     },
     viewVCESlot: function(slot) {
-	vceHead = crt.Voices[slot];
-	console.log("view voice slot " + slot + " : " + vceHead);
+	vce = crt.Voices[slot];
+	
+	console.log("view voice slot " + slot + " : " + vce);
 	index.load("viewVCE.html", document.getElementById("content"));
 	viewVCE.refreshText();
     },
