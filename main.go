@@ -36,6 +36,7 @@ var (
 	loadsyn = flag.String("LOADSYN", "", "load the named SYN file into Synergy")
 	synver  = flag.Bool("SYNVER", false, "Print the firmware version of the connected Synergy")
 	rawlog  = flag.Bool("RAWLOG", false, "Turn off timestamps to make logs easier to compare")
+	//midiproxy = flag.Bool("MIDIPROXY", false, "present a MIDI interface and use serial IO to control the Synergy")
 	
 	w        *astilectron.Window
 	about_w  *astilectron.Window
@@ -180,6 +181,10 @@ func main() {
 			err = diagLoadSYN(*loadsyn);
 			if err != nil { code=1; log.Println(err) }
 			os.Exit(code);
+		//} else if *midiproxy {
+		//	err = midiProxy()
+		//	if err != nil { code=1; log.Println(err) }
+		//	os.Exit(code);
 		}
 	}
 

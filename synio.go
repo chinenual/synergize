@@ -7,16 +7,23 @@ import (
 	"github.com/snksoft/crc"
 )
 
+const RT_TIMEOUT_MS = 100 // "realtime" events need a shorter timeout
 const LONG_TIMEOUT_MS = 10000 // after large amounts of IO, give the synergy more time to ack
 const TIMEOUT_MS = 5000
 
-const OP_VRLOD       = byte(0x6b)
-const OP_VCELOD      = byte(0x6e)
-const OP_DISABLEVRAM = byte(0x6f)
-const OP_ENABLEVRAM  = byte(0x70)
-const OP_GETID       = byte(0x74)
-const OP_STDUMP      = byte(0x79)
-const OP_STLOAD      = byte(0x7a)
+const OP_KEYDWN       = byte(0x01)
+const OP_KEYUP        = byte(0x02)
+const OP_POT          = byte(0x03)
+const OP_ASSIGNED_KEY = byte(0x77)
+const OP_SELECT       = byte(0x78)
+
+const OP_VRLOD        = byte(0x6b)
+const OP_VCELOD       = byte(0x6e)
+const OP_DISABLEVRAM  = byte(0x6f)
+const OP_ENABLEVRAM   = byte(0x70)
+const OP_GETID        = byte(0x74)
+const OP_STDUMP       = byte(0x79)
+const OP_STLOAD       = byte(0x7a)
 
 const ACK byte = 0x06
 const DC1 byte = 0x11
@@ -457,6 +464,85 @@ func synioDiagLOOPTST() (err error) {
 	}
 	return nil
 }
+
+func synioSelectVoiceMapping(v1, v2, v3 ,v4 byte) (err error) {
+	if err = command(OP_SELECT, "OP_SELECT"); err != nil {
+		return errors.Wrapf(err, "failed to OP_SELECT")
+	}
+	if err = serialWriteByte(RT_TIMEOUT_MS, v1, "voice1"); err != nil {
+		return errors.Wrapf(err, "failed to voice1 mapping")
+	}
+	if err = serialWriteByte(RT_TIMEOUT_MS, v2, "voice2"); err != nil {
+		return errors.Wrapf(err, "failed to voice2 mapping")
+	}
+	if err = serialWriteByte(RT_TIMEOUT_MS, v3, "voice3"); err != nil {
+		return errors.Wrapf(err, "failed to voice3 mapping")
+	}
+	if err = serialWriteByte(RT_TIMEOUT_MS, v4, "voice4"); err != nil {
+		return errors.Wrapf(err, "failed to voice4 mapping")
+	}
+	return
+}
+
+// voice      1..4
+// key        0..73
+// velocity   0..32
+func synioKeyDown(voice, key, velocity byte) (err error) {
+	if err = command(OP_ASSIGNED_KEY, "OP_ASSIGNED_KEY"); err != nil {
+		return errors.Wrapf(err, "failed to OP_ASSIGNED_KEY")
+	}
+//	if err = serialWriteByte(RT_TIMEOUT_MS, OP_KEYDWN, "OP_KEYDWN"); err != nil {
+//		return errors.Wrapf(err, "failed to OP_KEYDWN")
+//	}
+	if err = serialWriteByte(RT_TIMEOUT_MS, voice, "voice"); err != nil {
+		return errors.Wrapf(err, "failed to send notedown voice")
+	}
+	if err = serialWriteByte(RT_TIMEOUT_MS, key, "key"); err != nil {
+		return errors.Wrapf(err, "failed to send notedown key")
+	}
+	if err = serialWriteByte(RT_TIMEOUT_MS, velocity, "velocity"); err != nil {
+		return errors.Wrapf(err, "failed to send notedown velocity")
+	}
+	return
+}
+
+
+// Synergy can't turn off voice-specific key - we're in rolling voice assign mode
+// key        0..73
+// velocity   0..32
+func synioKeyUp(key, velocity byte) (err error) {
+	if err = command(OP_KEYUP, "OP_KEYUP"); err != nil {
+		return errors.Wrapf(err, "failed to OP_KEYUP")
+	}
+	if err = serialWriteByte(RT_TIMEOUT_MS, key, "key"); err != nil {
+		return errors.Wrapf(err, "failed to send noteup key")
+	}
+	if err = serialWriteByte(RT_TIMEOUT_MS, velocity, "velocity"); err != nil {
+		return errors.Wrapf(err, "failed to send noteup velocity")
+	}
+	return
+}
+
+func synioPedal(up bool) (err error) {
+	const OPERAND_PEDAL_SUSTAIN = byte(64)
+	const OPERAND_PEDAL_LATCH = byte(65)
+
+	if err = command(OP_POT, "OP_POT"); err != nil {
+		return errors.Wrapf(err, "failed to send pedal OP")
+	}
+	if err = serialWriteByte(RT_TIMEOUT_MS, OPERAND_PEDAL_SUSTAIN, "OPERAND_PEDAL_SUSTAIN"); err != nil {
+		return errors.Wrapf(err, "failed to send pedal SUSTAIN operand")
+	}
+	var value = byte(0) // down
+	if up {
+		value = 127
+	}
+	if err = serialWriteByte(RT_TIMEOUT_MS, value, "pedal value"); err != nil {
+		return errors.Wrapf(err, "failed to send pedal value")
+	}
+	return
+}
+
 
 func bytesToWord(hob byte, lob byte) uint16 {
 	return uint16(hob) << 8 + uint16(lob)
