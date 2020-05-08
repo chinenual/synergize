@@ -4,6 +4,8 @@ let index = {
     init: function() {
         // Wait for astilectron to be ready
         document.addEventListener('astilectron-ready', function() {
+	    viewVCE.init();
+	    
             // Listen
             index.listen();
             // Explore default path

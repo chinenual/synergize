@@ -1,6 +1,31 @@
 let vce = {};
 
 let viewVCE = {
+    init: function() {
+	Chart.defaults.global.defaultFontColor = 'white';
+	Chart.defaults.global.defaultFontSize  = 14;
+    },
+    
+    keyPropCurve: function(kprop) {
+	var result = [];
+	// y = 0..32
+	// x = 0..23
+	for (v = 0; v < kprop.length; v++) {
+	    result[v] = kprop[v];
+	}
+	return result;
+    },
+    
+    keyEqCurve: function(keq) {
+	var result = [];
+	// y = -24..6
+	// x = 0..23
+	for (v = 0; v < keq.length; v++) {
+	    result[v] = keq[v];
+	}
+	return result;
+    },
+    
     timbreProportionCurve: function(center, sensitivity) {
 	var result = [];
 	if (sensitivity == 0) {
@@ -19,7 +44,8 @@ let viewVCE = {
 	    result[v] = p;
 	}
 	return result;
-    },    
+    },
+    
     ampProportionCurve: function(center, sensitivity) {
 	var result = [];
 	if (sensitivity == 0) {
@@ -39,6 +65,7 @@ let viewVCE = {
 	}
 	return result;
     },
+    
     patchTable: function() {
 	var tbody = document.getElementById("patchTbody");
 	// remove old rows:
@@ -126,7 +153,167 @@ let viewVCE = {
 	    tbody.appendChild(tr);
 	}
     },
+
+    keyEqChart: function() {
+	console.log("keyEqChart init");
+	var propData = viewVCE.keyEqCurve(vce.Head.VEQ);
+	
+	var ctx = document.getElementById('keyEqChart').getContext('2d');
+	var chart = new Chart(ctx, {
+	    
+	    type: 'line',
+	    data: {
+		labels: ['','','','','','','','','','','','','','','','','','','','','','','',''],
+		//labels: ['','','',''],
+		datasets: [{
+		    fill: false,
+		    lineTension: 0,
+		    pointRadius: 0,
+		    label: 'Key Equalization',
+		    // https://www.color-hex.com/color-palette/89750
+		    backgroundColor: 'rgb(255,215,0)',
+		    borderColor: 'rgb(255,215,0)',
+		    data: propData
+		}]
+	    },
+	    
+	    // Configuration options go here
+	    options: {
+		tooltips: {
+		    mode: 'index',
+		},
+		hover: {
+		    mode: 'index',
+		},
+		scales: {
+		    xAxes: [{
+			gridLines: {
+			    color: '#666',
+			    display: true,
+			    drawBorder: false,
+			    drawOnChartArea: false
+			},
+			scaleLabel: {
+			    display: true,
+			    labelString: "Key"
+			},
+			ticks: {
+			    min: 0,
+			    max: 23,
+			    color: '#eee',
+			    display: true
+			}
+		    }],
+		    yAxes: [{
+			grid: {
+			    color: '#666'
+			},
+			gridLines: {
+			    color: '#666',
+			    display: true,
+			    drawBorder: false,
+			    drawOnChartArea: true
+			},
+			scaleLabel: {
+			    display: true,
+			    labelString: "dB"
+			},
+			ticks: {
+			    min: -24,
+			    max: 8,
+			    stepSize: 4,
+			    color: '#eee',
+			    display: true
+			}
+		    }],
+		},
+		responsive: false,
+		maintainAspectRatio: false
+	    }
+	});
+    },
+
+    keyPropChart: function() {
+	console.log("keyPropChart init");
+	var propData = viewVCE.keyPropCurve(vce.Head.KPROP);
+	
+	var ctx = document.getElementById('keyPropChart').getContext('2d');
+	var chart = new Chart(ctx, {
+	    
+	    type: 'line',
+	    data: {
+		labels: ['','','','','','','','','','','','','','','','','','','','','','','',''],
+		datasets: [{
+		    fill: false,
+		    lineTension: 0,
+		    pointRadius: 0,
+		    label: 'Key Proportion',
+		    // https://www.color-hex.com/color-palette/89750
+		    backgroundColor: 'rgb(255,215,0)',
+		    borderColor: 'rgb(255,215,0)',
+		    data: propData
+		}]
+	    },
+	    
+	    // Configuration options go here
+	    options: {
+		tooltips: {
+		    mode: 'index',
+		},
+		hover: {
+		    mode: 'index',
+		},
+		scales: {
+		    xAxes: [{
+			gridLines: {
+			    color: '#666',
+			    display: true,
+			    drawBorder: false,
+			    drawOnChartArea: false
+			},
+			scaleLabel: {
+			    display: true,
+			    labelString: "Key"
+			},
+			ticks: {
+			    min: 0,
+			    max: 23,
+			    color: '#666',
+			    display: true
+			}
+		    }],
+		    yAxes: [{
+			gridLines: {
+			    color: '#666',
+			    display: true,
+			    drawBorder: false,
+			    drawOnChartArea: true
+			},
+			scaleLabel: {
+			    display: true,
+			    labelString: "Bounds"
+			},
+			ticks: {
+			    min: 0,
+			    max: 32,
+			    stepSize: 4,
+			    color: '#eee',
+			    display: true
+			}
+		    }],
+		},
+		responsive: false,
+		maintainAspectRatio: false
+	    }
+	});
+    },
+    
+
     refreshText: function () {
+	console.log("vceVoiceTab init");
+	viewVCE.keyPropChart();
+	viewVCE.keyEqChart();
+		
 	if (crt_name == null) {
 	    document.getElementById("backToCRT").hidden = true;
 	} else {

@@ -10,7 +10,7 @@
 | byte  | 1     | VTCENT | envelope center (0 .. 32)
 | byte  | 1     | VTSENS | envelope sensitivity
 | byte  | 1     |        | \<unused - always 0\>
-| byte  | 24    | VEQ    | array of voice amplitude for each key (one value per every 4 keys)
+| int8  | 24    | VEQ    | array of voice amplitude for each key (one value per every 4 keys)
 | byte  | 8     | VNAME  | voice name. left justified, blank padded
 | byte  | 1     | VACENT | amplitude center
 | byte  | 1     | VASENS | amplitude sensitivity

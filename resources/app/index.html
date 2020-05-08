@@ -7,7 +7,10 @@
     <link rel="stylesheet" href="static/css/bootstrap.min-darkly.css">
     <link rel="stylesheet" href="static/css/base.css">
 
-    <script src="static/js/jquery-3.4.1.slim.js"></script>
+      <!-- jQuery/Electron "bug": https://techsparx.com/nodejs/electron/load-jquery-bootstrap.html -->
+    <script src="static/js/jquery-3.4.1.slim.js"
+	    type="text/javascript"
+	    onload="window.$ = window.jQuery = module.exports;"></script>
     <script src="static/js/popper.min.js"></script>
     <script src="static/js/bootstrap.min.js"></script>
     <script src="static/js/Chart.bundle.min.js"></script>
@@ -171,3 +174,8 @@ TEST a "more button" design:
     
   </body>
 </html>
+
+
+
+
+
