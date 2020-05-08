@@ -42,9 +42,9 @@ func compareVoiceList(t *testing.T, context string, crt CRT, list[]string) {
 		return
 	}
 	for i,voicename := range(list) {
-		if voicename != vceName(crt.Voices[i]) {
+		if voicename != vceName(crt.Voices[i].Head) {
 		t.Errorf("%s: Voice name mismatch [%d] - got '%s', expected '%s'",
-			context, i, vceName(crt.Voices[i]), voicename)
+			context, i, vceName(crt.Voices[i].Head), voicename)
 		}
 	}
 }

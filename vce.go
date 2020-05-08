@@ -82,6 +82,28 @@ func vceReadFile(filename string) (vce VCE, err error) {
 	}
 	return
 }
+
+func vceReadFilters(buf io.Reader, vce *VCE) (err error) {
+	var filterCount = 0
+	for _,f := range vce.Head.FILTER {
+		if f != 0 {
+			filterCount++
+		}
+	}
+	vce.Filters = make ([][32]int8,filterCount);
+	
+	for i := 0; i < filterCount; i++ {
+		for j := 0; j < 32; j++ {
+			err = binary.Read(buf, binary.LittleEndian, &vce.Filters[i][j])
+			if err != nil {
+				log.Println(vceToString(*vce))
+				log.Println("binary.Read failed:", i, " ", j, " ", err)
+				return
+			}			
+		}
+	}
+	return
+}
 	
 func vceRead(buf io.Reader, skipFilters bool) (vce VCE, err error) {
 	err = binary.Read(buf, binary.LittleEndian, &vce.Head)
@@ -174,36 +196,23 @@ func vceRead(buf io.Reader, skipFilters bool) (vce VCE, err error) {
 		}
 		vce.Envelopes[i] = e
 	}
-	var filterCount = 0
-	for _,f := range vce.Head.FILTER {
-		if f != 0 {
-			filterCount++
-		}
-	}
-	vce.Filters = make ([][32]int8,filterCount);
-
-	for i := 0; i < filterCount; i++ {
-		for j := 0; j < 32; j++ {
-			err = binary.Read(buf, binary.LittleEndian, &vce.Filters[i][j])
-			if err != nil {
-				log.Println(vceToString(vce))
-				log.Println("binary.Read failed:", i, " ", j, " ", err)
-				return
-			}			
-		}
+	if ! skipFilters {
+		err = vceReadFilters(buf, &vce)
 	}
 	return
 }
 
 func vceToString(vce VCE) (result string) {
-	b,_ := json.MarshalIndent(vce, "", " ")
-	result = string(b)
+       b,_ := json.MarshalIndent(vce, "", " ")
+       result = string(b)
 
-	return
+       return
 }
+
+
 func vceToJson(vce VCE) (result string) {
 	b,_ := json.Marshal(vce)
 	result = string(b)
-
+	
 	return
 }
