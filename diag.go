@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"path/filepath"
 
+	"github.com/chinenual/synergize/synio"
 )
 
 var (
@@ -57,13 +58,13 @@ func diagCOMTST() {
 	log.Printf("%s at %d baud\n",
 		prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud);
 
-	err := synioInit(prefsUserPreferences.SerialPort,
+	err := synio.SynioInit(prefsUserPreferences.SerialPort,
 		prefsUserPreferences.SerialBaud, true, *serialVerboseFlag)
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
 	}
-	err = synioDiagCOMTST()
+	err = synio.SynioDiagCOMTST()
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		log.Printf("Note:\n\tThe Synergy must be running in COMTST mode before executing this test.\n\tPress RESTORE + PROGRAM 4 on the Synergy then rerun this program.\n");
@@ -78,7 +79,7 @@ func diagLOOPTST() {
 	log.Printf("%s at %d baud\n",
 		prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud);
 
-	err := synioInit(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag)
+	err := synio.SynioInit(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag)
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
@@ -87,7 +88,7 @@ func diagLOOPTST() {
 	log.Printf("Entering LOOPBACK mode - any byte recieved from the Synergy is echo'd back\n")
 	log.Printf("Start the test by pressing RESTORE + RESTORE + PROGRAM 1 on the Synergy\n")
 
-	err = synioDiagLOOPTST()
+	err = synio.SynioDiagLOOPTST()
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 	}
@@ -99,14 +100,14 @@ func diagInitAndPrintFirmwareID() (err error) {
 	log.Printf("%s at %d baud\n",
 		prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud);
 	
-	err = synioInit(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag)
+	err = synio.SynioInit(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag)
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
 	}
 
 	var version [2]byte
-	version,err = synioGetID()
+	version,err = synio.SynioGetID()
 	if err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
@@ -130,7 +131,7 @@ func diagLoadVCE(path string) (err error) {
 
 	log.Printf("VCE %s -- %d bytes into slotnum %d\n", path, len(vce_bytes), slotnum)
 
-	err = synioLoadVCE(slotnum, vce_bytes)
+	err = synio.SynioLoadVCE(slotnum, vce_bytes)
 	if err != nil {
 		return
 	}
@@ -154,7 +155,7 @@ func diagLoadCRT(path string) (err error) {
 
 	log.Printf("CRT %s -- %d bytes \n", path, len(crt_bytes))
 
-	err = synioLoadCRT(crt_bytes)
+	err = synio.SynioLoadCRT(crt_bytes)
 	return
 }
 
@@ -164,7 +165,7 @@ func diagSaveSYN(path string) (err error) {
 		return
 	} 
 	var syn_bytes []byte
-	syn_bytes, err = synioSaveSYN()
+	syn_bytes, err = synio.SynioSaveSYN()
 	
 	if err != nil {
 		return
@@ -189,6 +190,6 @@ func diagLoadSYN(path string) (err error) {
 	}
 
 
-	err = synioLoadSYN(syn_bytes)
+	err = synio.SynioLoadSYN(syn_bytes)
 	return
 }

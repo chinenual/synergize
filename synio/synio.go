@@ -1,4 +1,4 @@
-package main
+package synio
 
 import (
 	"log"
@@ -33,7 +33,7 @@ var vramInitialized bool = false
 var synioVerbose bool = false
 var crcHash *crc.Hash
 
-func synioInit(port string, baud uint, synVerbose bool, serialVerbose bool) (err error) {
+func SynioInit(port string, baud uint, synVerbose bool, serialVerbose bool) (err error) {
 	synioVerbose = synVerbose
 	err = serialInit(port, baud, serialVerbose);
 	if err != nil {
@@ -145,7 +145,7 @@ func command(opcode byte, name string) (err error) {
 	return
 }
 
-func synioInitVRAM() (err error) {
+func SynioInitVRAM() (err error) {
 	if vramInitialized {
 		return
 	}
@@ -159,8 +159,8 @@ func synioInitVRAM() (err error) {
 	return
 }
 
-func synioLoadVCE(slotnum byte, vce []byte) (err error) {
-	err = synioInitVRAM()
+func SynioLoadVCE(slotnum byte, vce []byte) (err error) {
+	err = SynioInitVRAM()
 	if err != nil {
 		err = errors.Wrap(err, "Failed to initialize Synergy VRAM")
 		return 
@@ -208,8 +208,8 @@ func synioLoadVCE(slotnum byte, vce []byte) (err error) {
 	return
 }
 
-func synioLoadCRT(crt []byte) (err error) {
-	err = synioInitVRAM()
+func SynioLoadCRT(crt []byte) (err error) {
+	err = SynioInitVRAM()
 	if err != nil {
 		err = errors.Wrap(err, "Failed to initialize Synergy VRAM")
 		return 
@@ -284,7 +284,7 @@ func synioLoadCRT(crt []byte) (err error) {
 
 
 // Send Synergy "state" (STLOAD in the Z80 sources)
-func synioLoadSYN(bytes []byte) (err error) {
+func SynioLoadSYN(bytes []byte) (err error) {
 	err = command(OP_STLOAD, "STLOAD")
 	if err != nil {
 		err = errors.Wrap(err, "error sending opcode")
@@ -316,7 +316,7 @@ func synioLoadSYN(bytes []byte) (err error) {
 
 
 // Retrieve Synergy "state" (STDUMP in the Z80 sources)
-func synioSaveSYN() (bytes []byte, err error) {
+func SynioSaveSYN() (bytes []byte, err error) {
 	err = command(OP_STDUMP, "STDUMP")
 	if err != nil {
 		err = errors.Wrap(err, "error sending opcode")
@@ -388,7 +388,7 @@ func synioSaveSYN() (bytes []byte, err error) {
 	return
 }
 
-func synioGetID() (versionID [2]byte, err error) {
+func SynioGetID() (versionID [2]byte, err error) {
 	err = command(OP_GETID, "GETID")
 	if err != nil {
 		err = errors.Wrap(err, "error sending opcode")
@@ -410,7 +410,7 @@ func synioGetID() (versionID [2]byte, err error) {
 	return 
 }
 
-func synioDisableVRAM() (err error) {
+func SynioDisableVRAM() (err error) {
 	err = command(OP_DISABLEVRAM, "DISABLEVRAM")
 	if err == nil {
 		// errors will implicitly show  up in the log but we need to explicitly log success
@@ -419,7 +419,7 @@ func synioDisableVRAM() (err error) {
 	return
 }
 
-func synioDiagCOMTST() (err error) {	
+func SynioDiagCOMTST() (err error) {	
 
 	var i int
 	for i = 0; i < 256; i++ {
@@ -444,7 +444,7 @@ func synioDiagCOMTST() (err error) {
 	return nil
 }
 
-func synioDiagLOOPTST() (err error) {	
+func SynioDiagLOOPTST() (err error) {	
 
 	if synioVerbose { log.Printf("WARNING: LOOPTST causes Synergize to enter an infinte loop supporting the Synergy based test.  You must explicitly kill the Synergize process to stop the test.\n"); }
 	for true {
@@ -465,7 +465,7 @@ func synioDiagLOOPTST() (err error) {
 	return nil
 }
 
-func synioSelectVoiceMapping(v1, v2, v3 ,v4 byte) (err error) {
+func SynioSelectVoiceMapping(v1, v2, v3 ,v4 byte) (err error) {
 	if err = command(OP_SELECT, "OP_SELECT"); err != nil {
 		return errors.Wrapf(err, "failed to OP_SELECT")
 	}
@@ -487,7 +487,7 @@ func synioSelectVoiceMapping(v1, v2, v3 ,v4 byte) (err error) {
 // voice      1..4
 // key        0..73
 // velocity   0..32
-func synioKeyDown(voice, key, velocity byte) (err error) {
+func SynioKeyDown(voice, key, velocity byte) (err error) {
 	if err = command(OP_ASSIGNED_KEY, "OP_ASSIGNED_KEY"); err != nil {
 		return errors.Wrapf(err, "failed to OP_ASSIGNED_KEY")
 	}
@@ -510,7 +510,7 @@ func synioKeyDown(voice, key, velocity byte) (err error) {
 // Synergy can't turn off voice-specific key - we're in rolling voice assign mode
 // key        0..73
 // velocity   0..32
-func synioKeyUp(key, velocity byte) (err error) {
+func SynioKeyUp(key, velocity byte) (err error) {
 	if err = command(OP_KEYUP, "OP_KEYUP"); err != nil {
 		return errors.Wrapf(err, "failed to OP_KEYUP")
 	}
@@ -523,7 +523,7 @@ func synioKeyUp(key, velocity byte) (err error) {
 	return
 }
 
-func synioPedal(up bool) (err error) {
+func SynioPedal(up bool) (err error) {
 	const OPERAND_PEDAL_SUSTAIN = byte(64)
 	const OPERAND_PEDAL_LATCH = byte(65)
 

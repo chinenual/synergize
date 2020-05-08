@@ -8,7 +8,9 @@ import (
 	"os"
 	"runtime"
 	"strings"
-	
+
+	"github.com/chinenual/synergize/synio"
+
 	"github.com/asticode/go-astikit"
 	"github.com/asticode/go-astilectron"
 	"github.com/pkg/errors"
@@ -103,7 +105,7 @@ func connectToSynergyIfNotConnected() (err error) {
 
 func connectToSynergy() (err error) {
 	FirmwareVersion = "Not Connected"
-	err = synioInit(prefsUserPreferences.SerialPort,
+	err = synio.SynioInit(prefsUserPreferences.SerialPort,
 		prefsUserPreferences.SerialBaud, true, *serialVerboseFlag)
 	if err != nil {
 		err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n",
@@ -113,7 +115,7 @@ func connectToSynergy() (err error) {
 		return
 	}
 	var bytes [2]byte
-	bytes,err = synioGetID()
+	bytes,err = synio.SynioGetID()
 	if err != nil {
 		err = errors.Wrap(err, "Cannot get firmware version")
 		l.Printf(err.Error())

@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/chinenual/synergize/data"
+	"github.com/chinenual/synergize/synio"
 	
 	"github.com/pkg/errors"
 	"github.com/asticode/go-astilectron"
@@ -34,7 +35,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = err.Error()
 			return
 		} 
-		err = synioDisableVRAM()
+		err = synio.SynioDisableVRAM()
 		if err != nil {
 			payload = err.Error()
 			return
@@ -186,7 +187,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			// "not connected".
 			//
 			// Run the serial init without querying the firmware version
-			err = synioInit(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag)
+			err = synio.SynioInit(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag)
 			if err != nil {
 				err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n", prefsUserPreferences.SerialPort,prefsUserPreferences.SerialBaud)
 				payload = err.Error()
@@ -194,7 +195,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			}
 			FirmwareVersion = "Connected"
 		}
-		err = synioDiagCOMTST()
+		err = synio.SynioDiagCOMTST()
 		if err != nil {
 			payload = err.Error()
 			return
