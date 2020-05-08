@@ -67,7 +67,7 @@ version.go : VERSION
 	echo package main > version.go
 	echo const Version = \"$(VERSION)\" >> version.go
 
-TAGS: $(SRCS) $(DOCS)
+tags TAGS: $(SRCS) $(DOCS)
 	etags $(SRCS) $(DOCS)
 
 updateAstilectron:

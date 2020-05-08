@@ -11,7 +11,7 @@ import (
 func testParseVCE(t *testing.T, path string) {
 	log.Println("test ", path);
 	
-	vce, err := VceReadFile(path);
+	vce, err := ReadVceFile(path);
 	if err != nil {
 		t.Errorf("error parsing %s: %v", path, err)
 		return

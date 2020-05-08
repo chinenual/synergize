@@ -70,7 +70,29 @@ func vceName(vceHead VCEHead) (name string) {
 	return
 }
 
-func VceReadFile(filename string) (vce VCE, err error) {
+func VceAFilterCount(vce VCE) (count int) {
+	count = 0
+	for i := byte(0); i < vce.Head.VOITAB; i++ {
+		v := vce.Head.FILTER[i]
+		if v < 0 {
+			count = count + 1
+		}
+	}
+	return
+}
+
+func VceBFilterCount(vce VCE) (count int) {
+	count = 0
+	for i := byte(0); i < vce.Head.VOITAB; i++ {
+		v := vce.Head.FILTER[i]
+		if v > 0 {
+			count = count + 1
+		}
+	}
+	return
+}
+
+func ReadVceFile(filename string) (vce VCE, err error) {
 	var b []byte
 
 	if b,err = ioutil.ReadFile(filename); err != nil {

@@ -6,6 +6,8 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+
+	"github.com/pkg/errors"
 )
 
 type CRTHead struct {
@@ -27,7 +29,7 @@ type CRT struct {
 }
 
 
-func CrtReadFile(filename string) (crt CRT, err error) {
+func ReadCrtFile(filename string) (crt CRT, err error) {
 	// A CRT file is a long header containing filter info, followed by a list of CCE fragments (each voice missing the filter params since they are concatenated elsewhere in the file).
 	
 	var b []byte
@@ -46,24 +48,40 @@ func CrtReadFile(filename string) (crt CRT, err error) {
 
 //	log.Println(crt.Head)
 
-	// Offsets are from the VOIDTAB field
- 	var startOffset uint16 = 50
+	// voice Offsets are from the VOIDTAB field
+ 	var voitabOffset uint16 = 50
+	// filter Offsets are from the FILTAB field (after the last AFILTER entry)
+ 	var filtabOffset uint16 = 160
+	
 	for i,offset := range(crt.Head.VOIPTR) {
 		if offset != 0 {
-//		log.Printf("seek to %d\n",startOffset + offset)
+//		log.Printf("seek to %d\n",voitabOffset + offset)
 		
-			_,err = buf.Seek(int64(startOffset+offset), io.SeekStart)
+			_,err = buf.Seek(int64(voitabOffset+offset), io.SeekStart)
 			if err != nil {
-				log.Printf("failed to seek to voice #%d start: %v\n", i, err)
+				err = errors.Wrapf(err,"failed to seek to voice #%d start", i)
 				return
 			}
 			var vce VCE
 			if vce,err = vceRead(buf, true); err != nil {
-				log.Printf("failed to read voice #%d start: %v\n", i, err)
+				err = errors.Wrapf(err,"failed to read voice #%d start", i)
 				return
 			}
 			
-			// FIXME: skipping filters
+			if VceAFilterCount(vce) > 0 {
+				err = errors.Errorf("voice %d has an A-filter %v. cant parse",i, vce.Head.FILTER)
+				return
+			}
+			if VceBFilterCount(vce) > 0 {
+				offset = uint16(crt.Head.BFILTR[i]-1) * 32
+				_,err = buf.Seek(int64(filtabOffset+offset), io.SeekStart)
+				if err != nil {
+					err = errors.Wrapf(err,"failed to seek to voice #%d filter-b start", i)
+					return
+				}
+				vceReadFilters(buf, &vce)
+			}
+			
 			crt.Voices = append(crt.Voices, vce)
 		}
 	}

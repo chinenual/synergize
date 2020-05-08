@@ -143,7 +143,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		crt,err = data.CrtReadFile(path);
+		crt,err = data.ReadCrtFile(path);
 		if err != nil {
 			payload = err.Error()
 			return
@@ -161,7 +161,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		vce,err = data.VceReadFile(path);
+		vce,err = data.ReadVceFile(path);
 		if err != nil {
 			payload = err.Error()
 			return
