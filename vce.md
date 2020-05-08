@@ -54,5 +54,5 @@ One filter for any non-zero entry in the header FILTER array
 
 | Type   | Count | Name   | Description 
 |--------|-------|--------|-----
-| byte  | 32    | \<elements\>  | each filter table is 32 bytes long
+| int8   | 32    | \<elements\>  | each filter table is 32 bytes long
 

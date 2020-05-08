@@ -37,7 +37,7 @@ type Envelope struct {
 type VCE struct {
 	Head VCEHead
 	Envelopes []Envelope
-	Filters [][32]byte;
+	Filters [][32]int8;
 }
 
 type VCEHead struct {
@@ -180,7 +180,7 @@ func vceRead(buf io.Reader, skipFilters bool) (vce VCE, err error) {
 			filterCount++
 		}
 	}
-	vce.Filters = make ([][32]byte,filterCount);
+	vce.Filters = make ([][32]int8,filterCount);
 
 	for i := 0; i < filterCount; i++ {
 		for j := 0; j < 32; j++ {
