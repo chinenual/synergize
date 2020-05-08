@@ -60,6 +60,7 @@ packages/Synergize-linux-amd64-$(VERSION).tar.gz: $(EXE_LINUX)
 	cd output/linux-amd64 && tar czvf ../../packages/Synergize-linux-amd64-$(VERSION).tar.gz Synergize
 
 test:
+	cd data && go test
 	go test
 
 version.go : VERSION

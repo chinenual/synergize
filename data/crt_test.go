@@ -1,4 +1,4 @@
-package main
+package data
 
 import (
 	"bufio"
@@ -52,7 +52,7 @@ func compareVoiceList(t *testing.T, context string, crt CRT, list[]string) {
 func testParseCRT(t *testing.T, path string) {
 	log.Println("test ", path);
 	
-	crt, err := crtReadFile(path);
+	crt, err := CrtReadFile(path);
 	if err != nil {
 		t.Errorf("error parsing %s: %v", path, err)
 		return

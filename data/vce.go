@@ -1,4 +1,4 @@
-package main
+package data
 
 import (
 	"bytes"
@@ -70,7 +70,7 @@ func vceName(vceHead VCEHead) (name string) {
 	return
 }
 
-func vceReadFile(filename string) (vce VCE, err error) {
+func VceReadFile(filename string) (vce VCE, err error) {
 	var b []byte
 
 	if b,err = ioutil.ReadFile(filename); err != nil {

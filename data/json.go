@@ -1,4 +1,4 @@
-package main
+package data
 
 // JSON workarounds for []byte encoding - default go marshaller encodes as Base64
 

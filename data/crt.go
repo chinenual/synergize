@@ -1,4 +1,4 @@
-package main
+package data
 
 import (
 	"encoding/binary"
@@ -27,7 +27,7 @@ type CRT struct {
 }
 
 
-func crtReadFile(filename string) (crt CRT, err error) {
+func CrtReadFile(filename string) (crt CRT, err error) {
 	// A CRT file is a long header containing filter info, followed by a list of CCE fragments (each voice missing the filter params since they are concatenated elsewhere in the file).
 	
 	var b []byte

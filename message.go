@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+
+	"github.com/chinenual/synergize/data"
 	
 	"github.com/pkg/errors"
 	"github.com/asticode/go-astilectron"
@@ -131,7 +133,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		
 
 	case "readCRT":
-		var crt CRT
+		var crt data.CRT
 		var path string
 		if len(m.Payload) > 0 {
 			// Unmarshal payload
@@ -140,7 +142,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		crt,err = crtReadFile(path);
+		crt,err = data.CrtReadFile(path);
 		if err != nil {
 			payload = err.Error()
 			return
@@ -149,7 +151,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		}
 		
 	case "readVCE":
-		var vce VCE
+		var vce data.VCE
 		var path string
 		if len(m.Payload) > 0 {
 			// Unmarshal payload
@@ -158,7 +160,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		vce,err = vceReadFile(path);
+		vce,err = data.VceReadFile(path);
 		if err != nil {
 			payload = err.Error()
 			return
