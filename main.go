@@ -105,7 +105,7 @@ func connectToSynergyIfNotConnected() (err error) {
 
 func connectToSynergy() (err error) {
 	FirmwareVersion = "Not Connected"
-	err = synio.SynioInit(prefsUserPreferences.SerialPort,
+	err = synio.Init(prefsUserPreferences.SerialPort,
 		prefsUserPreferences.SerialBaud, true, *serialVerboseFlag)
 	if err != nil {
 		err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n",
@@ -115,7 +115,7 @@ func connectToSynergy() (err error) {
 		return
 	}
 	var bytes [2]byte
-	bytes,err = synio.SynioGetID()
+	bytes,err = synio.GetID()
 	if err != nil {
 		err = errors.Wrap(err, "Cannot get firmware version")
 		l.Printf(err.Error())

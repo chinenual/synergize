@@ -35,7 +35,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = err.Error()
 			return
 		} 
-		err = synio.SynioDisableVRAM()
+		err = synio.DisableVRAM()
 		if err != nil {
 			payload = err.Error()
 			return
@@ -187,7 +187,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			// "not connected".
 			//
 			// Run the serial init without querying the firmware version
-			err = synio.SynioInit(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag)
+			err = synio.Init(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag)
 			if err != nil {
 				err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n", prefsUserPreferences.SerialPort,prefsUserPreferences.SerialBaud)
 				payload = err.Error()
@@ -195,7 +195,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			}
 			FirmwareVersion = "Connected"
 		}
-		err = synio.SynioDiagCOMTST()
+		err = synio.DiagCOMTST()
 		if err != nil {
 			payload = err.Error()
 			return
