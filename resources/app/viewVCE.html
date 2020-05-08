@@ -1,3 +1,7 @@
+
+<span class="centered" id="vce_name"></span>
+<br><br>
+
 <ul id="vceTabs" class="nav nav-pills">
   <li class="nav-item"><a class="active nav-link" data-toggle="pill" href="#vceVoiceTab">Voice</a></li>
   <li class="nav-item"><a class="nav-link" data-toggle="pill" href="#vceEnvsTab">Envelopes</a></li>
@@ -5,6 +9,7 @@
   <li class="nav-item"><a class="nav-link" data-toggle="pill" href="#vceKeyEqTab">Key Eq</a></li>
   <li class="nav-item"><a class="nav-link" data-toggle="pill" href="#vceKeyPropTab">Key Prop</a></li>
 </ul>
+
 
 <div class="tab-content">
   <div id="vceVoiceTab" class="tab-pane fade show active">
@@ -128,15 +133,19 @@
   </div>
   
   <div id="vceFiltersTab" class="tab-pane fade ">
-    tab 3 stuff
+    <select id="filterSelect" onchange="viewVCE.filtersChartUpdate(this.options[this.selectedIndex].value,this.options[this.selectedIndex].innerHTML)">
+      <option>Bf 1</option>
+      <option>Bf 2</option>
+    </select>
+    <canvas id="filtersChart" height="400" width="600" style="border:solid #666;"></canvas>
   </div>
   
   <div id="vceKeyEqTab" class="tab-pane fade ">
-      <canvas id="keyEqChart" height="300" width="400" style="border:solid #666;"></canvas>
+    <canvas id="keyEqChart" height="400" width="600" style="border:solid #666;"></canvas>
   </div>
 
   <div id="vceKeyPropTab" class="tab-pane fade ">
-      <canvas id="keyPropChart" height="300" width="400" style="border:solid #666;"></canvas>
+    <canvas id="keyPropChart" height="400" width="600" style="border:solid #666;"></canvas>
   </div>
 
 </div>

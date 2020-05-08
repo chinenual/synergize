@@ -1,4 +1,5 @@
 let vce = {};
+let vceFiltersChart = null;
 
 let viewVCE = {
     init: function() {
@@ -147,7 +148,7 @@ let viewVCE = {
 	    var filter = vce.Head.FILTER[osc];
 	    td.innerHTML =
 		(filter == 0) ? ''
-		: (filter > 0) ? 'Bf' : 'Af';
+		: (filter > 0) ? ('Bf ' + filter) : ('Af ' + -filter);
 	    tr.appendChild(td);
 	    	    
 	    tbody.appendChild(tr);
@@ -307,12 +308,121 @@ let viewVCE = {
 	    }
 	});
     },
-    
+
+    filtersChartInit: function() {
+	var selectEle = document.getElementById("filterSelect");
+	// remove old options:
+	while (selectEle.firstChild) {
+	    selectEle.removeChild(selectEle.firstChild);
+	}
+	var filter0name = '';
+	for (i = 0; i < vce.Head.FILTER.length; i++) {
+	    if (vce.Head.FILTER[i] != 0) {
+		if (vce.Head.FILTER[i] > 0) {
+		    // a B-filter
+		    var option= document.createElement("option");
+		    option.value=vce.Head.FILTER[i]-1;
+		    option.innerHTML = "Bf " + vce.Head.FILTER[i];		    
+		    if (i==0) filter0name = "Bf " + vce.Head.FILTER[i];
+		    selectEle.appendChild(option);
+		} else {
+		    // an A-filter
+		    var option= document.createElement("option");
+		    option.value=(-vce.Head.FILTER[i])-1;
+		    option.innerHTML = "Af " + (-vce.Head.FILTER[i]);
+		    if (i==0) filter0name = "Af " + (-vce.Head.FILTER[i]);
+		    selectEle.appendChild(option);
+		}
+	    }
+	}
+	if (selectEle.firstChild == null) {
+	    // no filters
+	    document.getElementById("filtersChart").style.display="none";
+	} else {
+	    viewVCE.filtersChartUpdate(0,filter0name);
+	}
+    },
+
+    filtersChartUpdate: function(filterIndex, filterName) {
+	console.log("filtersChart init " + filterIndex);
+	var filterData = vce.Filters[filterIndex];
+	
+	var ctx = document.getElementById('filtersChart').getContext('2d');
+	if (vceFiltersChart != null) {
+	    vceFiltersChart.destroy();
+	}
+	vceFiltersChart = new Chart(ctx, {
+	    
+	    type: 'line',
+	    data: {
+		labels: ['','','','','','','','','','', '','','','','','','','','','', '','','','','','','','','','','',''],
+		datasets: [{
+		    fill: false,
+		    lineTension: 0,
+		    pointRadius: 0,
+		    label: filterName,
+		    // https://www.color-hex.com/color-palette/89750
+		    backgroundColor: 'rgb(255,215,0)',
+		    borderColor: 'rgb(255,215,0)',
+		    data: filterData
+		}]
+	    },
+	    
+	    // Configuration options go here
+	    options: {
+		tooltips: {
+		    mode: 'index',
+		},
+		hover: {
+		    mode: 'index',
+		},
+		scales: {
+		    xAxes: [{
+			gridLines: {
+			    color: '#666',
+			    display: true,
+			    drawBorder: false,
+			    drawOnChartArea: false
+			},
+			scaleLabel: {
+			    display: true,
+			    labelString: "Frequency"
+			},
+			ticks: {
+			    color: '#666',
+			    display: true
+			}
+		    }],
+		    yAxes: [{
+			gridLines: {
+			    color: '#666',
+			    display: true,
+			    drawBorder: false,
+			    drawOnChartArea: true
+			},
+			scaleLabel: {
+			    display: true,
+			    labelString: "dB"
+			},
+			ticks: {
+			    color: '#eee',
+			    display: true
+			}
+		    }],
+		},
+		responsive: false,
+		maintainAspectRatio: false
+	    }
+	});
+    },
 
     refreshText: function () {
 	console.log("vceVoiceTab init");
+	
 	viewVCE.keyPropChart();
 	viewVCE.keyEqChart();
+	viewVCE.filtersChartInit();
+	viewVCE.patchTable();
 		
 	if (crt_name == null) {
 	    document.getElementById("backToCRT").hidden = true;
@@ -320,7 +430,8 @@ let viewVCE = {
 	    document.getElementById("backToCRT").hidden = false;
 	}
 
-	viewVCE.patchTable();
+	document.getElementById("vce_name").innerHTML = vce.Head.VNAME;
+	
 	document.getElementById("name").innerHTML = vce.Head.VNAME;
 	document.getElementById("nOsc").innerHTML = vce.Head.VOITAB + 1;
 	document.getElementById("keysPlayable").innerHTML = Math.floor(32 / (vce.Head.VOITAB + 1));
