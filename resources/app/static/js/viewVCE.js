@@ -346,7 +346,15 @@ let viewVCE = {
     filtersChartUpdate: function(filterIndex, filterName) {
 	console.log("filtersChart init " + filterIndex);
 	var filterData = vce.Filters[filterIndex];
-	
+
+	$('#filterTable td.val').each(function(i, obj) {
+	    var id=obj.id;
+	    // id is "ft<n>" - we need the <n> part
+	    var idxString=id.substring(2);
+	    var idx=parseInt(idxString,10)-1;
+	    obj.innerHTML = filterData[idx];
+	});
+				
 	var ctx = document.getElementById('filtersChart').getContext('2d');
 	if (vceFiltersChart != null) {
 	    vceFiltersChart.destroy();

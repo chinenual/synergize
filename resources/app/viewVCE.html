@@ -138,6 +138,115 @@
       <option>Bf 2</option>
     </select>
     <canvas id="filtersChart" height="400" width="600" style="border:solid #666;"></canvas>
+
+    <style>
+      #filterTable td { text-align: center;}
+      #filterTable th { text-align: center;}
+      #filterTable td { color: #aaa; }
+      #filterTable td.val { color: #fff; }
+      #filterTable th { color: #aaa; }
+      #filterTable th.val { color: #fff; }
+    </style>
+
+    <table id="filterTable">
+      <thead>
+      <tr>
+	<th>Index</th>
+	<th>Freq</th>
+	<th class="val">dB</th>
+
+	<td rowspan="8" style="padding:10px;"></td>
+	<td rowspan="8" style="border-left:1px solid #666;padding:10px;">	
+	<th>Index</th>
+	<th>Freq</th>
+	<th class="val">dB</th>
+
+	<td rowspan="8" style="padding:10px;"></td>
+	<td rowspan="8" style="border-left:1px solid #666;padding:10px;">	
+	<th>Index</th>
+	<th>Freq</th>
+	<th class="val">dB</th>
+
+
+	<td rowspan="8" style="padding:10px;"></td>
+	<td rowspan="8" style="border-left:1px solid #666;padding:10px;">	
+	<th>Index</th>
+	<th>Freq</th>
+	<th class="val">dB</th>
+
+      </tr>
+      </thead>
+      <tbody id="filterTableBody">
+	<tr>
+	  <td>1</td><td>11</td><td id="ft1" class="val"></td>
+
+	  <td rowspan="8" style="padding:10px;"></td>
+	  <td rowspan="8" style="border-left:1px solid #666;padding:10px;"></td>
+	  <td>9</td><td>72</td><td id="ft9" class="val"></td>
+
+
+	  <td rowspan="8" style="padding:10px;"></td>
+	  <td rowspan="8" style="border-left:1px solid #666;padding:10px;"></td>
+	  <td>17</td><td>461</td><td id="ft17" class="val"></td>
+
+
+	  <td rowspan="8" style="padding:10px;"></td>
+	  <td rowspan="8" style="border-left:1px solid #666;padding:10px;"></td>
+	  <td>25</td><td>2929</td><td id="ft25" class="val"></td>
+	</tr>
+
+	<tr>
+	  <td>2</td><td>14</td><td id="ft2" class="val"></td>
+	  <td>10</td><td>91</td><td id="ft10" class="val"></td>
+	  <td>18</td><td>581</td><td id="ft18" class="val"></td>
+	  <td>26</td><td>3691</td><td id="ft26" class="val"></td>
+	</tr>
+
+	<tr>
+	  <td>3</td><td>18</td><td id="ft3" class="val"></td>
+	  <td>11</td><td>115</td><td id="ft11" class="val"></td>
+	  <td>19</td><td>732</td><td id="ft19" class="val"></td>
+	  <td>27</td><td>4650</td><td id="ft27" class="val"></td>
+	</tr>
+
+	<tr>
+	  <td>4</td><td>72</td><td id="ft4" class="val"></td>
+	  <td>12</td><td>145</td><td id="ft12" class="val"></td>
+	  <td>20</td><td>922</td><td id="ft20" class="val"></td>
+	  <td>28</td><td>5859</td><td id="ft28" class="val"></td>
+	</tr>
+
+	<tr>
+	  <td>5</td><td>28</td><td id="ft5" class="val"></td>
+	  <td>13</td><td>183</td><td id="ft13" class="val"></td>
+	  <td>21</td><td>1162</td><td id="ft21" class="val"></td>
+	  <td>29</td><td>7382</td><td id="ft29" class="val"></td>
+	</tr>
+
+	<tr>
+	  <td>6</td><td>36</td><td id="ft6" class="val"></td>
+	  <td>14</td><td>230</td><td id="ft14" class="val"></td>
+	  <td>22</td><td>1464</td><td id="ft22" class="val"></td>
+	  <td>30</td><td>9300</td><td id="ft30" class="val"></td>
+	</tr>
+
+	<tr>
+	  <td>7</td><td>45</td><td id="ft7" class="val"></td>
+	  <td>15</td><td>290</td><td id="ft15" class="val"></td>
+	  <td>23</td><td>1845</td><td id="ft23" class="val"></td>
+	  <td>31</td><td>11718</td><td id="ft31" class="val"></td>
+	</tr>
+
+	<tr>
+	  <td>8</td><td>57</td><td id="ft8" class="val"></td>
+	  <td>16</td><td>366</td><td id="ft16" class="val"></td>
+	  <td>24</td><td>2325</td><td id="ft24" class="val"></td>
+	  <td>32</td><td>14764</td><td id="ft32" class="val"></td>
+	</tr>
+
+      </tbody>
+    </table>
+    
   </div>
   
   <div id="vceKeyEqTab" class="tab-pane fade ">
