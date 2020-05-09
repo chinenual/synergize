@@ -64,7 +64,7 @@ func setVersion() {
 // platform specific config to ensure logs and preferences go to reasonable locations
 func getWorkingDirectory() (path string) {
 	// don't do this if we are running from the source tree
-	_, err := os.Stat("synio.go")
+	_, err := os.Stat("bundler.json")
 	if !os.IsNotExist(err) {
 		path="."
 		return
