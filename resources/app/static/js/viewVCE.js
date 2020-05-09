@@ -1,6 +1,15 @@
 let vce = {};
 let vceFiltersChart = null;
 
+// https://www.color-hex.com/color-palette/89750
+let chartColors=[
+    'rgb(225,215,0)',
+    'rgb(79,156,244)',
+    'rgb(62,244,6)',
+    'rgb(5,82,244)',
+    'rgb(4,169,24)'
+];
+
 let viewVCE = {
     init: function() {
 	Chart.defaults.global.defaultFontColor = 'white';
@@ -316,22 +325,31 @@ let viewVCE = {
 	    selectEle.removeChild(selectEle.firstChild);
 	}
 	var filter0name = '';
+	var idx=0;
 	for (i = 0; i < vce.Head.FILTER.length; i++) {
 	    if (vce.Head.FILTER[i] != 0) {
+		if (idx==0 && vce.Head.FILTER[0] != 0) {
+		    var option= document.createElement("option");
+		    option.value=-1;
+		    option.innerHTML = "All";
+		    selectEle.appendChild(option);
+		}
 		if (vce.Head.FILTER[i] > 0) {
 		    // a B-filter
 		    var option= document.createElement("option");
 		    option.value=vce.Head.FILTER[i]-1;
 		    option.innerHTML = "Bf " + vce.Head.FILTER[i];		    
-		    if (i==0) filter0name = "Bf " + vce.Head.FILTER[i];
+		    if (idx==0) filter0name = "Bf " + vce.Head.FILTER[i];
 		    selectEle.appendChild(option);
+		    idx++;
 		} else {
 		    // an A-filter
 		    var option= document.createElement("option");
 		    option.value=(-vce.Head.FILTER[i])-1;
 		    option.innerHTML = "Af " + (-vce.Head.FILTER[i]);
-		    if (i==0) filter0name = "Af " + (-vce.Head.FILTER[i]);
+		    if (idx==0) filter0name = "Af " + (-vce.Head.FILTER[i]);
 		    selectEle.appendChild(option);
+		    idx++;
 		}
 	    }
 	}
@@ -339,22 +357,58 @@ let viewVCE = {
 	    // no filters
 	    document.getElementById("filtersChart").style.display="none";
 	} else {
-	    viewVCE.filtersChartUpdate(0,filter0name);
+	    // "All" == -1
+	    viewVCE.filtersChartUpdate(-1);
 	}
     },
 
-    filtersChartUpdate: function(filterIndex, filterName) {
+    filtersChartUpdate: function(filterIndex) {
+	filterIndex = parseInt(filterIndex,10);
 	console.log("filtersChart init " + filterIndex);
-	var filterData = vce.Filters[filterIndex];
+	var datasets = [];
 
-	$('#filterTable td.val').each(function(i, obj) {
-	    var id=obj.id;
-	    // id is "ft<n>" - we need the <n> part
-	    var idxString=id.substring(2);
-	    var idx=parseInt(idxString,10)-1;
-	    obj.innerHTML = filterData[idx];
-	});
-				
+	if (filterIndex >= 0) {
+	    console.log("filter " + filterIndex + ": " + vce.Filters[filterIndex]);
+	    $('#filterTable').show();
+	    $('#filterTable td.val').each(function(i, obj) {
+		var id=obj.id;
+		// id is "ft<n>" - we need the <n> part
+		var idxString=id.substring(2);
+		var idx=parseInt(idxString,10)-1;
+		obj.innerHTML = vce.Filters[filterIndex][idx];
+	    });
+	    var filterName = $('#filterSelect option').eq(filterIndex+1).html();
+	    datasets = [{
+		    fill: false,
+		    lineTension: 0,
+		    pointRadius: 0,
+		    label: filterName,
+		    backgroundColor: chartColors[filterIndex % chartColors.length],
+		    borderColor: chartColors[filterIndex % chartColors.length],
+		    data: vce.Filters[filterIndex]
+		}];
+	} else {
+	    // "all"
+	    $('#filterTable').hide();
+	    console.log("filter len : " + vce.Filters.length);
+	    for (i = 0; i < vce.Filters.length; i++) {
+		console.log("filter " + i + ": " + vce.Filters[i]);
+		var filterName = $('#filterSelect option').eq(i+1).html();
+		datasets.push(
+		    {
+			fill: false,
+			lineTension: 0,
+			pointRadius: 0,
+			label: filterName,
+			backgroundColor: chartColors[i % chartColors.length],
+			borderColor: chartColors[i % chartColors.length],
+			data: vce.Filters[i]
+		    }
+		);
+	    }
+	    console.log("datasets = " + datasets);
+	}
+	
 	var ctx = document.getElementById('filtersChart').getContext('2d');
 	if (vceFiltersChart != null) {
 	    vceFiltersChart.destroy();
@@ -364,16 +418,7 @@ let viewVCE = {
 	    type: 'line',
 	    data: {
 		labels: ['','','','','','','','','','', '','','','','','','','','','', '','','','','','','','','','','',''],
-		datasets: [{
-		    fill: false,
-		    lineTension: 0,
-		    pointRadius: 0,
-		    label: filterName,
-		    // https://www.color-hex.com/color-palette/89750
-		    backgroundColor: 'rgb(255,215,0)',
-		    borderColor: 'rgb(255,215,0)',
-		    data: filterData
-		}]
+		datasets: datasets
 	    },
 	    
 	    // Configuration options go here
