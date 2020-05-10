@@ -41,8 +41,7 @@ var crcHash *crc.Hash
 
 func Init(port string, baud uint, synVerbose bool, serialVerbose bool) (err error) {
 	synioVerbose = synVerbose
-	err = serialInit(port, baud, serialVerbose);
-	if err != nil {
+	if err = serialInit(port, baud, serialVerbose); err != nil {
 		return errors.Wrap(err, "Could not open serial port")
 	}
 
@@ -97,16 +96,14 @@ func command(opcode byte, name string) (err error) {
 			case 1, 2, 3:
 				// KEY OR POT msg; consume 2 more bytes
 				for i := 0; i < 3; i++ {
-					_,err = serialReadByte(TIMEOUT_MS, "read key/pot data")
-					if err != nil {
+					_,err = serialReadByte(TIMEOUT_MS, "read key/pot data"); if err != nil {
 						err = errors.Wrap(err, "error syncing command key/pot comm")
+						return
 					}
 				}
 			default:
 				// otherwise, we need to send a NAK
-				err = serialWriteByte(TIMEOUT_MS, NAK, "write NAK")
-				if err != nil {
-					err = errors.Wrap(err, "error sending NAK during command sync")
+				if err = serialWriteByte(TIMEOUT_MS, NAK, "write command NAK"); err != nil {
 					return 
 				}
 			}
@@ -202,9 +199,7 @@ func InitVRAM() (err error) {
 	if vramInitialized {
 		return
 	}
-	err = command(OP_ENABLEVRAM, "ENABLEVRAM")
-	if err != nil {
-		err = errors.Wrap(err, "error sending ENABLEVRAM opcode")
+	if err = command(OP_ENABLEVRAM, "ENABLEVRAM"); err != nil {
 		return 
 	}
 	// errors will implicitly show  up in the log but we need to explicitly log success
@@ -213,27 +208,20 @@ func InitVRAM() (err error) {
 }
 
 func LoadVCE(slotnum byte, vce []byte) (err error) {
-	err = InitVRAM()
-	if err != nil {
+	if err = InitVRAM(); err != nil {
 		err = errors.Wrap(err, "Failed to initialize Synergy VRAM")
 		return 
 	}
 	
-	err = command(OP_VCELOD, "VCELOD")
-	if err != nil {
-		err = errors.Wrap(err, "error sending VCELOD opcode")
+	if err = command(OP_VCELOD, "VCELOD"); err != nil {
 		return 
 	}
 
-	err = serialWriteByte(TIMEOUT_MS, slotnum, "write slotnum")
-	if err != nil {
-		err = errors.Wrap(err, "error sending slotnum")
+	if err = serialWriteByte(TIMEOUT_MS, slotnum, "write slotnum"); err != nil {
 		return 
 	}
 	var status byte
-	status,err = serialReadByte(TIMEOUT_MS, "read slotnum ACK")
-	if err != nil {
-		err = errors.Wrap(err, "error reading slotnum ack")
+	if status,err = serialReadByte(TIMEOUT_MS, "read slotnum ACK"); err != nil {
 		return 
 	}
 	if status != DC1 {
@@ -241,14 +229,10 @@ func LoadVCE(slotnum byte, vce []byte) (err error) {
 		err = errors.Errorf("Invalid slotnum error")
 		return
 	}
-	err = serialWriteBytes(TIMEOUT_MS, vce, "write VCE")
-	if err != nil {
-		err = errors.Wrap(err, "error writing vce ")
+	if err = serialWriteBytes(TIMEOUT_MS, vce, "write VCE"); err != nil {
 		return 
 	}
-	status,err = serialReadByte(LONG_TIMEOUT_MS, "read VCE ACK")
-	if err != nil {
-		err = errors.Wrap(err, "error reading vce ack")
+	if status,err = serialReadByte(LONG_TIMEOUT_MS, "read VCE ACK"); err != nil {
 		return 
 	}
 	if status == ACK {
@@ -262,15 +246,11 @@ func LoadVCE(slotnum byte, vce []byte) (err error) {
 }
 
 func LoadCRT(crt []byte) (err error) {
-	err = InitVRAM()
-	if err != nil {
-		err = errors.Wrap(err, "Failed to initialize Synergy VRAM")
+	if err = InitVRAM(); err != nil {
 		return 
 	}
 	
-	err = command(OP_VRLOD, "VRLOD")
-	if err != nil {
-		err = errors.Wrap(err, "error sending VRLOD opcode")
+	if err = command(OP_VRLOD, "VRLOD"); err != nil {
 		return 
 	}
 
@@ -282,24 +262,18 @@ func LoadCRT(crt []byte) (err error) {
 	lenHob,lenLob := wordToBytes(length)
 	// LOB of the length
 	calcCRCByte(lenLob)
-	err = serialWriteByte(TIMEOUT_MS, lenLob, "write length LOB")
-	if err != nil {
-		err = errors.Wrap(err, "error sending length LOB")
+	if err = serialWriteByte(TIMEOUT_MS, lenLob, "write length LOB"); err != nil {
 		return 
 	}
 	// HOB of the length
 	calcCRCByte(lenHob)
-	err = serialWriteByte(TIMEOUT_MS, lenHob, "write length HOB")
-	if err != nil {
-		err = errors.Wrap(err, "error sending length HOB")
+	if err = serialWriteByte(TIMEOUT_MS, lenHob, "write length HOB"); err != nil {
 		return 
 	}
 
 	calcCRCBytes(crt)
 	
-	err = serialWriteBytes(TIMEOUT_MS, crt, "write CRT bytes")
-	if err != nil {
-		err = errors.Wrap(err, "error writing crt bytes ")
+	if err = serialWriteBytes(TIMEOUT_MS, crt, "write CRT bytes"); err != nil {
 		return 
 	}
 
@@ -308,22 +282,16 @@ func LoadCRT(crt []byte) (err error) {
 	
 	crcHob,crcLob := wordToBytes(crc)
 	// HOB of the crc
-	err = serialWriteByte(TIMEOUT_MS, crcHob, "write CRC HOB")
-	if err != nil {
-		err = errors.Wrap(err, "error sending crc HOB")
+	if err = serialWriteByte(TIMEOUT_MS, crcHob, "write CRC HOB"); err != nil {
 		return 
 	}
 	// LOB of the crc
-	err = serialWriteByte(TIMEOUT_MS, crcLob, "write CRC LOB")
-	if err != nil {
-		err = errors.Wrap(err, "error sending crc LOB")
+	if err = serialWriteByte(TIMEOUT_MS, crcLob, "write CRC LOB"); err != nil {
 		return 
 	}
 
 	var status byte
-	status,err = serialReadByte(LONG_TIMEOUT_MS, "read CRT ACK")
-	if err != nil {
-		err = errors.Wrap(err, "error reading crt ack")
+	if status,err = serialReadByte(LONG_TIMEOUT_MS, "read CRT ACK"); err != nil {
 		return 
 	}
 	if status == ACK {
@@ -338,24 +306,18 @@ func LoadCRT(crt []byte) (err error) {
 
 // Send Synergy "state" (STLOAD in the Z80 sources)
 func LoadSYN(bytes []byte) (err error) {
-	err = command(OP_STLOAD, "STLOAD")
-	if err != nil {
-		err = errors.Wrap(err, "error sending opcode")
+	if err = command(OP_STLOAD, "STLOAD"); err != nil {
 		return 
 	}
 	// the SYN file actually has everything we need to send to the Synergy:
 	// the initial byte count, the SEQ byte count and buffer and the final CRC.
 	// Just send it as a block 
-	err = serialWriteBytes(TIMEOUT_MS, bytes, "SYN bytes")
-	if err != nil {
-		err = errors.Wrap(err, "error sending SYN bytes")
+	if err = serialWriteBytes(TIMEOUT_MS, bytes, "SYN bytes"); err != nil {
 		return 
 	}
 	// expect an ACK:
 	var status byte
-	status,err = serialReadByte(LONG_TIMEOUT_MS, "read SYN ACK")
-	if err != nil {
-		err = errors.Wrap(err, "error reading SYN ack")
+	if status,err = serialReadByte(LONG_TIMEOUT_MS, "read SYN ACK"); err != nil {
 		return 
 	}
 	if status == ACK {
@@ -370,16 +332,12 @@ func LoadSYN(bytes []byte) (err error) {
 
 // Retrieve Synergy "state" (STDUMP in the Z80 sources)
 func SaveSYN() (bytes []byte, err error) {
-	err = command(OP_STDUMP, "STDUMP")
-	if err != nil {
-		err = errors.Wrap(err, "error sending opcode")
+	if err = command(OP_STDUMP, "STDUMP"); err != nil {
 		return 
 	}
 
 	var len_buf []byte
-	len_buf,err = serialReadBytes(TIMEOUT_MS, 2, "read CRC")
-	if err != nil {
-		err = errors.Wrap(err, "error reading CMOS length")
+	if len_buf,err = serialReadBytes(TIMEOUT_MS, 2, "read CMOS length"); err != nil {
 		return 
 	}
 
@@ -390,9 +348,7 @@ func SaveSYN() (bytes []byte, err error) {
 	if synioVerbose {log.Printf("CMOS LEN %d so read %d\n", cmos_len, cmos_len * 2 + 2)}
 	
 	var cmos_buf []byte
-	cmos_buf,err = serialReadBytes(TIMEOUT_MS, cmos_len * 2 + 2, "read CMOS")
-	if err != nil {
-		err = errors.Wrap(err, "error reading CMOS length")
+	if cmos_buf,err = serialReadBytes(TIMEOUT_MS, cmos_len * 2 + 2, "read CMOS"); err != nil {
 		return 
 	}
 
@@ -404,16 +360,12 @@ func SaveSYN() (bytes []byte, err error) {
 	seq_buf := []byte{}
 	
 	if seq_len != 0 {
-		seq_buf,err = serialReadBytes(TIMEOUT_MS, seq_len, "read SEQ")
-		if err != nil {
-			err = errors.Wrap(err, "error reading SEQ")
+		if seq_buf,err = serialReadBytes(TIMEOUT_MS, seq_len, "read SEQ"); err != nil {
 			return 
 		} 
 	}
 	var crc_buf []byte
-	crc_buf,err = serialReadBytes(TIMEOUT_MS, 2, "read CRC")
-	if err != nil {
-		err = errors.Wrap(err, "error reading CMOS length")
+	if crc_buf,err = serialReadBytes(TIMEOUT_MS, 2, "read CRC"); err != nil {
 		return 
 	}
 
@@ -442,19 +394,13 @@ func SaveSYN() (bytes []byte, err error) {
 }
 
 func GetID() (versionID [2]byte, err error) {
-	err = command(OP_GETID, "GETID")
-	if err != nil {
-		err = errors.Wrap(err, "error sending opcode")
+	if err = command(OP_GETID, "GETID"); err != nil {
 		return 
 	}
-	versionID[0],err = serialReadByte(TIMEOUT_MS, "read id HB")
-	if err != nil {
-		err = errors.Wrap(err, "error reading HB")
+	if versionID[0],err = serialReadByte(TIMEOUT_MS, "read id HB"); err != nil {
 		return 
 	}
-	versionID[1],err = serialReadByte(TIMEOUT_MS, "read id LB")
-	if err != nil {
-		err = errors.Wrap(err, "error reading LB")
+	if versionID[1],err = serialReadByte(TIMEOUT_MS, "read id LB"); err != nil {
 		return 
 	}
 	
@@ -464,8 +410,7 @@ func GetID() (versionID [2]byte, err error) {
 }
 
 func DisableVRAM() (err error) {
-	err = command(OP_DISABLEVRAM, "DISABLEVRAM")
-	if err == nil {
+	if err = command(OP_DISABLEVRAM, "DISABLEVRAM"); err == nil {
 		// errors will implicitly show  up in the log but we need to explicitly log success
 		if synioVerbose { log.Printf("DISABLEVRAM Success\n"); }	
 	}
@@ -479,13 +424,11 @@ func DiagCOMTST() (err error) {
 		b := byte(i)
 		log.Printf("%d (%02x) ...\n", b, b)
 
-		err = serialWriteByte(TIMEOUT_MS, b, "write test byte");
-		if err != nil {
+		if err = serialWriteByte(TIMEOUT_MS, b, "write test byte"); err != nil {
 			return errors.Wrapf(err, "failed to write byte %02x", b)
 		}
 		var read_b byte
-		read_b,err = serialReadByte(TIMEOUT_MS, "read test byte");
-		if err != nil {
+		if read_b,err = serialReadByte(TIMEOUT_MS, "read test byte"); err != nil {
 			return errors.Wrapf(err, "failed to read byte %02x", b)
 		}
 		if read_b != b {
@@ -503,15 +446,13 @@ func DiagLOOPTST() (err error) {
 	for true {
 
 		var b byte
-		b,err = serialReadByte(1000 * 60 * 5, "read test byte");
-		if err != nil {
+		if b,err = serialReadByte(1000 * 60 * 5, "read test byte");  err != nil {
 			return errors.Wrapf(err, "failed to read byte %02x", b)
 		}
 
 		log.Printf("%d (%02x) ...\n", b, b)
 
-		err = serialWriteByte(TIMEOUT_MS, b, "write test byte");
-		if err != nil {
+		if err = serialWriteByte(TIMEOUT_MS, b, "write test byte"); err != nil {
 			return errors.Wrapf(err, "failed to write byte %02x", b)
 		}
 	}
