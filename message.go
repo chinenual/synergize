@@ -22,21 +22,18 @@ import (
 func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload interface{}, err error) {
 	switch m.Name {
 	case "connectToSynergy":
-		err = connectToSynergy()
-		if err != nil {
+		if err = connectToSynergy(); err != nil {
 			payload = err.Error()
 		} else {
 			payload = FirmwareVersion
 		}
 		
 	case "disableVRAM":
-		err = connectToSynergyIfNotConnected();
-		if err != nil {
+		if err = connectToSynergyIfNotConnected(); err != nil {
 			payload = err.Error()
 			return
 		} 
-		err = synio.DisableVRAM()
-		if err != nil {
+		if err = synio.DisableVRAM(); err != nil {
 			payload = err.Error()
 			return
 		} else {
@@ -89,8 +86,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		err = diagLoadSYN(path)
-		if err != nil {
+		if err = diagLoadSYN(path);  err != nil {
 			payload = err.Error()
 			return
 		} else {
@@ -106,8 +102,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		err = diagSaveSYN(path)
-		if err != nil {
+		if err = diagSaveSYN(path); err != nil {
 			payload = err.Error()
 			return
 		} else {
@@ -124,8 +119,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		err = diagLoadCRT(path)
-		if err != nil {
+		if diagLoadCRT(path); if err != nil {
 			payload = err.Error()
 			return
 		} else {
@@ -143,8 +137,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		crt,err = data.ReadCrtFile(path);
-		if err != nil {
+		if crt,err = data.ReadCrtFile(path); err != nil {
 			payload = err.Error()
 			return
 		} else {
@@ -161,8 +154,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		vce,err = data.ReadVceFile(path);
-		if err != nil {
+		if vce,err = data.ReadVceFile(path); err != nil {
 			payload = err.Error()
 			return
 		} else {
@@ -187,16 +179,14 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			// "not connected".
 			//
 			// Run the serial init without querying the firmware version
-			err = synio.Init(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag)
-			if err != nil {
+			if err = synio.Init(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag); err != nil {
 				err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n", prefsUserPreferences.SerialPort,prefsUserPreferences.SerialBaud)
 				payload = err.Error()
 				return
 			}
 			FirmwareVersion = "Connected"
 		}
-		err = synio.DiagCOMTST()
-		if err != nil {
+		if err = synio.DiagCOMTST(); err != nil {
 			payload = err.Error()
 			return
 		} else {

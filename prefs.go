@@ -19,13 +19,11 @@ var prefsUserPreferences Preferences
 
 func prefsLoadPreferences() (err error) {
 	var b []byte
-	b,err = ioutil.ReadFile(preferencesPathname)
-	if err != nil {
+	if b,err = ioutil.ReadFile(preferencesPathname); if err != nil {
 		log.Println("Error loading preferences", err)
 		return
 	}
-	err = json.Unmarshal(b, &prefsUserPreferences)
-	if err != nil {
+	if err = json.Unmarshal(b, &prefsUserPreferences); err != nil {
 		log.Println("Error parsing preferences", err)
 		return
 	}
@@ -35,13 +33,11 @@ func prefsLoadPreferences() (err error) {
 
 func prefsSavePreferences() (err error) {
 	var b []byte
-	b,err = json.MarshalIndent(prefsUserPreferences, "", " ")
-	if err != nil {
+	if	b,err = json.MarshalIndent(prefsUserPreferences, "", " "); err != nil {
 		log.Println("Error saving preferences", err)
 	}
 	log.Printf("Save preferences %#v to file %s\n", prefsUserPreferences, preferencesPathname)
-	err = ioutil.WriteFile(preferencesPathname, b, 0644)
-	if err != nil {
+	if err = ioutil.WriteFile(preferencesPathname, b, 0644); err != nil {
 		log.Println("Error saving preferences", err)
 	}
 	return

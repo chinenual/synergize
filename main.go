@@ -105,9 +105,8 @@ func connectToSynergyIfNotConnected() (err error) {
 
 func connectToSynergy() (err error) {
 	FirmwareVersion = "Not Connected"
-	err = synio.Init(prefsUserPreferences.SerialPort,
-		prefsUserPreferences.SerialBaud, true, *serialVerboseFlag)
-	if err != nil {
+	if err = synio.Init(prefsUserPreferences.SerialPort,
+		prefsUserPreferences.SerialBaud, true, *serialVerboseFlag); err != nil {
 		err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n",
 			prefsUserPreferences.SerialPort,
 			prefsUserPreferences.SerialBaud)
@@ -128,8 +127,7 @@ func connectToSynergy() (err error) {
 }
 
 func refreshNavPane(path string) {
-	err := bootstrap.SendMessage(w, "explore", path, func(m *bootstrap.MessageIn){}) 
-	if err != nil {
+	if err := bootstrap.SendMessage(w, "explore", path, func(m *bootstrap.MessageIn){}) ; err != nil {
 		l.Println(fmt.Errorf("sending refreshNav event failed: %w", err))
 	}
 }
@@ -196,8 +194,7 @@ func main() {
 			{
 				Label: astikit.StrPtr("About Synergize"),
 				OnClick: func(e astilectron.Event) (deleteListener bool) {
-					err := bootstrap.SendMessage(about_w, "setVersion", AppVersion, func(m *bootstrap.MessageIn){}) 
-					if err != nil {
+					if err := bootstrap.SendMessage(about_w, "setVersion", AppVersion, func(m *bootstrap.MessageIn){}); err != nil {
 						l.Println(fmt.Errorf("sending about event failed: %w", err))
 					}
 					about_w.Show()
