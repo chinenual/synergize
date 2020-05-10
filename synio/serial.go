@@ -49,8 +49,7 @@ func serialInit(port string, baudRate uint, verbose bool) (err error) {
 		readerChannelQuit <- true
 	}
 	log.Printf(" --> serial.Open(%#v)\n",options)
-	stream,err = serial.Open(options);
-	if err != nil {
+	if stream,err = serial.Open(options); err != nil {
 		return errors.Wrapf(err,"Could not open serial port")
 	}
 
@@ -148,8 +147,7 @@ func serialReadBytes(timeoutMS uint, num_bytes uint16, purpose string) (bytes []
 	var arr []byte = make([]byte,num_bytes);
 
 	for i:= uint16(0); i < num_bytes; i++ {
-		arr[i],err = serialReadByte(timeoutMS, fmt.Sprintf("%s: %d",purpose,i))
-		if err != nil {
+		if arr[i],err = serialReadByte(timeoutMS, fmt.Sprintf("%s: %d",purpose,i)); err != nil {
 			bytes = arr[0:i]
 			err = errors.Wrap(err, "failed to read all bytes")
 			return
