@@ -116,8 +116,7 @@ func vceReadFilters(buf io.Reader, vce *VCE) (err error) {
 	
 	for i := 0; i < filterCount; i++ {
 		for j := 0; j < 32; j++ {
-			err = binary.Read(buf, binary.LittleEndian, &vce.Filters[i][j])
-			if err != nil {
+			if err = binary.Read(buf, binary.LittleEndian, &vce.Filters[i][j]); err != nil {
 				log.Println(vceToString(*vce))
 				log.Println("binary.Read failed:", i, " ", j, " ", err)
 				return
@@ -128,8 +127,7 @@ func vceReadFilters(buf io.Reader, vce *VCE) (err error) {
 }
 	
 func vceRead(buf io.Reader, skipFilters bool) (vce VCE, err error) {
-	err = binary.Read(buf, binary.LittleEndian, &vce.Head)
-	if err != nil {
+	if err = binary.Read(buf, binary.LittleEndian, &vce.Head); err != nil {
 		log.Println("binary.Read failed:", err)
 		return
 	}
@@ -138,80 +136,66 @@ func vceRead(buf io.Reader, skipFilters bool) (vce VCE, err error) {
 	for i := byte(0); i <= vce.Head.VOITAB; i++ {
 		var e Envelope
 	
-		err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.OPTCH)
-		if err != nil {
+		if err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.OPTCH); err != nil {
 			log.Println("binary.Read failed:", err)
 			return
 		}
-		err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.OHARM)
-		if err != nil {
+		if err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.OHARM); err != nil {
 			log.Println("binary.Read failed:", err)
 			return
 		}
-		err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.FDETUN)
-		if err != nil {
+		if err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.FDETUN); err != nil {
 			log.Println("binary.Read failed:", err)
 			return
 		}
-		err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.FENVL)
-		if err != nil {
+		if err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.FENVL); err != nil {
 			log.Println("binary.Read failed:", err)
 			return
 		}
-		err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.ENVTYPE)
-		if err != nil {
+		if err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.ENVTYPE); err != nil {
 			log.Println("binary.Read failed:", err)
 			return
 		}
-		err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.NPOINTS)
-		if err != nil {
+		if err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.NPOINTS); err != nil {
 			log.Println("binary.Read failed:", err)
 			return
 		}
-		err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.SUSTAINPT)
-		if err != nil {
+		if err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.SUSTAINPT); err != nil {
 			log.Println("binary.Read failed:", err)
 			return
 		}
-		err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.LOOPPT)
-		if err != nil {
+		if err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.LOOPPT); err != nil {
 			log.Println("binary.Read failed:", err)
 			return
 		}
 		// 4 values per point:
 		e.FreqEnvelope.Table = make([]byte, e.FreqEnvelope.NPOINTS*4)
 		for k := byte(0); k < e.FreqEnvelope.NPOINTS*4; k++ {
-			err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.Table[k])
-			if err != nil {
+			if err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.Table[k]); err != nil {
 				log.Println("binary.Read failed:", err)
 				return
 			}
 		}
-		err = binary.Read(buf, binary.LittleEndian, &e.AmpEnvelope.ENVTYPE)
-		if err != nil {
+		if err = binary.Read(buf, binary.LittleEndian, &e.AmpEnvelope.ENVTYPE); err != nil {
 			log.Println("binary.Read failed:", err)
 			return
 		}
-		err = binary.Read(buf, binary.LittleEndian, &e.AmpEnvelope.NPOINTS)
-		if err != nil {
+		if err = binary.Read(buf, binary.LittleEndian, &e.AmpEnvelope.NPOINTS); err != nil {
 			log.Println("binary.Read failed:", err)
 			return
 		}
-		err = binary.Read(buf, binary.LittleEndian, &e.AmpEnvelope.SUSTAINPT)
-		if err != nil {
+		if err = binary.Read(buf, binary.LittleEndian, &e.AmpEnvelope.SUSTAINPT); err != nil {
 			log.Println("binary.Read failed:", err)
 			return
 		}
-		err = binary.Read(buf, binary.LittleEndian, &e.AmpEnvelope.LOOPPT)
-		if err != nil {
+		if err = binary.Read(buf, binary.LittleEndian, &e.AmpEnvelope.LOOPPT); err != nil {
 			log.Println("binary.Read failed:", err)
 			return
 		}
 		// 4 values per point:
 		e.AmpEnvelope.Table = make([]byte, e.AmpEnvelope.NPOINTS*4)
 		for k := byte(0); k < e.AmpEnvelope.NPOINTS*4; k++ {
-			err = binary.Read(buf, binary.LittleEndian, &e.AmpEnvelope.Table[k])
-			if err != nil {
+			if err = binary.Read(buf, binary.LittleEndian, &e.AmpEnvelope.Table[k]); err != nil {
 				log.Println("binary.Read failed:", err)
 				return
 			}

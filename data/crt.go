@@ -34,14 +34,12 @@ func ReadCrtFile(filename string) (crt CRT, err error) {
 	
 	var b []byte
 
-	b,err = ioutil.ReadFile(filename)
-	if err != nil {
+	if b,err = ioutil.ReadFile(filename); err != nil {
 		return 
 	}
 	buf := bytes.NewReader(b)
 
-	err = binary.Read(buf, binary.LittleEndian, &crt.Head)
-	if err != nil {
+	if err = binary.Read(buf, binary.LittleEndian, &crt.Head); err != nil {
 		log.Println("binary.Read failed:", err)
 		return
 	}
@@ -57,8 +55,7 @@ func ReadCrtFile(filename string) (crt CRT, err error) {
 		if offset != 0 {
 //		log.Printf("seek to %d\n",voitabOffset + offset)
 		
-			_,err = buf.Seek(int64(voitabOffset+offset), io.SeekStart)
-			if err != nil {
+			if _,err = buf.Seek(int64(voitabOffset+offset), io.SeekStart); err != nil {
 				err = errors.Wrapf(err,"failed to seek to voice #%d start", i)
 				return
 			}
@@ -74,8 +71,7 @@ func ReadCrtFile(filename string) (crt CRT, err error) {
 			}
 			if VceBFilterCount(vce) > 0 {
 				offset = uint16(crt.Head.BFILTR[i]-1) * 32
-				_,err = buf.Seek(int64(filtabOffset+offset), io.SeekStart)
-				if err != nil {
+				if _,err = buf.Seek(int64(filtabOffset+offset), io.SeekStart); err != nil {
 					err = errors.Wrapf(err,"failed to seek to voice #%d filter-b start", i)
 					return
 				}

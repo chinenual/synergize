@@ -15,7 +15,7 @@ func jsonize (filename string) {
 	ext := strings.ToLower(path.Ext(filename))
 	switch ext {
 	case ".vce":
-		vce,err := data.VceReadFile(filename)
+		vce,err := data.ReadVceFile(filename)
 		if err != nil {
 			log.Panic(err);
 		}
@@ -25,7 +25,7 @@ func jsonize (filename string) {
 		
 		fmt.Println(result)
 	case ".crt":
-		crt,err := data.CrtReadFile(filename)
+		crt,err := data.ReadCrtFile(filename)
 		if err != nil {
 			log.Panic(err);
 		}
