@@ -14,16 +14,22 @@ const TIMEOUT_MS = 5000
 const OP_KEYDWN       = byte(0x01)
 const OP_KEYUP        = byte(0x02)
 const OP_POT          = byte(0x03)
-const OP_ASSIGNED_KEY = byte(0x77)
-const OP_SELECT       = byte(0x78)
 
 const OP_VRLOD        = byte(0x6b)
 const OP_VCELOD       = byte(0x6e)
 const OP_DISABLEVRAM  = byte(0x6f)
 const OP_ENABLEVRAM   = byte(0x70)
+const OP_BLOCKLOAD    = byte(0x71)
+const OP_BLOCKDUMP    = byte(0x72)
 const OP_GETID        = byte(0x74)
+const OP_EXECUTE      = byte(0x75)
+const OP_IMODE        = byte(0x76)
+const OP_ASSIGNED_KEY = byte(0x77)
+const OP_SELECT       = byte(0x78)
 const OP_STDUMP       = byte(0x79)
 const OP_STLOAD       = byte(0x7a)
+const OP_SLOW_BLOCKDUMP = byte(0x7c)
+
 
 const ACK byte = 0x06
 const DC1 byte = 0x11
@@ -141,6 +147,51 @@ func command(opcode byte, name string) (err error) {
 		err = errors.Errorf("com error sending opcode %02x - did not get ACK/NAK, got %02x",opcode,status)
 
 		
+	}
+	return
+}
+
+func writeU16(v uint16, purpose string) (err error) {
+	
+	hob,lob := wordToBytes(v)
+
+	err = serialWriteByte(TIMEOUT_MS, hob, "write HOB " + purpose)
+	if err != nil {
+		err = errors.Wrap(err, "error sending HOB " + purpose)
+		return 
+	}
+	err = serialWriteByte(TIMEOUT_MS, lob, "write LOB " + purpose)
+	if err != nil {
+		err = errors.Wrap(err, "error sending LOB " + purpose)
+		return 
+	}
+	return
+}
+
+func BlockDump(startAddress uint16, length uint16) (bytes []byte, err error) {
+	command(OP_BLOCKDUMP, "OP_BLOCKDUMP")
+	err = writeU16(startAddress, "blockdump start address")
+	err = writeU16(startAddress, "blockdump len")
+	if err != nil {
+		return 
+	}
+	bytes,err = serialReadBytes(LONG_TIMEOUT_MS, length, "block dump" )
+	if err != nil {
+		return 
+	}
+	return
+}
+
+func BlockLoad(startAddress uint16, length uint16, bytes []byte) (err error) {
+	command(OP_BLOCKLOAD, "OP_BLOCKLOAD")
+	err = writeU16(startAddress, "blockload start address")
+	err = writeU16(startAddress, "blockload len")
+	if err != nil {
+		return 
+	}
+	err = serialWriteBytes(LONG_TIMEOUT_MS, bytes, "block load" )
+	if err != nil {
+		return 
 	}
 	return
 }
