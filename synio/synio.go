@@ -155,13 +155,11 @@ func writeU16(v uint16, purpose string) (err error) {
 	
 	hob,lob := wordToBytes(v)
 
-	err = serialWriteByte(TIMEOUT_MS, hob, "write HOB " + purpose)
-	if err != nil {
+	if err = serialWriteByte(TIMEOUT_MS, hob, "write HOB " + purpose); err != nil {
 		err = errors.Wrap(err, "error sending HOB " + purpose)
 		return 
 	}
-	err = serialWriteByte(TIMEOUT_MS, lob, "write LOB " + purpose)
-	if err != nil {
+	if err = serialWriteByte(TIMEOUT_MS, lob, "write LOB " + purpose); err != nil {
 		err = errors.Wrap(err, "error sending LOB " + purpose)
 		return 
 	}
@@ -169,28 +167,32 @@ func writeU16(v uint16, purpose string) (err error) {
 }
 
 func BlockDump(startAddress uint16, length uint16) (bytes []byte, err error) {
-	command(OP_BLOCKDUMP, "OP_BLOCKDUMP")
-	err = writeU16(startAddress, "blockdump start address")
-	err = writeU16(startAddress, "blockdump len")
-	if err != nil {
+	if err = command(OP_BLOCKDUMP, "OP_BLOCKDUMP"); err != nil {
 		return 
 	}
-	bytes,err = serialReadBytes(LONG_TIMEOUT_MS, length, "block dump" )
-	if err != nil {
+	if err = writeU16(startAddress, "blockdump start address"); err != nil {
+		return 
+	}
+	if err = writeU16(startAddress, "blockdump len"); err != nil {
+		return 
+	}
+	if bytes,err = serialReadBytes(LONG_TIMEOUT_MS, length, "block dump" ); err != nil {
 		return 
 	}
 	return
 }
 
 func BlockLoad(startAddress uint16, length uint16, bytes []byte) (err error) {
-	command(OP_BLOCKLOAD, "OP_BLOCKLOAD")
-	err = writeU16(startAddress, "blockload start address")
-	err = writeU16(startAddress, "blockload len")
-	if err != nil {
+	if err  = command(OP_BLOCKLOAD, "OP_BLOCKLOAD"); err != nil {
+		return
+	}
+	if err = writeU16(startAddress, "blockload start address"); err != nil {
+		return
+	}
+	if err = writeU16(startAddress, "blockload len"); err != nil {
 		return 
 	}
-	err = serialWriteBytes(LONG_TIMEOUT_MS, bytes, "block load" )
-	if err != nil {
+	if err = serialWriteBytes(LONG_TIMEOUT_MS, bytes, "block load" ); err != nil {
 		return 
 	}
 	return
