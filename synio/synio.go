@@ -170,7 +170,7 @@ func BlockDump(startAddress uint16, length uint16) (bytes []byte, err error) {
 	if err = writeU16(startAddress, "blockdump start address"); err != nil {
 		return 
 	}
-	if err = writeU16(startAddress, "blockdump len"); err != nil {
+	if err = writeU16(length, "blockdump len"); err != nil {
 		return 
 	}
 	if bytes,err = serialReadBytes(LONG_TIMEOUT_MS, length, "block dump" ); err != nil {
@@ -179,18 +179,61 @@ func BlockDump(startAddress uint16, length uint16) (bytes []byte, err error) {
 	return
 }
 
-func BlockLoad(startAddress uint16, length uint16, bytes []byte) (err error) {
+func BlockLoad(startAddress uint16, bytes []byte) (err error) {
 	if err  = command(OP_BLOCKLOAD, "OP_BLOCKLOAD"); err != nil {
 		return
 	}
 	if err = writeU16(startAddress, "blockload start address"); err != nil {
 		return
 	}
-	if err = writeU16(startAddress, "blockload len"); err != nil {
+	if err = writeU16(uint16(len(bytes)), "blockload len"); err != nil {
 		return 
 	}
 	if err = serialWriteBytes(LONG_TIMEOUT_MS, bytes, "block load" ); err != nil {
 		return 
+	}
+	return
+}
+
+var synAddrs struct {
+	SEQTAB	uint16
+	SEQCON	uint16
+	SEQVOI	uint16
+	CODE	uint16
+	PTVAL	uint16
+	PTSTAT	uint16
+	SOLOSC	uint16
+	// and the implied addresses relative to the above:
+	EXTRA	uint16
+	DEVICE	uint16
+	VALUE	uint16
+	TRANSP	uint16
+}
+
+func getSynergyAddrs() (err error) {
+	var b []byte
+	if b, err = BlockDump(0x00c5, 14); err != nil {
+		return
+	}
+	synAddrs.SEQTAB = bytesToWord(b[1], b[0]);
+	synAddrs.SEQCON = bytesToWord(b[3], b[2]);
+	synAddrs.SEQVOI = bytesToWord(b[5], b[4]);
+	synAddrs.CODE   = bytesToWord(b[7], b[6]);
+	synAddrs.PTVAL  = bytesToWord(b[9], b[8]);
+	synAddrs.PTSTAT = bytesToWord(b[11],b[10]);
+	synAddrs.SOLOSC = bytesToWord(b[13],b[12]);
+	// and the implied addresses relative to the above:
+	synAddrs.EXTRA  = synAddrs.SEQTAB - 128
+	synAddrs.DEVICE = synAddrs.CODE + 2
+	synAddrs.VALUE  = synAddrs.CODE + 4
+	synAddrs.TRANSP = synAddrs.SEQTAB - 5
+	if synioVerbose {log.Printf("Addrs: %#v\n",synAddrs)}
+	return
+}
+
+func VoicingMode() (err error) {
+	if err = getSynergyAddrs(); err != nil {
+		return
 	}
 	return
 }

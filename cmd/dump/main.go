@@ -18,6 +18,10 @@ func main() {
 		log.Panic(err)
 	}
 
+	if os.Args[1] ==  "--addrs" {
+		synio.VoicingMode()
+		return
+	}
 	start,err = strconv.ParseUint(os.Args[1],10,16)
 	if err != nil {
 		log.Panic(err)
