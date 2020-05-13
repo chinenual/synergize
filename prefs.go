@@ -19,7 +19,7 @@ var prefsUserPreferences Preferences
 
 func prefsLoadPreferences() (err error) {
 	var b []byte
-	if b,err = ioutil.ReadFile(preferencesPathname); if err != nil {
+	if b,err = ioutil.ReadFile(preferencesPathname); err != nil {
 		log.Println("Error loading preferences", err)
 		return
 	}

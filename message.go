@@ -119,7 +119,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		if diagLoadCRT(path); if err != nil {
+		if diagLoadCRT(path); err != nil {
 			payload = err.Error()
 			return
 		} else {
