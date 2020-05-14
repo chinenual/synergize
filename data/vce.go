@@ -71,14 +71,13 @@ func vceName(vceHead VCEHead) (name string) {
 }
 
 func VceAFilterCount(vce VCE) (count int) {
-	count = 0
 	for i := byte(0); i < vce.Head.VOITAB; i++ {
 		v := vce.Head.FILTER[i]
 		if v < 0 {
-			count = count + 1
+			return 1
 		}
 	}
-	return
+	return 0
 }
 
 func VceBFilterCount(vce VCE) (count int) {
@@ -105,22 +104,51 @@ func ReadVceFile(filename string) (vce VCE, err error) {
 	return
 }
 
-func vceReadFilters(buf io.Reader, vce *VCE) (err error) {
-	var filterCount = 0
+func vceReadAFilters(buf io.Reader, vce *VCE) (err error) {
+	// a voice has at most 1 A filter. These are at the head of the filter array
+	// so we can unconditionally put it in slot 0 if there is one
 	for _,f := range vce.Head.FILTER {
-		if f != 0 {
-			filterCount++
+		if f < 0 {
+			for j := 0; j < 32; j++ {
+				if err = binary.Read(buf, binary.LittleEndian, &vce.Filters[0][j]); err != nil {
+					log.Println(vceToString(*vce))
+					log.Println("binary.Read failed:", 0, " ", j, " ", err)
+					return
+				}			
+			}			
+			return
 		}
 	}
-	vce.Filters = make ([][32]int8,filterCount);
-	
-	for i := 0; i < filterCount; i++ {
-		for j := 0; j < 32; j++ {
-			if err = binary.Read(buf, binary.LittleEndian, &vce.Filters[i][j]); err != nil {
-				log.Println(vceToString(*vce))
-				log.Println("binary.Read failed:", i, " ", j, " ", err)
-				return
-			}			
+	return
+}
+
+func vceReadBFilters(buf io.Reader, vce *VCE) (err error) {
+	var filterCount = 0
+	var hasAFilter = false;
+	for _,f := range vce.Head.FILTER {
+		if f != 0 {
+			filterCount = filterCount + 1
+		}
+		if f < 0 {
+			hasAFilter = true;
+		}
+	}
+
+	var offset = 0
+	if hasAFilter {
+		offset = 1
+	}
+	for _,f := range vce.Head.FILTER {
+		if f > 0 {
+			// filters are one-based 
+			var index = int(f) - 1 + offset
+			for j := 0; j < 32; j++ {
+				if err = binary.Read(buf, binary.LittleEndian, &vce.Filters[index][j]); err != nil {
+					log.Println(vceToString(*vce))
+					log.Println("binary.Read failed:", index, " ", j, " ", err)
+					return
+				}			
+			}
 		}
 	}
 	return
@@ -202,8 +230,30 @@ func vceRead(buf io.Reader, skipFilters bool) (vce VCE, err error) {
 		}
 		vce.Envelopes[i] = e
 	}
+
+	var filterCount = 0
+	var hasAFilter = false
+	for _,f := range vce.Head.FILTER {
+		if f > 0 {
+			filterCount++
+		} else if f < 0 {
+			hasAFilter = true;
+		}
+	}
+	if hasAFilter {
+		filterCount = filterCount+1;
+	}
+	vce.Filters = make ([][32]int8,filterCount);
+
 	if ! skipFilters {
-		err = vceReadFilters(buf, &vce)
+		if err = vceReadAFilters(buf, &vce); err != nil {
+			log.Println("binary.Read failed:", err)
+			return
+		}
+		if err = vceReadBFilters(buf, &vce); err != nil {
+			log.Println("binary.Read failed:", err)
+			return
+		}
 	}
 	return
 }
