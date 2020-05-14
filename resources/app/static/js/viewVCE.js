@@ -340,7 +340,7 @@ let viewVCE = {
 	    selectEle.appendChild(option);
 	}
 
-	viewVCE.envChartUpdate(1)
+	viewVCE.envChartUpdate(1,-1)
     },
 
     // SYNHCS COMMON.Z80 FTAB:
@@ -392,7 +392,7 @@ let viewVCE = {
 	return viewVCE.scaleViaRtab((v*2)-54);
     },
     
-    envChartUpdate: function(oscNum) {
+    envChartUpdate: function(oscNum,envNum) {
 	var oscIndex = oscNum-1;
 	var envelopes = vce.Envelopes[oscIndex];
 
@@ -490,6 +490,9 @@ let viewVCE = {
 	    totalTimeLow += timeLow;
 	    totalTimeUp  += timeUp;
 
+	    datasets[freqLowIdx].data.push({x: totalTimeLow, y: freqLow});
+	    datasets[freqUpIdx].data.push( {x: totalTimeUp,  y: freqUp});
+
 	    tr.find('td:eq(2)').html(freqLow); 
 	    tr.find('td:eq(3)').html(freqUp);
 	    tr.find('td:eq(4)').html(timeLow);
@@ -565,7 +568,14 @@ visualization makes sense
 	*/
 	
 	console.dir(datasets);
-	
+
+	var filteredDatasets = [];
+	if (envNum < 0) {
+	    // all of them:
+	    filteredDatasets = datasets;
+	} else {
+	    filteredDatasets.push(datasets[envNum])
+	}
 	var ctx = document.getElementById('envChart').getContext('2d');
 	if (vceEnvChart != null) {
 	    vceEnvChart.destroy();
@@ -575,7 +585,7 @@ visualization makes sense
 	    type: 'line',
 	    data: {
 //		labels: ['','','','','','','','','','', '','','','','','','','','','', '','','','','','','','','','','',''],
-		datasets: datasets
+		datasets: filteredDatasets
 	    },
 	    
 	    // Configuration options go here
