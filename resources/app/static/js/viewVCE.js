@@ -378,7 +378,7 @@ let viewVCE = {
     
     scaleAmpTimeValue: function(v) {
 	// See OSCDSP.Z80 DISVAL: DVAL20:
-	if (v < 23) return v;
+	if (v < 39) return v;
 	return viewVCE.scaleViaRtab(((v*2)-54)*2);
     },
     
@@ -396,6 +396,8 @@ let viewVCE = {
 	// scaling algorithms derived from DISVAL: in OSCDSP.Z80
 	
 	console.log("env freq npt " + envelopes.FreqEnvelope.NPOINTS);
+	var totalTimeLow = 0;
+	var totalTimeUp  = 0;
 	for (i = 0; i < envelopes.FreqEnvelope.NPOINTS; i++) {
 	    var tr = $('#envTable tbody tr:eq(' + i + ')');
 
@@ -404,10 +406,20 @@ let viewVCE = {
 		.html(viewVCE.scaleFreqEnvValue(envelopes.FreqEnvelope.Table[i*4 + 0])); 
 	    tr.find('td:eq(3)')
 		.html(viewVCE.scaleFreqEnvValue(envelopes.FreqEnvelope.Table[i*4 + 1])); 
+	    var timeLow = viewVCE.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i*4 + 2]); 
+	    var timeUp  = viewVCE.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i*4 + 3]);
+	    totalTimeLow += timeLow;
+	    totalTimeUp  += timeUp;
+
 	    tr.find('td:eq(4)')
-		.html(viewVCE.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i*4 + 2])); 
+		.html(timeLow);
 	    tr.find('td:eq(5)')
-		.html(viewVCE.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i*4 + 3])); 
+		.html(timeUp);
+	    tr.find('td:eq(6)')
+		.html(totalTimeLow);
+	    tr.find('td:eq(7)')
+		.html(totalTimeUp);
+	    
 	    if (envelopes.AmpEnvelope.SUSTAINPT == (i+1)) {
 		tr.find('td:eq(1)').html("S&gt;");
 	    }
@@ -417,6 +429,8 @@ let viewVCE = {
 	}
 
 	console.log("env amp npt " + envelopes.AmpEnvelope.NPOINTS);
+	totalTimeLow = 0;
+	totalTimeUp  = 0;
 	for (i = 0; i < envelopes.AmpEnvelope.NPOINTS; i++) {
 	    var tr = $('#envTable tbody tr:eq(' + i + ')');
 
@@ -433,10 +447,18 @@ let viewVCE = {
 	    tr.find('td:eq(' +(j+1)+ ')')
 		.html(viewVCE.scaleAmpEnvValue(envelopes.AmpEnvelope.Table[i*4 + 1],
 					       (i+1) >= envelopes.AmpEnvelope.NPOINTS)); 
+	    var timeLow = viewVCE.scaleAmpTimeValue(envelopes.AmpEnvelope.Table[i*4 + 2]); 
+	    var timeUp  = viewVCE.scaleAmpTimeValue(envelopes.AmpEnvelope.Table[i*4 + 3]);
+	    totalTimeLow += timeLow;
+	    totalTimeUp  += timeUp;
 	    tr.find('td:eq(' +(j+2)+ ')')
-		.html(viewVCE.scaleAmpTimeValue(envelopes.AmpEnvelope.Table[i*4 + 2])); 
+		.html(timeLow);
 	    tr.find('td:eq(' +(j+3)+ ')')
-		.html(viewVCE.scaleAmpTimeValue(envelopes.AmpEnvelope.Table[i*4 + 3]));
+		.html(timeUp);
+	    tr.find('td:eq(' +(j+4)+ ')')
+		.html(totalTimeLow);
+	    tr.find('td:eq(' +(j+5)+ ')')
+		.html(totalTimeUp);
 	    if (envelopes.AmpEnvelope.SUSTAINPT == (i+1)) {
 		tr.find('td:eq(' +(j-1)+ ')').html("S&gt;");
 	    }
