@@ -208,6 +208,17 @@ var synAddrs struct {
 	DEVICE	uint16
 	VALUE	uint16
 	TRANSP	uint16
+	
+	// Used in many SYNHCS address calculations:
+	FILTAB	uint16
+	EDATA	uint16
+	
+	// Fixed addresses (from SYN-322.LNK)
+	PROG    uint16
+	VTAB    uint16
+	ROM     uint16
+	RAM     uint16 // AKA DATA
+	CMOS    uint16 
 }
 
 func getSynergyAddrs() (err error) {
@@ -227,6 +238,18 @@ func getSynergyAddrs() (err error) {
 	synAddrs.DEVICE = synAddrs.CODE + 2
 	synAddrs.VALUE  = synAddrs.CODE + 4
 	synAddrs.TRANSP = synAddrs.SEQTAB - 5
+
+	// Used in many SYNHCS address calculations:
+	synAddrs.FILTAB = synAddrs.VTAB + 173
+	synAddrs.EDATA  = synAddrs.FILTAB+(17*32)
+		
+	// Fixed addresses:
+	synAddrs.PROG	= 0x0000
+	synAddrs.ROM	= 0x5c72
+	synAddrs.CMOS	= 0xf000
+	synAddrs.VTAB   = 0x6033 // voice table ROM
+	synAddrs.RAM    = 0x8000 // aka DATA
+	
 	if synioVerbose {log.Printf("Addrs: %#v\n",synAddrs)}
 	return
 }
