@@ -318,6 +318,137 @@ let viewVCE = {
 	});
     },
 
+    envChartInit: function() {
+	var selectEle = document.getElementById("envOscSelect");
+	// remove old options:
+	while (selectEle.firstChild) {
+	    selectEle.removeChild(selectEle.firstChild);
+	}
+
+	for (i = 0; i <= vce.Head.VOITAB; i++) {
+	    var option= document.createElement("option");
+	    option.value="" + (i+1);
+	    option.innerHTML = "" + (i+1);
+	    selectEle.appendChild(option);
+	}
+
+	viewVCE.envChartUpdate(1)
+    },
+
+    // SYNHCS COMMON.Z80 FTAB:
+    ftab: [
+	0,2,4,6,8,10,12,14,	//Reference frequency table
+	15,16,17,18,19,20,21,22,
+	24,25,27,28,30,32,34,36,
+	38,40,43,45,48,51,54,57,
+	61,64,68,72,76,81,86,91,
+	96,102,108,115,122,129,137,145,
+	153,163,172,183,193,205,217,230,
+	244,258,274,290,307,326,345,366,
+	387,411,435,461,488,517,548,581,
+	615,652,691,732,775,822,870,922,
+	977,1035,1097,1162,1231,1304,1382,1464,
+	1551,1644,1741,1845,1955,2071,2194,2325,
+	2463,2609,2765,2929,3103,3288,3483,3691,
+	3910,4143,4389,4650,4926,5219,5530,5859,
+	6207,6576,6967,7382,7820,8286,8778,9300,
+	9853,10439,11060,11718,12414,13153,13935,14764],
+
+    scaleViaRtab(v) {
+	return v;// TODO
+    },
+    
+    scaleFreqEnvValue: function(v) {
+	// See OSCDSP.Z80 DISVAL: DVAL10:
+	return v; // TODO
+    },
+    
+    scaleAmpEnvValue: function(v,last) {
+	// See OSCDSP.Z80 DISVAL: DVAL30:
+	console.log("scaleAmpEnvValue " + v + " " + last);	
+	if (last) return 0;
+	return Math.max(0, v-55);
+    },
+    
+    scaleFreqTimeValue: function(v) {
+	// See OSCDSP.Z80 DISVAL: 
+	if (v < 15) return v;
+	return viewVCE.scaleViaRtab((2*v)-14);
+    },
+    
+    scaleAmpTimeValue: function(v) {
+	// See OSCDSP.Z80 DISVAL: DVAL20:
+	if (v < 23) return v;
+	return viewVCE.scaleViaRtab(((v*2)-54)*2);
+    },
+    
+    envChartUpdate: function(oscNum) {
+	var oscIndex = oscNum-1;
+	var envelopes = vce.Envelopes[oscIndex];
+	
+	// clear old values:
+
+	$('#envTable td.val').each(function(i, obj) {
+	    obj.innerHTML = '';
+	});
+	// fill in freq env data:
+
+	// scaling algorithms derived from DISVAL: in OSCDSP.Z80
+	
+	console.log("env freq npt " + envelopes.FreqEnvelope.NPOINTS);
+	for (i = 0; i < envelopes.FreqEnvelope.NPOINTS; i++) {
+	    var tr = $('#envTable tbody tr:eq(' + i + ')');
+
+	    // table is logically in groups of 4
+	    tr.find('td:eq(2)')
+		.html(viewVCE.scaleFreqEnvValue(envelopes.FreqEnvelope.Table[i*4 + 0])); 
+	    tr.find('td:eq(3)')
+		.html(viewVCE.scaleFreqEnvValue(envelopes.FreqEnvelope.Table[i*4 + 1])); 
+	    tr.find('td:eq(4)')
+		.html(viewVCE.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i*4 + 2])); 
+	    tr.find('td:eq(5)')
+		.html(viewVCE.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i*4 + 3])); 
+	    if (envelopes.AmpEnvelope.SUSTAINPT == (i+1)) {
+		tr.find('td:eq(1)').html("S&gt;");
+	    }
+	    if (envelopes.AmpEnvelope.LOOPNPT == (i+1)) {
+		tr.find('td:eq(1)').html("L&gt;");
+	    }
+	}
+
+	console.log("env amp npt " + envelopes.AmpEnvelope.NPOINTS);
+	for (i = 0; i < envelopes.AmpEnvelope.NPOINTS; i++) {
+	    var tr = $('#envTable tbody tr:eq(' + i + ')');
+
+	    // table is logically in groups of 4.
+	    // "j" accounts for the difference in column index due to the
+	    // row-spanning separators (only in i==0):
+	    j = (i == 0) ? 11 : 9;
+	    console.log("j " + j);
+	    console.dir(tr);
+	    console.dir(tr.find('td:eq(' +(j+0)+ ')'));
+	    tr.find('td:eq(' +(j+0)+ ')')
+		.html(viewVCE.scaleAmpEnvValue(envelopes.AmpEnvelope.Table[i*4 + 0],
+					       (i+1) >= envelopes.AmpEnvelope.NPOINTS)); 
+	    tr.find('td:eq(' +(j+1)+ ')')
+		.html(viewVCE.scaleAmpEnvValue(envelopes.AmpEnvelope.Table[i*4 + 1],
+					       (i+1) >= envelopes.AmpEnvelope.NPOINTS)); 
+	    tr.find('td:eq(' +(j+2)+ ')')
+		.html(viewVCE.scaleAmpTimeValue(envelopes.AmpEnvelope.Table[i*4 + 2])); 
+	    tr.find('td:eq(' +(j+3)+ ')')
+		.html(viewVCE.scaleAmpTimeValue(envelopes.AmpEnvelope.Table[i*4 + 3]));
+	    if (envelopes.AmpEnvelope.SUSTAINPT == (i+1)) {
+		tr.find('td:eq(' +(j-1)+ ')').html("S&gt;");
+	    }
+	    if (envelopes.AmpEnvelope.LOOPNPT == (i+1)) {
+		tr.find('td:eq(' +(j-1)+ ')').html("L&gt;");
+	    }
+	}
+
+
+
+    },
+	
     filtersChartInit: function() {
 	var selectEle = document.getElementById("filterSelect");
 	// remove old options:
@@ -474,6 +605,7 @@ let viewVCE = {
 	
 	viewVCE.keyPropChart();
 	viewVCE.keyEqChart();
+	viewVCE.envChartInit();
 	viewVCE.filtersChartInit();
 	viewVCE.patchTable();
 		

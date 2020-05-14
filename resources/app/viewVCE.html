@@ -129,7 +129,377 @@
   </div>
 
   <div id="vceEnvsTab" class="tab-pane fade ">
-    tab 2 stuff
+    
+    <select id="envOscSelect" onchange="viewVCE.envChartUpdate(this.options[this.selectedIndex].value)">
+      <option>1</option>
+      <option>2</option>
+      <option>3</option>
+      <option>3</option>
+    </select>
+
+
+    <style>
+      #envTable td { text-align: center;}
+      #envTable th { text-align: center;}
+      #envTable td { color: #aaa; }
+      #envTable td.val { color: #fff; width:3em; }
+      #envTable th { color: #aaa; }
+      #envTable th.val { color: #fff; }
+    </style>
+
+    <table id="envTable">
+      <thead>
+	<tr>
+	  <th colspan="9">Frequency</th>
+
+	  <th colspan="9">Amplitude</th>
+	</tr>
+	<tr>
+	  <th></th>
+	  <th></th>
+	  <th colspan="2">Value(%)</th>
+	  <th colspan="2">Time(ms)</th>
+	  <th colspan="2">Total Time</th>
+
+	  <td rowspan="3" style="padding:10px;"></td>
+	  <td rowspan="3" style="border-left:1px solid #666;padding:10px;">	
+
+	  <th></th>
+	  <th colspan="2">Value(dB)</th>
+	  <th colspan="2">Time(ms)</th>
+	  <th colspan="2">Total Time</th>
+	  <th></th>
+	</tr>
+	<tr>
+	  <th>N</th>
+	  <th></th>
+	  <th>Low</th>
+	  <th>Up</th>
+	  <th>Low</th>
+	  <th>Up</th>
+	  <th>Low</th>
+	  <th>Up</th>
+	  
+	  <th></th>
+	  <th>Low</th>
+	  <th>Up</th>
+	  <th>Low</th>
+	  <th>Up</th>
+	  <th>Low</th>
+	  <th>Up</th>
+	  <th>N</th>
+	</tr>
+      </thead>
+      <tbody>
+	<tr>
+	  <td>1</td>	  
+	  <td class="val">S&gt;</td>
+	  <td class="val">0</td>
+	  <td class="val">2</td>
+	  <td class="val">0</td>
+	  <td class="val">0</td>
+	  <td class="val">0</td>
+	  <td class="val">0</td>
+
+	  <td rowspan="16" style="padding:10px;"></td>
+	  <td rowspan="16" style="border-left:1px solid #666;padding:10px;">	
+	  <td class="val">S&gt;</td>
+	  <td class="val">7</td>
+	  <td class="val">64</td>
+	  <td class="val">26</td>
+	  <td class="val">28</td>
+	  <td class="val">26</td>
+	  <td class="val">28</td>
+	  <td>1</td>
+	</tr>
+	<tr>
+	  <td>2</td>
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td>2</td>
+	</tr>
+	<tr>
+	  <td>3</td>
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td>3</td>
+	</tr>
+	<tr>
+	  <td>4</td>
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td>4</td>
+	</tr>
+	<tr>
+	  <td>5</td>
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td>5</td>
+	</tr>
+	<tr>
+	  <td>6</td>
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td>6</td>
+	</tr>
+	<tr>
+	  <td>7</td>
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td>7</td>
+	</tr>
+	<tr>
+	  <td>8</td>
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td>8</td>
+	</tr>
+	<tr>
+	  <td>9</td>
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td>9</td>
+	</tr>
+	<tr>
+	  <td>10</td>
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td>10</td>
+	</tr>
+	<tr>
+	  <td>11</td>
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td>11</td>
+	</tr>
+	<tr>
+	  <td>12</td>
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td>12</td>
+	</tr>
+	<tr>
+	  <td>13</td>
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td>13</td>
+	</tr>
+	<tr>
+	  <td>14</td>
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td>14</td>
+	</tr>
+	<tr>
+	  <td>15</td>
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td>15</td>
+	</tr>
+	<tr>
+	  <td>16</td>
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  
+	  <td class="val">S&gt;</td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td class="val"></td>
+	  <td>16</td>
+	</tr>
+      </tbody>
+    </table>
+    
   </div>
   
   <div id="vceFiltersTab" class="tab-pane fade ">
