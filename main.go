@@ -379,7 +379,7 @@ and easier to document if same on both Mac and Windows.
 			Options: &astilectron.WindowOptions{
 				BackgroundColor: astikit.StrPtr("black"),
 				Center:          astikit.BoolPtr(true),
-				Height:          astikit.IntPtr(620),
+				Height:          astikit.IntPtr(800),
 				Width:           astikit.IntPtr(890),
 			},
 		},{
