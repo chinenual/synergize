@@ -1,13 +1,23 @@
 let vce = {};
 let vceFiltersChart = null;
+let vceEnvChart = null;
 
 // https://www.color-hex.com/color-palette/89750
+//let chartColors=[
+//    'rgb(225,215,0)',
+//    'rgb(79,156,244)',
+//    'rgb(62,244,6)',
+//    'rgb(5,82,244)',
+//    'rgb(4,169,24)'
+//];
+
+// https://htmlcolors.com/palette/26/google-palette
 let chartColors=[
-    'rgb(225,215,0)',
-    'rgb(79,156,244)',
-    'rgb(62,244,6)',
-    'rgb(5,82,244)',
-    'rgb(4,169,24)'
+    'rgb(244,180,0)', // golden
+    'rgb(66,133,244)', // blue
+    'rgb(219,68,55)', // redish
+    'rgb(15,157,88)', // green
+    'rgb(255,255,255)' // white
 ];
 
 let viewVCE = {
@@ -180,9 +190,8 @@ let viewVCE = {
 		    lineTension: 0,
 		    pointRadius: 0,
 		    label: 'Key Equalization',
-		    // https://www.color-hex.com/color-palette/89750
-		    backgroundColor: 'rgb(255,215,0)',
-		    borderColor: 'rgb(255,215,0)',
+		    backgroundColor: chartColors[0],
+		    borderColor: chartColors[0],
 		    data: propData
 		}]
 	    },
@@ -258,9 +267,8 @@ let viewVCE = {
 		    lineTension: 0,
 		    pointRadius: 0,
 		    label: 'Key Proportion',
-		    // https://www.color-hex.com/color-palette/89750
-		    backgroundColor: 'rgb(255,215,0)',
-		    borderColor: 'rgb(255,215,0)',
+		    backgroundColor: chartColors[0],
+		    borderColor: chartColors[0],
 		    data: propData
 		}]
 	    },
@@ -387,6 +395,69 @@ let viewVCE = {
     envChartUpdate: function(oscNum) {
 	var oscIndex = oscNum-1;
 	var envelopes = vce.Envelopes[oscIndex];
+
+	let freqLowIdx = 0;
+	let freqUpIdx  = 1;
+	let ampLowIdx  = 2;
+	let ampUpIdx   = 3;
+	let datasets = [
+	    {
+		label: "Freq Low",
+		xAxisID: "time-axis",
+		yAxisID: "freq-axis",
+		fill: false,
+		lineTension: 0,
+		pointRadius: 2,
+		pointHitRadius: 5,
+		showLine: true,
+		borderWidth: 3,
+		backgroundColor: chartColors[2],
+		borderColor: chartColors[2],
+		data: []
+	    },
+	    {
+		label: "Freq Up",
+		xAxisID: "time-axis",
+		yAxisID: "freq-axis",
+		fill: false,
+		lineTension: 0,
+		pointRadius: 2,
+		pointHitRadius: 5,
+		showLine: true,
+		borderWidth: 3,
+		backgroundColor: chartColors[3],
+		borderColor: chartColors[3],
+		data: []
+	    },
+	    {
+		label: "Amp Low",
+		xAxisID: "time-axis",
+		yAxisID: "amp-axis",
+		fill: false,
+		lineTension: 0,
+		pointRadius: 2,
+		pointHitRadius: 5,
+		showLine: true,
+		borderWidth: 3,
+		backgroundColor: chartColors[0],
+		borderColor: chartColors[0],
+		data: []
+	    },
+	    {
+		label: "Amp Up",
+		xAxisID: "time-axis",
+		yAxisID: "amp-axis",	
+		fill: false,
+		lineTension: 0,
+		pointRadius: 2,
+		pointHitRadius: 5,
+		showLine: true,
+		borderWidth: 3,
+		backgroundColor: chartColors[1],
+		borderColor: chartColors[1],
+		data: []
+	    },
+	];
 	
 	// clear old values:
 
@@ -400,36 +471,41 @@ let viewVCE = {
 	console.log("env freq npt " + envelopes.FreqEnvelope.NPOINTS);
 	var totalTimeLow = 0;
 	var totalTimeUp  = 0;
+	var lastFreqLow  = 0;
+	var lastFreqUp   = 0;
+	var lastAmpLow   = 0;
+	var lastAmpUp    = 0;
+	
 	for (i = 0; i < envelopes.FreqEnvelope.NPOINTS; i++) {
 	    var tr = $('#envTable tbody tr:eq(' + i + ')');
 
 	    // table is logically in groups of 4
-	    tr.find('td:eq(2)')
-		.html(viewVCE.scaleFreqEnvValue(envelopes.FreqEnvelope.Table[i*4 + 0])); 
-	    tr.find('td:eq(3)')
-		.html(viewVCE.scaleFreqEnvValue(envelopes.FreqEnvelope.Table[i*4 + 1])); 
+	    var freqLow = viewVCE.scaleFreqEnvValue(envelopes.FreqEnvelope.Table[i*4 + 0]);
+	    var freqUp = viewVCE.scaleFreqEnvValue(envelopes.FreqEnvelope.Table[i*4 + 1]);
 	    var timeLow = viewVCE.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i*4 + 2], i==0); 
 	    var timeUp  = viewVCE.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i*4 + 3], i==0);
+
+	    lastFreqLow = freqLow;
+	    lastFreqUp = freqUp;
 	    totalTimeLow += timeLow;
 	    totalTimeUp  += timeUp;
 
-	    tr.find('td:eq(4)')
-		.html(timeLow);
-	    tr.find('td:eq(5)')
-		.html(timeUp);
-	    tr.find('td:eq(6)')
-		.html(totalTimeLow);
-	    tr.find('td:eq(7)')
-		.html(totalTimeUp);
+	    tr.find('td:eq(2)').html(freqLow); 
+	    tr.find('td:eq(3)').html(freqUp);
+	    tr.find('td:eq(4)').html(timeLow);
+	    tr.find('td:eq(5)').html(timeUp);
+	    tr.find('td:eq(6)').html(totalTimeLow);
+	    tr.find('td:eq(7)').html(totalTimeUp);
 	    
 	    if (envelopes.AmpEnvelope.SUSTAINPT == (i+1)) {
-		tr.find('td:eq(1)').html("S&gt;");
+		tr.find('td:eq(1)').html("S-&gt;");
 	    }
 	    if (envelopes.AmpEnvelope.LOOPNPT == (i+1)) {
-		tr.find('td:eq(1)').html("L&gt;");
+		tr.find('td:eq(1)').html("L-&gt;");
 	    }
 	}
-
+	var maxTotalTime = Math.max(totalTimeLow, totalTimeUp);
+	
 	console.log("env amp npt " + envelopes.AmpEnvelope.NPOINTS);
 	totalTimeLow = 0;
 	totalTimeUp  = 0;
@@ -443,33 +519,144 @@ let viewVCE = {
 	    console.log("j " + j);
 	    console.dir(tr);
 	    console.dir(tr.find('td:eq(' +(j+0)+ ')'));
-	    tr.find('td:eq(' +(j+0)+ ')')
-		.html(viewVCE.scaleAmpEnvValue(envelopes.AmpEnvelope.Table[i*4 + 0],
-					       (i+1) >= envelopes.AmpEnvelope.NPOINTS)); 
-	    tr.find('td:eq(' +(j+1)+ ')')
-		.html(viewVCE.scaleAmpEnvValue(envelopes.AmpEnvelope.Table[i*4 + 1],
-					       (i+1) >= envelopes.AmpEnvelope.NPOINTS)); 
+	    var ampLow =
+		viewVCE.scaleAmpEnvValue(envelopes.AmpEnvelope.Table[i*4 + 0],
+					 (i+1) >= envelopes.AmpEnvelope.NPOINTS);
+	    var ampUp = 
+		viewVCE.scaleAmpEnvValue(envelopes.AmpEnvelope.Table[i*4 + 1],
+					 (i+1) >= envelopes.AmpEnvelope.NPOINTS); 
 	    var timeLow = viewVCE.scaleAmpTimeValue(envelopes.AmpEnvelope.Table[i*4 + 2]); 
 	    var timeUp  = viewVCE.scaleAmpTimeValue(envelopes.AmpEnvelope.Table[i*4 + 3]);
+	    lastAmpLow = ampLow;
+	    lastAmpUp  = ampUp;
 	    totalTimeLow += timeLow;
 	    totalTimeUp  += timeUp;
-	    tr.find('td:eq(' +(j+2)+ ')')
-		.html(timeLow);
-	    tr.find('td:eq(' +(j+3)+ ')')
-		.html(timeUp);
-	    tr.find('td:eq(' +(j+4)+ ')')
-		.html(totalTimeLow);
-	    tr.find('td:eq(' +(j+5)+ ')')
-		.html(totalTimeUp);
+
+	    datasets[ampLowIdx].data.push({x: totalTimeLow, y: ampLow});
+	    datasets[ampUpIdx].data.push( {x: totalTimeUp,  y: ampUp});
+
+	    console.dir(datasets[ampLowIdx]);
+	    
+	    tr.find('td:eq(' +(j+0)+ ')').html(ampLow);
+	    tr.find('td:eq(' +(j+1)+ ')').html(ampUp);
+	    tr.find('td:eq(' +(j+2)+ ')').html(timeLow);
+	    tr.find('td:eq(' +(j+3)+ ')').html(timeUp);
+	    tr.find('td:eq(' +(j+4)+ ')').html(totalTimeLow);
+	    tr.find('td:eq(' +(j+5)+ ')').html(totalTimeUp);
+
 	    if (envelopes.AmpEnvelope.SUSTAINPT == (i+1)) {
-		tr.find('td:eq(' +(j-1)+ ')').html("S&gt;");
+		tr.find('td:eq(' +(j-1)+ ')').html("S-&gt;");
 	    }
 	    if (envelopes.AmpEnvelope.LOOPNPT == (i+1)) {
-		tr.find('td:eq(' +(j-1)+ ')').html("L&gt;");
+		tr.find('td:eq(' +(j-1)+ ')').html("L-&gt;");
 	    }
 	}
 
+	maxTotalTime = Math.max(maxTotalTime, totalTimeLow);
+	maxTotalTime = Math.max(maxTotalTime, totalTimeUp);
 
+	/*
+need to confirm the actual behavior of the envelopes to determine if this
+visualization makes sense
+	datasets[freqLowIdx].data.push({x: maxTotalTime, y: lastFreqLow});
+	datasets[freqUpIdx].data.push( {x: maxTotalTime,  y: lastFreqUp});
+	datasets[ampLowIdx].data.push({x: maxTotalTime, y: lastAmpLow});
+	datasets[ampUpIdx].data.push( {x: maxTotalTime,  y: lastAmpUp});
+	*/
+	
+	console.dir(datasets);
+	
+	var ctx = document.getElementById('envChart').getContext('2d');
+	if (vceEnvChart != null) {
+	    vceEnvChart.destroy();
+	}
+	vceEnvChart = new Chart(ctx, {
+	    
+	    type: 'line',
+	    data: {
+//		labels: ['','','','','','','','','','', '','','','','','','','','','', '','','','','','','','','','','',''],
+		datasets: datasets
+	    },
+	    
+	    // Configuration options go here
+	    options: {
+		tooltips: {
+		    mode: 'index',
+		},
+		hover: {
+		    mode: 'index',
+		},
+		scales: {
+		    xAxes: [{
+			position: 'bottom',
+			id: 'time-axis',
+			type: 'logarithmic',
+			gridLines: {
+			    color: '#666',
+			    display: true,
+			    drawBorder: true,
+			    drawOnChartArea: true
+			},
+			scaleLabel: {
+			    display: true,
+			    labelString: "Time (ms)"
+			},
+			ticks: {
+			    callback: function(value, index, values) {
+				// don't use scientific notation
+				return value;
+			    },
+			    color: '#666',
+			    display: true
+			}
+		    }],
+		    yAxes: [{
+			position: 'left',
+			id: 'freq-axis',
+			type: 'logarithmic',
+			gridLines: {
+			    color: '#666',
+			    display: true,
+			    drawBorder: true,
+			    drawOnChartArea: false
+			},
+			scaleLabel: {
+			    display: true,
+			    labelString: "Frequency (Hz)"
+			},
+			ticks: {
+			    callback: function(value, index, values) {
+				// don't use scientific notation
+				return value;
+			    },
+			    color: '#eee',
+			    display: true
+			}
+		    },
+		    {
+			position: 'right',
+			id: 'amp-axis',
+			type: 'linear',
+			gridLines: {
+			    color: '#666',
+			    display: true,
+			    drawBorder: true,
+			    drawOnChartArea: false
+			},
+			scaleLabel: {
+			    display: true,
+			    labelString: "Amplitude dB"
+			},
+			ticks: {
+			    color: '#eee',
+			    display: true
+			}
+		    }],
+		},
+		responsive: false,
+		maintainAspectRatio: false
+	    }
+	});
 
     },
 	
@@ -534,14 +721,15 @@ let viewVCE = {
 	    });
 	    var filterName = $('#filterSelect option').eq(filterIndex+1).html();
 	    datasets = [{
-		    fill: false,
-		    lineTension: 0,
-		    pointRadius: 0,
-		    label: filterName,
-		    backgroundColor: chartColors[filterIndex % chartColors.length],
-		    borderColor: chartColors[filterIndex % chartColors.length],
-		    data: vce.Filters[filterIndex]
-		}];
+		fill: false,
+		lineTension: 0,
+		pointRadius: 0,
+		pointHitRadius: 5,
+		label: filterName,
+		backgroundColor: chartColors[filterIndex % chartColors.length],
+		borderColor: chartColors[filterIndex % chartColors.length],
+		data: vce.Filters[filterIndex]
+	    }];
 	} else {
 	    // "all"
 	    $('#filterTable').hide();
@@ -554,6 +742,7 @@ let viewVCE = {
 			fill: false,
 			lineTension: 0,
 			pointRadius: 0,
+			pointHitRadius: 5,
 			label: filterName,
 			backgroundColor: chartColors[i % chartColors.length],
 			borderColor: chartColors[i % chartColors.length],
@@ -678,18 +867,19 @@ let viewVCE = {
 		    fill: false,
 		    lineTension: 0,
 		    pointRadius: 0,
+		    pointHitRadius: 5,
 		    label: 'Amplitude',
-		    // https://www.color-hex.com/color-palette/89750
-		    backgroundColor: 'rgb(255,215,0)',
-		    borderColor: 'rgb(255,215,0)',
+		    backgroundColor: chartColors[0],
+		    borderColor: chartColors[0],
 		    data: ampData
 		},{
 		    fill: false,
 		    lineTension: 0,
 		    pointRadius: 0,
+		    pointHitRadius: 5,
 		    label: 'Timbre',
-		    backgroundColor: 'rgb(79,156,244)',
-		    borderColor: 'rgb(79,156,244)',
+		    backgroundColor: chartColors[1],
+		    borderColor: chartColors[1],
 		    data: timbreData
 		}]
 	    },
