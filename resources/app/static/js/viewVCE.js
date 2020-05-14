@@ -355,7 +355,9 @@ let viewVCE = {
 	9853,10439,11060,11718,12414,13153,13935,14764],
 
     scaleViaRtab(v) {
-	return v;// TODO
+	if (v <= 0) return 0;
+	if (v >= viewVCE.ftab.length) return viewVCE.ftab[viewVCE.ftab.length-1];
+	return viewVCE.ftab[v-1];
     },
     
     scaleFreqEnvValue: function(v) {
@@ -365,13 +367,13 @@ let viewVCE = {
     
     scaleAmpEnvValue: function(v,last) {
 	// See OSCDSP.Z80 DISVAL: DVAL30:
-	console.log("scaleAmpEnvValue " + v + " " + last);	
 	if (last) return 0;
 	return Math.max(0, v-55);
     },
     
-    scaleFreqTimeValue: function(v) {
-	// See OSCDSP.Z80 DISVAL: 
+    scaleFreqTimeValue: function(v,first) {
+	// See OSCDSP.Z80 DISVAL:
+	if (first) return 0;
 	if (v < 15) return v;
 	return viewVCE.scaleViaRtab((2*v)-14);
     },
@@ -379,7 +381,7 @@ let viewVCE = {
     scaleAmpTimeValue: function(v) {
 	// See OSCDSP.Z80 DISVAL: DVAL20:
 	if (v < 39) return v;
-	return viewVCE.scaleViaRtab(((v*2)-54)*2);
+	return viewVCE.scaleViaRtab((v*2)-54);
     },
     
     envChartUpdate: function(oscNum) {
@@ -406,8 +408,8 @@ let viewVCE = {
 		.html(viewVCE.scaleFreqEnvValue(envelopes.FreqEnvelope.Table[i*4 + 0])); 
 	    tr.find('td:eq(3)')
 		.html(viewVCE.scaleFreqEnvValue(envelopes.FreqEnvelope.Table[i*4 + 1])); 
-	    var timeLow = viewVCE.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i*4 + 2]); 
-	    var timeUp  = viewVCE.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i*4 + 3]);
+	    var timeLow = viewVCE.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i*4 + 2], i==0); 
+	    var timeUp  = viewVCE.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i*4 + 3], i==0);
 	    totalTimeLow += timeLow;
 	    totalTimeUp  += timeUp;
 
