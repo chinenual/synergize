@@ -1,6 +1,7 @@
 let vce = {};
 let vceFiltersChart = null;
 let vceEnvChart = null;
+let vceFilterNames = null;
 
 // https://www.color-hex.com/color-palette/89750
 //let chartColors=[
@@ -520,8 +521,8 @@ let viewVCE = {
 	    // row-spanning separators (only in i==0):
 	    j = (i == 0) ? 11 : 9;
 	    console.log("j " + j);
-	    console.dir(tr);
-	    console.dir(tr.find('td:eq(' +(j+0)+ ')'));
+//	    console.dir(tr);
+//	    console.dir(tr.find('td:eq(' +(j+0)+ ')'));
 	    var ampLow =
 		viewVCE.scaleAmpEnvValue(envelopes.AmpEnvelope.Table[i*4 + 0],
 					 (i+1) >= envelopes.AmpEnvelope.NPOINTS);
@@ -538,7 +539,7 @@ let viewVCE = {
 	    datasets[ampLowIdx].data.push({x: totalTimeLow, y: ampLow});
 	    datasets[ampUpIdx].data.push( {x: totalTimeUp,  y: ampUp});
 
-	    console.dir(datasets[ampLowIdx]);
+//	    console.dir(datasets[ampLowIdx]);
 	    
 	    tr.find('td:eq(' +(j+0)+ ')').html(ampLow);
 	    tr.find('td:eq(' +(j+1)+ ')').html(ampUp);
@@ -567,7 +568,7 @@ visualization makes sense
 	datasets[ampUpIdx].data.push( {x: maxTotalTime,  y: lastAmpUp});
 	*/
 	
-	console.dir(datasets);
+//	console.dir(datasets);
 
 	var filteredDatasets = [];
 	if (envNum < 0) {
@@ -676,45 +677,50 @@ visualization makes sense
 	while (selectEle.firstChild) {
 	    selectEle.removeChild(selectEle.firstChild);
 	}
-	var filter0name = '';
-	var idx=0;
+
+	var filterNames = [];
+	// check for a-filter
 	for (i = 0; i < vce.Head.FILTER.length; i++) {
-	    if (vce.Head.FILTER[i] != 0) {
-		if (idx==0 && vce.Head.FILTER[0] != 0) {
-		    var option= document.createElement("option");
-		    option.value=-1;
-		    option.innerHTML = "All";
-		    selectEle.appendChild(option);
-		}
-		if (vce.Head.FILTER[i] > 0) {
-		    // a B-filter
-		    var option= document.createElement("option");
-		    option.value=vce.Head.FILTER[i]-1;
-		    option.innerHTML = "Bf " + vce.Head.FILTER[i];		    
-		    if (idx==0) filter0name = "Bf " + vce.Head.FILTER[i];
-		    selectEle.appendChild(option);
-		    idx++;
-		} else {
-		    // an A-filter
-		    var option= document.createElement("option");
-		    option.value=(-vce.Head.FILTER[i])-1;
-		    option.innerHTML = "Af " + (-vce.Head.FILTER[i]);
-		    if (idx==0) filter0name = "Af " + (-vce.Head.FILTER[i]);
-		    selectEle.appendChild(option);
-		    idx++;
-		}
+	    if (vce.Head.FILTER[i] < 0) {
+		// zero'th filter is the a-filter
+		filterNames.push('Af');
+		break;
 	    }
 	}
-	if (selectEle.firstChild == null) {
+	// now the b-filters
+	for (i = 0; i < vce.Head.FILTER.length; i++) {
+	    if (vce.Head.FILTER[i] > 0) {
+		filterNames.push('Bf ' + vce.Head.FILTER[i]);
+		break;
+	    }
+	}
+
+	if (filterNames.length > 1) {
+	    var option= document.createElement("option");
+	    option.value=-1;
+	    option.innerHTML = "All";
+	    selectEle.appendChild(option);
+	}
+	
+	for (i = 0; i < filterNames.length; i++) {
+	    var option= document.createElement("option");
+	    option.value=i;
+	    option.innerHTML = filterNames[i];
+	    selectEle.appendChild(option);
+	}
+	if (filterNames.length <= 0) {
 	    // no filters
 	    document.getElementById("filtersChart").style.display="none";
-	} else {
+	} else if (filterNames.length > 1) {
 	    // "All" == -1
-	    viewVCE.filtersChartUpdate(-1);
+	    viewVCE.filtersChartUpdate(-1, 'All');
+	} else {
+	    // first filter
+	    viewVCE.filtersChartUpdate(0, filterNames[0]);
 	}
     },
 
-    filtersChartUpdate: function(filterIndex) {
+    filtersChartUpdate: function(filterIndex, filterName) {
 	filterIndex = parseInt(filterIndex,10);
 	console.log("filtersChart init " + filterIndex);
 	var datasets = [];
@@ -729,7 +735,6 @@ visualization makes sense
 		var idx=parseInt(idxString,10)-1;
 		obj.innerHTML = vce.Filters[filterIndex][idx];
 	    });
-	    var filterName = $('#filterSelect option').eq(filterIndex+1).html();
 	    datasets = [{
 		fill: false,
 		lineTension: 0,
@@ -762,6 +767,8 @@ visualization makes sense
 	    }
 	    console.log("datasets = " + datasets);
 	}
+
+	console.dir(datasets);
 	
 	var ctx = document.getElementById('filtersChart').getContext('2d');
 	if (vceFiltersChart != null) {
@@ -838,6 +845,7 @@ visualization makes sense
 	    document.getElementById("backToCRT").hidden = false;
 	}
 
+	document.getElementById("vce_crt_name").innerHTML = crt_name;
 	document.getElementById("vce_name").innerHTML = vce.Head.VNAME;
 	
 	document.getElementById("name").innerHTML = vce.Head.VNAME;
