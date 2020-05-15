@@ -12,7 +12,10 @@ failcount=0
 i=0
 
 while [ $i -lt ${n} ]; do
-    i=$((i + 1)) 
+    i=$((i + 1))
+    echo
+    echo ${cmd}
+    echo
     ${cmd}
     if [ $? != 0 ]; then
 	echo $i: FAIL
