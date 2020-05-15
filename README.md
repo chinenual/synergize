@@ -33,8 +33,12 @@ Please report problems via a [github issue](https://github.com/chinenual/synergi
 
 ## Screenshots
 
-<img src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE.png?raw=true" width="400"/>
-<img src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewCRT.png?raw=true" width="400"/>
+<img src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewCRT.png?raw=true" width="30%"/>
+<img src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_voice.png?raw=true" width="30%"/>
+<img src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_envs.png?raw=true" width="30%"/>
+<img src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_filters.png?raw=true" width="30%"/>
+<img src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_keyeq.png?raw=true" width="30%"/>
+<img src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_keyprop.png?raw=true" width="30%"/>
 
 ## How to use
 
