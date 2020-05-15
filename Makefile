@@ -12,7 +12,9 @@ EXE_LINUX=output/linux-amd64/Synergize
 # used in main.go are generated as side-effects of the astielectron-bundler
 all: TAGS $(EXES)
 
+
 $(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX): $(SRCS)
+	rm windows.syso # delete temporary file side effect of windows build - linux-arm chokes on it.
 	astilectron-bundler
 
 # command line friendly variant for running batch serial comms tests
@@ -54,10 +56,17 @@ packages/Synergize-Installer-$(VERSION).msi : windows-installer.wxs $(EXE_WINDOW
 		-o packages/Synergize-Installer-$(VERSION).msi \
 		windows-installer.wxs
 
-packageLinux: packages/Synergize-linux-amd64-$(VERSION).tar.gz
-packages/Synergize-linux-amd64-$(VERSION).tar.gz: $(EXE_LINUX)
+packageLinux: \
+  packages/Synergize-linux-amd64-$(VERSION).tar.gz \
+  packages/Synergize-linux-arm-$(VERSION).tar.gz
+
+packages/Synergize-linux-amd64-$(VERSION).tar.gz: $(EXE_LINUX_AMD64)
 	mkdir -p packages
 	cd output/linux-amd64 && tar czvf ../../packages/Synergize-linux-amd64-$(VERSION).tar.gz Synergize
+
+packages/Synergize-linux-arm-$(VERSION).tar.gz: $(EXE_LINUX_ARM)
+	mkdir -p packages
+	cd output/linux-arm && tar czvf ../../packages/Synergize-linux-arm-$(VERSION).tar.gz Synergize
 
 test:
 	cd data && go test

@@ -7,37 +7,37 @@ shift
 cmd=$*
 status=0
 
-bash testfiles/bin/loop.sh ${iterations} ${cmd} -SYNVER
+bash testbin/loop.sh ${iterations} ${cmd} -SYNVER
 SYNVER_status=$?
 if [ $SYNVER_status != 0 ]; then
     status=1
 fi
 
-bash testfiles/bin/loop.sh ${iterations} ${cmd} -SAVESYN test.syn
+bash testbin/loop.sh ${iterations} ${cmd} -SAVESYN test.syn
 SAVESYN_status=$?
 if [ $SAVESYN_status != 0 ]; then
     status=1
 fi
 
-bash testfiles/bin/loop.sh ${iterations} ${cmd} -LOADSYN test.syn
+bash testbin/loop.sh ${iterations} ${cmd} -LOADSYN test.syn
 LOADSYN_status=$?
 if [ $LOADSYN_status != 0 ]; then
     status=1
 fi
 
-bash testfiles/bin/loop.sh ${iterations} ${cmd} -LOADCRT testfiles/INTERNAL.CRT
+bash testbin/loop.sh ${iterations} ${cmd} -LOADCRT data/testfiles/INTERNAL.CRT
 LOADCRT_INTERNAL_status=$?
 if [ $LOADCRT_INTERNAL_status != 0 ]; then
     status=1
 fi
 
-bash testfiles/bin/loop.sh ${iterations} ${cmd} -LOADCRT testfiles/L4.CRT
+bash testbin/loop.sh ${iterations} ${cmd} -LOADCRT data/testfiles/L4.CRT
 LOADCRT_L4_status=$?
 if [ $LOADCRT_L4_status != 0 ]; then
     status=1
 fi
 
-bash testfiles/bin/loop.sh ${iterations} ${cmd} -LOADCRT testfiles/VCART1.CRT
+bash testbin/loop.sh ${iterations} ${cmd} -LOADCRT data/testfiles/VCART1.CRT
 LOADCRT_VCART1_status=$?
 if [ $LOADCRT_VCART1_status != 0 ]; then
     status=1

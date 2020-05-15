@@ -1,4 +1,4 @@
-set PATH=%PATH%;testfiles\bin\windows
+set PATH=%PATH%;testbin\windows
 
-bash.exe testfiles\bin\testwindows.sh %1
+bash.exe testbin\testwindows.sh %1
 
