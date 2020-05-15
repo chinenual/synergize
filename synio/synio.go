@@ -8,8 +8,8 @@ import (
 )
 
 const RT_TIMEOUT_MS = 100 // "realtime" events need a shorter timeout
-const LONG_TIMEOUT_MS = 10000 // after large amounts of IO, give the synergy more time to ack
-const TIMEOUT_MS = 5000
+const LONG_TIMEOUT_MS = 20000 // after large amounts of IO, give the synergy more time to ack
+const TIMEOUT_MS = 10000
 
 const OP_KEYDWN       = byte(0x01)
 const OP_KEYUP        = byte(0x02)
@@ -295,7 +295,7 @@ func LoadVCE(slotnum byte, vce []byte) (err error) {
 		err = errors.Errorf("Invalid slotnum error")
 		return
 	}
-	if err = serialWriteBytes(TIMEOUT_MS, vce, "write VCE"); err != nil {
+	if err = serialWriteBytes(LONG_TIMEOUT_MS, vce, "write VCE"); err != nil {
 		return 
 	}
 	if status,err = serialReadByte(LONG_TIMEOUT_MS, "read VCE ACK"); err != nil {
@@ -339,7 +339,7 @@ func LoadCRT(crt []byte) (err error) {
 
 	calcCRCBytes(crt)
 	
-	if err = serialWriteBytes(TIMEOUT_MS, crt, "write CRT bytes"); err != nil {
+	if err = serialWriteBytes(LONG_TIMEOUT_MS, crt, "write CRT bytes"); err != nil {
 		return 
 	}
 
@@ -378,7 +378,7 @@ func LoadSYN(bytes []byte) (err error) {
 	// the SYN file actually has everything we need to send to the Synergy:
 	// the initial byte count, the SEQ byte count and buffer and the final CRC.
 	// Just send it as a block 
-	if err = serialWriteBytes(TIMEOUT_MS, bytes, "SYN bytes"); err != nil {
+	if err = serialWriteBytes(LONG_TIMEOUT_MS, bytes, "SYN bytes"); err != nil {
 		return 
 	}
 	// expect an ACK:
@@ -414,7 +414,7 @@ func SaveSYN() (bytes []byte, err error) {
 	if synioVerbose {log.Printf("CMOS LEN %d so read %d\n", cmos_len, cmos_len * 2 + 2)}
 	
 	var cmos_buf []byte
-	if cmos_buf,err = serialReadBytes(TIMEOUT_MS, cmos_len * 2 + 2, "read CMOS"); err != nil {
+	if cmos_buf,err = serialReadBytes(LONG_TIMEOUT_MS, cmos_len * 2 + 2, "read CMOS"); err != nil {
 		return 
 	}
 
@@ -426,7 +426,7 @@ func SaveSYN() (bytes []byte, err error) {
 	seq_buf := []byte{}
 	
 	if seq_len != 0 {
-		if seq_buf,err = serialReadBytes(TIMEOUT_MS, seq_len, "read SEQ"); err != nil {
+		if seq_buf,err = serialReadBytes(LONG_TIMEOUT_MS, seq_len, "read SEQ"); err != nil {
 			return 
 		} 
 	}
