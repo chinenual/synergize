@@ -18,7 +18,7 @@ while [ $i -lt ${n} ]; do
     echo
     ${cmd}
     if [ $? != 0 ]; then
-	echo $i: FAIL
+	echo $i: FAIL ${cmd}
 	failcount=$((failcount + 1))
     else 
 	echo $i: PASS
