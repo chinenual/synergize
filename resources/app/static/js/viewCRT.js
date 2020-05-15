@@ -8,7 +8,7 @@ let viewCRT = {
 	    index.viewVCESlot(slot);
 	}
     },
-    refreshText: function () {
+    init: function () {
 	document.getElementById("crt_path").innerHTML = crt_name;
 	// clear everything
 	for (i = 0; i < 24; i++) {

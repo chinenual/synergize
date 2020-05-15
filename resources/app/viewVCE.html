@@ -128,7 +128,7 @@
   <div id="vceEnvsTab" class="tab-pane fade ">
 
     Oscillator:&nbsp;
-    <select id="envOscSelect" onchange="viewVCE.envChartUpdate(this.options[this.selectedIndex].value, $('#envEnvSelect').val())">
+    <select id="envOscSelect" onchange="viewVCE_envs.envChartUpdate(this.options[this.selectedIndex].value, $('#envEnvSelect').val())">
       <option>1</option>
       <option>2</option>
       <option>3</option>
@@ -136,7 +136,7 @@
     </select>
 
     &nbsp;&nbsp;&nbsp;&nbsp;Envelopes:&nbsp;
-    <select id="envEnvSelect" onchange="viewVCE.envChartUpdate($('#envOscSelect').val(), this.options[this.selectedIndex].value)">
+    <select id="envEnvSelect" onchange="viewVCE_envs.envChartUpdate($('#envOscSelect').val(), this.options[this.selectedIndex].value)">
       <option value="-1">All</option>
       <option value="0">Freq Low</option>
       <option value="1">Freq Up</option>
@@ -514,7 +514,7 @@
   <div id="vceFiltersTab" class="tab-pane fade ">
 
     Filter:&nbsp;
-    <select id="filterSelect" onchange="viewVCE.filtersChartUpdate(this.options[this.selectedIndex].value,this.options[this.selectedIndex].innerHTML)">
+    <select id="filterSelect" onchange="viewVCE_filters.filtersChartUpdate(this.options[this.selectedIndex].value,this.options[this.selectedIndex].innerHTML)">
       <option>Bf 1</option>
       <option>Bf 2</option>
     </select>

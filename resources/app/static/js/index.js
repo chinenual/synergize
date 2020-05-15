@@ -3,9 +3,7 @@ const {dialog} = require('electron').remote;
 let index = {
     init: function() {
         // Wait for astilectron to be ready
-        document.addEventListener('astilectron-ready', function() {
-	    viewVCE.init();
-	    
+        document.addEventListener('astilectron-ready', function() {	    
             // Listen
             index.listen();
             // Explore default path
@@ -137,13 +135,13 @@ let index = {
 	    crt_name = name;
 	    crt = message.payload;
 	    index.load("viewCRT.html", document.getElementById("content"));
-	    viewCRT.refreshText();
+	    viewCRT.init();
 	    index.refreshConnectionStatus();
 	});
     },
     viewLoadedCRT: function() {
 	index.load("viewCRT.html", document.getElementById("content"));
-	viewCRT.refreshText();
+	viewCRT.init();
     },
     viewVCE: function(name, path) {	
         let message = {"name": "readVCE",
@@ -162,7 +160,7 @@ let index = {
 	    crt_name = null;
 	    crt_path = null;
 	    index.load("viewVCE.html", document.getElementById("content"));
-	    viewVCE.refreshText();
+	    viewVCE.init();
 	    index.refreshConnectionStatus();
 	});
     },
@@ -171,7 +169,7 @@ let index = {
 	
 	console.log("view voice slot " + slot + " : " + vce);
 	index.load("viewVCE.html", document.getElementById("content"));
-	viewVCE.refreshText();
+	viewVCE.init();
     },
     addFolder: function(name, path) {
         let div = document.createElement("div");
@@ -385,7 +383,7 @@ let index = {
 		console.log("viewVCE: " + message.payload);
 		vce = message.payload;
 		index.load("view.html", document.getElementById("content"));
-		viewVCE.refreshText();
+		viewVCE.init();
 		
                 return {payload: "ok"};
                 break;
