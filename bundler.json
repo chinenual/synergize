@@ -11,6 +11,8 @@
 	{"arch" : "arm",
 	 "os"   : "linux"},
 	{"arch" : "386",
+	 "os"   : "linux"},
+	{"arch" : "386",
 	 "os"   : "windows"},
 	{"arch" : "amd64", 
 	 "os"   : "darwin",
