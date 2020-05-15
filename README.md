@@ -1,6 +1,6 @@
 # synergize
 
-![logo](https://github.com/chinenual/synergize/raw/master/resources/app/static/images/logo-transparent.png?raw=true)
+<img src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/logo-for-github.png?raw=true"/>
 
 A portable voice librarian for the DKI Synergy synthesizer
 
