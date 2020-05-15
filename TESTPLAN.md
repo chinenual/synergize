@@ -53,7 +53,7 @@
 Run SAVE/LOAD options in a loop to try to catch intermittent errors.  Pass count of 1 for a quick sanity test:
 
 ```
-testfiles/bin/testmac [count]
-testfiles/bin/testwindows [count]
-testfiles/bin/testlinux [count]
+testbin/testmac [count]
+testbin/testwindows [count]
+testbin/testlinux [count]
 ```
