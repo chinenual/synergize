@@ -13,7 +13,7 @@ need to emulate CP/M software.
 library of carts.
 
 * Load individual "voices" (VCE files).   View their properties in a
-manner similar to the original SYNHCS ".DOC" format.
+manner similar to the original SYNHCS ".DOC" format and some of the edit screens in SYNHCS.
 
 * Load and save synergy "state" (SYN files).  This preserves
 sequencer, portamento, vibrato and other performance customizations.
@@ -22,7 +22,7 @@ Note: Synergize does not itself include the original voice libraries -- download
 
 ## Download
 
-Download the beta release:
+Download the release:
 [Release Binaries](https://github.com/chinenual/synergize/releases)
 
 See links below for sites containing the original DK/Mulogix voice library.
@@ -33,9 +33,8 @@ Please report problems via a [github issue](https://github.com/chinenual/synergi
 
 ## Screenshots
 
-![logo](https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE.png?raw=true)
-
-![logo](https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewCRT.png?raw=true)
+<img src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE.png?raw=true" width="400"/>
+<img src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewCRT.png?raw=true" width="400"/>
 
 ## How to use
 
@@ -55,7 +54,7 @@ When you load a Cartridge (CRT) file, basic information is displayed (the voice 
 
 ### VCE Viewer
 
-When you load a Voice (VCE) file or drill down to a voice from the CRT viewer, basic information about the voice is displayed.  This essentially reproduces the information and timbre / amplitude sensitivity graphs from the original SYNHCS software.   Detailed info about the underlying oscillator and filter configuration is not (yet) displayed.   Text notes included in some voice .DOC files are not displayed.
+When you load a Voice (VCE) file or drill down to a voice from the CRT viewer, various information about the voice is displayed.  This includes the basic info included in the original "DOC" files, plus screens that replicate various screens from the original SYHNCS software - including frequency and amplitude envelopes, filters, keyboard equalization and proportion curves.
 
 ### Returning the Synergy to normal state
 
@@ -68,11 +67,11 @@ NOTE: once the Synergy is in this test state, it will remain there until it is p
 
 ## Known Issues
 
-* If you have problems connecting, be sure to match the baud rate on your Synergy. Checking this requires opening up and looking at a jumper on the interface daughter board.  Mine was originally set to 9600 (not sure if this was the "factory default" or if it was tweaked by a previous owner). As long as Synergize is configured with the same rate, all is good. I've since set mine to 19,200 and things work fine.
+* If you have problems connecting, be sure to match the baud rate on your Synergy. Checking this requires opening up and looking at a jumper on the interface daughter board.  Mine was originally set to 9600 (not sure if this was the "factory default" or if it was tweaked by a previous owner). As long as Synergize is configured with the same rate, all is good. I've tested mine at both 9600 and 19,200 baud and things work fine.
 
 * On MacOS, if you change serial parameters, you will need to restart the application in order to "reconnect" to the synergy with those parameters. On Windows, you can directly re-connect via the Connect->Connect to Synergy menu.
 
-* Due to the mysteries of serial port communication, attempts to save or load files to the Synergy will sometimes fail (often reporting a TIMEOUT).  If this happens, a second try will usually succeed. Fixes introduced in 0.2.0 improve, but don't completely fix this.
+* Due to the mysteries of serial port communication, attempts to save or load files to the Synergy will sometimes fail (often reporting a TIMEOUT).  If this happens, a second try will usually succeed. Fixes introduced in 0.2.0 greatly improve, but don't completely fix this.
 
 ## Voice Library
 
@@ -83,10 +82,8 @@ available via the below links.  The set I'm using includes the Internal voices, 
 
 ## Thank you!
 
-This would not have be possible without access to the copious
-documentation, firmware and SYNHCS Z80 source code donated to the
-community by Stoney Stockell and Mulogix, Inc.  Those are available in
-several locations:
+This would not have be possible without access to the excellent
+documentation, and well commented firmware and SYNHCS Z80 source code donated to thecommunity by  Stoney Stockell and Mulogix, Inc.  Those are available in several locations:
 
 * [Synergy Facebook Users Group](https://www.facebook.com/groups/synergysynth/)
 * [Synergy groups.io group](https://groups.io/g/synergy-synth)
