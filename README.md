@@ -75,7 +75,11 @@ NOTE: once the Synergy is in this test state, it will remain there until it is p
 
 * On MacOS, if you change serial parameters, you will need to restart the application in order to "reconnect" to the synergy with those parameters. On Windows, you can directly re-connect via the Connect->Connect to Synergy menu.
 
-* Due to the mysteries of serial port communication, attempts to save or load files to the Synergy will sometimes fail (often reporting a TIMEOUT).  If this happens, a second try will usually succeed. Fixes introduced in 0.2.0 greatly improve, but don't completely fix this.
+* Due to the mysteries of serial port communication, attempts to save or load files to the Synergy will sometimes fail (often reporting a TIMEOUT).  If this happens, a second try will usually succeed. Fixes introduced in 0.2.0 and 1.0.0 greatly improve, but don't completely fix this.
+
+* See the
+[Release Notes](https://github.com/chinenual/synergize/releases)
+for some caveats regarding the Linux builds.
 
 ## Voice Library
 
