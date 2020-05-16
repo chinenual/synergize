@@ -38,10 +38,10 @@ package: test packageMac packageWindows packageLinux
 
 # uses create-dmg (installed via "brew install create-dmg"):
 .PHONY: packageMac
-packageMac: packages/Synergize-Installer-$(VERSION).dmg
-packages/Synergize-Installer-$(VERSION).dmg : $(EXE_MAC) 
+packageMac: packages/Synergize-Installer-mac-$(VERSION).dmg
+packages/Synergize-Installer-mac-$(VERSION).dmg : $(EXE_MAC) 
 	mkdir -p packages
-	rm -f packages/Synergize-Installer-$(VERSION).dmg
+	rm -f packages/Synergize-Installer-mac-$(VERSION).dmg
 	create-dmg \
 		--volname "Synergize Installer" \
 		--volicon resources/icon.icns \
@@ -49,20 +49,20 @@ packages/Synergize-Installer-$(VERSION).dmg : $(EXE_MAC)
 		--window-size 450 400 \
 		--icon "Synergize.app" 100 120 \
 		--app-drop-link 300 120 \
-		"packages/Synergize-Installer-$(VERSION).dmg" \
+		"packages/Synergize-Installer-mac-$(VERSION).dmg" \
 		output/darwin-amd64
 
 # uses msitools (installed via "brew install msitools"):
 .PHONY: packageWindows
-packageWindows: packages/Synergize-Installer-$(VERSION).msi $(EXE_WINDOWS)
-packages/Synergize-Installer-$(VERSION).msi : windows-installer.wxs $(EXE_WINDOWS)
+packageWindows: packages/Synergize-Installer-windows-$(VERSION).msi $(EXE_WINDOWS)
+packages/Synergize-Installer-windows-$(VERSION).msi : windows-installer.wxs $(EXE_WINDOWS)
 	mkdir -p packages
-	rm -f packages/Synergize-Installer-$(VERSION).msi
+	rm -f packages/Synergize-Installer-windows-$(VERSION).msi
 	wixl -v \
 		-a x86 \
 		-D VERSION=$(VERSION) \
 		-D SourceDir=output/windows-386/ \
-		-o packages/Synergize-Installer-$(VERSION).msi \
+		-o packages/Synergize-Installer-windows-$(VERSION).msi \
 		windows-installer.wxs
 
 .PHONY: packageLinux
