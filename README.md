@@ -44,7 +44,7 @@ Please report problems via a [github issue](https://github.com/chinenual/synergi
 
 ### Synergy II+
 
-Synergize connects to a Synergy II+ via its RS232 serial port.
+Synergize connects to a Synergy II+ via its RS232 serial port.  It is tested with a Synergy running the latest 3.22 firmware - but is probably compatible with earlier versions.
 
 ### Serial Cable(s)
 
