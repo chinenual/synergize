@@ -40,6 +40,30 @@ Please report problems via a [github issue](https://github.com/chinenual/synergi
 <img title="Voice Key Equalization view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_keyeq.png?raw=true" width="45%"/>
 <img title="Voice Key Proportion view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_keyprop.png?raw=true" width="45%"/>
 
+## Requirements
+
+### Synergy II+
+
+Synergize connects to a Synergy II+ via its RS232 serial port.
+
+### Serial Cable(s)
+
+The connection from the computer to the Synergy requires a "null modem" cable. I test with a combination of a traditional null modem cable (same one you would use for a direct SYNHCS/Kaypro connection) and an FTDI based USB serial cable.
+
+I've been asked specifically what cables I use. I've been told that FTDI makes the most robust chipset, but I have _NO_ objective reason to prefer one cable over another.  These are not "endorsements" - it's just a note of what "works for me":
+
+* FTDI based USB cable: [Sabrent FTDI USB to Serial](https://www.amazon.com/gp/product/B006AA04K0)
+* Null modem serial cable: [C2G 02019 DB25 to DB9 Null Modem cable](https://www.amazon.com/gp/product/B000083K2R/)
+
+### Operating Systems
+
+Synergize has been tested on:
+
+* MacOS 10.14.6 (Mojave)
+* Windows10
+* Ubuntu Linux 18.04
+* Ubuntu Linux 16.04
+
 ## How to use
 
 ### Connecting to the Synergy
