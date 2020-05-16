@@ -16,7 +16,7 @@
         * So, I've recycled an old laptop with an old 32-bit version of
           Ubuntu and tested the 386 version: it's as reliable as the
           Mac and Windows ports.   Further evidence that the 64-bit
-          version might also be OK and that my test setup is to blaim.
+          version might also be OK and that my test setup is to blame.
         * I have no ability to test the ARM port at all - but know
           that there is interest in running on raspberry pi, so I'm
           building  it in hopes it works for those that try it.

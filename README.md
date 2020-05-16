@@ -23,7 +23,7 @@ Note: Synergize does not itself include the original voice libraries -- download
 ## Download
 
 Download the release:
-[Release Binaries](https://github.com/chinenual/synergize/releases)
+[Release Binaries](https://github.com/chinenual/synergize/releases/latest)
 
 See links below for sites containing the original DK/Mulogix voice library.
 
@@ -102,7 +102,7 @@ NOTE: once the Synergy is in this test state, it will remain there until it is p
 * Due to the mysteries of serial port communication, attempts to save or load files to the Synergy will sometimes fail (often reporting a TIMEOUT).  If this happens, a second try will usually succeed. Fixes introduced in 0.2.0 and 1.0.0 greatly improve, but don't completely fix this.
 
 * See the
-[Release Notes](https://github.com/chinenual/synergize/releases)
+[Release Notes](https://github.com/chinenual/synergize/releases/latest)
 for some caveats regarding the Linux builds.
 
 ## Voice Library
