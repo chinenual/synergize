@@ -239,10 +239,6 @@ func getSynergyAddrs() (err error) {
 	synAddrs.VALUE  = synAddrs.CODE + 4
 	synAddrs.TRANSP = synAddrs.SEQTAB - 5
 
-	// Used in many SYNHCS address calculations:
-	synAddrs.FILTAB = synAddrs.VTAB + 173
-	synAddrs.EDATA  = synAddrs.FILTAB+(17*32)
-		
 	// Fixed addresses:
 	synAddrs.PROG	= 0x0000
 	synAddrs.ROM	= 0x5c72
@@ -250,6 +246,10 @@ func getSynergyAddrs() (err error) {
 	synAddrs.VTAB   = 0x6033 // voice table ROM
 	synAddrs.RAM    = 0x8000 // aka DATA
 	
+	// Used in many SYNHCS address calculations:
+	synAddrs.FILTAB = synAddrs.VTAB + 173
+	synAddrs.EDATA  = synAddrs.FILTAB+(17*32)
+		
 	if synioVerbose {log.Printf("Addrs: %#v\n",synAddrs)}
 	return
 }

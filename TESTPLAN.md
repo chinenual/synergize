@@ -50,6 +50,8 @@
 * -COMTST
 * -LOOPTST
 
+Run the integration tests: make itest
+
 Run SAVE/LOAD options in a loop to try to catch intermittent errors.  Pass count of 1 for a quick sanity test:
 
 ```

@@ -88,9 +88,20 @@ test:
 	cd data && go test
 	go test
 
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+PORT=/dev/tty.usbserial-AL05OC8S
+endif
+ifeq ($(UNAME_S),Linux)
+PORT=/dev/ttyS0
+endif
+ifeq ($(PORT),'')
+PORT=COM1
+endif
+
 .PHONY: itest
 itest:
-	cd synio && go test -synio -port /dev/tty.usbserial-AL05OC8S
+	cd synio && go test -v -synio -port $(PORT)
 
 version.go : VERSION
 	echo package main > version.go
