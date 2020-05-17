@@ -28,28 +28,17 @@ func TestGetFirmwareId(t *testing.T) {
 		t.Errorf("Expected 3.22, got %v", id)
 	}
 }
-
-func TestLoadSyn(t *testing.T) {
-	var syn_bytes []byte
-	var err error
-
-	if syn_bytes, err = ioutil.ReadFile("../data/testfiles/TEST.SYN"); err != nil {
-		t.Fatalf("Error when reading test file: %v", err)
-	}
-
-	if err = LoadSYN(syn_bytes); err != nil {
-		t.Fatalf("Error calling LoadSYN: %v", err)
-	}
-	return
-}
-
-func TestSaveSyn(t *testing.T) {
+func TestLoadSaveSyn(t *testing.T) {
 	var expect_bytes []byte
 	var syn_bytes []byte
 	var err error
 
 	if expect_bytes, err = ioutil.ReadFile("../data/testfiles/TEST.SYN"); err != nil {
 		t.Fatalf("Error when reading test file: %v", err)
+	}
+
+	if err = LoadSYN(expect_bytes); err != nil {
+		t.Fatalf("Error calling LoadSYN: %v", err)
 	}
 
 	if syn_bytes, err = SaveSYN(); err != nil {
