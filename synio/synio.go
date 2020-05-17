@@ -148,6 +148,26 @@ func command(opcode byte, name string) (err error) {
 	return
 }
 
+func LoadByte(addr uint16, value byte, purpose string) (err error) {
+	var arr = []byte{value}
+	if err = BlockLoad(addr, arr); err != nil {
+		err = errors.Wrap(err, "error loading byte " + purpose)
+	}
+	return
+}
+
+
+func DumpByte(addr uint16, purpose string) (value byte, err error) {
+	var arr []byte
+	if arr,err = BlockDump(addr, 1); err != nil {
+		err = errors.Wrap(err, "error dumping byte " + purpose)
+		return
+	}
+	value = arr[0]
+	return
+}
+
+
 func writeU16(v uint16, purpose string) (err error) {
 	
 	hob,lob := wordToBytes(v)
