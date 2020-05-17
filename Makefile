@@ -88,6 +88,10 @@ test:
 	cd data && go test
 	go test
 
+.PHONY: itest
+itest:
+	cd synio && go test -synio -port /dev/tty.usbserial-AL05OC8S
+
 version.go : VERSION
 	echo package main > version.go
 	echo const Version = \"$(VERSION)\" >> version.go
