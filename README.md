@@ -60,7 +60,7 @@ I've been asked specifically what cables I use. I've been told that FTDI makes t
 Synergize has been tested on:
 
 * MacOS 10.14.6 (Mojave)
-* Windows10
+* Windows 10
 * Ubuntu Linux 18.04
 * Ubuntu Linux 16.04
 
