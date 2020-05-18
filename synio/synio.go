@@ -238,7 +238,14 @@ var synAddrs struct {
 	VTAB    uint16
 	ROM     uint16
 	RAM     uint16 // AKA DATA
-	CMOS    uint16 
+	CMOS    uint16
+
+	exec_LDGENR  uint16 // SUBROUTINE LDGENR - reload note generators
+	exec_REAEQ   uint16 // SUBROUTINE REAEQ - alter amp scale for sounding notes
+	exec_REFIL   uint16 // SUBROUTINE REFIL - recalc filter values
+	exec_QUIET   uint16 // SUBROUTINE QUIET - stop all sounding notes
+	exec_SETCON  uint16 // SUBROUTINE SETCON - force immediate use of CMOS ram voice storage values
+	exec_CKCMOS  uint16 // SUBROUTINE CKCMOS - force reload note generators.
 }
 
 func getSynergyAddrs() (err error) {
@@ -268,14 +275,51 @@ func getSynergyAddrs() (err error) {
 	
 	// Used in many SYNHCS address calculations:
 	synAddrs.FILTAB = synAddrs.VTAB + 173
-	synAddrs.EDATA  = synAddrs.FILTAB+(17*32)
-		
+	synAddrs.EDATA  = synAddrs.FILTAB+(16*32)
+
+
+	synAddrs.exec_CKCMOS	= uint16(0x00c2)
+	synAddrs.exec_LDGENR	= uint16(0x007a)
+	synAddrs.exec_QUIET	= uint16(0x009b)
+	synAddrs.exec_REAEQ	= uint16(0x00bc)
+	synAddrs.exec_REFIL	= uint16(0x00bf)
+	synAddrs.exec_SETCON	= uint16(0x00b9)
+	
 	if synioVerbose {log.Printf("Addrs: %#v\n",synAddrs)}
 	return
 }
 
 func VoicingMode() (err error) {
 	if err = getSynergyAddrs(); err != nil {
+		return
+	}
+	return
+}
+
+func ReloadNoteGenerators() (err error) {
+	if err = command(OP_EXECUTE, "OP_EXECUTE"); err != nil {
+		return
+	}
+	if err = writeU16 (synAddrs.exec_LDGENR, "LDGENR addr"); err != nil {
+		return
+	}
+	if err = writeU16 (0, "LDGENR args"); err != nil {
+		return
+	}
+	return
+}
+
+// emulate the SYNHCS GEDPTR subroutine: get OSC specific offset into the EDATA array
+func gedptr(osc int) uint16 {
+	return uint16(2 * osc) + synAddrs.EDATA + 1
+}
+
+func SetOscHarmonic(osc int, value byte) (err error) {
+	addr := gedptr(osc)
+	if err = LoadByte(addr, value, "Osc harmonic value"); err != nil {
+		return
+	}
+	if err = ReloadNoteGenerators(); err != nil {
 		return
 	}
 	return
