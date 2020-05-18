@@ -12,14 +12,35 @@ import (
 var (
 	synio = flag.Bool("synio", false, "run integration tests that talk to the Synergy")
 	port = flag.String("port", "", "the serial device")
-	baud = flag.Uint("baud", 9600, "the serial baud rate")
+	baud = flag.Uint("baud", 9600, "the serial baud rate")	
 )
+
+// MIDIC is at 0xf400 in the firmware sources, but the linker relocates CMOS from
+// 0xf100 to 0xf000 -- so subtract 0x0100:
+const MIDIC_addr uint16 = 0xf300
+
+func dumpAddressSpace(path string) {
+	var b []byte
+	var err error
+
+	b,err = BlockDump(uint16(0), uint16(65323))
+	if err != nil {
+		fmt.Printf("Error: %v", err)
+		os.Exit(1)
+	}
+	err = ioutil.WriteFile(path, b, 0644)
+	if err != nil {
+		fmt.Printf("Error: %v", err)
+		os.Exit(1)
+	}
+}
 
 func connectToSynergy() (err error) {
 	return Init(*port, *baud, true, false)
 }
 
 func TestGetFirmwareId(t *testing.T) {
+	if !*synio { t.Skip() }
 	id, err := GetID();
 	if err != nil {
 		t.Fatalf("Error when getting id: %v", err)
@@ -36,6 +57,7 @@ func assertUint16(t *testing.T, b uint16, expected uint16, context string) {
 }
 
 func TestDynamicAddrs(t *testing.T) {
+	if !*synio { t.Skip() }
 	if err := getSynergyAddrs(); err != nil {
 		t.Fatalf("Error when getting dynamic addrs: %v", err)
 	}
@@ -62,6 +84,7 @@ func TestDynamicAddrs(t *testing.T) {
 }
 
 func TestBlockDump(t *testing.T) {
+	if !*synio { t.Skip() }
 	var syn_bytes []byte
 	var err error
 
@@ -76,6 +99,7 @@ func TestBlockDump(t *testing.T) {
 }
 
 func TestBlockLoad(t *testing.T) {
+	if !*synio { t.Skip() }
 	var expect_bytes = []byte("Test Block Load")
 	var len_expect uint16 = uint16(len(expect_bytes))
 	var syn_bytes []byte
@@ -106,6 +130,7 @@ func TestBlockLoad(t *testing.T) {
 }
 
 func TestDumpByte(t *testing.T) {
+	if !*synio { t.Skip() }
 	// first few bytes of the the copyright header
 	var b byte
 	var err error
@@ -130,6 +155,7 @@ func TestDumpByte(t *testing.T) {
 }
 
 func TestLoadSaveSyn(t *testing.T) {
+	if !*synio { t.Skip() }
 	var expect_bytes []byte
 	var syn_bytes []byte
 	var err error
@@ -152,38 +178,54 @@ func TestLoadSaveSyn(t *testing.T) {
 }
 
 func TestInitVRAM(t *testing.T) {
+	if !*synio { t.Skip() }
+//	dumpAddressSpace("before-initVRAM.bin");
+	
 	var err error
 	if err = InitVRAM(); err != nil {
 		t.Fatalf("Error initializing VRAM: %v\n", err)
 	}
-
-	/*
-	var midic_addr uint16 = 0xf400
+	
+//	dumpAddressSpace("after-initVRAM.bin");
+	
 	var b byte
-	if b, err = DumpByte(midic_addr, "get MIDIC"); err != nil {
+	if b, err = DumpByte(MIDIC_addr, "get MIDIC"); err != nil {
 		t.Fatalf("Error getting MIDIC value: %v\n", err);
 	}
 	if b != 0xff {
-		t.Fatalf("MIDIC not 0xff: got %x", b);
+		// can't treat this as an error since I can't actually
+		// find the toggled value at the addr I expect it to be.
+		// leave this as a warning until better understanding
+    		t.Logf("MIDIC not 0xff: got %x", b);
 	}	
-*/
 }
 
 func TestDisableVRAM(t *testing.T) {
+	if !*synio { t.Skip() }
 	var err error
 	if err = DisableVRAM(); err != nil {
 		t.Fatalf("Error disabling VRAM: %v\n", err);
 	}
-/*
-	var midic_addr uint16 = 0xf400
+//	dumpAddressSpace("after-disableVRAM.bin");
+
 	var b byte
-	if b, err = DumpByte(midic_addr, "get MIDIC"); err != nil {
+	if b, err = DumpByte(MIDIC_addr, "get MIDIC"); err != nil {
 		t.Fatalf("Error getting MIDIC value: %v\n", err);
 	}
 	if b != 0 {
-		t.Fatalf("MIDIC not zero: got %x", b);
+		// can't treat this as an error since I can't actually
+		// find the toggled value at the addr I expect it to be.
+		// leave this as a warning until better understanding
+		t.Logf("MIDIC not zero: got %x", b);
 	}	
-*/
+}
+
+func TestReloadNoteGenerators(t *testing.T) {
+	if !*synio { t.Skip() }
+	var err error
+	if err = ReloadNoteGenerators(); err != nil {
+		t.Fatalf("Error reloading note generators: %v\n", err);
+	}
 }
 
 func TestLoadCRT(t *testing.T) {
@@ -193,48 +235,34 @@ func TestLoadCRT(t *testing.T) {
 func TestLoadVCE(t *testing.T) {
 }
 
+func diff(path1, path2 string) {
+	var err error
+	var bytes1, bytes2 []byte
+	if bytes1, err = ioutil.ReadFile(path1); err != nil {
+		os.Exit(1)
+	}
+	if bytes2, err = ioutil.ReadFile(path2); err != nil {
+		os.Exit(1)
+	}
+
+	for i,_ := range(bytes1) {
+		if bytes2[i] == 0 && bytes1[i] != 0 {
+			fmt.Printf("%04x : after disable: %x, after init: %x\n",
+				i, bytes2[i], bytes1[i])
+		}
+	}
+	os.Exit(0)
+}
 
 func TestMain(m *testing.M) {
+//	diff("after-initVRAM.bin", "after-disableVRAM.bin")
+	
 	flag.Parse()
 	if *synio {
 		err := connectToSynergy(); if err != nil {
 			fmt.Printf("could not initialize io: %v\n", err)
 			os.Exit(1)
 		}
-		os.Exit(m.Run())
 	}	
-	os.Exit(0)
+	os.Exit(m.Run())
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
