@@ -16,6 +16,7 @@ const OP_KEYUP        = byte(0x02)
 const OP_POT          = byte(0x03)
 
 const OP_VRLOD        = byte(0x6b)
+const OP_VRDUMP       = byte(0x6c)
 const OP_VCELOD       = byte(0x6e)
 const OP_DISABLEVRAM  = byte(0x6f)
 const OP_ENABLEVRAM   = byte(0x70)
@@ -308,6 +309,53 @@ func ReloadNoteGenerators() (err error) {
 	}
 	return
 }
+
+// Sets the value in the Synergy address space and then reloads the note
+// generators
+func SetVoiceHeadDataByte(offset int, value byte, purpose string) (err error) {
+	addr := edataHeadAddr(offset)
+	if err = LoadByte(addr, value, purpose); err != nil {
+		return
+	}
+	if err = ReloadNoteGenerators(); err != nil {
+		return
+	}
+	return
+}
+
+// osc is 1-based
+func SetVoiceOscDataByte(osc int, offset int, value byte, purpose string) (err error) {
+	addr := edataOscAddr(osc, offset)
+	if err = LoadByte(addr, value, purpose); err != nil {
+		return
+	}
+	if err = ReloadNoteGenerators(); err != nil {
+		return
+	}
+	return
+}
+
+func SetVoiceAPVIB(value byte) (err error) {
+	if err = SetVoiceHeadDataByte(off_EDATA_APVIB, value, "set APVIB"); err != nil {
+		return
+	}
+	return
+}
+
+func SetVoiceOscOHARM(osc int, value int8) (err error) {
+	if err = SetVoiceOscDataByte(osc, off_EOSC_OHARM, byte(value), "set OHARM"); err != nil {
+		return
+	}
+	return
+}
+
+func SetVoiceOscFDETUN(osc int, value int8) (err error) {
+	if err = SetVoiceOscDataByte(osc, off_EOSC_FDETUN, byte(value), "set FDETUN"); err != nil {
+		return
+	}
+	return
+}
+
 
 // emulate the SYNHCS GEDPTR subroutine: get OSC specific offset into the EDATA array
 func gedptr(osc int) uint16 {

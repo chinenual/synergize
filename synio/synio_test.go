@@ -12,7 +12,9 @@ import (
 var (
 	synio = flag.Bool("synio", false, "run integration tests that talk to the Synergy")
 	port = flag.String("port", "", "the serial device")
-	baud = flag.Uint("baud", 9600, "the serial baud rate")	
+	baud = flag.Uint("baud", 9600, "the serial baud rate")
+	verbose = flag.Bool("verbose", false, "synio verbose")
+	serialVerboseFlag = flag.Bool("SERIALVERBOSE", false, "serial verbose")
 )
 
 // MIDIC is at 0xf400 in the firmware sources, but the linker relocates CMOS from
@@ -36,7 +38,7 @@ func dumpAddressSpace(path string) {
 }
 
 func connectToSynergy() (err error) {
-	return Init(*port, *baud, true, false)
+	return Init(*port, *baud, *verbose, *serialVerboseFlag)
 }
 
 func TestGetFirmwareId(t *testing.T) {
@@ -47,6 +49,12 @@ func TestGetFirmwareId(t *testing.T) {
 	}
 	if id[0] != 3 || id[1] != 22 {
 		t.Errorf("Expected 3.22, got %v", id)
+	}
+}
+
+func assertByte(t *testing.T, b byte, expected byte, context string) {
+	if b != expected {
+		t.Errorf("expected %s %04x, got %04x\n", context, expected, b)
 	}
 }
 
@@ -67,7 +75,7 @@ func TestDynamicAddrs(t *testing.T) {
 	assertUint16(t, 0x5c72, synAddrs.ROM,    "ROM")
 	assertUint16(t, 0x6033, synAddrs.VTAB,   "VTAB")
 	assertUint16(t, 0x60e0, synAddrs.FILTAB, "FILTAB")
-	assertUint16(t, 0x6300, synAddrs.EDATA,  "EDATA")
+	assertUint16(t, 0x62e0, synAddrs.EDATA,  "EDATA")
 	assertUint16(t, 0x8000, synAddrs.RAM,    "RAM")
 	assertUint16(t, 0x8044, synAddrs.PTSTAT, "PTSTAT")
 	assertUint16(t, 0x86f9, synAddrs.SOLOSC, "SOLOSC")
@@ -234,6 +242,41 @@ func TestLoadCRT(t *testing.T) {
 
 func TestLoadVCE(t *testing.T) {
 }
+
+func TestSetAPVIB(t *testing.T) {
+	if !*synio { t.Skip() }
+	var err error
+	for v := 0; v <= 0xff; v++ {
+		if err = SetVoiceAPVIB(byte(v)); err != nil {
+			t.Fatalf("Error setting APVIB value %v",v)
+		}
+	}
+}
+
+func TestSetOHARM(t *testing.T) {
+	if !*synio { t.Skip() }
+	var err error
+	for osc := 0; osc < 2; osc++ {
+		for v := -64; v <= 64; v++ {
+			if err = SetVoiceOscOHARM(osc, int8(v)); err != nil {
+				t.Fatalf("Error setting OHARM osc %v value %v",osc, v)
+			}
+		}
+	}
+}
+
+func TestSetFDETUN(t *testing.T) {
+	if !*synio { t.Skip() }
+	var err error
+	for osc := 0; osc < 2; osc++ {
+		for v := -64; v <= 64; v++ {
+			if err = SetVoiceOscFDETUN(osc, int8(v)); err != nil {
+				t.Fatalf("Error setting FDETUN osc %v value %v",osc, v)
+			}
+		}
+	}
+}
+
 
 func diff(path1, path2 string) {
 	var err error
