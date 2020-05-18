@@ -1,7 +1,6 @@
 package synio
 
 import (
-	"log"
 )
 
 // layout of the EDATA, OSC tables on the synergy.
