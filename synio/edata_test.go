@@ -1,11 +1,13 @@
 package synio
 
 import (
+	"fmt"
+	"log"
 	"testing"
 )
 
 
-func TestEdata(t *testing.T) {
+func TestEdataAddrs(t *testing.T) {
 	// some selective fields to validate that the reflective offset
 	// computation works
 
@@ -34,4 +36,20 @@ func TestEdata(t *testing.T) {
 		synAddrs.EDATA+off_EDATA_EOSC+sizeof_EOSC+1, "OSC[1].OHARM")
 	assertUint16(t, edataOscAddr(2,off_EOSC_FDETUN),
 		synAddrs.EDATA+off_EDATA_EOSC+sizeof_EOSC+2, "OSC[1].FDETUN")
+}
+
+func TestLocalEdata(t *testing.T) {
+	log.Printf("edata_head_default: %v\n", edata_head_default)
+	// spot check some data:
+	assertByte(t, edata[0], 0, "VOITAB")
+	assertByte(t, edata[off_EDATA_APVIB], 32, "APVIB")
+
+	for osc := 1; osc <= 16; osc++ {
+		off := edataLocalOscOffset(osc, 0)
+		assertByte(t, edata[off], 4, fmt.Sprintf("osc %d OPTCH", osc))
+		off = edataLocalOscOffset(osc, off_EOSC_OHARM)
+		assertByte(t, edata[off], 1, fmt.Sprintf("osc %d OHARM", osc))
+		off = edataLocalOscOffset(osc, off_EOSC_FDETUN)
+		assertByte(t, edata[off], 0, fmt.Sprintf("osc %d FDETUN", osc))
+	}
 }
