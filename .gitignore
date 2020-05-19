@@ -9,6 +9,8 @@ sdt-*md
 *.syn
 *.log
 
+preferences.json
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
