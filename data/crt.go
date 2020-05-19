@@ -60,7 +60,7 @@ func ReadCrtFile(filename string) (crt CRT, err error) {
 				return
 			}
 			var vce VCE
-			if vce,err = vceRead(buf, true); err != nil {
+			if vce,err = ReadVce(buf, true); err != nil {
 				err = errors.Wrapf(err,"failed to read voice #%d start", i)
 				return
 			}

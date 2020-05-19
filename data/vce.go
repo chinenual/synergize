@@ -7,6 +7,7 @@ import (
 	"log"
 	"io"
 	"io/ioutil"
+	"os"
 )
 
 type FreqEnvelopeTable struct {
@@ -98,7 +99,20 @@ func ReadVceFile(filename string) (vce VCE, err error) {
 		return 
 	}
 	buf := bytes.NewReader(b)
-	if vce,err = vceRead(buf, false); err != nil {
+	if vce,err = ReadVce(buf, false); err != nil {
+		return
+	}
+	return
+}
+
+func WriteVceFile(filename string, vce VCE) (err error) {
+	var file *os.File
+	if file,err = os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0755); err != nil {
+		return
+	}
+	defer file.Close()
+	
+	if err = WriteVce(file, vce, true); err != nil {
 		return
 	}
 	return
@@ -113,6 +127,21 @@ func vceReadAFilters(buf io.Reader, vce *VCE) (err error) {
 				if err = binary.Read(buf, binary.LittleEndian, &vce.Filters[0][j]); err != nil {
 					log.Println(vceToString(*vce))
 					log.Println("binary.Read failed:", 0, " ", j, " ", err)
+					return
+				}			
+			}			
+			return
+		}
+	}
+	return
+}
+
+func vceWriteAFilters(buf io.Writer, vce VCE) (err error) {
+	for _,f := range vce.Head.FILTER {
+		if f < 0 {
+			for j := 0; j < 32; j++ {
+				if err = binary.Write(buf, binary.LittleEndian, vce.Filters[0][j]); err != nil {
+					log.Println("binary.Write failed:", 0, " ", j, " ", err)
 					return
 				}			
 			}			
@@ -153,8 +182,38 @@ func vceReadBFilters(buf io.Reader, vce *VCE) (err error) {
 	}
 	return
 }
+func vceWriteBFilters(buf io.Writer, vce VCE) (err error) {
+	var filterCount = 0
+	var hasAFilter = false;
+	for _,f := range vce.Head.FILTER {
+		if f != 0 {
+			filterCount = filterCount + 1
+		}
+		if f < 0 {
+			hasAFilter = true;
+		}
+	}
+
+	var offset = 0
+	if hasAFilter {
+		offset = 1
+	}
+	for _,f := range vce.Head.FILTER {
+		if f > 0 {
+			// filters are one-based 
+			var index = int(f) - 1 + offset
+			for j := 0; j < 32; j++ {
+				if err = binary.Write(buf, binary.LittleEndian, vce.Filters[index][j]); err != nil {
+					log.Println("binary.Write failed:", index, " ", j, " ", err)
+					return
+				}			
+			}
+		}
+	}
+	return
+}
 	
-func vceRead(buf io.Reader, skipFilters bool) (vce VCE, err error) {
+func ReadVce(buf io.Reader, skipFilters bool) (vce VCE, err error) {
 	if err = binary.Read(buf, binary.LittleEndian, &vce.Head); err != nil {
 		log.Println("binary.Read failed:", err)
 		return
@@ -252,6 +311,93 @@ func vceRead(buf io.Reader, skipFilters bool) (vce VCE, err error) {
 		}
 		if err = vceReadBFilters(buf, &vce); err != nil {
 			log.Println("binary.Read failed:", err)
+			return
+		}
+	}
+	return
+}
+	
+func WriteVce(buf io.Writer, vce VCE, skipFilters bool) (err error) {
+	if err = binary.Write(buf, binary.LittleEndian, &vce.Head); err != nil {
+		log.Println("binary.Write failed:", err)
+		return
+	}
+
+	for i := byte(0); i <= vce.Head.VOITAB; i++ {
+		e := vce.Envelopes[i]
+
+		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.OPTCH); err != nil {
+			log.Println("binary.Write failed:", err)
+			return
+		}
+		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.OHARM); err != nil {
+			log.Println("binary.Write failed:", err)
+			return
+		}
+		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.FDETUN); err != nil {
+			log.Println("binary.Write failed:", err)
+			return
+		}
+		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.FENVL); err != nil {
+			log.Println("binary.Write failed:", err)
+			return
+		}
+		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.ENVTYPE); err != nil {
+			log.Println("binary.Write failed:", err)
+			return
+		}
+		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.NPOINTS); err != nil {
+			log.Println("binary.Write failed:", err)
+			return
+		}
+		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.SUSTAINPT); err != nil {
+			log.Println("binary.Write failed:", err)
+			return
+		}
+		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.LOOPPT); err != nil {
+			log.Println("binary.Write failed:", err)
+			return
+		}
+		// 4 values per point:
+
+		for k := byte(0); k < e.FreqEnvelope.NPOINTS*4; k++ {
+			if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.Table[k]); err != nil {
+				log.Println("binary.Write failed:", err)
+				return
+			}
+		}
+		if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.ENVTYPE); err != nil {
+			log.Println("binary.Write failed:", err)
+			return
+		}
+		if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.NPOINTS); err != nil {
+			log.Println("binary.Write failed:", err)
+			return
+		}
+		if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.SUSTAINPT); err != nil {
+			log.Println("binary.Write failed:", err)
+			return
+		}
+		if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.LOOPPT); err != nil {
+			log.Println("binary.Write failed:", err)
+			return
+		}
+		// 4 values per point:
+		for k := byte(0); k < e.AmpEnvelope.NPOINTS*4; k++ {
+			if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.Table[k]); err != nil {
+				log.Println("binary.Write failed:", err)
+				return
+			}
+		}
+	}
+
+	if ! skipFilters {
+		if err = vceWriteAFilters(buf, vce); err != nil {
+			log.Println("binary.Write failed:", err)
+			return
+		}
+		if err = vceWriteBFilters(buf, vce); err != nil {
+			log.Println("binary.Write failed:", err)
 			return
 		}
 	}
