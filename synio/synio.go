@@ -483,6 +483,50 @@ func LoadCRT(crt []byte) (err error) {
 	return
 }
 
+func DumpVRAM() (bytes []byte, err error) {
+	if err = command(OP_VRDUMP, "VRDUMP"); err != nil {
+		return 
+	}
+
+	var len_buf []byte
+	if len_buf,err = serialReadBytes(TIMEOUT_MS, 2, "read VRAM length"); err != nil {
+		return 
+	}
+
+	vram_len := data.BytesToWord(len_buf[1],len_buf[0])
+
+	if synioVerbose {log.Printf("len: %d bytes\n", vram_len)}
+
+	if bytes,err = serialReadBytes(LONG_TIMEOUT_MS, vram_len, "read VRAM"); err != nil {
+		return 
+	}
+
+	var crc_buf []byte
+	if crc_buf,err = serialReadBytes(TIMEOUT_MS, 2, "read CRC"); err != nil {
+		return 
+	}
+
+	crcFromSynergy := data.BytesToWord(crc_buf[0], crc_buf[1])
+
+	crcHash.Reset();
+
+	calcCRCBytes(len_buf)
+	calcCRCBytes(bytes)
+//	calcCRCBytes(crc_buf)
+	
+	if synioVerbose {log.Printf("CRC from synergy %04x - our calculation %04x\n", crcFromSynergy, crcHash.CRC16())}
+
+	if crcFromSynergy != crcHash.CRC16() {
+		err = errors.Errorf("VRDUMP CRC does not match got %04x, expected %04x",
+			crcFromSynergy, crcHash.CRC16())
+		return
+	}
+	// errors will implicitly show  up in the log but we need to explicitly log success
+	if synioVerbose { log.Printf("VRDUMP Success\n"); }	
+
+	return
+
+}
 
 // Send Synergy "state" (STLOAD in the Z80 sources)
 func LoadSYN(bytes []byte) (err error) {
@@ -557,10 +601,10 @@ func SaveSYN() (bytes []byte, err error) {
 	calcCRCBytes(len_buf)
 	calcCRCBytes(cmos_buf)
 	calcCRCBytes(seq_buf)
-	if synioVerbose {log.Printf("CRC from synergy %x - our calculation %x\n", crcFromSynergy, crcHash.CRC16())}
+	if synioVerbose {log.Printf("CRC from synergy %04x - our calculation %04x\n", crcFromSynergy, crcHash.CRC16())}
 
 	if crcFromSynergy != crcHash.CRC16() {
-		err = errors.Errorf("STDUMP CRC does not match got %x, expected %x",
+		err = errors.Errorf("STDUMP CRC does not match got %04x, expected %04x",
 			crcFromSynergy, crcHash.CRC16())
 		return
 	}

@@ -227,8 +227,31 @@ func TestReloadNoteGenerators(t *testing.T) {
 }
 
 func TestLoadCRT(t *testing.T) {
+	if !*synio { t.Skip() }
+	var err error
+	var bytes []byte
+
+	// FIXME: probably shoudnt be using the test files from the data package
+	if bytes, err = ioutil.ReadFile("../data/testfiles/INTERNAL.CRT"); err != nil {
+		t.Fatalf("Can't load test data %v", err)
+	}
+	
+	if err = LoadCRT(bytes); err != nil {
+		t.Fatalf("LoadCRT failed %v", err)
+	}
 }
 
+func TestDumpVRAM(t *testing.T) {
+	if !*synio { t.Skip() }
+	var err error
+	var bytes []byte
+	
+	// FIXME: probably shoudnt be using the test files from the data package
+	if bytes, err = DumpVRAM(); err != nil {
+		t.Fatalf("DumpVRAM failed %v", err)
+	}
+	fmt.Printf("vram returned %d bytes\n", len(bytes))
+}
 
 func TestLoadVCE(t *testing.T) {
 }
