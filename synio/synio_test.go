@@ -7,6 +7,8 @@ import (
 	"testing"
 	"os"
 	"reflect"
+
+	"github.com/chinenual/synergize/data"
 )
 
 var (
@@ -52,18 +54,6 @@ func TestGetFirmwareId(t *testing.T) {
 	}
 }
 
-func assertByte(t *testing.T, b byte, expected byte, context string) {
-	if b != expected {
-		t.Errorf("expected %s %04x, got %04x\n", context, expected, b)
-	}
-}
-
-func assertUint16(t *testing.T, b uint16, expected uint16, context string) {
-	if b != expected {
-		t.Errorf("expected %s %04x, got %04x\n", context, expected, b)
-	}
-}
-
 func TestDynamicAddrs(t *testing.T) {
 	if !*synio { t.Skip() }
 	if err := getSynergyAddrs(); err != nil {
@@ -71,24 +61,24 @@ func TestDynamicAddrs(t *testing.T) {
 	}
 	// other firmware versions may load things in other places, but mine
 	// loads them as below:
-	assertUint16(t, 0x0000, synAddrs.PROG,   "PROG")
-	assertUint16(t, 0x5c72, synAddrs.ROM,    "ROM")
-	assertUint16(t, 0x6033, synAddrs.VTAB,   "VTAB")
-	assertUint16(t, 0x60e0, synAddrs.FILTAB, "FILTAB")
-	assertUint16(t, 0x62e0, synAddrs.EDATA,  "EDATA")
-	assertUint16(t, 0x8000, synAddrs.RAM,    "RAM")
-	assertUint16(t, 0x8044, synAddrs.PTSTAT, "PTSTAT")
-	assertUint16(t, 0x86f9, synAddrs.SOLOSC, "SOLOSC")
-	assertUint16(t, 0x8715, synAddrs.CODE,   "CODE")
-	assertUint16(t, 0x8717, synAddrs.DEVICE, "DEVICE")
-	assertUint16(t, 0x8719, synAddrs.VALUE,  "VALUE")
-	assertUint16(t, 0x871b, synAddrs.PTVAL,  "PTVAL")
-	assertUint16(t, 0x877a, synAddrs.SEQCON, "SEQCON")
-	assertUint16(t, 0x87a2, synAddrs.SEQVOI, "SEQVOI")
-	assertUint16(t, 0x882e, synAddrs.EXTRA,  "EXTRA")
-	assertUint16(t, 0x88a9, synAddrs.TRANSP, "TRANSP")
-	assertUint16(t, 0x88ae, synAddrs.SEQTAB, "SEQTAB")
-	assertUint16(t, 0xf000, synAddrs.CMOS,   "CMOS")
+	data.AssertUint16(t, 0x0000, synAddrs.PROG,   "PROG")
+	data.AssertUint16(t, 0x5c72, synAddrs.ROM,    "ROM")
+	data.AssertUint16(t, 0x6033, synAddrs.VTAB,   "VTAB")
+	data.AssertUint16(t, 0x60e0, synAddrs.FILTAB, "FILTAB")
+	data.AssertUint16(t, 0x62e0, synAddrs.EDATA,  "EDATA")
+	data.AssertUint16(t, 0x8000, synAddrs.RAM,    "RAM")
+	data.AssertUint16(t, 0x8044, synAddrs.PTSTAT, "PTSTAT")
+	data.AssertUint16(t, 0x86f9, synAddrs.SOLOSC, "SOLOSC")
+	data.AssertUint16(t, 0x8715, synAddrs.CODE,   "CODE")
+	data.AssertUint16(t, 0x8717, synAddrs.DEVICE, "DEVICE")
+	data.AssertUint16(t, 0x8719, synAddrs.VALUE,  "VALUE")
+	data.AssertUint16(t, 0x871b, synAddrs.PTVAL,  "PTVAL")
+	data.AssertUint16(t, 0x877a, synAddrs.SEQCON, "SEQCON")
+	data.AssertUint16(t, 0x87a2, synAddrs.SEQVOI, "SEQVOI")
+	data.AssertUint16(t, 0x882e, synAddrs.EXTRA,  "EXTRA")
+	data.AssertUint16(t, 0x88a9, synAddrs.TRANSP, "TRANSP")
+	data.AssertUint16(t, 0x88ae, synAddrs.SEQTAB, "SEQTAB")
+	data.AssertUint16(t, 0xf000, synAddrs.CMOS,   "CMOS")
 }
 
 func TestBlockDump(t *testing.T) {

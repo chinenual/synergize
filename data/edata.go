@@ -1,4 +1,4 @@
-package synio
+package data
 
 import (
 )
@@ -16,44 +16,44 @@ import (
 // EDHEAD is identical to data.VCEHead. Use same names
 
 const (
-	off_EDATA_VOITAB 	= 0
-	off_EDATA_OSCPTR 	= 1
-	off_EDATA_VTRANS 	= 33
-	off_EDATA_VTCENT 	= 34
-	off_EDATA_VTSENS 	= 35
-	off_EDATA_patchTableIndex = 36
-	off_EDATA_VEQ 		= 37
-	off_EDATA_VNAME 	= 61	
-	off_EDATA_VACENT 	= 69
-	off_EDATA_VASENS 	= 70
-	off_EDATA_VIBRAT 	= 71
-	off_EDATA_VIBDEL 	= 72
-	off_EDATA_VIBDEP 	= 73
-	off_EDATA_KPROP		= 97
-	off_EDATA_APVIB  	= 98
-	off_EDATA_FILTER_arr	= 99
+	Off_EDATA_VOITAB 	= 0
+	Off_EDATA_OSCPTR 	= 1
+	Off_EDATA_VTRANS 	= 33
+	Off_EDATA_VTCENT 	= 34
+	Off_EDATA_VTSENS 	= 35
+	Off_EDATA_patchTableIndex = 36
+	Off_EDATA_VEQ 		= 37
+	Off_EDATA_VNAME 	= 61	
+	Off_EDATA_VACENT 	= 69
+	Off_EDATA_VASENS 	= 70
+	Off_EDATA_VIBRAT 	= 71
+	Off_EDATA_VIBDEL 	= 72
+	Off_EDATA_VIBDEP 	= 73
+	Off_EDATA_KPROP		= 97
+	Off_EDATA_APVIB  	= 98
+	Off_EDATA_FILTER_arr	= 99
 
 	// offset of OSC[0] from EDATA:
-	off_EDATA_EOSC		= 115
+	Off_EDATA_EOSC		= 115
 	// size of each EOSC array element
-	sizeof_EOSC = 140
+	Sizeof_EOSC = 140
 
-	off_EOSC_OPTCH		= 0
-	off_EOSC_OHARM		= 1
-	off_EOSC_FDETUN		= 2
-	off_EOSC_FENVL		= 3
+	Off_EOSC_OPTCH		= 0
+	Off_EOSC_OHARM		= 1
+	Off_EOSC_FDETUN		= 2
+	Off_EOSC_FENVL		= 3
 		// frequency env:
-	off_EOSC_FreqENVTYPE	= 4
-	off_EOSC_FreqNPOINTS	= 5
-	off_EOSC_FreqSUSTAINPT	= 6
-	off_EOSC_FreqLOOPPT	= 7
-	off_EOSC_FreqPoints	= 8
+	Off_EOSC_FreqENVTYPE	= 4
+	Off_EOSC_FreqNPOINTS	= 5
+	Off_EOSC_FreqSUSTAINPT	= 6
+	Off_EOSC_FreqLOOPPT	= 7
+	Off_EOSC_FreqPoints	= 8
 		// amp env:
-	off_EOSC_AmpENVTYPE	= 72
-	off_EOSC_AmpNPOINTS	= 73
-	off_EOSC_AmpSUSTAINPT	= 74
-	off_EOSC_AmpLOOPPT	= 75
-	off_EOSC_AmpPoints 	= 76
+	Off_EOSC_AmpENVTYPE	= 72
+	Off_EOSC_AmpNPOINTS	= 73
+	Off_EOSC_AmpSUSTAINPT	= 74
+	Off_EOSC_AmpLOOPPT	= 75
+	Off_EOSC_AmpPoints 	= 76
 )
 
 var (
@@ -146,14 +146,14 @@ var (
 		55,55,0,0, 	// point15
 		55,55,0,0 }	// point16	
 
-	edata [off_EDATA_EOSC + 16 * sizeof_EOSC]byte
+	EDATA [Off_EDATA_EOSC + 16 * Sizeof_EOSC]byte
 )
 
 func init() {
 	// fixup the default data that can't be easily made with literal values
 	for osc := 0; osc < 16; osc++ {
-		offset := osc * sizeof_EOSC + off_EDATA_EOSC
-		hob,lob := wordToBytes(uint16(offset))
+		offset := osc * Sizeof_EOSC + Off_EDATA_EOSC
+		hob,lob := WordToBytes(uint16(offset))
 		edata_head_default[1 + osc*2] = lob
 		edata_head_default[2 + osc*2] = hob
 	}
@@ -162,33 +162,24 @@ func init() {
 
 func ClearLocalEDATA() {
 	for i := 0; i < len(edata_head_default); i++ {
-		edata[i] = edata_head_default[i]
+		EDATA[i] = edata_head_default[i]
 	}
 	for osc := 0; osc < 16; osc++ {
 		for i := 0; i < len(edata_osc_default); i++ {
-			offset := off_EDATA_EOSC + osc * sizeof_EOSC + i
-			edata[offset] = edata_osc_default[i]
+			offset := Off_EDATA_EOSC + osc * Sizeof_EOSC + i
+			EDATA[offset] = edata_osc_default[i]
 		}
 	}
 }
 
-func edataLocalHeadOffset(fieldOffset int) uint16 {
+func EDATALocalHeadOffset(fieldOffset int) uint16 {
 	return uint16(fieldOffset)
 }
 
-func edataLocalOscOffset(osc int, fieldOffset int) uint16 {
+func EDATALocalOscOffset(osc int, fieldOffset int) uint16 {
 	// osc is 1-based
-	return uint16(off_EDATA_EOSC +
-		((osc-1) * sizeof_EOSC) +
+	return uint16(Off_EDATA_EOSC +
+		((osc-1) * Sizeof_EOSC) +
 		fieldOffset)
 }
 
-func edataHeadAddr(fieldOffset int) uint16 {
-	return synAddrs.EDATA + edataLocalHeadOffset(fieldOffset)
-}
-
-
-func edataOscAddr(osc int, fieldOffset int) uint16 {
-	// osc is 1-based
-	return synAddrs.EDATA + edataLocalOscOffset(osc, fieldOffset)	
-}

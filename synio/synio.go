@@ -3,6 +3,8 @@ package synio
 import (
 	"log"
 	"strings"
+	"github.com/chinenual/synergize/data"
+	
 	"github.com/pkg/errors"
 	"github.com/snksoft/crc"
 )
@@ -171,7 +173,7 @@ func DumpByte(addr uint16, purpose string) (value byte, err error) {
 
 func writeU16(v uint16, purpose string) (err error) {
 	
-	hob,lob := wordToBytes(v)
+	hob,lob := data.WordToBytes(v)
 
 	if err = serialWriteByte(TIMEOUT_MS, hob, "write HOB " + purpose); err != nil {
 		err = errors.Wrap(err, "error sending HOB " + purpose)
@@ -254,13 +256,13 @@ func getSynergyAddrs() (err error) {
 	if b, err = BlockDump(0x00c5, 14); err != nil {
 		return
 	}
-	synAddrs.SEQTAB = bytesToWord(b[1], b[0]);
-	synAddrs.SEQCON = bytesToWord(b[3], b[2]);
-	synAddrs.SEQVOI = bytesToWord(b[5], b[4]);
-	synAddrs.CODE   = bytesToWord(b[7], b[6]);
-	synAddrs.PTVAL  = bytesToWord(b[9], b[8]);
-	synAddrs.PTSTAT = bytesToWord(b[11],b[10]);
-	synAddrs.SOLOSC = bytesToWord(b[13],b[12]);
+	synAddrs.SEQTAB = data.BytesToWord(b[1], b[0]);
+	synAddrs.SEQCON = data.BytesToWord(b[3], b[2]);
+	synAddrs.SEQVOI = data.BytesToWord(b[5], b[4]);
+	synAddrs.CODE   = data.BytesToWord(b[7], b[6]);
+	synAddrs.PTVAL  = data.BytesToWord(b[9], b[8]);
+	synAddrs.PTSTAT = data.BytesToWord(b[11],b[10]);
+	synAddrs.SOLOSC = data.BytesToWord(b[13],b[12]);
 	// and the implied addresses relative to the above:
 	synAddrs.EXTRA  = synAddrs.SEQTAB - 128
 	synAddrs.DEVICE = synAddrs.CODE + 2
@@ -313,7 +315,7 @@ func ReloadNoteGenerators() (err error) {
 // Sets the value in the Synergy address space and then reloads the note
 // generators
 func SetVoiceHeadDataByte(offset int, value byte, purpose string) (err error) {
-	addr := edataHeadAddr(offset)
+	addr := EDATAHeadAddr(offset)
 	if err = LoadByte(addr, value, purpose); err != nil {
 		return
 	}
@@ -325,7 +327,7 @@ func SetVoiceHeadDataByte(offset int, value byte, purpose string) (err error) {
 
 // osc is 1-based
 func SetVoiceOscDataByte(osc int, offset int, value byte, purpose string) (err error) {
-	addr := edataOscAddr(osc, offset)
+	addr := EDATAOscAddr(osc, offset)
 	if err = LoadByte(addr, value, purpose); err != nil {
 		return
 	}
@@ -336,21 +338,21 @@ func SetVoiceOscDataByte(osc int, offset int, value byte, purpose string) (err e
 }
 
 func SetVoiceAPVIB(value byte) (err error) {
-	if err = SetVoiceHeadDataByte(off_EDATA_APVIB, value, "set APVIB"); err != nil {
+	if err = SetVoiceHeadDataByte(data.Off_EDATA_APVIB, value, "set APVIB"); err != nil {
 		return
 	}
 	return
 }
 
 func SetVoiceOscOHARM(osc int, value int8) (err error) {
-	if err = SetVoiceOscDataByte(osc, off_EOSC_OHARM, byte(value), "set OHARM"); err != nil {
+	if err = SetVoiceOscDataByte(osc, data.Off_EOSC_OHARM, byte(value), "set OHARM"); err != nil {
 		return
 	}
 	return
 }
 
 func SetVoiceOscFDETUN(osc int, value int8) (err error) {
-	if err = SetVoiceOscDataByte(osc, off_EOSC_FDETUN, byte(value), "set FDETUN"); err != nil {
+	if err = SetVoiceOscDataByte(osc, data.Off_EOSC_FDETUN, byte(value), "set FDETUN"); err != nil {
 		return
 	}
 	return
@@ -437,7 +439,7 @@ func LoadCRT(crt []byte) (err error) {
 	var length = uint16(len(crt))
 	if synioVerbose {log.Printf("length: %d (dec) %x (hex)\n", length, length)}
 
-	lenHob,lenLob := wordToBytes(length)
+	lenHob,lenLob := data.WordToBytes(length)
 	// LOB of the length
 	calcCRCByte(lenLob)
 	if err = serialWriteByte(TIMEOUT_MS, lenLob, "write length LOB"); err != nil {
@@ -458,7 +460,7 @@ func LoadCRT(crt []byte) (err error) {
 	crc := crcHash.CRC16()
 	if synioVerbose {log.Printf("CRC: %d (dec) %x (hex) %x\n", crc, crc, crcHash.CRC())}
 	
-	crcHob,crcLob := wordToBytes(crc)
+	crcHob,crcLob := data.WordToBytes(crc)
 	// HOB of the crc
 	if err = serialWriteByte(TIMEOUT_MS, crcHob, "write CRC HOB"); err != nil {
 		return 
@@ -519,7 +521,7 @@ func SaveSYN() (bytes []byte, err error) {
 		return 
 	}
 
-	cmos_len := bytesToWord(len_buf[1],len_buf[0])
+	cmos_len := data.BytesToWord(len_buf[1],len_buf[0])
 	
 	// read two CMOS data banks and the length of the sequencer (2 more bytes);
 	
@@ -531,7 +533,7 @@ func SaveSYN() (bytes []byte, err error) {
 	}
 
 	// decode sequencer length and possibly grab more
-	seq_len := bytesToWord(cmos_buf[len(cmos_buf)-1], cmos_buf[len(cmos_buf)-2])
+	seq_len := data.BytesToWord(cmos_buf[len(cmos_buf)-1], cmos_buf[len(cmos_buf)-2])
 	if synioVerbose {log.Printf("SEQ LEN from synergy %d\n", seq_len)}
 
 	// empty buf unless we have non-zero length to read
@@ -548,7 +550,7 @@ func SaveSYN() (bytes []byte, err error) {
 	}
 
 	// FIXME: these bytes seem out of order vs the length HOB/LOB yet seem to be transmitted the same from INTF.Z80 firmware sourcecode - I dont understand something..
-	crcFromSynergy := bytesToWord(crc_buf[0], crc_buf[1])
+	crcFromSynergy := data.BytesToWord(crc_buf[0], crc_buf[1])
 
 	crcHash.Reset();
 
@@ -715,16 +717,6 @@ func Pedal(up bool) (err error) {
 	return
 }
 
-
-func bytesToWord(hob byte, lob byte) uint16 {
-	return uint16(hob) << 8 + uint16(lob)
-}
-
-func wordToBytes(word uint16) (hob byte, lob byte) {
-	hob = byte(word >> 8)
-	lob = byte(word)
-	return
-}
 
 func calcCRCByte(b byte)  {
 	var arr []byte = make([]byte,1)
