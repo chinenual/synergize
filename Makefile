@@ -17,7 +17,7 @@ all: TAGS $(EXES)
 
 
 $(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX_AMD64) $(EXE_LINUX_386) $(EXE_LINUX_ARM) : $(SRCS)
-	rm windows.syso # delete temporary file side effect of windows build - linux-arm chokes on it.
+	rm -f windows.syso # delete temporary file side effect of windows build - linux-arm chokes on it.
 	astilectron-bundler
 
 # command line friendly variant for running batch serial comms tests
