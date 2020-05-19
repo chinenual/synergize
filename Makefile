@@ -86,6 +86,7 @@ packages/Synergize-linux-arm-$(VERSION).tar.gz: $(EXE_LINUX_ARM)
 .PHONY: test
 test:
 	cd data && go test
+	cd synio && go test
 	go test
 
 UNAME_S := $(shell uname -s)
