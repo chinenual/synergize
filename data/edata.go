@@ -1,6 +1,8 @@
 package data
 
 import (
+	"bytes"
+	"log"
 )
 
 // layout of the EDATA, OSC tables on the synergy.
@@ -18,8 +20,10 @@ import (
 /// VRAM dump is a CRT header, then A and B filters, then the EDATA (VOITAB).
 
 const (
+	Off_VRAM_BFILTR		= 0x70
+	Off_VRAM_AFILTR		= 0x88
+	Off_VRAM_FILTAB		= 0xa0 // offset from start of VRAM to start of filters
 	Off_VRAM_EDATA		= 0x2c0 // offset from start of VRAM to start of EDATA
-	Off_VRAM_FILTERS	= 0xc0 // offset from start of VRAM to start of filters
 	
 	Off_EDATA_VOITAB 	= 0
 	Off_EDATA_OSCPTR 	= 1
@@ -188,3 +192,36 @@ func EDATALocalOscOffset(osc int, fieldOffset int) uint16 {
 		fieldOffset)
 }
 
+func ReadVceFromVRAM(vram []byte) (vce VCE, err error) {
+	buf := bytes.NewReader(vram[Off_VRAM_EDATA:])
+	if vce,err = ReadVce(buf, true); err != nil {
+		return
+	}
+
+	// in practice, the filters for this voice are always at the top
+	// of the array.  But just to be safe, check the header and use
+	// those offsets
+
+	a_idx := int(int8(BytesToWord(vram[Off_VRAM_AFILTR+1], vram[Off_VRAM_AFILTR])))
+	b_idx := BytesToWord(vram[Off_VRAM_BFILTR+1], vram[Off_VRAM_BFILTR])
+
+	log.Printf("filter idx %d %d\n",a_idx,b_idx)
+	
+	if VceAFilterCount(vce) > 0 {
+		offset := ((-a_idx)-1) * 32
+		log.Printf("filter a offset %d %x\n",Off_VRAM_FILTAB+offset,Off_VRAM_FILTAB+offset)
+		buf = bytes.NewReader(vram[Off_VRAM_FILTAB + offset:])		
+		if err = vceReadAFilters(buf, &vce); err !=nil {
+			return
+		}
+	}
+	if VceBFilterCount(vce) > 0 {
+		offset := (b_idx-1) * 32
+		log.Printf("filter b offset %d %x\n",Off_VRAM_FILTAB+offset,Off_VRAM_FILTAB+offset)
+		buf = bytes.NewReader(vram[Off_VRAM_FILTAB + offset:])		
+		if err = vceReadBFilters(buf, &vce); err != nil {
+			return
+		}
+	}
+	return		
+}

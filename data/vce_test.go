@@ -13,6 +13,7 @@ import (
 
 var testfilepath = flag.String("testfilepath", "testfiles", "path to VCE and CRT files")
 
+
 func testReadWriteVCE(t *testing.T, path string) {
 	log.Println("test ", path);
 

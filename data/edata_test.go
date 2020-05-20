@@ -44,3 +44,31 @@ func TestInitEDATA(t *testing.T) {
 	}
 }
 
+func TestReadVceFromVRAM(t *testing.T) {
+	var read_bytes []byte
+	var err error
+
+	var vram_path = "testfiles/VRAMG7S.bin"
+	var vce_path  = "testfiles/G7S.VCE"
+	if read_bytes,err = ioutil.ReadFile(vram_path); err != nil {
+		t.Errorf("error reading %s: %v", vram_path, err)
+		return 
+	}
+
+	var vce_from_vram VCE
+	var vce_from_file VCE
+	
+	if vce_from_vram,err = ReadVceFromVRAM(read_bytes); err != nil {
+		t.Errorf("error reading vce: %v", err)
+		return 
+	}
+
+	if vce_from_file,err = ReadVceFile(vce_path); err != nil {
+		t.Errorf("error reading %s: %v", vce_path, err)
+		return 
+	}
+	if !diffVCE(vce_from_vram, vce_from_file) {
+		t.Errorf("VCE do not match %s %s", vram_path, vce_path)
+	}
+}
+
