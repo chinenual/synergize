@@ -125,7 +125,6 @@ func vceReadAFilters(buf io.Reader, vce *VCE) (err error) {
 		if f < 0 {
 			for j := 0; j < 32; j++ {
 				if err = binary.Read(buf, binary.LittleEndian, &vce.Filters[0][j]); err != nil {
-					log.Println(vceToString(*vce))
 					log.Println("binary.Read failed:", 0, " ", j, " ", err)
 					return
 				}			
@@ -173,7 +172,6 @@ func vceReadBFilters(buf io.Reader, vce *VCE) (err error) {
 			var index = int(f) - 1 + offset
 			for j := 0; j < 32; j++ {
 				if err = binary.Read(buf, binary.LittleEndian, &vce.Filters[index][j]); err != nil {
-					log.Println(vceToString(*vce))
 					log.Println("binary.Read failed:", index, " ", j, " ", err)
 					return
 				}			
