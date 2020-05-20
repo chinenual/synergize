@@ -67,21 +67,23 @@ func ReadCrtFile(filename string) (crt CRT, err error) {
 			
 			if VceAFilterCount(vce) > 0 {
 				offset = uint16(crt.Head.AFILTR[i]-1) * 32
-				// log.Printf("v:%d A FILTER index %d so offset %d from %x\n", i,crt.Head.AFILTR[i],offset,filtabOffset);
 				if _,err = buf.Seek(int64(filtabOffset+offset), io.SeekStart); err != nil {
 					err = errors.Wrapf(err,"failed to seek to voice #%d filter-b start", i)
 					return
 				}
-				vceReadAFilters(buf, &vce)
+				if err = vceReadAFilters(buf, &vce); err !=nil {
+					return
+				}
 			}
 			if VceBFilterCount(vce) > 0 {
 				offset = uint16(crt.Head.BFILTR[i]-1) * 32
-				// log.Printf("v:%d B FILTER index %d so offset %d from %x\n", i,crt.Head.BFILTR[i],offset,filtabOffset);
 				if _,err = buf.Seek(int64(filtabOffset+offset), io.SeekStart); err != nil {
 					err = errors.Wrapf(err,"failed to seek to voice #%d filter-b start", i)
 					return
 				}
-				vceReadBFilters(buf, &vce)
+				if err = vceReadBFilters(buf, &vce); err !=nil {
+					return
+				}
 			}
 			
 			crt.Voices = append(crt.Voices, vce)
