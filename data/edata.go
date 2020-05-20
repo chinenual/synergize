@@ -15,7 +15,12 @@ import (
 
 // EDHEAD is identical to data.VCEHead. Use same names
 
+/// VRAM dump is a CRT header, then A and B filters, then the EDATA (VOITAB).
+
 const (
+	Off_VRAM_EDATA		= 0x2c0 // offset from start of VRAM to start of EDATA
+	Off_VRAM_FILTERS	= 0xc0 // offset from start of VRAM to start of filters
+	
 	Off_EDATA_VOITAB 	= 0
 	Off_EDATA_OSCPTR 	= 1
 	Off_EDATA_VTRANS 	= 33

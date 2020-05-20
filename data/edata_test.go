@@ -2,11 +2,13 @@ package data
 
 import (
 	"fmt"
+	"io/ioutil"
+	"reflect"
 //	"log"
 	"testing"
 )
 
-func TestLocalEDATA(t *testing.T) {
+func TestLocalEDATAOffsets(t *testing.T) {
 //	log.Printf("edata_head_default: %v\n", edata_head_default)
 	// spot check some data:
 	AssertByte(t, EDATA[0], 0, "VOITAB")
@@ -21,3 +23,24 @@ func TestLocalEDATA(t *testing.T) {
 		AssertByte(t, EDATA[off], 0, fmt.Sprintf("osc %d FDETUN", osc))
 	}
 }
+
+func TestInitEDATA(t *testing.T) {
+	var read_bytes []byte
+	var err error
+
+	ClearLocalEDATA()
+
+	var path = "testfiles/VRAMRAW.bin"
+	if read_bytes,err = ioutil.ReadFile(path); err != nil {
+		t.Errorf("error reading %s: %v", path, err)
+		return 
+	}
+	// only compare the portion of the EDATA actually returned from the
+	// synergy (it doesnt send unused voices)
+	read_EDATA   := read_bytes[Off_VRAM_EDATA:]
+	EDATA_subset := EDATA[:len(read_EDATA)]
+	if !reflect.DeepEqual(read_EDATA, EDATA_subset) {
+		t.Errorf("initialized EDATA data doesnt match. read:\n%v\n\nEDATA:\n %v", read_EDATA, EDATA_subset)
+	}
+}
+
