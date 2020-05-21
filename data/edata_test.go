@@ -90,8 +90,6 @@ func TestReadVceFromVRAM(t *testing.T) {
 	write_bytes, _ := ioutil.ReadAll(writebuf.Reader())
 	var readbuf = bytes.NewReader(write_bytes)
 
-	dumpTestBytes("TEST.bin", write_bytes)
-	
 	var vce_from_vram2 VCE
 	if vce_from_vram2, err = ReadVce(readbuf, false); err != nil {
 		t.Errorf("error parsing generated stream: %v", err)
