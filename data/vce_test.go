@@ -9,10 +9,27 @@ import (
 	"path/filepath"
 	"reflect"
 	"testing"
+
+	"github.com/orcaman/writerseeker"
 )
 
 var testfilepath = flag.String("testfilepath", "testfiles", "path to VCE and CRT files")
 
+func testOnePathname(t *testing.T, path string, expect string) {
+	AssertString(t, vceNameFromPathname(path), expect, path);	
+}
+
+func TestVceNameFromPathname(t *testing.T) {
+	testOnePathname(t, "/foo/bar/foo.vce", "FOO     ")
+	testOnePathname(t, "/foo/bar/foo.VcE", "FOO     ")
+	testOnePathname(t, "/foo/bar/foo.VCE", "FOO     ")
+	testOnePathname(t, "C:\\foo\\bar\\FOO.VCE", "FOO     ")
+	testOnePathname(t, "C:\\foo\\bar\\foo.VcE", "FOO     ")
+ 	testOnePathname(t, "/foo/bar/foo", "FOO     ")
+	testOnePathname(t, "/foo/bar/foo.baz", "FOO.BAZ ")
+	testOnePathname(t, "/foo/bar/f123456789012345", "F1234567")
+	testOnePathname(t, "/foo/bar/f123456789012345.vce", "F1234567")
+}		
 
 func testReadWriteVCE(t *testing.T, path string) {
 	log.Println("test ", path);
@@ -25,7 +42,7 @@ func testReadWriteVCE(t *testing.T, path string) {
 		return 
 	}
 
-	var readbuf = bytes.NewBuffer(read_bytes)
+	var readbuf = bytes.NewReader(read_bytes)
 	var vce VCE
 	
 	if vce, err = ReadVce(readbuf, false); err != nil {
@@ -35,31 +52,31 @@ func testReadWriteVCE(t *testing.T, path string) {
 
 	testVCEName(t, path, vce)
 	
-	var writebuf bytes.Buffer
+	var writebuf = writerseeker.WriterSeeker{}
 
-	if err = WriteVce(&writebuf, vce, false); err != nil {
+	if err = WriteVce(&writebuf, vce, vceNameFromPathname(path), false); err != nil {
 		t.Errorf("error writing %s: %v", path, err)
 		return
 	}
-	write_bytes := writebuf.Bytes()
+	write_bytes, _ := ioutil.ReadAll(writebuf.Reader())
 	
 	if !reflect.DeepEqual(read_bytes, write_bytes) {
-		// before we report an error, this might be the case thata the
+		// before we report an error, this might be the case that the
 		// original file just has some extra bytes at the end (G7S.VCE
 		// has a bunch of null, some files have ASCII EOF chars).
 		//
-		// compare the filters if they are the same, we'll consider the
+		// compare the parsed data: if they are the same, we'll consider the
 		// files identical
 
-		var readbuf2 = bytes.NewBuffer(write_bytes)
+		var readbuf2 = bytes.NewReader(write_bytes)
 		var vce2 VCE
 
 		if vce2, err = ReadVce(readbuf2, false); err != nil {
 			t.Errorf("error parsing generated stream: %v", err)
 			return
 		}
-		if !reflect.DeepEqual(vce.Filters, vce2.Filters) {
-			t.Errorf("read/write data doesnt match. read:\n%v\nfilters:%v\n\nwrote:\n %v\nfilters:%v",read_bytes,vce.Filters,write_bytes,vce2.Filters)
+		if !diffVCE(vce, vce2) {
+			t.Errorf("read/write data doesnt match")
 			return
 		}		
 

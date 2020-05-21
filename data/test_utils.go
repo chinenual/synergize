@@ -2,10 +2,25 @@ package data
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"reflect"
 	"testing"
 )
+
+func dumpTestBytes(path string, bytes []byte) (err error) {
+	err = ioutil.WriteFile(path, bytes, 0644)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func AssertString(t *testing.T, b string, expected string, context string) {
+	if b != expected {
+		t.Errorf("expected %s '%s', got '%s'\n", context, expected, b)
+	}
+}
 
 func AssertByte(t *testing.T, b byte, expected byte, context string) {
 	if b != expected {

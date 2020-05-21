@@ -2,7 +2,6 @@ package data
 
 import (
 	"bytes"
-	"log"
 )
 
 // layout of the EDATA, OSC tables on the synergy.
@@ -205,11 +204,8 @@ func ReadVceFromVRAM(vram []byte) (vce VCE, err error) {
 	a_idx := int(int8(BytesToWord(vram[Off_VRAM_AFILTR+1], vram[Off_VRAM_AFILTR])))
 	b_idx := BytesToWord(vram[Off_VRAM_BFILTR+1], vram[Off_VRAM_BFILTR])
 
-	log.Printf("filter idx %d %d\n",a_idx,b_idx)
-	
 	if VceAFilterCount(vce) > 0 {
 		offset := ((-a_idx)-1) * 32
-		log.Printf("filter a offset %d %x\n",Off_VRAM_FILTAB+offset,Off_VRAM_FILTAB+offset)
 		buf = bytes.NewReader(vram[Off_VRAM_FILTAB + offset:])		
 		if err = vceReadAFilters(buf, &vce); err !=nil {
 			return
@@ -217,7 +213,6 @@ func ReadVceFromVRAM(vram []byte) (vce VCE, err error) {
 	}
 	if VceBFilterCount(vce) > 0 {
 		offset := (b_idx-1) * 32
-		log.Printf("filter b offset %d %x\n",Off_VRAM_FILTAB+offset,Off_VRAM_FILTAB+offset)
 		buf = bytes.NewReader(vram[Off_VRAM_FILTAB + offset:])		
 		if err = vceReadBFilters(buf, &vce); err != nil {
 			return

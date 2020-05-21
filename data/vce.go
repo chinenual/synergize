@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
-	"log"
 	"io"
 	"io/ioutil"
 	"os"
+	"strings"
+	"github.com/pkg/errors"
 )
 
 type FreqEnvelopeTable struct {
@@ -105,14 +106,46 @@ func ReadVceFile(filename string) (vce VCE, err error) {
 	return
 }
 
+func vceNameFromPathname(filename string) (name string) {
+	// filepath.Base() is OS dependent = looks for \ on windows, else /.
+	// We want to be platform independent (at least for the unit tests :)) so roll our own
+	name = filename
+	if i := strings.LastIndexByte(name,'/'); i >= 0 {
+		name = name[i+1:]
+	}
+	if i := strings.LastIndexByte(name,'\\'); i >= 0 {
+		name = name[i+1:]
+	}
+	
+	// remove .vce suffix
+	name = strings.ToUpper(name)
+	name = strings.TrimSuffix(name, ".VCE")
+	name = vcePaddedName(name)
+	return name
+}
+
+func vcePaddedName(name string) (padded string) {
+	padded = name
+	if len(padded) > 8 {
+		padded = padded[:8]
+	} else if len(padded) < 8 {
+		add := 8-len(padded)
+		for i := 0; i < add; i++ {
+			padded = padded + " "
+		}
+	}
+	return padded
+}
+
 func WriteVceFile(filename string, vce VCE) (err error) {
 	var file *os.File
 	if file,err = os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0755); err != nil {
 		return
 	}
 	defer file.Close()
-	
-	if err = WriteVce(file, vce, true); err != nil {
+
+	name := vceNameFromPathname(filename)
+	if err = WriteVce(file, vce, name, false); err != nil {
 		return
 	}
 	return
@@ -125,7 +158,7 @@ func vceReadAFilters(buf io.Reader, vce *VCE) (err error) {
 		if f < 0 {
 			for j := 0; j < 32; j++ {
 				if err = binary.Read(buf, binary.LittleEndian, &vce.Filters[0][j]); err != nil {
-					log.Println("binary.Read failed:", 0, " ", j, " ", err)
+					err = errors.Wrapf(err, "Failed to read A filter[%d]", j)
 					return
 				}			
 			}			
@@ -140,7 +173,7 @@ func vceWriteAFilters(buf io.Writer, vce VCE) (err error) {
 		if f < 0 {
 			for j := 0; j < 32; j++ {
 				if err = binary.Write(buf, binary.LittleEndian, vce.Filters[0][j]); err != nil {
-					log.Println("binary.Write failed:", 0, " ", j, " ", err)
+					err = errors.Wrapf(err, "Failed to write A filter[%d]", j)
 					return
 				}			
 			}			
@@ -172,7 +205,7 @@ func vceReadBFilters(buf io.Reader, vce *VCE) (err error) {
 			var index = int(f) - 1 + offset
 			for j := 0; j < 32; j++ {
 				if err = binary.Read(buf, binary.LittleEndian, &vce.Filters[index][j]); err != nil {
-					log.Println("binary.Read failed:", index, " ", j, " ", err)
+					err = errors.Wrapf(err, "Failed to read B filter[%d][%d]", index,j)
 					return
 				}			
 			}
@@ -202,7 +235,7 @@ func vceWriteBFilters(buf io.Writer, vce VCE) (err error) {
 			var index = int(f) - 1 + offset
 			for j := 0; j < 32; j++ {
 				if err = binary.Write(buf, binary.LittleEndian, vce.Filters[index][j]); err != nil {
-					log.Println("binary.Write failed:", index, " ", j, " ", err)
+					err = errors.Wrapf(err, "Failed to write B filter[%d][%d]", index,j)
 					return
 				}			
 			}
@@ -211,77 +244,112 @@ func vceWriteBFilters(buf io.Writer, vce VCE) (err error) {
 	return
 }
 	
-func ReadVce(buf io.Reader, skipFilters bool) (vce VCE, err error) {
+func ReadVce(buf io.ReadSeeker, skipFilters bool) (vce VCE, err error) {
+	var startVceOffset int64
+	if startVceOffset,err = buf.Seek(0, io.SeekCurrent); err != nil {
+		return
+	}
+		
 	if err = binary.Read(buf, binary.LittleEndian, &vce.Head); err != nil {
-		log.Println("binary.Read failed:", err)
+		err = errors.Wrapf(err, "Failed to read voice header")
 		return
 	}
 
 	vce.Envelopes = make ([]Envelope,vce.Head.VOITAB+1)
 	for i := byte(0); i <= vce.Head.VOITAB; i++ {
 		var e Envelope
+
+		offset := int64(vce.Head.OSCPTR[i])+startVceOffset
+		
+		if _,err = buf.Seek(offset, io.SeekStart); err != nil {
+			err = errors.Wrapf(err,"failed to seek to osc #%d start: %04x", i, offset)
+			return
+		}
 	
 		if err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.OPTCH); err != nil {
-			log.Println("binary.Read failed:", err)
+			err = errors.Wrapf(err, "Failed to read voice freq env [%d] OPTCH",i)
 			return
 		}
 		if err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.OHARM); err != nil {
-			log.Println("binary.Read failed:", err)
+			err = errors.Wrapf(err, "Failed to read voice freq env [%d] OHARM",i)
 			return
 		}
 		if err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.FDETUN); err != nil {
-			log.Println("binary.Read failed:", err)
+			err = errors.Wrapf(err, "Failed to read voice freq env [%d] FDETUN",i)
 			return
 		}
 		if err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.FENVL); err != nil {
-			log.Println("binary.Read failed:", err)
+			err = errors.Wrapf(err, "Failed to read voice freq env [%d] FENVL",i)
 			return
 		}
+
+		// XREF: amp start
+		// Danger Will Robinson. Data coming directly from the Synergy
+		// via VRAM DUMP will have the envelopes spaced out with unused
+		// points in between.  Need to trust the FENVL value and not
+		// just use the NPOINTS value to determine where to find the
+		// beginning of the Amp envelope.  So determine where that is now:
+		var startAmpEnv int64
+		if startAmpEnv,err = buf.Seek(0, io.SeekCurrent); err != nil {
+			return
+		}
+		startAmpEnv = startAmpEnv + int64(e.FreqEnvelope.FENVL)
+		
 		if err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.ENVTYPE); err != nil {
-			log.Println("binary.Read failed:", err)
+			err = errors.Wrapf(err, "Failed to read voice freq env [%d] ENVTYPE",i)
 			return
 		}
 		if err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.NPOINTS); err != nil {
-			log.Println("binary.Read failed:", err)
+			err = errors.Wrapf(err, "Failed to read voice freq env [%d] NPOINTS",i)
 			return
 		}
 		if err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.SUSTAINPT); err != nil {
-			log.Println("binary.Read failed:", err)
+			err = errors.Wrapf(err, "Failed to read voice freq env [%d] SUSTAINPT",i)
 			return
 		}
 		if err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.LOOPPT); err != nil {
-			log.Println("binary.Read failed:", err)
+			err = errors.Wrapf(err, "Failed to read voice freq env [%d] LOOPPT",i)
 			return
 		}
+
 		// 4 values per point:
+		
 		e.FreqEnvelope.Table = make([]byte, e.FreqEnvelope.NPOINTS*4)
 		for k := byte(0); k < e.FreqEnvelope.NPOINTS*4; k++ {
 			if err = binary.Read(buf, binary.LittleEndian, &e.FreqEnvelope.Table[k]); err != nil {
-				log.Println("binary.Read failed:", err)
+				err = errors.Wrapf(err, "Failed to read voice freq env [%d] table[%d]",i,k)
 				return
 			}
 		}
+
+		// XREF: amp start
+		if _,err = buf.Seek(startAmpEnv, io.SeekStart); err != nil {
+			err = errors.Wrapf(err,"failed to seek to amp env #%d start: %04x", i, startAmpEnv)
+			return
+		}
+
+		
 		if err = binary.Read(buf, binary.LittleEndian, &e.AmpEnvelope.ENVTYPE); err != nil {
-			log.Println("binary.Read failed:", err)
+			err = errors.Wrapf(err, "Failed to read voice amp env [%d] ENVTYPE",i)
 			return
 		}
 		if err = binary.Read(buf, binary.LittleEndian, &e.AmpEnvelope.NPOINTS); err != nil {
-			log.Println("binary.Read failed:", err)
+			err = errors.Wrapf(err, "Failed to read voice amp env [%d] NPOINTS",i)
 			return
 		}
 		if err = binary.Read(buf, binary.LittleEndian, &e.AmpEnvelope.SUSTAINPT); err != nil {
-			log.Println("binary.Read failed:", err)
+			err = errors.Wrapf(err, "Failed to read voice amp env [%d] SUSTAINPT",i)
 			return
 		}
 		if err = binary.Read(buf, binary.LittleEndian, &e.AmpEnvelope.LOOPPT); err != nil {
-			log.Println("binary.Read failed:", err)
+			err = errors.Wrapf(err, "Failed to read voice amp env [%d] LOOPPT",i)
 			return
 		}
 		// 4 values per point:
 		e.AmpEnvelope.Table = make([]byte, e.AmpEnvelope.NPOINTS*4)
 		for k := byte(0); k < e.AmpEnvelope.NPOINTS*4; k++ {
 			if err = binary.Read(buf, binary.LittleEndian, &e.AmpEnvelope.Table[k]); err != nil {
-				log.Println("binary.Read failed:", err)
+				err = errors.Wrapf(err, "Failed to read amp freq env [%d] table[%d]",i,k)
 				return
 			}
 		}
@@ -304,86 +372,133 @@ func ReadVce(buf io.Reader, skipFilters bool) (vce VCE, err error) {
 
 	if ! skipFilters {
 		if err = vceReadAFilters(buf, &vce); err != nil {
-			log.Println("binary.Read failed:", err)
+			err = errors.Wrapf(err, "Failed to read A filters")
 			return
 		}
 		if err = vceReadBFilters(buf, &vce); err != nil {
-			log.Println("binary.Read failed:", err)
+			err = errors.Wrapf(err, "Failed to read B filters")
 			return
 		}
 	}
 	return
 }
+
+func updateOscPtr(buf io.WriteSeeker, headOffset int64, osc byte, val uint16) (err error) {
+	var curr int64
+	if curr,err = buf.Seek(0, io.SeekCurrent); err != nil {
+		return
+	}
+	// OSC[n] offset is Head+1 + (osc)*2  [2-byte word]
+	if _,err = buf.Seek(headOffset + 1 + (int64(osc) * 2), io.SeekStart); err != nil {
+		return
+	}
+
+	lob, hob := WordToBytes(val)
 	
-func WriteVce(buf io.Writer, vce VCE, skipFilters bool) (err error) {
+	if err = binary.Write(buf, binary.LittleEndian, hob); err != nil {
+		err = errors.Wrapf(err, "Failed to write OSCPTR[%d].hob",osc)
+		return
+	}
+	if err = binary.Write(buf, binary.LittleEndian, lob); err != nil {
+		err = errors.Wrapf(err, "Failed to write OSCPTR[%d].lob",osc)
+		return
+	}
+	
+	// restore the position
+	if curr,err = buf.Seek(curr, io.SeekStart); err != nil {
+		return
+	}
+	return
+}
+	
+// sets the VNAME, rewrites the OSCPTR array and compresses the FENVL values
+func WriteVce(buf io.WriteSeeker, vce VCE, name string, skipFilters bool) (err error) {
+	var headOffset int64
+	if headOffset,err = buf.Seek(0, io.SeekCurrent); err != nil {
+		return
+	}
+	
+	vce.Head.VNAME= StringToSpaceEncodedString(name)
+	for i,_ := range(vce.Head.OSCPTR) {
+		vce.Head.OSCPTR[i] = 0
+	}
+	
 	if err = binary.Write(buf, binary.LittleEndian, &vce.Head); err != nil {
-		log.Println("binary.Write failed:", err)
+		err = errors.Wrapf(err, "Failed to write voice header")
 		return
 	}
 
 	for i := byte(0); i <= vce.Head.VOITAB; i++ {
 		e := vce.Envelopes[i]
 
+		var oscOffset int64
+		if oscOffset,err = buf.Seek(0, io.SeekCurrent); err != nil {
+			return
+		}
+		updateOscPtr(buf, headOffset, i, uint16(oscOffset-headOffset))
+
 		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.OPTCH); err != nil {
-			log.Println("binary.Write failed:", err)
+			err = errors.Wrapf(err, "Failed to write voice freq env [%d] OPTCH",i)
 			return
 		}
 		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.OHARM); err != nil {
-			log.Println("binary.Write failed:", err)
+			err = errors.Wrapf(err, "Failed to write voice freq env [%d] OHARM",i)
 			return
 		}
 		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.FDETUN); err != nil {
-			log.Println("binary.Write failed:", err)
+			err = errors.Wrapf(err, "Failed to write voice freq env [%d] FDETUN",i)
 			return
 		}
+		
+		e.FreqEnvelope.FENVL = 4 + 4*e.FreqEnvelope.NPOINTS
 		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.FENVL); err != nil {
-			log.Println("binary.Write failed:", err)
+			err = errors.Wrapf(err, "Failed to write voice freq env [%d] FENVL",i)
 			return
 		}
 		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.ENVTYPE); err != nil {
-			log.Println("binary.Write failed:", err)
+			err = errors.Wrapf(err, "Failed to write voice freq env [%d] ENVTYPE",i)
 			return
 		}
 		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.NPOINTS); err != nil {
-			log.Println("binary.Write failed:", err)
+			err = errors.Wrapf(err, "Failed to write voice freq env [%d] NPOINTS",i)
 			return
 		}
 		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.SUSTAINPT); err != nil {
-			log.Println("binary.Write failed:", err)
+			err = errors.Wrapf(err, "Failed to write voice freq env [%d] SUSTAINPT",i)
 			return
 		}
 		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.LOOPPT); err != nil {
-			log.Println("binary.Write failed:", err)
+			err = errors.Wrapf(err, "Failed to write voice freq env [%d] LOOPPT",i)
 			return
 		}
 		// 4 values per point:
 
 		for k := byte(0); k < e.FreqEnvelope.NPOINTS*4; k++ {
 			if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.Table[k]); err != nil {
-				log.Println("binary.Write failed:", err)
+				err = errors.Wrapf(err, "Failed to write freq env [%d] table[%d]",i,k)
 				return
 			}
 		}
 		if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.ENVTYPE); err != nil {
-			log.Println("binary.Write failed:", err)
+			err = errors.Wrapf(err, "Failed to write voice amp env [%d] ENVTYPE",i)
 			return
 		}
 		if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.NPOINTS); err != nil {
-			log.Println("binary.Write failed:", err)
+			err = errors.Wrapf(err, "Failed to write voice amp env [%d] NPOINTS",i)
 			return
 		}
 		if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.SUSTAINPT); err != nil {
-			log.Println("binary.Write failed:", err)
+			err = errors.Wrapf(err, "Failed to write voice amp env [%d] SUSTAINPT",i)
 			return
 		}
 		if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.LOOPPT); err != nil {
-			log.Println("binary.Write failed:", err)
+			err = errors.Wrapf(err, "Failed to write voice amp env [%d] LOOPPT",i)
 			return
 		}
 		// 4 values per point:
 		for k := byte(0); k < e.AmpEnvelope.NPOINTS*4; k++ {
 			if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.Table[k]); err != nil {
-				log.Println("binary.Write failed:", err)
+				err = errors.Wrapf(err, "Failed to write amp freq env [%d] table[%d]",i,k)
 				return
 			}
 		}
@@ -391,11 +506,11 @@ func WriteVce(buf io.Writer, vce VCE, skipFilters bool) (err error) {
 
 	if ! skipFilters {
 		if err = vceWriteAFilters(buf, vce); err != nil {
-			log.Println("binary.Write failed:", err)
+			err = errors.Wrapf(err, "Failed to write A filters")
 			return
 		}
 		if err = vceWriteBFilters(buf, vce); err != nil {
-			log.Println("binary.Write failed:", err)
+			err = errors.Wrapf(err, "Failed to write B filters")
 			return
 		}
 	}

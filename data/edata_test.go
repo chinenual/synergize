@@ -1,11 +1,14 @@
 package data
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"reflect"
 //	"log"
 	"testing"
+
+	"github.com/orcaman/writerseeker"
 )
 
 func TestLocalEDATAOffsets(t *testing.T) {
@@ -44,12 +47,21 @@ func TestInitEDATA(t *testing.T) {
 	}
 }
 
+//func TestDiffG7S(t *testing.T) {
+//	vce1,_:=ReadVceFile("testfiles/G7S.VCE")
+//	vce2,_:=ReadVceFile("testfiles/VRAMG7S.VCE")
+//	_=diffVCE(vce1,vce2)
+//}
+
 func TestReadVceFromVRAM(t *testing.T) {
 	var read_bytes []byte
 	var err error
 
 	var vram_path = "testfiles/VRAMG7S.bin"
-	var vce_path  = "testfiles/G7S.VCE"
+	// don't get with real G7S.VCE - something about loading it into VRAM
+	// and then back alters it -- changes VIBRAT. So compare against the
+	// VCE that SYNCS created by the same VRAM dump
+	var vce_path  = "testfiles/VRAMG7S.VCE"
 	if read_bytes,err = ioutil.ReadFile(vram_path); err != nil {
 		t.Errorf("error reading %s: %v", vram_path, err)
 		return 
@@ -60,6 +72,7 @@ func TestReadVceFromVRAM(t *testing.T) {
 	
 	if vce_from_vram,err = ReadVceFromVRAM(read_bytes); err != nil {
 		t.Errorf("error reading vce: %v", err)
+		t.Errorf("  parsed so far: %s\n", vceToJson(vce_from_vram))
 		return 
 	}
 
@@ -67,7 +80,26 @@ func TestReadVceFromVRAM(t *testing.T) {
 		t.Errorf("error reading %s: %v", vce_path, err)
 		return 
 	}
-	if !diffVCE(vce_from_vram, vce_from_file) {
+	// don't diff the raw vce -- it hasnt been re-compressed = write it
+	// via WriteVce to get something comparable
+	var writebuf = writerseeker.WriterSeeker{}
+	if err = WriteVce(&writebuf, vce_from_vram, "VRAMG7S", false); err != nil {
+		t.Errorf("error normalizing VRAM %v", err)
+	}
+	// now read in the compressed vce:
+	write_bytes, _ := ioutil.ReadAll(writebuf.Reader())
+	var readbuf = bytes.NewReader(write_bytes)
+
+	dumpTestBytes("TEST.bin", write_bytes)
+	
+	var vce_from_vram2 VCE
+	if vce_from_vram2, err = ReadVce(readbuf, false); err != nil {
+		t.Errorf("error parsing generated stream: %v", err)
+		t.Errorf("  parsed so far: %s\n", vceToJson(vce_from_vram2))
+		return
+	}
+	
+	if !diffVCE(vce_from_vram2, vce_from_file) {
 		t.Errorf("VCE do not match %s %s", vram_path, vce_path)
 	}
 }

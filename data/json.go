@@ -28,3 +28,13 @@ func (u SpaceEncodedString) MarshalJSON() ([]byte, error) {
 	return []byte(result), nil
 }
 
+func StringToSpaceEncodedString(s string) (u SpaceEncodedString) {
+	for i,_ := range u {
+		if i < len(s) {
+			u[i] = s[i]
+		} else {
+			u[i] = ' '
+		}
+	}
+	return u
+}
