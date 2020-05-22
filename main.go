@@ -349,6 +349,10 @@ and easier to document if same on both Mac and Windows.
 			SingleInstance:     true,
 			VersionAstilectron: VersionAstilectron,
 			VersionElectron:    VersionElectron,
+			//ElectronSwitches: []string{
+			//	"remote-debugging-port", "8315",
+			//	"host-rules", "MAP * 127.0.0.1",
+			},
 		},
 		Debug:  prefsUserPreferences.HTTPDebug,
 		Logger: l,
@@ -389,7 +393,7 @@ and easier to document if same on both Mac and Windows.
 				BackgroundColor: astikit.StrPtr("black"),
 				Center:          astikit.BoolPtr(true),
 				Show:            astikit.BoolPtr(false),
-				Height:          astikit.IntPtr(320),
+				Height:          astikit.IntPtr(400),
 				Width:           astikit.IntPtr(500),
 				Custom: &astilectron.WindowCustomOptions{
 					HideOnClose:	astikit.BoolPtr(true),
