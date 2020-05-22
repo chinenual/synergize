@@ -6,7 +6,6 @@ let index = {
 	init: function () {
 		// make sure external web links open in system browser - not the application:
 		document.addEventListener('click', function (event) {
-			console.log("in shell event click listener - tagname " + event.target.tagName + " href " + event.target.href)
 			if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
 				event.preventDefault()
 				shell.openExternal(event.target.href)
@@ -343,7 +342,7 @@ let index = {
 		index.spinnerOn();
 		astilectron.sendMessage(message, function (message) {
 			index.spinnerOff();
-			console.log("runCOMTST returned: " + message);
+			console.log("runCOMTST returned: " + JSON.stringify(message));
 			// Check error
 			if (message.name === "error") {
 				index.errorNotification(message.payload);
@@ -355,7 +354,7 @@ let index = {
 	},
 
 	load: function (url, element) {
-		console.log("load " + url + " into " + element);
+		console.log("load " + url + " into " + JSON.stringify(element));
 		req = new XMLHttpRequest();
 
 		req.onreadystatechange = function () {
@@ -403,7 +402,7 @@ let index = {
 					return { payload: f };
 					break;
 				case "viewVCE":
-					console.log("viewVCE: " + message.payload);
+					console.log("viewVCE: " + JSON.stringify(message.payload));
 					vce = message.payload;
 					index.load("view.html", document.getElementById("content"));
 					viewVCE.init();
@@ -424,10 +423,10 @@ function inDropbtn(ele) {
 		//console.log("ele is null");
 		return false
 	} else if (ele.classList.contains('dropbtn')) {
-		//console.log("ele has dropbtn " + ele);
+		//console.log("ele has dropbtn " + JSON.stringify(ele));
 		return true;
 	}
-	//console.log("ele doesnt have dropbtn - try parent " + ele + " " + ele.parentElement);
+	//console.log("ele doesnt have dropbtn - try parent " + JSON.stringify(ele) + " " + JSON.stringify(ele.parentElement));
 	return inDropbtn(ele.parentElement);
 }
 

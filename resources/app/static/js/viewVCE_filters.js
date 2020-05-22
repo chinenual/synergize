@@ -94,7 +94,7 @@ let viewVCE_filters = {
 		    }
 		);
 	    }
-	    console.log("datasets = " + datasets);
+	    console.log("datasets = " + JSON.stringify(datasets));
 	}
 
 	console.dir(datasets);

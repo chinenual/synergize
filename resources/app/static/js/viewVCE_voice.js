@@ -45,8 +45,8 @@ let viewVCE_voice = {
 	while (tbody.firstChild) {
 	    tbody.removeChild(tbody.firstChild);
 	}
-	console.log("vceEnv" + vce.Envelopes);
-	console.log("vceFilters" + vce.Filters);
+	console.log("vceEnv" + JSON.stringify(vce.Envelopes));
+	console.log("vceFilters" + JSON.stringify(vce.Filters));
 	
 	// populate new ones:
 	for (osc = 0; osc <= vce.Head.VOITAB; osc++) {
@@ -166,8 +166,8 @@ let viewVCE_voice = {
 	var ampData = viewVCE_voice.ampProportionCurve(vce.Head.VACENT, vce.Head.VASENS);
 	var timbreData = viewVCE_voice.timbreProportionCurve(vce.Head.VTCENT, vce.Head.VTSENS);
 	
-	console.log("ampData: " + ampData);
-	console.log("timbreData: " + timbreData);
+	console.log("ampData: " + JSON.stringify(ampData));
+	console.log("timbreData: " + JSON.stringify(timbreData));
 	
 	var ctx = document.getElementById('velocityChart').getContext('2d');
 	var chart = new Chart(ctx, {

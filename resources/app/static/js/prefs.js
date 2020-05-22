@@ -17,7 +17,7 @@ let prefs = {
 		var os = message.payload.Os
 		preferences = message.payload.Preferences
 		
-		console.log("loaded preferences: " + os + ": " + preferences)
+		console.log("loaded preferences: " + os + ": " + JSON.stringify(preferences))
 
 		document.getElementById("serialPort").value = preferences.SerialPort;
 		document.getElementById("serialBaud").value = preferences.SerialBaud;
@@ -104,7 +104,7 @@ let prefs = {
     listen: function() {
 	console.log("prefs listening...")
         astilectron.onMessage(function(message) {
-	    console.log("unexpected msg: " + message);
+	    console.log("unexpected msg: " + JSON.stringify(message));
         });
     }
 };
