@@ -14,9 +14,15 @@
     <center>
       <img src="static/images/logo-transparent.png" width="200"><br>
       <br>
-      a librarian/editor for the DK Synergy<br>
+      a librarian/editor for the DK Synergy
       <br>
-      Version: <div id="version">{{.Version}}</div><br>
+      <br>
+      Version: <span id="version">{{.Version}}</span>
+      <div id="updateAvailable" style="display:none;">
+        A new version of Synergize is available.<br>
+        <button onclick="shell.openExternal('https://github.com/chinenual/synergize/releases/latest')"">Get Latest Version</button>
+      </div>
+      <br>
       <br>
       Updates and Support are available via the <a href="https://chinenual.github.com/synergize" target="_blank">Synergize github project</a>. 
       Please report bugs or suggest new features via an <a href="https://github.com/chinenual/synergize/issues" target="_blank">Issue</a> there.  

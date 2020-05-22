@@ -1,6 +1,6 @@
 package main
 
-import (		
+import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
@@ -12,10 +12,10 @@ import (
 
 	"github.com/chinenual/synergize/data"
 	"github.com/chinenual/synergize/synio"
-	
-	"github.com/pkg/errors"
+
 	"github.com/asticode/go-astilectron"
 	bootstrap "github.com/asticode/go-astilectron-bootstrap"
+	"github.com/pkg/errors"
 )
 
 // handleMessages handles messages
@@ -27,35 +27,38 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		} else {
 			payload = FirmwareVersion
 		}
-		
+
 	case "disableVRAM":
 		if err = connectToSynergyIfNotConnected(); err != nil {
 			payload = err.Error()
 			return
-		} 
+		}
 		if err = synio.DisableVRAM(); err != nil {
 			payload = err.Error()
 			return
 		} else {
 			payload = "ok"
 		}
-		
+
 	case "getVersion":
-		payload = AppVersion
+		payload = struct {
+			Version             string
+			NewVersionAvailable bool
+		}{AppVersion, true}
 
 	case "showAbout":
 		about_w.Show()
-		
+
 	case "showPreferences":
-		log.Printf("Show Preferences (from messages)\n");
+		log.Printf("Show Preferences (from messages)\n")
 		prefs_w.Show()
-		
+
 	case "getPreferences":
 		payload = struct {
-			Os string
+			Os          string
 			Preferences Preferences
-		} {runtime.GOOS, prefsUserPreferences}
-		
+		}{runtime.GOOS, prefsUserPreferences}
+
 	case "savePreferences":
 		oldPath := prefsUserPreferences.LibraryPath
 		if len(m.Payload) > 0 {
@@ -76,7 +79,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 
 	case "cancelPreferences":
 		prefs_w.Hide()
-		
+
 	case "loadSYN":
 		var path string
 		if len(m.Payload) > 0 {
@@ -86,13 +89,13 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		if err = diagLoadSYN(path);  err != nil {
+		if err = diagLoadSYN(path); err != nil {
 			payload = err.Error()
 			return
 		} else {
 			payload = "ok"
 		}
-		
+
 	case "saveSYN":
 		var path string
 		if len(m.Payload) > 0 {
@@ -108,8 +111,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		} else {
 			payload = "ok"
 		}
-		
-		
+
 	case "loadCRT":
 		var path string
 		if len(m.Payload) > 0 {
@@ -125,7 +127,6 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		} else {
 			payload = "ok"
 		}
-		
 
 	case "readCRT":
 		var crt data.CRT
@@ -137,13 +138,13 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		if crt,err = data.ReadCrtFile(path); err != nil {
+		if crt, err = data.ReadCrtFile(path); err != nil {
 			payload = err.Error()
 			return
 		} else {
 			payload = crt
 		}
-		
+
 	case "readVCE":
 		var vce data.VCE
 		var path string
@@ -154,20 +155,20 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		if vce,err = data.ReadVceFile(path); err != nil {
+		if vce, err = data.ReadVceFile(path); err != nil {
 			payload = err.Error()
 			return
 		} else {
 			payload = vce
 		}
-		
+
 	case "getFirmwareVersion":
 		payload = FirmwareVersion
 
 	case "getCWD":
-		payload,_ = os.Getwd()
-		log.Printf("CWD: %s\n",payload)
-		
+		payload, _ = os.Getwd()
+		log.Printf("CWD: %s\n", payload)
+
 	case "runCOMTST":
 		// nothing interesting in the payload - just start the test and return results
 		if FirmwareVersion == "" {
@@ -180,7 +181,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			//
 			// Run the serial init without querying the firmware version
 			if err = synio.Init(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag); err != nil {
-				err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n", prefsUserPreferences.SerialPort,prefsUserPreferences.SerialBaud)
+				err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
 				payload = err.Error()
 				return
 			}
@@ -192,7 +193,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		} else {
 			payload = "Success!"
 		}
-		
+
 	case "explore":
 		// Unmarshal payload
 		var path string
@@ -218,11 +219,11 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 
 // Exploration represents the results of an exploration
 type Exploration struct {
-	Dirs       []Dir              `json:"dirs"`
-	SYNFiles   []Dir              `json:"SYNfiles"`
-	CRTFiles   []Dir              `json:"CRTfiles"`
-	VCEFiles   []Dir              `json:"VCEfiles"`
-	Path       string             `json:"path"`
+	Dirs     []Dir  `json:"dirs"`
+	SYNFiles []Dir  `json:"SYNfiles"`
+	CRTFiles []Dir  `json:"CRTfiles"`
+	VCEFiles []Dir  `json:"VCEfiles"`
+	Path     string `json:"path"`
 }
 
 // PayloadDir represents a dir payload
@@ -278,7 +279,7 @@ func explore(path string) (e Exploration, err error) {
 				Path: filepath.Join(path, f.Name()),
 			})
 		} else {
-			
+
 			// Only collect files with Synergy related extensions
 			switch strings.ToLower(filepath.Ext(f.Name())) {
 			case ".syn":
@@ -291,7 +292,7 @@ func explore(path string) (e Exploration, err error) {
 					Name: strings.TrimSuffix(f.Name(), filepath.Ext(f.Name())),
 					Path: filepath.Join(path, f.Name()),
 				})
-			case ".vce" :
+			case ".vce":
 				e.VCEFiles = append(e.VCEFiles, Dir{
 					Name: strings.TrimSuffix(f.Name(), filepath.Ext(f.Name())),
 					Path: filepath.Join(path, f.Name()),
