@@ -3,6 +3,12 @@ body {
     color: #fff;
     font-size: 0.8rem;
 }
+a {
+    /* XREF: match yellow
+     * the bootstrap theme uses green links.  Use a color that matches the yellow we use in charts.
+     */
+    color: rgb(244,180,0);
+}
 
 table {
     font-size: small;
