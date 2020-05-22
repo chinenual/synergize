@@ -319,6 +319,8 @@ func TestMain(m *testing.M) {
 			fmt.Printf("could not initialize io: %v\n", err)
 			os.Exit(1)
 		}
-	}	
+	} else {
+		fmt.Printf("Integration tests skipped. Run with -synio to run them.\n")
+	}
 	os.Exit(m.Run())
 }
