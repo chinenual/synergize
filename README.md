@@ -31,6 +31,9 @@ See links below for sites containing the original DK/Mulogix voice library.
 
 Please report problems via a [github issue](https://github.com/chinenual/synergize/issues).  If you don't have a github account, send a bug report email to "support at chinenual.com"
 
+If you are a user or are thinking of becoming a user, please join our Slack workspace (https://slack-app.slack.com).  Send an email to "support at chinenual.com" for an invitation to the group.
+
+
 ## Screenshots
 
 <img title="Cartridge voice listing view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewCRT.png?raw=true" width="45%"/>
