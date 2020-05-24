@@ -242,7 +242,7 @@ func diff(path1, path2 string) {
 		os.Exit(1)
 	}
 
-	for i, _ := range bytes1 {
+	for i := range bytes1 {
 		if bytes2[i] == 0 && bytes1[i] != 0 {
 			fmt.Printf("%04x : after disable: %x, after init: %x\n",
 				i, bytes2[i], bytes1[i])
