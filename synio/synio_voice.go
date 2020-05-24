@@ -1,8 +1,8 @@
 package synio
+
 import (
 	"github.com/chinenual/synergize/data"
 )
-
 
 func VoicingMode() (err error) {
 	if err = getSynergyAddrs(); err != nil {
@@ -67,28 +67,28 @@ func SetVoiceOscDataByte(osc int, offset int, value byte, purpose string, reload
 	return
 }
 
-func SetVoiceVeqValue(index, value byte) (err error) {
+func SetVoiceVEQValue(index, value byte) (err error) {
 	if err = SetVoiceHeadDataByte(data.Off_EDATA_VEQ+int(index), value, "set VEQ", false); err != nil {
 		return
 	}
 	return
 }
 
-func SetVoiceVeqArray(value []byte) (err error) {
+func SetVoiceVEQArray(value []byte) (err error) {
 	if err = SetVoiceHeadDataArray(data.Off_EDATA_VEQ, value, "set VEQ", false); err != nil {
 		return
 	}
 	return
 }
 
-func SetVoiceKpropValue(index, value byte) (err error) {
+func SetVoiceKPROPValue(index, value byte) (err error) {
 	if err = SetVoiceHeadDataByte(data.Off_EDATA_KPROP+int(index), value, "set Kprop", false); err != nil {
 		return
 	}
 	return
 }
 
-func SetVoiceKpropArray(value []byte) (err error) {
+func SetVoiceKPROPArray(value []byte) (err error) {
 	if err = SetVoiceHeadDataArray(data.Off_EDATA_KPROP, value, "set Kprop", false); err != nil {
 		return
 	}

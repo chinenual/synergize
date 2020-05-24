@@ -85,12 +85,82 @@ func TestDynamicAddrs(t *testing.T) {
 	data.AssertUint16(t, 0xf000, synAddrs.CMOS, "CMOS")
 }
 
+func TestInitVRAM(t *testing.T) {
+	if !*synio {
+		t.Skip()
+	}
+	//	dumpAddressSpace("before-initVRAM.bin");
+
+	var err error
+	if err = InitVRAM(); err != nil {
+		t.Fatalf("Error initializing VRAM: %v\n", err)
+	}
+
+	//	dumpAddressSpace("after-initVRAM.bin");
+
+	var b byte
+	if b, err = DumpByte(MIDIC_addr, "get MIDIC"); err != nil {
+		t.Fatalf("Error getting MIDIC value: %v\n", err)
+	}
+	if b != 0xff {
+		// can't treat this as an error since I can't actually
+		// find the toggled value at the addr I expect it to be.
+		// leave this as a warning until better understanding
+		t.Logf("MIDIC not 0xff: got %x", b)
+	}
+}
+
+func TestDisableVRAM(t *testing.T) {
+	if !*synio {
+		t.Skip()
+	}
+	var err error
+	if err = DisableVRAM(); err != nil {
+		t.Fatalf("Error disabling VRAM: %v\n", err)
+	}
+	//	dumpAddressSpace("after-disableVRAM.bin");
+
+	var b byte
+	if b, err = DumpByte(MIDIC_addr, "get MIDIC"); err != nil {
+		t.Fatalf("Error getting MIDIC value: %v\n", err)
+	}
+	if b != 0 {
+		// can't treat this as an error since I can't actually
+		// find the toggled value at the addr I expect it to be.
+		// leave this as a warning until better understanding
+		t.Logf("MIDIC not zero: got %x", b)
+	}
+}
+
+func TestDumpVRAM(t *testing.T) {
+	if !*synio {
+		t.Skip()
+	}
+	var err error
+	var bytes []byte
+
+	// will fail unless vram is enabled on the synergy side:
+	if err = InitVRAM(); err != nil {
+		t.Fatalf("Error initializing VRAM: %v\n", err)
+	}
+
+	if bytes, err = DumpVRAM(); err != nil {
+		t.Fatalf("DumpVRAM failed %v", err)
+	}
+	fmt.Printf("vram returned %d bytes\n", len(bytes))
+}
+
 func TestBlockDump(t *testing.T) {
 	if !*synio {
 		t.Skip()
 	}
 	var syn_bytes []byte
 	var err error
+
+	// NOTE: this needs to run before we init VRAM (or at least after disabling it - so put VRAM tests above) - but just to be sure:
+	if err = DisableVRAM(); err != nil {
+		t.Fatalf("Error disabling VRAM: %v\n", err)
+	}
 
 	if syn_bytes, err = BlockDump(0x6000, 41, "get header bytes"); err != nil {
 		t.Fatalf("Error executing block dump: %v", err)
@@ -159,193 +229,6 @@ func TestDumpByte(t *testing.T) {
 	}
 	if b != byte('P') {
 		t.Fatalf("Dumped byte doesnt match expected value got %v expected %v", b, 'P')
-	}
-}
-
-func TestLoadSaveSyn(t *testing.T) {
-	if !*synio {
-		t.Skip()
-	}
-	var expect_bytes []byte
-	var syn_bytes []byte
-	var err error
-
-	if expect_bytes, err = ioutil.ReadFile("../data/testfiles/TEST.SYN"); err != nil {
-		t.Fatalf("Error when reading test file: %v", err)
-	}
-
-	if err = LoadSYN(expect_bytes); err != nil {
-		t.Fatalf("Error calling LoadSYN: %v", err)
-	}
-
-	if syn_bytes, err = SaveSYN(); err != nil {
-		t.Fatalf("Error calling SaveSYN: %v", err)
-	}
-
-	if !reflect.DeepEqual(syn_bytes, expect_bytes) {
-		t.Fatalf("downloaded SYN doesnt match what we uploaded\n%v\n\n\n %v", syn_bytes, expect_bytes)
-	}
-}
-
-func TestInitVRAM(t *testing.T) {
-	if !*synio {
-		t.Skip()
-	}
-	//	dumpAddressSpace("before-initVRAM.bin");
-
-	var err error
-	if err = InitVRAM(); err != nil {
-		t.Fatalf("Error initializing VRAM: %v\n", err)
-	}
-
-	//	dumpAddressSpace("after-initVRAM.bin");
-
-	var b byte
-	if b, err = DumpByte(MIDIC_addr, "get MIDIC"); err != nil {
-		t.Fatalf("Error getting MIDIC value: %v\n", err)
-	}
-	if b != 0xff {
-		// can't treat this as an error since I can't actually
-		// find the toggled value at the addr I expect it to be.
-		// leave this as a warning until better understanding
-		t.Logf("MIDIC not 0xff: got %x", b)
-	}
-}
-
-func TestDisableVRAM(t *testing.T) {
-	if !*synio {
-		t.Skip()
-	}
-	var err error
-	if err = DisableVRAM(); err != nil {
-		t.Fatalf("Error disabling VRAM: %v\n", err)
-	}
-	//	dumpAddressSpace("after-disableVRAM.bin");
-
-	var b byte
-	if b, err = DumpByte(MIDIC_addr, "get MIDIC"); err != nil {
-		t.Fatalf("Error getting MIDIC value: %v\n", err)
-	}
-	if b != 0 {
-		// can't treat this as an error since I can't actually
-		// find the toggled value at the addr I expect it to be.
-		// leave this as a warning until better understanding
-		t.Logf("MIDIC not zero: got %x", b)
-	}
-}
-
-func TestReloadNoteGenerators(t *testing.T) {
-	if !*synio {
-		t.Skip()
-	}
-	var err error
-	if err = ReloadNoteGenerators(); err != nil {
-		t.Fatalf("Error reloading note generators: %v\n", err)
-	}
-}
-
-func TestLoadCRT(t *testing.T) {
-	if !*synio {
-		t.Skip()
-	}
-	var err error
-	var bytes []byte
-
-	// FIXME: probably shoudnt be using the test files from the data package
-	if bytes, err = ioutil.ReadFile("../data/testfiles/INTERNAL.CRT"); err != nil {
-		t.Fatalf("Can't load test data %v", err)
-	}
-
-	if err = LoadCRT(bytes); err != nil {
-		t.Fatalf("LoadCRT failed %v", err)
-	}
-}
-
-func TestDumpVRAM(t *testing.T) {
-	if !*synio {
-		t.Skip()
-	}
-	var err error
-	var bytes []byte
-
-	// FIXME: probably shoudnt be using the test files from the data package
-	if bytes, err = DumpVRAM(); err != nil {
-		t.Fatalf("DumpVRAM failed %v", err)
-	}
-	fmt.Printf("vram returned %d bytes\n", len(bytes))
-}
-
-func TestLoadVCE(t *testing.T) {
-}
-
-func TestSetVeq(t *testing.T) {
-	if !*synio {
-		t.Skip()
-	}
-	var err error
-	for v := -24; v <= 6; v++ {
-		if err = SetVoiceVeqValue(0, byte(v)); err != nil {
-			t.Fatalf("Error setting Veq value %v", v)
-		}
-	}
-	var arr []byte = []byte{0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1}
-	if err = SetVoiceVeqArray(arr); err != nil {
-		t.Fatalf("Error setting Veq array %v", arr)
-	}
-}
-func TestSetKprop(t *testing.T) {
-	if !*synio {
-		t.Skip()
-	}
-	var err error
-	for v := 0; v <= 32; v++ {
-		if err = SetVoiceKpropValue(0, byte(v)); err != nil {
-			t.Fatalf("Error setting Veq value %v", v)
-		}
-	}
-	var arr []byte = []byte{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23}
-	if err = SetVoiceKpropArray(arr); err != nil {
-		t.Fatalf("Error setting Veq array %v", arr)
-	}
-}
-
-func TestSetAPVIB(t *testing.T) {
-	if !*synio {
-		t.Skip()
-	}
-	var err error
-	for v := 0; v <= 0xff; v++ {
-		if err = SetVoiceAPVIB(byte(v)); err != nil {
-			t.Fatalf("Error setting APVIB value %v", v)
-		}
-	}
-}
-
-func TestSetOHARM(t *testing.T) {
-	if !*synio {
-		t.Skip()
-	}
-	var err error
-	for osc := 0; osc < 2; osc++ {
-		for v := -64; v <= 64; v++ {
-			if err = SetVoiceOscOHARM(osc, int8(v)); err != nil {
-				t.Fatalf("Error setting OHARM osc %v value %v", osc, v)
-			}
-		}
-	}
-}
-
-func TestSetFDETUN(t *testing.T) {
-	if !*synio {
-		t.Skip()
-	}
-	var err error
-	for osc := 0; osc < 2; osc++ {
-		for v := -64; v <= 64; v++ {
-			if err = SetVoiceOscFDETUN(osc, int8(v)); err != nil {
-				t.Fatalf("Error setting FDETUN osc %v value %v", osc, v)
-			}
-		}
 	}
 }
 
