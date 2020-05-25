@@ -17,7 +17,7 @@ let about = {
                 console.log("getVersion returned: " + JSON.stringify(message));
                 document.getElementById("version").innerHTML = message.payload.Version;
                 if (message.payload.NewVersionAvailable) {
-                    document.getElementById("updateAvailable").style.display="block";
+                    document.getElementById("updateAvailable").style.display = "block";
                 }
             });
 
