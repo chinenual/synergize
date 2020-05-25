@@ -10,7 +10,7 @@ First check is full UI support; second check is lower-level IO and tests
 * [x] [x] Load Synergy Machine State
 * [x] [x] Save Synergy Machine State
 * [x] [x] Load VRAM image
-* [ ] [ ] Save VRAM image
+* [ ] [x] Save VRAM image
 * [ ] [ ] Edit VRAM image
 * [x] [x] Disable VRAM
 * [x] [x] Test communications
@@ -56,7 +56,7 @@ First check is full UI support; second check is lower-level IO and tests
     * [ ] [ ] copy other oscillator's filter
 
 * Keyboard Equalization
-    * [ ] [ ] set each point in the curve
+    * [ ] [x] set each point in the curve
 
 * Keyboard Proportion
-    * [ ] [ ] set each point in the curve
+    * [ ] [x] set each point in the curve

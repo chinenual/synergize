@@ -12,8 +12,9 @@ let vceFilterNames = null;
 //    'rgb(4,169,24)'
 //];
 
+// XREF: match yellow - see base.css
 // https://htmlcolors.com/palette/26/google-palette
-let chartColors=[
+let chartColors = [
     'rgb(244,180,0)', // golden
     'rgb(66,133,244)', // blue
     'rgb(219,68,55)', // redish
@@ -22,15 +23,15 @@ let chartColors=[
 ];
 
 let viewVCE = {
-    init: function() {
-	Chart.defaults.global.defaultFontColor = 'white';
-	Chart.defaults.global.defaultFontSize  = 14;
-	
-	viewVCE_voice.init();
-	viewVCE_keyprop.init();
-	viewVCE_keyeq.init();
-	viewVCE_envs.init();
-	viewVCE_filters.init();
+    init: function () {
+        Chart.defaults.global.defaultFontColor = 'white';
+        Chart.defaults.global.defaultFontSize = 14;
+
+        viewVCE_voice.init();
+        viewVCE_keyprop.init();
+        viewVCE_keyeq.init();
+        viewVCE_envs.init();
+        viewVCE_filters.init();
 
     }
 }
