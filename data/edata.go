@@ -42,7 +42,7 @@ const (
 	Off_EDATA_FILTER_arr      = 99
 
 	// offset of OSC[0] from EDATA:
-	Off_EDATA_EOSC = 115
+	Off_EDATA_EOSC = 115  /// (so 0x333 from VRAM start)
 	// size of each EOSC array element
 	Sizeof_EOSC = 140
 
