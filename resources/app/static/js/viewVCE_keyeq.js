@@ -13,6 +13,14 @@ let viewVCE_keyeq = {
 		console.log("keyEqChart init");
 		var propData = viewVCE_keyeq.keyEqCurve(vce.Head.VEQ);
 
+		$('#keyEqTable td.val').each(function (i, obj) {
+			var id = obj.id;
+			// id is "keq<n>" - we need the <n> part
+			var idxString = id.substring(3);
+			var idx = parseInt(idxString, 10) - 1;
+			obj.innerHTML = propData[idx];
+		});
+
 		var ctx = document.getElementById('keyEqChart').getContext('2d');
 		var chart = new Chart(ctx, {
 

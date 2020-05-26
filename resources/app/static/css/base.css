@@ -184,3 +184,29 @@ td.centered span {
 .dropdown a:hover {background-color: #ddd;}
 
 .show {display: block;}
+
+
+.valTable td {
+    color: #aaa;
+    text-align: center;
+}
+
+.valTable th {
+    color: #aaa;
+    text-align: center;
+}
+
+.valTable td.val {
+    color: #fff;
+    width: 3em;
+}
+
+.valTable td.total {
+    color: #aaa;
+}
+
+.valTable th.val {
+    color: #fff;
+}
+
+

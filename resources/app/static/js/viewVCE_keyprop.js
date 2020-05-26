@@ -14,6 +14,15 @@ let viewVCE_keyprop = {
 		console.log("keyPropChart init");
 		var propData = viewVCE_keyprop.keyPropCurve(vce.Head.KPROP);
 
+		$('#keyPropTable td.val').each(function (i, obj) {
+			var id = obj.id;
+			// id is "kp<n>" - we need the <n> part
+			console.log("id: " + id + " str: " + idxString);
+			var idxString = id.substring(2);
+			var idx = parseInt(idxString, 10) - 1;
+			obj.innerHTML = propData[idx];
+		});
+
 		var ctx = document.getElementById('keyPropChart').getContext('2d');
 		var chart = new Chart(ctx, {
 
