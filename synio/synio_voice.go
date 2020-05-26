@@ -210,6 +210,7 @@ func SetOscWAVE(osc int, triangle bool) (err error) {
 	if err = SetOscWAVEControl(osc, value); err != nil {
 		return
 	}
+	return
 }
 
 func SetOscKEYPROP(osc int, usesKeypro bool) (err error) {
@@ -226,7 +227,7 @@ func SetOscKEYPROP(osc int, usesKeypro bool) (err error) {
 	} else {
 		value = 0x10 &^ value
 	}
-	if value, err = SetOscWAVEControl(osc, value); err != nil {
+	if err = SetOscWAVEControl(osc, value); err != nil {
 		return
 	}
 	return
