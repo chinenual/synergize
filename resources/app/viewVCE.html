@@ -19,6 +19,7 @@
 
 		<!-- Old School - table layout -->
 
+		Patch Type:&nbsp;<span id="patchType"></span>
 		<table style="width:100%">
 			<thead>
 				<tr>
@@ -90,6 +91,8 @@
 							<td>Keys Playable</td>
 							<td><span id="keysPlayable" /></td>
 						</tr>
+
+
 						<tr>
 							<td>&nbsp;</td>
 							<td></td>
@@ -719,275 +722,275 @@
 		<canvas id="keyEqChart" height="400" width="600" style="border:solid #666;"></canvas>
 
 		<table id="keyEqTable" class="valTable">
-		  <thead>
-		    <tr>
-		      <th>Index</th>
-		      <th>Key</th>
-		      <th class="val">dB</th>
-		      
-		      <td rowspan="8" style="padding:10px;"></td>
-		      <td rowspan="8" style="border-left:1px solid #666;padding:10px;">
-			<th>Index</th>
-			<th>Key</th>
-			<th class="val">dB</th>
-			
-		      <td rowspan="8" style="padding:10px;"></td>
-		      <td rowspan="8" style="border-left:1px solid #666;padding:10px;">
-			<th>Index</th>
-			<th>Key</th>
-			<th class="val">dB</th>
-			
-			
-		      <td rowspan="8" style="padding:10px;"></td>
-		      <td rowspan="8" style="border-left:1px solid #666;padding:10px;">
-			<th>Index</th>
-			<th>Key</th>
-			<th class="val">dB</th>
-			
-		    </tr>
-		  </thead>
-		  <tbody id="keyEqTableBody">
-		    <tr>
-		      <td>1</td>
-		      <td>E1</td>
-		      <td id="keq1" class="val"></td>
-		      
-		      <td rowspan="8" style="padding:10px;"></td>
-		      <td rowspan="8" style="border-left:1px solid #666;padding:10px;"></td>
-		      <td>7</td>
-		      <td>B3</td>
-		      <td id="keq7" class="val"></td>
-		      
-		      <td rowspan="8" style="padding:10px;"></td>
-		      <td rowspan="8" style="border-left:1px solid #666;padding:10px;"></td>
-		      <td>13</td>
-		      <td>E4</td>
-		      <td id="keq13" class="val"></td>
-		      
-		      
-		      <td rowspan="8" style="padding:10px;"></td>
-		      <td rowspan="8" style="border-left:1px solid #666;padding:10px;"></td>
-		      <td>19</td>
-		      <td>B6</td>
-		      <td id="keq19" class="val"></td>
-		      
-		    </tr>
-		    
-		    <tr>
-		      <td>2</td>
-		      <td>G#1</td>
-		      <td id="keq2" class="val"></td>
-		      <td>8</td>
-		      <td>D4</td>
-		      <td id="keq8" class="val"></td>
-		      <td>14</td>
-		      <td>G#5</td>
-		      <td id="keq14" class="val"></td>
-		      <td>20</td>
-		      <td>D7</td>
-		      <td id="keq20" class="val"></td>
-		    </tr>
-		    
-		    <tr>
-		      <td>3</td>
-		      <td>B1</td>
-		      <td id="keq3" class="val"></td>
-		      <td>9</td>
-		      <td>E4</td>
-		      <td id="keq9" class="val"></td>
-		      <td>15</td>
-		      <td>B5</td>
-		      <td id="keq15" class="val"></td>
-		      <td>21</td>
-		      <td>E6</td>
-		      <td id="keq21" class="val"></td>
-		    </tr>
-		    
-		    <tr>
-		      <td>4</td>
-		      <td>D3</td>
-		      <td id="keq4" class="val"></td>
-		      <td>10</td>
-		      <td>G#4</td>
-		      <td id="keq10" class="val"></td>
-		      <td>16</td>
-		      <td>D6</td>
-		      <td id="keq16" class="val"></td>
-		      <td>22</td>
-		      <td>G#7</td>
-		      <td id="keq22" class="val"></td>
-		    </tr>
-		    
-		    <tr>
-		      <td>5</td>
-		      <td>E2</td>
-		      <td id="keq5" class="val"></td>
-		      <td>11</td>
-		      <td>B4</td>
-		      <td id="keq11" class="val"></td>
-		      <td>17</td>
-		      <td>E6</td>
-		      <td id="keq17" class="val"></td>
-		      <td>23</td>
-		      <td>B7</td>
-		      <td id="keq23" class="val"></td>
-		    </tr>
-		    
-		    <tr>
-		      <td>6</td>
-		      <td>G#3</td>
-		      <td id="keq6" class="val"></td>
-		      <td>12</td>
-		      <td>D5</td>
-		      <td id="keq12" class="val"></td>
-		      <td>18</td>
-		      <td>G#6</td>
-		      <td id="keq18" class="val"></td>
-		      <td>24</td>
-		      <td>D8</td>
-		      <td id="keq24" class="val"></td>
-		    </tr>
-		    
-		  </tbody>
+			<thead>
+				<tr>
+					<th>Index</th>
+					<th>Key</th>
+					<th class="val">dB</th>
+
+					<td rowspan="8" style="padding:10px;"></td>
+					<td rowspan="8" style="border-left:1px solid #666;padding:10px;">
+					<th>Index</th>
+					<th>Key</th>
+					<th class="val">dB</th>
+
+					<td rowspan="8" style="padding:10px;"></td>
+					<td rowspan="8" style="border-left:1px solid #666;padding:10px;">
+					<th>Index</th>
+					<th>Key</th>
+					<th class="val">dB</th>
+
+
+					<td rowspan="8" style="padding:10px;"></td>
+					<td rowspan="8" style="border-left:1px solid #666;padding:10px;">
+					<th>Index</th>
+					<th>Key</th>
+					<th class="val">dB</th>
+
+				</tr>
+			</thead>
+			<tbody id="keyEqTableBody">
+				<tr>
+					<td>1</td>
+					<td>E1</td>
+					<td id="keq1" class="val"></td>
+
+					<td rowspan="8" style="padding:10px;"></td>
+					<td rowspan="8" style="border-left:1px solid #666;padding:10px;"></td>
+					<td>7</td>
+					<td>B3</td>
+					<td id="keq7" class="val"></td>
+
+					<td rowspan="8" style="padding:10px;"></td>
+					<td rowspan="8" style="border-left:1px solid #666;padding:10px;"></td>
+					<td>13</td>
+					<td>E4</td>
+					<td id="keq13" class="val"></td>
+
+
+					<td rowspan="8" style="padding:10px;"></td>
+					<td rowspan="8" style="border-left:1px solid #666;padding:10px;"></td>
+					<td>19</td>
+					<td>B6</td>
+					<td id="keq19" class="val"></td>
+
+				</tr>
+
+				<tr>
+					<td>2</td>
+					<td>G#1</td>
+					<td id="keq2" class="val"></td>
+					<td>8</td>
+					<td>D4</td>
+					<td id="keq8" class="val"></td>
+					<td>14</td>
+					<td>G#5</td>
+					<td id="keq14" class="val"></td>
+					<td>20</td>
+					<td>D7</td>
+					<td id="keq20" class="val"></td>
+				</tr>
+
+				<tr>
+					<td>3</td>
+					<td>B1</td>
+					<td id="keq3" class="val"></td>
+					<td>9</td>
+					<td>E4</td>
+					<td id="keq9" class="val"></td>
+					<td>15</td>
+					<td>B5</td>
+					<td id="keq15" class="val"></td>
+					<td>21</td>
+					<td>E6</td>
+					<td id="keq21" class="val"></td>
+				</tr>
+
+				<tr>
+					<td>4</td>
+					<td>D3</td>
+					<td id="keq4" class="val"></td>
+					<td>10</td>
+					<td>G#4</td>
+					<td id="keq10" class="val"></td>
+					<td>16</td>
+					<td>D6</td>
+					<td id="keq16" class="val"></td>
+					<td>22</td>
+					<td>G#7</td>
+					<td id="keq22" class="val"></td>
+				</tr>
+
+				<tr>
+					<td>5</td>
+					<td>E2</td>
+					<td id="keq5" class="val"></td>
+					<td>11</td>
+					<td>B4</td>
+					<td id="keq11" class="val"></td>
+					<td>17</td>
+					<td>E6</td>
+					<td id="keq17" class="val"></td>
+					<td>23</td>
+					<td>B7</td>
+					<td id="keq23" class="val"></td>
+				</tr>
+
+				<tr>
+					<td>6</td>
+					<td>G#3</td>
+					<td id="keq6" class="val"></td>
+					<td>12</td>
+					<td>D5</td>
+					<td id="keq12" class="val"></td>
+					<td>18</td>
+					<td>G#6</td>
+					<td id="keq18" class="val"></td>
+					<td>24</td>
+					<td>D8</td>
+					<td id="keq24" class="val"></td>
+				</tr>
+
+			</tbody>
 		</table>
-		
+
 	</div>
-	
+
 	<div id="vceKeyPropTab" class="tab-pane fade ">
-	  <canvas id="keyPropChart" height="400" width="600" style="border:solid #666;"></canvas>
-	  <table id="keyPropTable" class="valTable">
-	    <thead>
-	      <tr>
-		<th>Index</th>
-		<th>Key</th>
-		<th class="val">Bound</th>
-		
-		<td rowspan="8" style="padding:10px;"></td>
-		<td rowspan="8" style="border-left:1px solid #666;padding:10px;">
-		  <th>Index</th>
-		  <th>Key</th>
-		  <th class="val">Bound</th>
-		  
-		<td rowspan="8" style="padding:10px;"></td>
-		<td rowspan="8" style="border-left:1px solid #666;padding:10px;">
-		  <th>Index</th>
-		  <th>Key</th>
-		  <th class="val">Bound</th>
-		  
-		  
-		<td rowspan="8" style="padding:10px;"></td>
-		<td rowspan="8" style="border-left:1px solid #666;padding:10px;">
-		  <th>Index</th>
-		  <th>Key</th>
-		  <th class="val">Bound</th>
-		  
-	      </tr>
-	    </thead>
-	    <tbody id="keyPropTableBody">
-	      <tr>
-		<td>1</td>
-		<td>E1</td>
-		<td id="kp1" class="val"></td>
-		
-		<td rowspan="8" style="padding:10px;"></td>
-		<td rowspan="8" style="border-left:1px solid #666;padding:10px;"></td>
-		<td>7</td>
-		<td>B3</td>
-		<td id="kp7" class="val"></td>
-		
-		<td rowspan="8" style="padding:10px;"></td>
-		<td rowspan="8" style="border-left:1px solid #666;padding:10px;"></td>
-		<td>13</td>
-		<td>E4</td>
-		<td id="kp13" class="val"></td>
-		
-		
-		<td rowspan="8" style="padding:10px;"></td>
-		<td rowspan="8" style="border-left:1px solid #666;padding:10px;"></td>
-		<td>19</td>
-		<td>B6</td>
-		<td id="kp19" class="val"></td>
-		
-	      </tr>
-	      
-	      <tr>
-		<td>2</td>
-		<td>G#1</td>
-		<td id="kp2" class="val"></td>
-		<td>8</td>
-		<td>D4</td>
-		<td id="kp8" class="val"></td>
-		<td>14</td>
-		<td>G#5</td>
-		<td id="kp14" class="val"></td>
-		<td>20</td>
-		<td>D7</td>
-		<td id="kp20" class="val"></td>
-	      </tr>
-	      
-	      <tr>
-		<td>3</td>
-		<td>B1</td>
-		<td id="kp3" class="val"></td>
-		<td>9</td>
-		<td>E4</td>
-		<td id="kp9" class="val"></td>
-		<td>15</td>
-		<td>B5</td>
-		<td id="kp15" class="val"></td>
-		<td>21</td>
-		<td>E6</td>
-		<td id="kp21" class="val"></td>
-	      </tr>
-	      
-	      <tr>
-		<td>4</td>
-		<td>D3</td>
-		<td id="kp4" class="val"></td>
-		<td>10</td>
-		<td>G#4</td>
-		<td id="kp10" class="val"></td>
-		<td>16</td>
-		<td>D6</td>
-		<td id="kp16" class="val"></td>
-		<td>22</td>
-		<td>G#7</td>
-		<td id="kp22" class="val"></td>
-	      </tr>
-	      
-	      <tr>
-		<td>5</td>
-		<td>E2</td>
-		<td id="kp5" class="val"></td>
-		<td>11</td>
-		<td>B4</td>
-		<td id="kp11" class="val"></td>
-		<td>17</td>
-		<td>E6</td>
-		<td id="kp17" class="val"></td>
-		<td>23</td>
-		<td>B7</td>
-		<td id="kp23" class="val"></td>
-	      </tr>
-	      
-	      <tr>
-		<td>6</td>
-		<td>G#3</td>
-		<td id="kp6" class="val"></td>
-		<td>12</td>
-		<td>D5</td>
-		<td id="kp12" class="val"></td>
-		<td>18</td>
-		<td>G#6</td>
-		<td id="kp18" class="val"></td>
-		<td>24</td>
-		<td>D8</td>
-		<td id="kp24" class="val"></td>
-	      </tr>
-	      
-	    </tbody>
-	  </table>
-	  
+		<canvas id="keyPropChart" height="400" width="600" style="border:solid #666;"></canvas>
+		<table id="keyPropTable" class="valTable">
+			<thead>
+				<tr>
+					<th>Index</th>
+					<th>Key</th>
+					<th class="val">Bound</th>
+
+					<td rowspan="8" style="padding:10px;"></td>
+					<td rowspan="8" style="border-left:1px solid #666;padding:10px;">
+					<th>Index</th>
+					<th>Key</th>
+					<th class="val">Bound</th>
+
+					<td rowspan="8" style="padding:10px;"></td>
+					<td rowspan="8" style="border-left:1px solid #666;padding:10px;">
+					<th>Index</th>
+					<th>Key</th>
+					<th class="val">Bound</th>
+
+
+					<td rowspan="8" style="padding:10px;"></td>
+					<td rowspan="8" style="border-left:1px solid #666;padding:10px;">
+					<th>Index</th>
+					<th>Key</th>
+					<th class="val">Bound</th>
+
+				</tr>
+			</thead>
+			<tbody id="keyPropTableBody">
+				<tr>
+					<td>1</td>
+					<td>E1</td>
+					<td id="kp1" class="val"></td>
+
+					<td rowspan="8" style="padding:10px;"></td>
+					<td rowspan="8" style="border-left:1px solid #666;padding:10px;"></td>
+					<td>7</td>
+					<td>B3</td>
+					<td id="kp7" class="val"></td>
+
+					<td rowspan="8" style="padding:10px;"></td>
+					<td rowspan="8" style="border-left:1px solid #666;padding:10px;"></td>
+					<td>13</td>
+					<td>E4</td>
+					<td id="kp13" class="val"></td>
+
+
+					<td rowspan="8" style="padding:10px;"></td>
+					<td rowspan="8" style="border-left:1px solid #666;padding:10px;"></td>
+					<td>19</td>
+					<td>B6</td>
+					<td id="kp19" class="val"></td>
+
+				</tr>
+
+				<tr>
+					<td>2</td>
+					<td>G#1</td>
+					<td id="kp2" class="val"></td>
+					<td>8</td>
+					<td>D4</td>
+					<td id="kp8" class="val"></td>
+					<td>14</td>
+					<td>G#5</td>
+					<td id="kp14" class="val"></td>
+					<td>20</td>
+					<td>D7</td>
+					<td id="kp20" class="val"></td>
+				</tr>
+
+				<tr>
+					<td>3</td>
+					<td>B1</td>
+					<td id="kp3" class="val"></td>
+					<td>9</td>
+					<td>E4</td>
+					<td id="kp9" class="val"></td>
+					<td>15</td>
+					<td>B5</td>
+					<td id="kp15" class="val"></td>
+					<td>21</td>
+					<td>E6</td>
+					<td id="kp21" class="val"></td>
+				</tr>
+
+				<tr>
+					<td>4</td>
+					<td>D3</td>
+					<td id="kp4" class="val"></td>
+					<td>10</td>
+					<td>G#4</td>
+					<td id="kp10" class="val"></td>
+					<td>16</td>
+					<td>D6</td>
+					<td id="kp16" class="val"></td>
+					<td>22</td>
+					<td>G#7</td>
+					<td id="kp22" class="val"></td>
+				</tr>
+
+				<tr>
+					<td>5</td>
+					<td>E2</td>
+					<td id="kp5" class="val"></td>
+					<td>11</td>
+					<td>B4</td>
+					<td id="kp11" class="val"></td>
+					<td>17</td>
+					<td>E6</td>
+					<td id="kp17" class="val"></td>
+					<td>23</td>
+					<td>B7</td>
+					<td id="kp23" class="val"></td>
+				</tr>
+
+				<tr>
+					<td>6</td>
+					<td>G#3</td>
+					<td id="kp6" class="val"></td>
+					<td>12</td>
+					<td>D5</td>
+					<td id="kp12" class="val"></td>
+					<td>18</td>
+					<td>G#6</td>
+					<td id="kp18" class="val"></td>
+					<td>24</td>
+					<td>D8</td>
+					<td id="kp24" class="val"></td>
+				</tr>
+
+			</tbody>
+		</table>
+
 	</div>
-	
+
 </div>

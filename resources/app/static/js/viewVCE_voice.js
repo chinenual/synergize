@@ -39,7 +39,28 @@ let viewVCE_voice = {
 		return result;
 	},
 
+	patchTypeNames: [
+		"1 + 2 + 3 + 4 + 5 + 6 + 7 + 8",
+		"(1~2) + (3~4) + (5~6) + (7~8)",
+		"((1+2+3)~4) + ((5+6+7)~8)",
+		"(1~2+3)~4) + ((5~6+7)~8)",
+		"(1~2) + 3 + 4 + (5~6) + 7 + 8",
+		"((1~2)~3) + ((1~2)~4) + ((5~6)~7) + ((5~6)~8)",
+		"(1~2) + (1~3) + (1~4) + (1~5) + (1~6) + (1~7) + (1~8)",
+		"(1~2~3) + (1~2~4) + (1~2~5) + (1~2~6) + (1~2~7) + (1~2~8)",
+		"(1~2~3~4) + (1~2~3~5) + (1~2~3~6) + (1~2~3~7) + (1~2~3~8)",
+		"((1~2+3)~4) + ((1~2+3)~5) + ((1~2+3)~6) + ((1~2+3)~7) + ((1~2+3)~8)",
+		"User Specified",
+		"User Specified",
+		"User Specified",
+		"User Specified",
+		"User Specified",
+		"User Specified"
+	],
+
 	patchTable: function () {
+		document.getElementById("patchType").innerHTML = viewVCE_voice.patchTypeNames[vce.Extra.PatchType];
+
 		var tbody = document.getElementById("patchTbody");
 		// remove old rows:
 		while (tbody.firstChild) {
