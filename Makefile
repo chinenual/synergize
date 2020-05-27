@@ -27,10 +27,7 @@ $(EXE_WINDOWS_TEST): $(SRCS)
 
 .PHONY: mac
 mac: $(EXE_MAC)
-.PHONY: windows
-windows : $(EXE_WINDOWS) $(EXE_WINDOWS_TEST)
-.PHONY: linux
-linux: $(EXE_LINUX_AMD64) $(EXE_LINUX_386) $(EXE_LINUX_ARM)
+	astilectron-bundler -c bundler-mac-only.json
 
 .PHONY: package
 package: test packageMac packageWindows packageLinux
