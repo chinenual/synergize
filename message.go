@@ -40,6 +40,60 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = "ok"
 		}
 
+	case "toggleVoicingMode":
+		if err = connectToSynergyIfNotConnected(); err != nil {
+			payload = err.Error()
+			return
+		}
+		var mode bool
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &mode); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if mode {
+			var vce data.VCE
+			if vce, err = synio.EnableVoicingMode(); err != nil {
+				payload = err.Error()
+				return
+			}
+			payload = vce
+
+		} else {
+			if err = synio.DisableVoicingMode(); err != nil {
+				payload = err.Error()
+				return
+			}
+			payload = "ok"
+		}
+
+	case "setVoiceByte":
+		var args struct {
+			Param string
+			Args  []int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		switch args.Param {
+		case "OHARM":
+			if err = synio.SetVoiceOscOHARM(args.Args[0], int8(args.Args[1])); err != nil {
+				payload = err.Error()
+				return
+			}
+		case "FDETUN":
+			if err = synio.SetVoiceOscFDETUN(args.Args[0], int8(args.Args[1])); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+
 	case "getVersion":
 		payload = struct {
 			Version             string
@@ -143,6 +197,28 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			return
 		} else {
 			payload = crt
+		}
+
+	case "loadVceVoicingMode":
+		var vce data.VCE
+		var path string
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &path); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if vce, err = data.ReadVceFile(path); err != nil {
+			payload = err.Error()
+			return
+		}
+
+		if err = synio.LoadVceVoicingMode(vce); err != nil {
+			payload = err.Error()
+			return
+		} else {
+			payload = vce
 		}
 
 	case "readVCE":

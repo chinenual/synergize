@@ -93,7 +93,6 @@ table {
     cursor: pointer;
     padding: 3px;
 }
-
 .dir .fa {
     margin-right: 5px;
 }
@@ -210,3 +209,31 @@ td.centered span {
 }
 
 
+/*-- styling for value fields that are "disablable" depending on whether we're displaying a voice or editing it */
+.vceEdit {
+    color: #fff;
+    background-color: #222;
+    border: 1px solid #aaa;
+    border-style: solid;
+    border-radius: 5px;
+}
+.vceNum {
+    width: 3em;
+}
+
+input[disabled].vceEdit:hover, input[disabled].vceEdit:active, input[disabled].vceEdit:focus, .vceEdit:disabled  {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    outline: none !important;
+    border: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+}
+
+/**
+.vceEdit::-webkit-outer-spin-button,
+.vceEdit::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+**/

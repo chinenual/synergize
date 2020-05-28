@@ -139,6 +139,10 @@ let index = {
 		}
 	},
 	viewCRT: function (name, path) {
+		if (viewVCE_voice.voicingMode) {
+			index.errorNotification("Can't load a CRT file while in Voicing mode");
+			return;
+		}
 		let message = {
 			"name": "readCRT",
 			"payload": path
@@ -162,8 +166,12 @@ let index = {
 		viewCRT.init();
 	},
 	viewVCE: function (name, path) {
+		var name = "readVCE";
+		if (viewVCE_voice.voicingMode) {
+			name = "loadVceVoicingMode"
+		}
 		let message = {
-			"name": "readVCE",
+			"name": name,
 			"payload": path
 		};
 		// Send message

@@ -1,12 +1,41 @@
 package synio
 
 import (
+	"bytes"
+
 	"github.com/chinenual/synergize/data"
 	"github.com/pkg/errors"
 )
 
-func VoicingMode() (err error) {
+func EnableVoicingMode() (vce data.VCE, err error) {
 	if err = getSynergyAddrs(); err != nil {
+		return
+	}
+	if err = InitVRAM(); err != nil {
+		return
+	}
+	data.ClearLocalEDATA()
+	if err = LoadCRT(data.VRAM_EDATA[:]); err != nil {
+		return
+	}
+	rdr := bytes.NewReader(data.VRAM_EDATA[data.Off_VRAM_EDATA:])
+	if vce, err = data.ReadVce(rdr, false); err != nil {
+		return
+	}
+
+	return
+}
+
+func DisableVoicingMode() (err error) {
+	//nothing to do (we dont put synergy into special state like SYNHCS does)
+	return
+}
+
+func LoadVceVoicingMode(vce data.VCE) (err error) {
+	if err = data.LoadVceIntoEDATA(vce); err != nil {
+		return
+	}
+	if err = LoadCRT(data.VRAM_EDATA[:]); err != nil {
 		return
 	}
 	return
@@ -134,6 +163,23 @@ func gedptr(osc int) uint16 {
 func EncodePatchControl(outputDSR byte, inhibitAddr byte,
 	adderInputDSR byte, inhibitF0 byte, f0InputDSR byte) (control byte) {
 
+	//Patch Control Byte (k=0):
+	//
+	// 7  6    5     4  3     2      1  0
+	//-------------------------------------
+	//| OUT | ENAB |  DSR  | ENAB |  DSR  |
+	//-------------------------------------
+	//   ^     ^       ^      ^       ^
+	//   ^     ^       ^      ^       +++++ FO Input DSR
+	//   ^     ^       ^      ^
+	//   ^     ^       ^      +++++++++++++ 1 = Inhibit FO
+	//   ^     ^       ^
+	//   ^     ^       ++++++++++++++++++++ Adder Input DSR
+	//   ^     ^
+	//   ^     ++++++++++++++++++++++++++++ 1 = Inhibit Adder
+	//   ^
+	//   ++++++++++++++++++++++++++++++++++ Output DSR
+
 	control = 0
 	control = control | (0x3 & f0InputDSR)
 	control = control | ((0x1 & inhibitF0) << 2)
@@ -181,8 +227,35 @@ func GetOscWAVEControl(osc int) (value byte, err error) {
 
 func SetOscWAVEControl(osc int, value byte) (err error) {
 	err = errors.New("not yet implemented")
-	// wave is stored in 3 bits the 4th entry in the freq envelope. eesh.
+	// based on snooping the serial line, wave is stored in 3 bits the
+	// 4th entry in the freq envelope. eesh.
 	// 0x633e, 0x01 == sine, 0x00 == triangle
+	//
+	// this does not match the osc bit descriptor in the manual:
+	//     7         6      5 4 3    2 1 0
+	//---------------------------------------
+	//| AMP INT | FRQ INT | OCTAVE |  WAVE  |
+	//---------------------------------------
+	//     ^         ^        ^        ++++++ 000 = Sine
+	//     ^         ^        ^		001 = Triangle
+	//     ^         ^        ^
+	//     ^         ^        +++++++++++++++	000 = No reduction
+	//     ^         ^			001 = Freq./2
+	//     ^         ^			010 = Freq./4
+	//     ^         ^			011 = Freq./8
+	//     ^         ^			100 = Freq./16
+	//     ^         ^			101 = Freq./32
+	//     ^         ^			110 = Freq./64
+	//     ^         ^			111 = Shut Down
+	//     ^         ^
+	//     ^         ++++++++++++++++++++++++	Freq. Ramp Interrupt
+	//     ^					1 = Enabled
+	//     ^					0 = Disabled
+	//     ^
+	//     ++++++++++++++++++++++++++++++++++	Amp. Ramp Interrupt
+	//					1 = Enabled
+	//					0 = Disabled
+
 	if err = SetVoiceOscDataByte(osc, data.Off_EOSC_FreqPoints+3, value, "set fenv[3]", true); err != nil {
 		return
 	}

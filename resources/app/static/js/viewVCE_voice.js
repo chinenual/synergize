@@ -1,4 +1,6 @@
 let viewVCE_voice = {
+	voicingMode: false,
+
 	timbreProportionCurve: function (center, sensitivity) {
 		var result = [];
 		if (sensitivity == 0) {
@@ -39,27 +41,37 @@ let viewVCE_voice = {
 		return result;
 	},
 
-	patchTypeNames: [
-		"1 + 2 + 3 + 4 + 5 + 6 + 7 + 8",
-		"(1~2) + (3~4) + (5~6) + (7~8)",
-		"((1+2+3)~4) + ((5+6+7)~8)",
-		"(1~2+3)~4) + ((5~6+7)~8)",
-		"(1~2) + 3 + 4 + (5~6) + 7 + 8",
-		"((1~2)~3) + ((1~2)~4) + ((5~6)~7) + ((5~6)~8)",
-		"(1~2) + (1~3) + (1~4) + (1~5) + (1~6) + (1~7) + (1~8)",
-		"(1~2~3) + (1~2~4) + (1~2~5) + (1~2~6) + (1~2~7) + (1~2~8)",
-		"(1~2~3~4) + (1~2~3~5) + (1~2~3~6) + (1~2~3~7) + (1~2~3~8)",
-		"((1~2+3)~4) + ((1~2+3)~5) + ((1~2+3)~6) + ((1~2+3)~7) + ((1~2+3)~8)",
-		"User Specified",
-		"User Specified",
-		"User Specified",
-		"User Specified",
-		"User Specified",
-		"User Specified"
-	],
+	onchange: function (ele) {
+		var id = ele.id;
+		console.log("changed: " + id);
+
+		var oscPattern = /([A-Z]+)\[(\d+)\]/;
+		if (ret = id.match(oscPattern)) {
+			param = ret[1];
+			osc = ret[2];
+			console.log("changed: " + id + " param: " + param + " osc: " + osc);
+
+			let message = {
+				"name": "setVoiceByte",
+				"payload": {
+					"Param": param,
+					"Args": [parseInt(osc, 10), parseInt(ele.value, 10)]
+				}
+			};
+			astilectron.sendMessage(message, function (message) {
+				console.log("setVoiceByte returned: " + JSON.stringify(message));
+				// Check error
+				if (message.name === "error") {
+					// failed - dont change the boolean
+					index.errorNotification(message.payload);
+				}
+			});
+
+		}
+	},
 
 	patchTable: function () {
-		document.getElementById("patchType").innerHTML = viewVCE_voice.patchTypeNames[vce.Extra.PatchType];
+		document.getElementById("patchType").value = vce.Extra.PatchType;
 
 		var tbody = document.getElementById("patchTbody");
 		// remove old rows:
@@ -114,26 +126,31 @@ let viewVCE_voice = {
 
 			//--- Hrm
 			td = document.createElement("td");
-			td.innerHTML = vce.Envelopes[osc].FreqEnvelope.OHARM
+			td.innerHTML = `<input type="number" class="vceEdit vceNum" id="OHARM[${osc}]" onchange="viewVCE_voice.onchange(this)" value="${vce.Envelopes[osc].FreqEnvelope.OHARM}" disabled/>`;
 			tr.appendChild(td);
 
 			//--- Detn
 			td = document.createElement("td");
-			td.innerHTML = vce.Envelopes[osc].FreqEnvelope.FDETUN
+			td.innerHTML = `<input type="number" class="vceEdit vceNum" id="FDETUN[${osc}]" value="${vce.Envelopes[osc].FreqEnvelope.FDETUN}" disabled/>`;
 			tr.appendChild(td);
 
 			var waveByte = vce.Envelopes[osc].FreqEnvelope.Table[0][3];
-			var wave = ((waveByte & 0x7) == 0) ? 'Sine' : 'Triangle';
+			var wave = ((waveByte & 0x7) == 0) ? 'Sin' : 'Tri';
 			var keyprop = ((waveByte & 0x8) == 0) ? 'Key' : '';
 
 			//--- Wave
 			td = document.createElement("td");
 			td.innerHTML = wave;
+			td.innerHTML = `<select class="vceEdit" id="wave[${osc}]" value="${keyprop}" disabled/>
+			<option value="Sin">Sin</option>
+			<option value="Tri">Tri</option>
+			</select>
+			`;
 			tr.appendChild(td);
 
 			//--- Key
 			td = document.createElement("td");
-			td.innerHTML = keyprop;
+			td.innerHTML = `<input type="text" class="vceEdit vceNum" id="keyprop[${osc}]" value="${keyprop}" disabled/>`;
 			tr.appendChild(td);
 
 			//--- Flt
@@ -148,12 +165,44 @@ let viewVCE_voice = {
 		}
 	},
 
+	toggleVoicingMode: function (mode) {
+		console.log(`VoicingMode ${mode ? 'on' : 'off'}`);
+
+		let message = {
+			"name": "toggleVoicingMode",
+			"payload": mode
+		};
+		index.spinnerOn();
+		astilectron.sendMessage(message, function (message) {
+			index.spinnerOff();
+			console.log("toggleVoiceMode returned: " + JSON.stringify(message));
+			// Check error
+			if (message.name === "error") {
+				// failed - dont change the boolean
+				index.errorNotification(message.payload);
+			} else {
+				viewVCE_voice.voicingMode = mode;
+				if (message.payload != null) {
+					vce = message.payload;
+
+					crt_name = null;
+					crt_path = null;
+					index.load("viewVCE.html", document.getElementById("content"));
+					viewVCE.init();
+				}
+				index.infoNotification(`Voicing mode ${mode ? 'enabled' : 'disabled'}`);
+			}
+			index.refreshConnectionStatus();
+
+			$('.vceEdit').prop('disabled', !viewVCE_voice.voicingMode);
+			document.getElementById("voiceModeButtonImg").src = `static/images/red-button-${viewVCE_voice.voicingMode ? 'on' : 'off'}-full.png`;
+		});
+	},
 
 	init: function () {
 		console.log("vceVoiceTab init");
 
 		viewVCE_voice.patchTable();
-
 
 		if (crt_name == null) {
 			document.getElementById("backToCRT").hidden = true;
@@ -165,13 +214,13 @@ let viewVCE_voice = {
 		document.getElementById("vce_name").innerHTML = vce.Head.VNAME;
 
 		document.getElementById("name").innerHTML = vce.Head.VNAME;
-		document.getElementById("nOsc").innerHTML = vce.Head.VOITAB + 1;
+		document.getElementById("nOsc").value = vce.Head.VOITAB + 1;
 		document.getElementById("keysPlayable").innerHTML = Math.floor(32 / (vce.Head.VOITAB + 1));
-		document.getElementById("vibType").innerHTML = (vce.Head.VIBDEL >= 0) ? "Sine" : "Random";
-		document.getElementById("vibRate").innerHTML = vce.Head.VIBRAT;
-		document.getElementById("vibDelay").innerHTML = vce.Head.VIBDEL;
-		document.getElementById("vibDepth").innerHTML = vce.Head.VIBDEP;
-		document.getElementById("transpose").innerHTML = vce.Head.VTRANS;
+		document.getElementById("vibType").value = (vce.Head.VIBDEL >= 0) ? "Sine" : "Random";
+		document.getElementById("vibRate").value = vce.Head.VIBRAT;
+		document.getElementById("vibDelay").value = vce.Head.VIBDEL;
+		document.getElementById("vibDepth").value = vce.Head.VIBDEP;
+		document.getElementById("transpose").value = vce.Head.VTRANS;
 		var i;
 		var count = 0;
 		for (i = 0; i < vce.Head.FILTER.length; i++) {

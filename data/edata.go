@@ -2,6 +2,13 @@ package data
 
 import (
 	"bytes"
+	"io"
+	"io/ioutil"
+
+	//"log"
+
+	"github.com/orcaman/writerseeker"
+	"github.com/pkg/errors"
 )
 
 // layout of the EDATA, OSC tables on the synergy.
@@ -11,6 +18,8 @@ import (
 // whatever processor we're running on (which is going to be word and
 // pointer aligned).  So we have to manually compute offsets. Sigh.
 
+// VRAM header init at CLRVRM: CRTGEN.Z80
+
 // OSC layout in VOICE.Z80, OSC1:
 // EDHEAD: header of the EDATA data structure
 
@@ -19,6 +28,9 @@ import (
 /// VRAM dump is a CRT header, then A and B filters, then the EDATA (VOITAB).
 
 const (
+	Off_VRAM_FREE   = 0x00 // SYNCHS initializes the first "unused" 51 bytes to 0xff - so we should we
+	Off_VRAM_VOITAB = 0x33 // always zero
+	Off_VRAM_VCHK   = 0x34 // 5 check bytes expected to be 0xaa
 	Off_VRAM_BFILTR = 0x70
 	Off_VRAM_AFILTR = 0x88
 	Off_VRAM_FILTAB = 0xa0  // offset from start of VRAM to start of filters
@@ -38,17 +50,17 @@ const (
 	Off_EDATA_VIBDEL          = 72
 	Off_EDATA_VIBDEP          = 73
 	Off_EDATA_KPROP           = 74
-	Off_EDATA_APVIB           = 98
+	Off_EDATA_APVIB           = 98 // 0x322
 	Off_EDATA_FILTER_arr      = 99
 
 	// offset of OSC[0] from EDATA:
-	Off_EDATA_EOSC = 115  /// (so 0x333 from VRAM start)
+	Off_EDATA_EOSC = 115 /// (so 0x333 from VRAM start)
 	// size of each EOSC array element
 	Sizeof_EOSC = 140
 
-	Off_EOSC_OPTCH  = 0
-	Off_EOSC_OHARM  = 1
-	Off_EOSC_FDETUN = 2
+	Off_EOSC_OPTCH  = 0 // 0x333, 0x3bf, 0x44b, 0x4d7
+	Off_EOSC_OHARM  = 1 // 0x334
+	Off_EOSC_FDETUN = 2 // 0x335
 	Off_EOSC_FENVL  = 3
 	// frequency env:
 	Off_EOSC_FreqENVTYPE   = 4
@@ -154,7 +166,7 @@ var (
 		55, 55, 0, 0, // point15
 		55, 55, 0, 0} // point16
 
-	EDATA [Off_EDATA_EOSC + 16*Sizeof_EOSC]byte
+	VRAM_EDATA [Off_VRAM_EDATA + Off_EDATA_EOSC + 16*Sizeof_EOSC]byte
 )
 
 func init() {
@@ -169,15 +181,80 @@ func init() {
 }
 
 func ClearLocalEDATA() {
+	for i := 0; i < Off_VRAM_EDATA; i++ {
+		VRAM_EDATA[i] = 0
+	}
+	// SYNCHS initializes the first "unused" 51 bytes to 0xff - so we should we
+	for i := 0; i < 51; i++ {
+		VRAM_EDATA[i] = 0xff
+	}
+	// 5 check bytes expected to be 0xaa
+	for i := Off_VRAM_VCHK; i < Off_VRAM_VCHK+5; i++ {
+		VRAM_EDATA[i] = 0xaa
+	}
+
 	for i := 0; i < len(edata_head_default); i++ {
-		EDATA[i] = edata_head_default[i]
+		VRAM_EDATA[Off_VRAM_EDATA+i] = edata_head_default[i]
 	}
 	for osc := 0; osc < 16; osc++ {
 		for i := 0; i < len(edata_osc_default); i++ {
-			offset := Off_EDATA_EOSC + osc*Sizeof_EOSC + i
-			EDATA[offset] = edata_osc_default[i]
+			offset := Off_VRAM_EDATA + Off_EDATA_EOSC + osc*Sizeof_EOSC + i
+			VRAM_EDATA[offset] = edata_osc_default[i]
 		}
 	}
+	//	log.Printf("Cleared VRAM_DATA: %v\n", VRAM_EDATA)
+}
+
+func LoadVceIntoEDATA(vce VCE) (err error) {
+	ClearLocalEDATA()
+	// don't overwrite everything - leave the osc offsets and envelope sizes at maxed values - just overwrite data
+
+	// adopt the offsets and envelope sizes from the initialized EDATA:
+	for osc := 0; osc < 16; osc++ {
+		offset := osc*Sizeof_EOSC + Off_EDATA_EOSC
+		vce.Head.OSCPTR[osc] = uint16(offset)
+	}
+	// the VCE will only have envelopes for the oscillators it knows about - so careful not write past the end of the array
+	for osc := byte(0); osc <= vce.Head.VOITAB; osc++ {
+		vce.Envelopes[osc].FreqEnvelope.FENVL = 68
+	}
+	var buf = writerseeker.WriterSeeker{}
+	// initialize the buffer with cleared edata:
+	if _, err = buf.Write(VRAM_EDATA[:]); err != nil {
+		return
+	}
+	// seek to the start of the voice
+	if _, err = buf.Seek(Off_VRAM_EDATA, io.SeekStart); err != nil {
+		return
+	}
+	if err = WriteVcePreserveOffsets(&buf, vce, VceName(vce.Head), true /*skip filters*/); err != nil {
+		return
+	}
+
+	var offset = uint16(Off_VRAM_AFILTR)
+	if _, err = buf.Seek(int64(offset), io.SeekStart); err != nil {
+		err = errors.Wrapf(err, "failed to seek to filter-a start")
+		return
+	}
+	if err = VceWriteAFilters(&buf, vce); err != nil {
+		return
+	}
+
+	offset = uint16(Off_VRAM_BFILTR)
+	if _, err = buf.Seek(int64(offset), io.SeekStart); err != nil {
+		err = errors.Wrapf(err, "failed to seek to filter-b start")
+		return
+	}
+	if err = VceWriteBFilters(&buf, vce); err != nil {
+		return
+	}
+
+	// Now copy the written data to the VRAM_DATA array
+	b, _ := ioutil.ReadAll(buf.Reader())
+	copy(VRAM_EDATA[:], b)
+
+	//	log.Printf("VCE %s VRAM_DATA: %v\n", VceName(vce.Head), VRAM_EDATA)
+	return
 }
 
 func EDATALocalHeadOffset(fieldOffset int) uint16 {
@@ -207,14 +284,14 @@ func ReadVceFromVRAM(vram []byte) (vce VCE, err error) {
 	if VceAFilterCount(vce) > 0 {
 		offset := ((-a_idx) - 1) * 32
 		buf = bytes.NewReader(vram[Off_VRAM_FILTAB+offset:])
-		if err = vceReadAFilters(buf, &vce); err != nil {
+		if err = VceReadAFilters(buf, &vce); err != nil {
 			return
 		}
 	}
 	if VceBFilterCount(vce) > 0 {
 		offset := (b_idx - 1) * 32
 		buf = bytes.NewReader(vram[Off_VRAM_FILTAB+offset:])
-		if err = vceReadBFilters(buf, &vce); err != nil {
+		if err = VceReadBFilters(buf, &vce); err != nil {
 			return
 		}
 	}

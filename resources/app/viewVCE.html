@@ -19,7 +19,19 @@
 
 		<!-- Old School - table layout -->
 
-		Patch Type:&nbsp;<span id="patchType"></span>
+		Patch Type:&nbsp;
+		<select class="vceEdit" id="patchType" disabled>
+			<option value="0">1 + 2 + 3 + 4 + 5 + 6 + 7 + 8</option>
+			<option value="1">(1~2) + (3~4) + (5~6) + (7~8)</option>
+			<option value="2">((1+2+3)~4) + ((5+6+7)~8)</option>
+			<option value="3">(1~2+3)~4) + ((5~6+7)~8)</option>
+			<option value="4">(1~2) + 3 + 4 + (5~6) + 7 + 8</option>
+			<option value="5">((1~2)~3) + ((1~2)~4) + ((5~6)~7) + ((5~6)~8)</option>
+			<option value="6">(1~2) + (1~3) + (1~4) + (1~5) + (1~6) + (1~7) + (1~8)</option>
+			<option value="7">(1~2~3) + (1~2~4) + (1~2~5) + (1~2~6) + (1~2~7) + (1~2~8)</option>
+			<option value="8">(1~2~3~4) + (1~2~3~5) + (1~2~3~6) + (1~2~3~7) + (1~2~3~8)</option>
+			<option value="9">((1~2+3)~4) + ((1~2+3)~5) + ((1~2+3)~6) + ((1~2+3)~7) + ((1~2+3)~8)</option>
+		</select>
 		<table style="width:100%">
 			<thead>
 				<tr>
@@ -85,7 +97,7 @@
 						</tr>
 						<tr>
 							<td>Oscillators</td>
-							<td><span id="nOsc" /></td>
+							<td><input class="vceEdit vceNum" type="number" id="nOsc" disabled /></td>
 						</tr>
 						<tr>
 							<td>Keys Playable</td>
@@ -99,19 +111,24 @@
 						</tr>
 						<tr>
 							<td>Vibrato Type</td>
-							<td><span id="vibType" /></td>
+							<td>
+								<select class="vceEdit" id="vibType" disabled>
+									<option value="Sine">Sine</option>
+									<option value="Random">Random</option>
+								</select>
+							</td>
 						</tr>
 						<tr>
 							<td>Vibrato Depth</td>
-							<td><span id="vibDepth" /></td>
+							<td><input class="vceEdit vceNum" type="number" id="vibDepth" disabled /></td>
 						</tr>
 						<tr>
 							<td>Vibrato Rate</td>
-							<td><span id="vibRate" /></td>
+							<td><input class="vceEdit vceNum" type="number" id="vibRate" disabled /></td>
 						</tr>
 						<tr>
 							<td>Vibrato Delay</td>
-							<td><span id="vibDelay" /></td>
+							<td><input class="vceEdit vceNum" type="number" id="vibDelay" disabled /></td>
 						</tr>
 						<tr>
 							<td>&nbsp;</td>
@@ -119,7 +136,7 @@
 						</tr>
 						<tr>
 							<td>Transpose</td>
-							<td><span id="transpose" /></td>
+							<td><input class="vceEdit vceNum" type="number" id="transpose" disabled /></td>
 						</tr>
 						<tr>
 							<td>&nbsp;</td>

@@ -3,8 +3,8 @@ package data
 import (
 	"bytes"
 	"flag"
-	"log"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -16,7 +16,7 @@ import (
 var testfilepath = flag.String("testfilepath", "testfiles", "path to VCE and CRT files")
 
 func testOnePathname(t *testing.T, path string, expect string) {
-	AssertString(t, vceNameFromPathname(path), expect, path);	
+	AssertString(t, vceNameFromPathname(path), expect, path)
 }
 
 func TestVceNameFromPathname(t *testing.T) {
@@ -25,33 +25,33 @@ func TestVceNameFromPathname(t *testing.T) {
 	testOnePathname(t, "/foo/bar/foo.VCE", "FOO     ")
 	testOnePathname(t, "C:\\foo\\bar\\FOO.VCE", "FOO     ")
 	testOnePathname(t, "C:\\foo\\bar\\foo.VcE", "FOO     ")
- 	testOnePathname(t, "/foo/bar/foo", "FOO     ")
+	testOnePathname(t, "/foo/bar/foo", "FOO     ")
 	testOnePathname(t, "/foo/bar/foo.baz", "FOO.BAZ ")
 	testOnePathname(t, "/foo/bar/f123456789012345", "F1234567")
 	testOnePathname(t, "/foo/bar/f123456789012345.vce", "F1234567")
-}		
+}
 
 func testReadWriteVCE(t *testing.T, path string) {
-	log.Println("test ", path);
+	log.Println("test ", path)
 
 	var read_bytes []byte
 	var err error
-	
-	if read_bytes,err = ioutil.ReadFile(path); err != nil {
+
+	if read_bytes, err = ioutil.ReadFile(path); err != nil {
 		t.Errorf("error reading %s: %v", path, err)
-		return 
+		return
 	}
 
 	var readbuf = bytes.NewReader(read_bytes)
 	var vce VCE
-	
+
 	if vce, err = ReadVce(readbuf, false); err != nil {
 		t.Errorf("error parsing %s: %v", path, err)
 		return
 	}
 
 	testVCEName(t, path, vce)
-	
+
 	var writebuf = writerseeker.WriterSeeker{}
 
 	if err = WriteVce(&writebuf, vce, vceNameFromPathname(path), false); err != nil {
@@ -59,7 +59,7 @@ func testReadWriteVCE(t *testing.T, path string) {
 		return
 	}
 	write_bytes, _ := ioutil.ReadAll(writebuf.Reader())
-	
+
 	if !reflect.DeepEqual(read_bytes, write_bytes) {
 		// before we report an error, this might be the case that the
 		// original file just has some extra bytes at the end (G7S.VCE
@@ -78,31 +78,31 @@ func testReadWriteVCE(t *testing.T, path string) {
 		if !diffVCE(vce, vce2) {
 			t.Errorf("read/write data doesnt match")
 			return
-		}		
+		}
 
 		return
-	}	
+	}
 }
 
 func testVCEName(t *testing.T, path string, vce VCE) {
-	
+
 	base := filepath.Base(path)
-	if base != vceName(vce.Head)+".VCE" {
-		t.Errorf("name doesnt match file - expected %s, got %s", base, vceName(vce.Head))
+	if base != VceName(vce.Head)+".VCE" {
+		t.Errorf("name doesnt match file - expected %s, got %s", base, VceName(vce.Head))
 	}
 }
 
 func TestAllVCE(t *testing.T) {
 	fileList := []string{}
-	
+
 	filepath.Walk(*testfilepath,
 		func(path string, f os.FileInfo, err error) error {
-			if (filepath.Ext(path) == ".VCE") {
+			if filepath.Ext(path) == ".VCE" {
 				fileList = append(fileList, path)
 			}
 			return nil
 		})
-	for _,path := range fileList {
+	for _, path := range fileList {
 		testReadWriteVCE(t, path)
 	}
 	return
