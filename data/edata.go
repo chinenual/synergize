@@ -28,13 +28,15 @@ import (
 /// VRAM dump is a CRT header, then A and B filters, then the EDATA (VOITAB).
 
 const (
-	Off_VRAM_FREE   = 0x00 // SYNCHS initializes the first "unused" 51 bytes to 0xff - so we should we
-	Off_VRAM_VOITAB = 0x33 // always zero
-	Off_VRAM_VCHK   = 0x34 // 5 check bytes expected to be 0xaa
-	Off_VRAM_BFILTR = 0x70
-	Off_VRAM_AFILTR = 0x88
-	Off_VRAM_FILTAB = 0xa0  // offset from start of VRAM to start of filters
-	Off_VRAM_EDATA  = 0x2c0 // offset from start of VRAM to start of EDATA
+	Off_VRAM_FREE         = 0x00 // SYNCHS initializes the first "unused" 51 bytes to 0xff - so we should we
+	Off_VRAM_VOITAB       = 0x33 // always zero
+	Off_VRAM_VCHK         = 0x34 // 5 check bytes expected to be 0xaa
+	Off_VRAM_VOIPTR       = 0x40 // start of the VOIPTR array
+	Off_VRAM_BFILTR       = 0x70
+	Off_VRAM_AFILTR       = 0x88
+	Off_VRAM_FILTAB       = 0xa0  // offset from start of VRAM to start of filters
+	Off_VRAM_EDATA        = 0x2c0 // offset from start of VRAM to start of EDATA
+	Off_VOIPTR_FirstVoice = 0x28e
 
 	Off_EDATA_VOITAB          = 0
 	Off_EDATA_OSCPTR          = 1
@@ -192,6 +194,9 @@ func ClearLocalEDATA() {
 	for i := Off_VRAM_VCHK; i < Off_VRAM_VCHK+5; i++ {
 		VRAM_EDATA[i] = 0xaa
 	}
+
+	VRAM_EDATA[Off_VRAM_VOIPTR] = byte(Off_VOIPTR_FirstVoice & 0xff)
+	VRAM_EDATA[Off_VRAM_VOIPTR+1] = byte((Off_VOIPTR_FirstVoice >> 8) & 0xff)
 
 	for i := 0; i < len(edata_head_default); i++ {
 		VRAM_EDATA[Off_VRAM_EDATA+i] = edata_head_default[i]
