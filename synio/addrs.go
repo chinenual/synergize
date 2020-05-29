@@ -4,12 +4,11 @@ import (
 	"github.com/chinenual/synergize/data"
 )
 
-func EDATAHeadAddr(fieldOffset int) uint16 {
-	return synAddrs.EDATA + data.EDATALocalHeadOffset(fieldOffset)
+func VoiceHeadAddr(voiceFieldOffset int) uint16 {
+	return synAddrs.VRAM + data.VRAMVoiceHeadOffset(voiceFieldOffset)
 }
 
-
-func EDATAOscAddr(osc int, fieldOffset int) uint16 {
+func VoiceOscAddr(osc /*1-based*/ int, oscFieldOffset int) uint16 {
 	// osc is 1-based
-	return synAddrs.EDATA + data.EDATALocalOscOffset(osc, fieldOffset)	
+	return synAddrs.VRAM + data.VRAMVoiceOscOffset(osc, oscFieldOffset)
 }

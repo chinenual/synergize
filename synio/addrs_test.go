@@ -2,41 +2,39 @@ package synio
 
 import (
 	"testing"
+
 	"github.com/chinenual/synergize/data"
 )
-
 
 func TestEDATAAddrs(t *testing.T) {
 	// some selective fields to validate that the reflective offset
 	// computation works
 
-	// set EDATA to reflect the value we will get at runtime so its easy
-	// to compare values of this unit test vs. the dynamic case
-	synAddrs.EDATA=0x6300
-	
-	data.AssertUint16(t, EDATAHeadAddr(data.Off_EDATA_VOITAB),
-		synAddrs.EDATA, "VOITAB")
-	data.AssertUint16(t, EDATAHeadAddr(data.Off_EDATA_OSCPTR),
-		synAddrs.EDATA+1, "OSCPTR")
-	data.AssertUint16(t, EDATAHeadAddr(data.Off_EDATA_VTRANS),
-		synAddrs.EDATA+33, "VTRANS")
-	data.AssertUint16(t, EDATAHeadAddr(data.Off_EDATA_APVIB),
-		synAddrs.EDATA+98, "APVIB")
+	// set VRAM base address to reflect the value we will get at runtime so
+	// it's easy to compare values of this unit test vs. the dynamic case
+	synAddrs.VRAM = 0x6000
 
-	data.AssertUint16(t, EDATAOscAddr(1,data.Off_EOSC_OPTCH),
-		synAddrs.EDATA+data.Off_EDATA_EOSC+0, "OSC[0].OPTCH")
-	data.AssertUint16(t, EDATAOscAddr(1,data.Off_EOSC_OHARM),
-		synAddrs.EDATA+data.Off_EDATA_EOSC+1, "OSC[0].OHARM")
-	data.AssertUint16(t, EDATAOscAddr(1,data.Off_EOSC_FDETUN),
-		synAddrs.EDATA+data.Off_EDATA_EOSC+2, "OSC[0].FDETUN")
+	// expected values are derived from SYNHCS wire logging
+	data.AssertUint16(t, VoiceHeadAddr(data.Off_EDATA_VOITAB),
+		0x62c0, "VOITAB")
+	data.AssertUint16(t, VoiceHeadAddr(data.Off_EDATA_OSCPTR),
+		0x62c1, "OSCPTR")
+	data.AssertUint16(t, VoiceHeadAddr(data.Off_EDATA_VTRANS),
+		0x62e1, "VTRANS")
+	data.AssertUint16(t, VoiceHeadAddr(data.Off_EDATA_APVIB),
+		0x6322, "APVIB")
 
-	data.AssertUint16(t, EDATAOscAddr(2,data.Off_EOSC_OPTCH),
-		synAddrs.EDATA+data.Off_EDATA_EOSC+data.Sizeof_EOSC+0,
-		"OSC[1].OPTCH")
-	data.AssertUint16(t, EDATAOscAddr(2,data.Off_EOSC_OHARM),
-		synAddrs.EDATA+data.Off_EDATA_EOSC+data.Sizeof_EOSC+1,
-		"OSC[1].OHARM")
-	data.AssertUint16(t, EDATAOscAddr(2,data.Off_EOSC_FDETUN),
-		synAddrs.EDATA+data.Off_EDATA_EOSC+data.Sizeof_EOSC+2,
-		"OSC[1].FDETUN")
+	data.AssertUint16(t, VoiceOscAddr(1, data.Off_EOSC_OPTCH),
+		0x6333, "OSC[1].OPTCH")
+	data.AssertUint16(t, VoiceOscAddr(1, data.Off_EOSC_OHARM),
+		0x6334, "OSC[1].OHARM")
+	data.AssertUint16(t, VoiceOscAddr(1, data.Off_EOSC_FDETUN),
+		0x6335, "OSC[1].FDETUN")
+
+	data.AssertUint16(t, VoiceOscAddr(2, data.Off_EOSC_OPTCH),
+		0x63bf, "OSC[2].OPTCH")
+	data.AssertUint16(t, VoiceOscAddr(2, data.Off_EOSC_OHARM),
+		0x63c0, "OSC[2].OHARM")
+	data.AssertUint16(t, VoiceOscAddr(2, data.Off_EOSC_FDETUN),
+		0x63c1, "OSC[2].FDETUN")
 }

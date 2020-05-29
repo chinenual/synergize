@@ -19,12 +19,12 @@ func TestLocalEDATAOffsets(t *testing.T) {
 	AssertByte(t, VRAM_EDATA[Off_VRAM_EDATA+Off_EDATA_APVIB], 32, "APVIB")
 
 	for osc := 1; osc <= 16; osc++ {
-		off := EDATALocalOscOffset(osc, 0)
-		AssertByte(t, VRAM_EDATA[Off_VRAM_EDATA+off], 4, fmt.Sprintf("osc %d OPTCH", osc))
-		off = EDATALocalOscOffset(osc, Off_EOSC_OHARM)
-		AssertByte(t, VRAM_EDATA[Off_VRAM_EDATA+off], 1, fmt.Sprintf("osc %d OHARM", osc))
-		off = EDATALocalOscOffset(osc, Off_EOSC_FDETUN)
-		AssertByte(t, VRAM_EDATA[Off_VRAM_EDATA+off], 0, fmt.Sprintf("osc %d FDETUN", osc))
+		off := VRAMVoiceOscOffset(osc, 0)
+		AssertByte(t, VRAM_EDATA[off], 4, fmt.Sprintf("osc %d OPTCH", osc))
+		off = VRAMVoiceOscOffset(osc, Off_EOSC_OHARM)
+		AssertByte(t, VRAM_EDATA[off], 1, fmt.Sprintf("osc %d OHARM", osc))
+		off = VRAMVoiceOscOffset(osc, Off_EOSC_FDETUN)
+		AssertByte(t, VRAM_EDATA[off], 0, fmt.Sprintf("osc %d FDETUN", osc))
 	}
 }
 

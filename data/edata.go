@@ -27,14 +27,17 @@ import (
 /// VRAM dump is a CRT header, then A and B filters, then the EDATA (VOITAB).
 
 const (
-	Off_VRAM_FREE         = 0x00 // SYNCHS initializes the first "unused" 51 bytes to 0xff - so we should we
-	Off_VRAM_VOITAB       = 0x33 // always zero
-	Off_VRAM_VCHK         = 0x34 // 5 check bytes expected to be 0xaa
-	Off_VRAM_VOIPTR       = 0x40 // start of the VOIPTR array
-	Off_VRAM_BFILTR       = 0x70
-	Off_VRAM_AFILTR       = 0x88
-	Off_VRAM_FILTAB       = 0xa0  // offset from start of VRAM to start of filters
-	Off_VRAM_EDATA        = 0x2c0 // offset from start of VRAM to start of EDATA
+	Off_VRAM_FREE = 0x00 // SYNCHS initializes the first "unused" 51 bytes to 0xff - so we should we
+
+	Off_VRAM_VOITAB = 0x33 // always zero
+	Off_VRAM_VCHK   = 0x34 // 5 check bytes expected to be 0xaa
+	Off_VRAM_VOIPTR = 0x40 // start of the VOIPTR array
+	Off_VRAM_BFILTR = 0x70
+	Off_VRAM_AFILTR = 0x88
+	Off_VRAM_FILTAB = 0xa0  // offset from start of VRAM to start of filters
+	Off_VRAM_EDATA  = 0x2c0 // offset from start of VRAM to start of EDATA
+
+	// relative offsets written to VRAM are always relative to VOIPTR (the first 51 bytes of VRAM are ignored)
 	Off_VOIPTR_FirstVoice = 0x28e
 
 	Off_EDATA_VOITAB          = 0
@@ -272,15 +275,15 @@ func LoadVceIntoEDATA(vce VCE) (err error) {
 	return
 }
 
-func EDATALocalHeadOffset(fieldOffset int) uint16 {
-	return uint16(fieldOffset)
+func VRAMVoiceHeadOffset(voiceFieldOffset int) uint16 {
+	return Off_VRAM_EDATA + uint16(voiceFieldOffset)
 }
 
-func EDATALocalOscOffset(osc int, fieldOffset int) uint16 {
-	// osc is 1-based
-	return uint16(Off_EDATA_EOSC +
-		((osc - 1) * Sizeof_EOSC) +
-		fieldOffset)
+func VRAMVoiceOscOffset(osc /*1-based*/ int, oscFieldOffset int) uint16 {
+	return Off_VRAM_EDATA +
+		uint16(Off_EDATA_EOSC+
+			((osc-1)*Sizeof_EOSC)+
+			oscFieldOffset)
 }
 
 func ReadVceFromVRAM(vram []byte) (vce VCE, err error) {

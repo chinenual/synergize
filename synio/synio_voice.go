@@ -58,7 +58,7 @@ func ReloadNoteGenerators() (err error) {
 // generators
 
 func SetVoiceHeadDataArray(offset int, value []byte, purpose string, reloadGen bool) (err error) {
-	addr := EDATAHeadAddr(offset)
+	addr := VoiceHeadAddr(offset)
 	if err = BlockLoad(addr, value, purpose); err != nil {
 		return
 	}
@@ -71,7 +71,7 @@ func SetVoiceHeadDataArray(offset int, value []byte, purpose string, reloadGen b
 }
 
 func SetVoiceHeadDataByte(offset int, value byte, purpose string, reloadGen bool) (err error) {
-	addr := EDATAHeadAddr(offset)
+	addr := VoiceHeadAddr(offset)
 	if err = LoadByte(addr, value, purpose); err != nil {
 		return
 	}
@@ -84,8 +84,8 @@ func SetVoiceHeadDataByte(offset int, value byte, purpose string, reloadGen bool
 }
 
 // osc is 1-based
-func SetVoiceOscDataByte(osc int, offset int, value byte, purpose string, reloadGen bool) (err error) {
-	addr := EDATAOscAddr(osc, offset)
+func SetVoiceOscDataByte(osc /*1-based*/ int, offset int, value byte, purpose string, reloadGen bool) (err error) {
+	addr := VoiceOscAddr(osc, offset)
 	if err = LoadByte(addr, value, purpose); err != nil {
 		return
 	}
@@ -98,8 +98,8 @@ func SetVoiceOscDataByte(osc int, offset int, value byte, purpose string, reload
 }
 
 // osc is 1-based
-func GetVoiceOscDataByte(osc int, offset int, purpose string) (value byte, err error) {
-	addr := EDATAOscAddr(osc, offset)
+func GetVoiceOscDataByte(osc /*1-based*/ int, offset int, purpose string) (value byte, err error) {
+	addr := VoiceOscAddr(osc, offset)
 	if value, err = DumpByte(addr, purpose); err != nil {
 		return
 	}

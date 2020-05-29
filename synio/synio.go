@@ -236,6 +236,7 @@ var synAddrs struct {
 
 	// Fixed addresses (from SYN-322.LNK)
 	PROG uint16
+	VRAM uint16
 	VTAB uint16
 	ROM  uint16
 	RAM  uint16 // AKA DATA
@@ -271,6 +272,7 @@ func getSynergyAddrs() (err error) {
 	synAddrs.PROG = 0x0000
 	synAddrs.ROM = 0x5c72
 	synAddrs.CMOS = 0xf000
+	synAddrs.VRAM = 0x6000
 	synAddrs.VTAB = 0x6033 // voice table ROM
 	synAddrs.RAM = 0x8000  // aka DATA
 

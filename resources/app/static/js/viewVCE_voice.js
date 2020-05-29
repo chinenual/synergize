@@ -126,12 +126,12 @@ let viewVCE_voice = {
 
 			//--- Hrm
 			td = document.createElement("td");
-			td.innerHTML = `<input type="number" class="vceEdit vceNum" id="OHARM[${osc}]" onchange="viewVCE_voice.onchange(this)" value="${vce.Envelopes[osc].FreqEnvelope.OHARM}" disabled/>`;
+			td.innerHTML = `<input type="number" class="vceEdit vceNum" id="OHARM[${osc + 1}]" onchange="viewVCE_voice.onchange(this)" value="${vce.Envelopes[osc].FreqEnvelope.OHARM}" disabled/>`;
 			tr.appendChild(td);
 
 			//--- Detn
 			td = document.createElement("td");
-			td.innerHTML = `<input type="number" class="vceEdit vceNum" id="FDETUN[${osc}]" value="${vce.Envelopes[osc].FreqEnvelope.FDETUN}" disabled/>`;
+			td.innerHTML = `<input type="number" class="vceEdit vceNum" id="FDETUN[${osc + 1}]" onchange="viewVCE_voice.onchange(this)" value="${vce.Envelopes[osc].FreqEnvelope.FDETUN}" disabled/>`;
 			tr.appendChild(td);
 
 			var waveByte = vce.Envelopes[osc].FreqEnvelope.Table[0][3];
@@ -141,7 +141,7 @@ let viewVCE_voice = {
 			//--- Wave
 			td = document.createElement("td");
 			td.innerHTML = wave;
-			td.innerHTML = `<select class="vceEdit" id="wave[${osc}]" value="${keyprop}" disabled/>
+			td.innerHTML = `<select class="vceEdit" id="wave[${osc + 1}]" value="${keyprop}" disabled/>
 			<option value="Sin">Sin</option>
 			<option value="Tri">Tri</option>
 			</select>
@@ -150,7 +150,7 @@ let viewVCE_voice = {
 
 			//--- Key
 			td = document.createElement("td");
-			td.innerHTML = `<input type="text" class="vceEdit vceNum" id="keyprop[${osc}]" value="${keyprop}" disabled/>`;
+			td.innerHTML = `<input type="text" class="vceEdit vceNum" id="keyprop[${osc + 1}]" value="${keyprop}" disabled/>`;
 			tr.appendChild(td);
 
 			//--- Flt
