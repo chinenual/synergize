@@ -4,8 +4,7 @@ import (
 	"bytes"
 	"io"
 	"io/ioutil"
-
-	//"log"
+	"log"
 
 	"github.com/orcaman/writerseeker"
 	"github.com/pkg/errors"
@@ -198,6 +197,11 @@ func ClearLocalEDATA() {
 	VRAM_EDATA[Off_VRAM_VOIPTR] = byte(Off_VOIPTR_FirstVoice & 0xff)
 	VRAM_EDATA[Off_VRAM_VOIPTR+1] = byte((Off_VOIPTR_FirstVoice >> 8) & 0xff)
 
+	// filter offsets - we allocate space for the A-filter even of the voice doesnt currently use it:
+	VRAM_EDATA[Off_VRAM_AFILTR] = 0x00
+	// and the b-filter will be the second one in the the FILTAB:
+	VRAM_EDATA[Off_VRAM_BFILTR] = 0x02
+
 	for i := 0; i < len(edata_head_default); i++ {
 		VRAM_EDATA[Off_VRAM_EDATA+i] = edata_head_default[i]
 	}
@@ -232,11 +236,14 @@ func LoadVceIntoEDATA(vce VCE) (err error) {
 	if _, err = buf.Seek(Off_VRAM_EDATA, io.SeekStart); err != nil {
 		return
 	}
+	log.Printf("SEEK - top of voice at %x", Off_VRAM_EDATA)
 	if err = WriteVcePreserveOffsets(&buf, vce, VceName(vce.Head), true /*skip filters*/); err != nil {
 		return
 	}
 
-	var offset = uint16(Off_VRAM_AFILTR)
+	// A-filter is always the first filter in the FILTAB:
+	var offset = uint16(Off_VRAM_FILTAB)
+	log.Printf("SEEK - top of AFILTER at %x", offset)
 	if _, err = buf.Seek(int64(offset), io.SeekStart); err != nil {
 		err = errors.Wrapf(err, "failed to seek to filter-a start")
 		return
@@ -245,7 +252,10 @@ func LoadVceIntoEDATA(vce VCE) (err error) {
 		return
 	}
 
-	offset = uint16(Off_VRAM_BFILTR)
+	// B-filters always start as the second filter in the FILTAB:
+
+	offset = uint16(Off_VRAM_FILTAB + 32)
+	log.Printf("SEEK - top of BFILTER at %x", offset)
 	if _, err = buf.Seek(int64(offset), io.SeekStart); err != nil {
 		err = errors.Wrapf(err, "failed to seek to filter-b start")
 		return

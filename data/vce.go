@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 
@@ -501,7 +502,7 @@ func writeVce(buf io.WriteSeeker, vce VCE, name string, skipFilters bool, preser
 	if headOffset, err = buf.Seek(0, io.SeekCurrent); err != nil {
 		return
 	}
-
+	log.Printf("SEEK - top of voice at %x", headOffset)
 	vce.Head.VNAME = StringToSpaceEncodedString(name)
 	if !preserveOffsets {
 		for i, _ := range vce.Head.OSCPTR {
@@ -517,17 +518,19 @@ func writeVce(buf io.WriteSeeker, vce VCE, name string, skipFilters bool, preser
 	for i := byte(0); i <= vce.Head.VOITAB; i++ {
 		e := vce.Envelopes[i]
 
+		var oscOffset int64
 		if preserveOffsets {
 			// trust the OSCPTR value
-			if _, err = buf.Seek(headOffset+int64(vce.Head.OSCPTR[i]), io.SeekStart); err != nil {
+			oscOffset = headOffset + int64(vce.Head.OSCPTR[i])
+			if _, err = buf.Seek(oscOffset, io.SeekStart); err != nil {
 				return
 			}
+			log.Printf("SEEK - top of osc[%d] at %x", i, headOffset+int64(vce.Head.OSCPTR[i]))
 		} else {
-			// fixup the oscptr based on where we are in the bytestream
-			var oscOffset int64
 			if oscOffset, err = buf.Seek(0, io.SeekCurrent); err != nil {
 				return
 			}
+			// fixup the oscptr based on where we are in the bytestream
 			updateOscPtr(buf, headOffset, i, uint16(oscOffset-headOffset))
 		}
 
@@ -572,6 +575,13 @@ func writeVce(buf io.WriteSeeker, vce VCE, name string, skipFilters bool, preser
 		for k := byte(0); k < e.FreqEnvelope.NPOINTS*4; k++ {
 			if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.Table[k]); err != nil {
 				err = errors.Wrapf(err, "Failed to write freq env [%d] table[%d]", i, k)
+				return
+			}
+		}
+
+		if preserveOffsets {
+			// skip over the unused freq envelope entries
+			if _, err = buf.Seek(oscOffset+72, io.SeekStart); err != nil {
 				return
 			}
 		}
