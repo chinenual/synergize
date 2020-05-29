@@ -2,18 +2,19 @@ let viewVCE_voice = {
 	voicingMode: false,
 
 	timbreProportionCurve: function (center, sensitivity) {
+		console.log("timbre prop " + center + " " + sensitivity)
 		var result = [];
 		if (sensitivity == 0) {
 			for (v = 0; v < 32; v++) {
 				result[v] = center;
 			}
+			return result;
 		}
 		// center = 0..32
 		// sensitivity = 1..31
 		for (v = 0; v < 32; v++) {
 			// this appears to be what the z80 code is doing for timbre PROPC:
-			// HACK: the division by 10 is a hack - makes the graphs "look" ok but i can't account for why
-			var p = (center * 2) - 15 + (v / 10 * sensitivity) - (2 * sensitivity);
+			var p = (center * 2) - 15 + ((v / 10) * sensitivity) - (2 * sensitivity);
 			if (p > 31) p = 31;
 			if (p < 0) p = 0;
 			result[v] = p;
@@ -22,18 +23,19 @@ let viewVCE_voice = {
 	},
 
 	ampProportionCurve: function (center, sensitivity) {
+		console.log("amp prop " + center + " " + sensitivity)
 		var result = [];
 		if (sensitivity == 0) {
 			for (v = 0; v < 32; v++) {
 				result[v] = center;
 			}
+			return result;
 		}
 		// center = 0..32
 		// sensitivity = 1..31
 		for (v = 0; v < 32; v++) {
 			// this appears to be what the z80 code is doing for timbre PROPC:
-			// HACK: the division by 10 is a hack - makes the graphs "look" ok but i can't account for why
-			var p = (((v / 10 * sensitivity) / 2 - sensitivity) / 2) + center - 24
+			var p = ((((v / 10) * sensitivity) / 2.0 - sensitivity) / 2.0) + (center - 24)
 			if (p > 6) p = 6;
 			if (p < -24) p = -24;
 			result[v] = p + 25;
@@ -41,33 +43,51 @@ let viewVCE_voice = {
 		return result;
 	},
 
-	onchange: function (ele) {
+	onchange: function (ele, updater) {
 		var id = ele.id;
 		console.log("changed: " + id);
 
+		var param
+		var args
 		var oscPattern = /([A-Z]+)\[(\d+)\]/;
+		var headPattern = /([A-Z]+)/;
 		if (ret = id.match(oscPattern)) {
 			param = ret[1];
-			osc = ret[2];
-			console.log("changed: " + id + " param: " + param + " osc: " + osc);
+			osc = parseInt(ret[2], 10)
+			args = [osc, parseInt(ele.value, 10)]
 
+			console.log("changed: " + id + " param: " + param + " osc: " + osc);
+			vce.Envelopes[osc - 1][param] = ele.value;
+
+		} else if (ret = id.match(headPattern)) {
+			param = id;
+			args = [parseInt(ele.value, 10)]
+			vce.Head[param] = ele.value;
+		}
+		//console.dir(vce);
+		if (param != null) {
 			let message = {
 				"name": "setVoiceByte",
 				"payload": {
 					"Param": param,
-					"Args": [parseInt(osc, 10), parseInt(ele.value, 10)]
+					"Args": args
 				}
 			};
 			astilectron.sendMessage(message, function (message) {
 				console.log("setVoiceByte returned: " + JSON.stringify(message));
+				console.log("updater: " + updater);
 				// Check error
 				if (message.name === "error") {
 					// failed - dont change the boolean
 					index.errorNotification(message.payload);
+					return false;
+				} else if (updater != undefined) {
+					updater();
 				}
 			});
 
 		}
+		return true;
 	},
 
 	patchTable: function () {
@@ -126,12 +146,18 @@ let viewVCE_voice = {
 
 			//--- Hrm
 			td = document.createElement("td");
-			td.innerHTML = `<input type="number" class="vceEdit vceNum" id="OHARM[${osc + 1}]" onchange="viewVCE_voice.onchange(this)" value="${vce.Envelopes[osc].FreqEnvelope.OHARM}" disabled/>`;
+			td.innerHTML = `<input type="number" class="vceEdit vceNum" id="OHARM[${osc + 1}]" 
+			onchange="viewVCE_voice.onchange(this)" value="${vce.Envelopes[osc].FreqEnvelope.OHARM}" 
+			min="-11" max="30"
+			disabled/>`;
 			tr.appendChild(td);
 
 			//--- Detn
 			td = document.createElement("td");
-			td.innerHTML = `<input type="number" class="vceEdit vceNum" id="FDETUN[${osc + 1}]" onchange="viewVCE_voice.onchange(this)" value="${vce.Envelopes[osc].FreqEnvelope.FDETUN}" disabled/>`;
+			td.innerHTML = `<input type="number" class="vceEdit vceNum" id="FDETUN[${osc + 1}]" 
+			onchange="viewVCE_voice.onchange(this)" value="${vce.Envelopes[osc].FreqEnvelope.FDETUN}" 
+			min="-127" max="128"
+			disabled/>`;
 			tr.appendChild(td);
 
 			var waveByte = vce.Envelopes[osc].FreqEnvelope.Table[0][3];
@@ -199,6 +225,21 @@ let viewVCE_voice = {
 		});
 	},
 
+	chart: null,
+
+	updateChart: function () {
+		var ampData = viewVCE_voice.ampProportionCurve(vce.Head.VACENT, vce.Head.VASENS);
+		var timbreData = viewVCE_voice.timbreProportionCurve(vce.Head.VTCENT, vce.Head.VTSENS);
+
+		viewVCE_voice.chart.data.datasets[0].data = ampData;
+		viewVCE_voice.chart.data.datasets[1].data = timbreData;
+		viewVCE_voice.chart.update();
+	},
+
+	updateVibType: function () {
+		document.getElementById("vibType").innerHTML = (vce.Head.VIBDEP >= 0) ? "Sine" : "Random";
+	},
+
 	init: function () {
 		console.log("vceVoiceTab init");
 
@@ -216,11 +257,17 @@ let viewVCE_voice = {
 		document.getElementById("name").innerHTML = vce.Head.VNAME;
 		document.getElementById("nOsc").value = vce.Head.VOITAB + 1;
 		document.getElementById("keysPlayable").innerHTML = Math.floor(32 / (vce.Head.VOITAB + 1));
-		document.getElementById("vibType").value = (vce.Head.VIBDEL >= 0) ? "Sine" : "Random";
-		document.getElementById("vibRate").value = vce.Head.VIBRAT;
-		document.getElementById("vibDelay").value = vce.Head.VIBDEL;
-		document.getElementById("vibDepth").value = vce.Head.VIBDEP;
-		document.getElementById("transpose").value = vce.Head.VTRANS;
+		viewVCE_voice.updateVibType();
+		document.getElementById("VIBRAT").value = vce.Head.VIBRAT;
+		document.getElementById("VIBDEL").value = vce.Head.VIBDEL;
+		document.getElementById("VIBDEP").value = vce.Head.VIBDEP;
+		document.getElementById("APVIB").value = vce.Head.APVIB;
+
+		document.getElementById("VTRANS").value = vce.Head.VTRANS;
+		document.getElementById("VACENT").value = vce.Head.VACENT;
+		document.getElementById("VASENS").value = vce.Head.VASENS;
+		document.getElementById("VTCENT").value = vce.Head.VTCENT;
+		document.getElementById("VTSENS").value = vce.Head.VTSENS;
 		var i;
 		var count = 0;
 		for (i = 0; i < vce.Head.FILTER.length; i++) {
@@ -240,7 +287,7 @@ let viewVCE_voice = {
 		console.log("timbreData: " + JSON.stringify(timbreData));
 
 		var ctx = document.getElementById('velocityChart').getContext('2d');
-		var chart = new Chart(ctx, {
+		viewVCE_voice.chart = new Chart(ctx, {
 
 			type: 'line',
 			data: {
@@ -298,6 +345,8 @@ let viewVCE_voice = {
 						},
 						ticks: {
 							display: true,
+							max: 33,
+							min: 0,
 							callback: function (dataLabel, index) { return ''; }
 						}
 					}],

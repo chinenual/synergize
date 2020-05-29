@@ -4,10 +4,51 @@ import (
 	"bytes"
 
 	"github.com/chinenual/synergize/data"
-	"github.com/pkg/errors"
 )
 
+type offsetMapEle struct {
+	Offset    int
+	ReloadGen bool
+}
+
+var offsetMap map[string]offsetMapEle
+
+func initMap() {
+	if offsetMap != nil {
+		return
+	}
+	offsetMap = make(map[string]offsetMapEle)
+
+	offsetMap["VTRANS"] = offsetMapEle{data.Off_EDATA_VTRANS, false}
+	offsetMap["VTCENT"] = offsetMapEle{data.Off_EDATA_VTCENT, false}
+	offsetMap["VTSENS"] = offsetMapEle{data.Off_EDATA_VTSENS, false}
+	offsetMap["VACENT"] = offsetMapEle{data.Off_EDATA_VACENT, false}
+	offsetMap["VASENS"] = offsetMapEle{data.Off_EDATA_VASENS, false}
+	offsetMap["VIBRAT"] = offsetMapEle{data.Off_EDATA_VIBRAT, false}
+	offsetMap["VIBDEL"] = offsetMapEle{data.Off_EDATA_VIBDEL, false}
+	offsetMap["VIBDEP"] = offsetMapEle{data.Off_EDATA_VIBDEP, false}
+	offsetMap["APVIB"] = offsetMapEle{data.Off_EDATA_APVIB, false}
+
+	offsetMap["OPTCH"] = offsetMapEle{data.Off_EOSC_OPTCH, true}
+	offsetMap["OHARM"] = offsetMapEle{data.Off_EOSC_OHARM, true}
+	offsetMap["FDETUN"] = offsetMapEle{data.Off_EOSC_FDETUN, true}
+
+	offsetMap["FreqENVTYPE"] = offsetMapEle{data.Off_EOSC_FreqENVTYPE, true}
+	offsetMap["FreqNPOINTS"] = offsetMapEle{data.Off_EOSC_FreqNPOINTS, true}
+	offsetMap["FreqSUSTAINPT"] = offsetMapEle{data.Off_EOSC_FreqSUSTAINPT, true}
+	offsetMap["FreqLOOPPT"] = offsetMapEle{data.Off_EOSC_FreqLOOPPT, true}
+	offsetMap["FreqPoints"] = offsetMapEle{data.Off_EOSC_FreqPoints, true}
+
+	offsetMap["AmpENVTYPE"] = offsetMapEle{data.Off_EOSC_AmpENVTYPE, true}
+	offsetMap["AmpNPOINTS"] = offsetMapEle{data.Off_EOSC_AmpNPOINTS, true}
+	offsetMap["AmpSUSTAINPT"] = offsetMapEle{data.Off_EOSC_AmpSUSTAINPT, true}
+	offsetMap["AmpLOOPPT"] = offsetMapEle{data.Off_EOSC_AmpLOOPPT, true}
+	offsetMap["AmpPoints"] = offsetMapEle{data.Off_EOSC_AmpPoints, true}
+}
+
 func EnableVoicingMode() (vce data.VCE, err error) {
+	initMap()
+
 	if err = getSynergyAddrs(); err != nil {
 		return
 	}
@@ -57,12 +98,12 @@ func ReloadNoteGenerators() (err error) {
 // Sets the value in the Synergy address space and then reloads the note
 // generators
 
-func SetVoiceHeadDataArray(offset int, value []byte, purpose string, reloadGen bool) (err error) {
-	addr := VoiceHeadAddr(offset)
-	if err = BlockLoad(addr, value, purpose); err != nil {
+func SetVoiceHeadDataArray(fieldName string, value []byte) (err error) {
+	addr := VoiceHeadAddr(offsetMap[fieldName].Offset)
+	if err = BlockLoad(addr, value, "set array "+fieldName); err != nil {
 		return
 	}
-	if reloadGen {
+	if offsetMap[fieldName].ReloadGen {
 		if err = ReloadNoteGenerators(); err != nil {
 			return
 		}
@@ -70,26 +111,12 @@ func SetVoiceHeadDataArray(offset int, value []byte, purpose string, reloadGen b
 	return
 }
 
-func SetVoiceHeadDataByte(offset int, value byte, purpose string, reloadGen bool) (err error) {
-	addr := VoiceHeadAddr(offset)
-	if err = LoadByte(addr, value, purpose); err != nil {
+func SetVoiceHeadDataByte(fieldName string, value byte) (err error) {
+	addr := VoiceHeadAddr(offsetMap[fieldName].Offset)
+	if err = LoadByte(addr, value, "set "+fieldName); err != nil {
 		return
 	}
-	if reloadGen {
-		if err = ReloadNoteGenerators(); err != nil {
-			return
-		}
-	}
-	return
-}
-
-// osc is 1-based
-func SetVoiceOscDataByte(osc /*1-based*/ int, offset int, value byte, purpose string, reloadGen bool) (err error) {
-	addr := VoiceOscAddr(osc, offset)
-	if err = LoadByte(addr, value, purpose); err != nil {
-		return
-	}
-	if reloadGen {
+	if offsetMap[fieldName].ReloadGen {
 		if err = ReloadNoteGenerators(); err != nil {
 			return
 		}
@@ -98,14 +125,29 @@ func SetVoiceOscDataByte(osc /*1-based*/ int, offset int, value byte, purpose st
 }
 
 // osc is 1-based
-func GetVoiceOscDataByte(osc /*1-based*/ int, offset int, purpose string) (value byte, err error) {
-	addr := VoiceOscAddr(osc, offset)
-	if value, err = DumpByte(addr, purpose); err != nil {
+func SetVoiceOscDataByte(osc /*1-based*/ int, fieldName string, value byte) (err error) {
+	addr := VoiceOscAddr(osc, offsetMap[fieldName].Offset)
+	if err = LoadByte(addr, value, "set "+fieldName+"["+string(osc)+"]"); err != nil {
+		return
+	}
+	if offsetMap[fieldName].ReloadGen {
+		if err = ReloadNoteGenerators(); err != nil {
+			return
+		}
+	}
+	return
+}
+
+// osc is 1-based
+func GetVoiceOscDataByte(osc /*1-based*/ int, fieldName string) (value byte, err error) {
+	addr := VoiceOscAddr(osc, offsetMap[fieldName].Offset)
+	if value, err = DumpByte(addr, "get "+fieldName+"["+string(osc)+"]"); err != nil {
 		return
 	}
 	return
 }
 
+/****
 func SetVoiceVEQValue(index, value byte) (err error) {
 	if err = SetVoiceHeadDataByte(data.Off_EDATA_VEQ+int(index), value, "set VEQ", false); err != nil {
 		return
@@ -154,6 +196,7 @@ func SetVoiceOscFDETUN(osc int, value int8) (err error) {
 	}
 	return
 }
+*****/
 
 // emulate the SYNHCS GEDPTR subroutine: get OSC specific offset into the EDATA array
 func gedptr(osc int) uint16 {
@@ -199,6 +242,7 @@ func DecodePatchControl(control byte) (outputDSR byte, inhibitAddr byte,
 	return
 }
 
+/****
 func GetOscPATCHControl(osc int) (value byte, err error) {
 	if value, err = GetVoiceOscDataByte(osc, data.Off_EOSC_OPTCH, "get OPATCH"); err != nil {
 		return
@@ -305,6 +349,7 @@ func SetOscKEYPROP(osc int, usesKeypro bool) (err error) {
 	}
 	return
 }
+**/
 
 /*****
 func SetVoiceVTCENT(val byte) (err error) {

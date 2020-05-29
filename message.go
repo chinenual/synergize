@@ -81,18 +81,18 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		switch args.Param {
-		case "OHARM":
-			if err = synio.SetVoiceOscOHARM(args.Args[0], int8(args.Args[1])); err != nil {
+		if len(args.Args) == 2 {
+			if err = synio.SetVoiceOscDataByte(args.Args[0], args.Param, byte(args.Args[1])); err != nil {
 				payload = err.Error()
 				return
 			}
-		case "FDETUN":
-			if err = synio.SetVoiceOscFDETUN(args.Args[0], int8(args.Args[1])); err != nil {
+		} else {
+			if err = synio.SetVoiceHeadDataByte(args.Param, byte(args.Args[0])); err != nil {
 				payload = err.Error()
 				return
 			}
 		}
+		payload = "ok"
 
 	case "getVersion":
 		payload = struct {

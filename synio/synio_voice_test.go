@@ -14,13 +14,14 @@ func TestReloadNoteGenerators(t *testing.T) {
 	}
 }
 
+/***
 func TestSetVEQ(t *testing.T) {
 	if !*synio {
 		t.Skip()
 	}
 	var err error
 	for v := -24; v <= 6; v++ {
-		if err = SetVoiceVEQValue(0, byte(v)); err != nil {
+		if err = SetVoiceVEValue("VEQ", byte(v)); err != nil {
 			t.Fatalf("Error setting Veq value %v", v)
 		}
 	}
@@ -44,6 +45,7 @@ func TestSetKPROP(t *testing.T) {
 		t.Fatalf("Error setting Veq array %v", arr)
 	}
 }
+***/
 
 func TestSetAPVIB(t *testing.T) {
 	if !*synio {
@@ -51,7 +53,7 @@ func TestSetAPVIB(t *testing.T) {
 	}
 	var err error
 	for v := 0; v <= 0xff; v++ {
-		if err = SetVoiceAPVIB(byte(v)); err != nil {
+		if err = SetVoiceHeadDataByte("APVIB", byte(v)); err != nil {
 			t.Fatalf("Error setting APVIB value %v", v)
 		}
 	}
@@ -64,7 +66,7 @@ func TestSetOHARM(t *testing.T) {
 	var err error
 	for osc := 0; osc < 2; osc++ {
 		for v := -64; v <= 64; v++ {
-			if err = SetVoiceOscOHARM(osc, int8(v)); err != nil {
+			if err = SetVoiceOscDataByte(osc, "OHARM", byte(v)); err != nil {
 				t.Fatalf("Error setting OHARM osc %v value %v", osc, v)
 			}
 		}
@@ -78,7 +80,7 @@ func TestSetFDETUN(t *testing.T) {
 	var err error
 	for osc := 0; osc < 2; osc++ {
 		for v := -64; v <= 64; v++ {
-			if err = SetVoiceOscFDETUN(osc, int8(v)); err != nil {
+			if err = SetVoiceOscDataByte(osc, "FDETUN", byte(v)); err != nil {
 				t.Fatalf("Error setting FDETUN osc %v value %v", osc, v)
 			}
 		}

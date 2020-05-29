@@ -1,3 +1,7 @@
+* Fixed the voice amplitude proportionality chart - for certain
+combinations of center and sensitivity it could show an odd
+discontinuous curve.
+
 # 1.0.0
 
 * Voice settings (envelopes, filters, key equalization, key

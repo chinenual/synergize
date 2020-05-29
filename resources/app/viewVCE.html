@@ -97,7 +97,7 @@
 						</tr>
 						<tr>
 							<td>Oscillators</td>
-							<td><input class="vceEdit vceNum" type="number" id="nOsc" disabled /></td>
+							<td><input class="vceEdit vceNum" type="number" id="nOsc" min="1" max="16" disabled /></td>
 						</tr>
 						<tr>
 							<td>Keys Playable</td>
@@ -112,23 +112,63 @@
 						<tr>
 							<td>Vibrato Type</td>
 							<td>
-								<select class="vceEdit" id="vibType" disabled>
-									<option value="Sine">Sine</option>
-									<option value="Random">Random</option>
-								</select>
+								<span id="vibType"></span>
 							</td>
 						</tr>
 						<tr>
 							<td>Vibrato Depth</td>
-							<td><input class="vceEdit vceNum" type="number" id="vibDepth" disabled /></td>
+							<td><input class="vceEdit vceNum" type="number" id="VIBDEP" min="-128" max="128"
+									onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateVibType)" disabled /></td>
 						</tr>
 						<tr>
 							<td>Vibrato Rate</td>
-							<td><input class="vceEdit vceNum" type="number" id="vibRate" disabled /></td>
+							<td><input class="vceEdit vceNum" type="number" id="VIBRAT" min="0" max="127"
+									onchange="viewVCE_voice.onchange(this)" disabled /></td>
 						</tr>
 						<tr>
 							<td>Vibrato Delay</td>
-							<td><input class="vceEdit vceNum" type="number" id="vibDelay" disabled /></td>
+							<td><input class="vceEdit vceNum" type="number" id="VIBDEL" min="0" max="127"
+									onchange="viewVCE_voice.onchange(this);" disabled />
+							</td>
+						</tr>
+						<tr>
+							<td>Aperiodic Vibrato</td>
+							<td><input class="vceEdit vceNum" type="number" id="APVIB" min="-128" max="128"
+									onchange="viewVCE_voice.onchange(this)" disabled />
+								<!--FIXME:validate range-->
+							</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Amp Center</td>
+							<td><input class="vceEdit vceNum" type="number" id="VACENT" min="0" max="32"
+									onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled />
+							</td>
+						</tr>
+						<tr>
+							<td>Amp Sensitivity</td>
+							<td><input class="vceEdit vceNum" type="number" id="VASENS" min="0" max="31"
+									onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled />
+							</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Timbre Center</td>
+							<td><input class="vceEdit vceNum" type="number" id="VTCENT" min="0" max="32"
+									onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled />
+							</td>
+						</tr>
+						<tr>
+							<td>Timbre Sensitivity</td>
+							<td><input class="vceEdit vceNum" type="number" id="VTSENS" min="0" max="31"
+									onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled />
+							</td>
 						</tr>
 						<tr>
 							<td>&nbsp;</td>
@@ -136,7 +176,8 @@
 						</tr>
 						<tr>
 							<td>Transpose</td>
-							<td><input class="vceEdit vceNum" type="number" id="transpose" disabled /></td>
+							<td><input class="vceEdit vceNum" type="number" id="VTRANS" min="-127" max="128"
+									onchange="viewVCE_voice.onchange(this)" disabled /></td>
 						</tr>
 						<tr>
 							<td>&nbsp;</td>
