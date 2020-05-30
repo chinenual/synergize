@@ -237,3 +237,15 @@ input[disabled].vceEdit:hover, input[disabled].vceEdit:active, input[disabled].v
   margin: 0;
 }
 **/
+
+.vceEditToggleText {
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    width: 1.2em;
+}
+.vceEditToggleText.on {
+    /* invert */
+    color: #222;
+    background-color: #fff;
+}

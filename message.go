@@ -69,6 +69,25 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = "ok"
 		}
 
+	case "setOscSolo":
+		var args struct {
+			Mute []bool
+			Solo []bool
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		var oscStatus [16]bool
+		if oscStatus, err = synio.SetOscSolo(args.Mute, args.Solo); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = oscStatus
+
 	case "setVoiceByte":
 		var args struct {
 			Param string

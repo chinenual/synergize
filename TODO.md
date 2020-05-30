@@ -17,7 +17,7 @@ First check is full UI support; second check is lower-level IO and tests
 * [ ] [ ] <s>"Extended programmer" Performance Program controller (sequence of CRT/SYN files for live performance)</s>
 
 * Voicing System Main screen
-    * [ ] [ ] Load a VCE directly into VRAM
+    * [x] [x] Load a VCE directly into VRAM
     * [ ] [ ] Save a VCE from VRAM
     * [ ] [ ] set # oscillators
     * [ ] [ ] set default patch
@@ -27,16 +27,16 @@ First check is full UI support; second check is lower-level IO and tests
     * [ ] [ ] <s>print voicing parameters</s>
 
 * Voice page
-    * [ ] [ ] "ensemble"/"group"/"solo" oscillators
+    * [x] [x] "ensemble"/"group"/"solo" oscillators
     * [ ] [ ] copy an oscillator
-    * [ ] [x] change harmonic
-    * [ ] [x] detune
-    * [ ] [x] aperiodic detune
+    * [x] [x] change harmonic
+    * [x] [x] detune
+    * [x] [x] aperiodic detune
     * [ ] [ ] select sine vs. triangle
     * [ ] [ ] assign A-filter, B-filter or no-filter to each oscillator
-    * [ ] [ ] set timbre/amp sensitivity and center
+    * [x] [x] set timbre/amp sensitivity and center
     * [ ] [ ] set portamento
-    * [ ] [ ] set vibrato
+    * [x] [x] set vibrato
     * [ ] [ ] toggle keyboard proportionalization per oscillator
     * [ ] [ ] adjust the "patch" routing (adder, frequency, output registers)
 
@@ -46,8 +46,7 @@ First check is full UI support; second check is lower-level IO and tests
     * [ ] [ ] set Loop point
     * [ ] [ ] change envelope type
     * [ ] [ ] scale up/down
-    * [ ] [ ] change freq, amp or time values for both upper and lower
-    * bounds
+    * [ ] [ ] change freq, amp or time values for both upper and lower bounds
     * [ ] [ ] copy upper <-> lower
 
 * Filters

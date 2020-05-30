@@ -64,11 +64,63 @@ func EnableVoicingMode() (vce data.VCE, err error) {
 		return
 	}
 
+	if err = rawSetOscSolo([16]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}); err != nil {
+		return
+	}
 	return
 }
 
 func DisableVoicingMode() (err error) {
-	//nothing to do (we dont put synergy into special state like SYNHCS does)
+	if err = rawSetOscSolo([16]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}); err != nil {
+		return
+	}
+	return
+}
+
+func rawSetOscSolo(oscStatus [16]byte) (err error) {
+	if err = BlockLoad(synAddrs.SOLOSC, oscStatus[:], "set SOLOSC"); err != nil {
+		return
+	}
+	if err = ReloadNoteGenerators(); err != nil {
+		return
+	}
+	return
+}
+
+func SetOscSolo(mute, solo []bool) (oscStatus [16]bool, err error) {
+	// 0 = on, 1 = off
+	var state = [16]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+	oscStatus = [16]bool{true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true}
+
+	// solo takes precedence. If any soloed, then ignore mutes
+	for _, soloed := range solo {
+		if soloed {
+			for i, v := range solo {
+				state[i] = 1
+				oscStatus[i] = false
+				if v {
+					state[i] = 0
+					oscStatus[i] = true
+				}
+			}
+			if err = rawSetOscSolo(state); err != nil {
+				return
+			}
+			return
+		}
+	}
+	// if no solo, then just mute the ones selected (if any):
+	for i, v := range mute {
+		state[i] = 0
+		oscStatus[i] = true
+		if v {
+			state[i] = 1
+			oscStatus[i] = false
+		}
+	}
+	if err = rawSetOscSolo(state); err != nil {
+		return
+	}
 	return
 }
 

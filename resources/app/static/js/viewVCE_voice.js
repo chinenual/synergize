@@ -43,6 +43,39 @@ let viewVCE_voice = {
 		return result;
 	},
 
+	SOLO: [],
+	MUTE: [],
+
+	toggleOsc: function (ele) {
+		console.log("toggle " + ele.id);
+		var oscPattern = /([A-Z]+)\[(\d+)\]/;
+		if (ret = ele.id.match(oscPattern)) {
+			param = ret[1];
+			osc = parseInt(ret[2], 10); /* 1-based */
+
+			state = ele.classList.contains("on");
+			viewVCE_voice[param][osc - 1] = !state;
+			ele.classList.toggle('on');
+
+			let message = {
+				"name": "setOscSolo",
+				"payload": {
+					"Mute": viewVCE_voice.MUTE,
+					"Solo": viewVCE_voice.SOLO,
+				}
+			};
+			astilectron.sendMessage(message, function (message) {
+				console.log("setOscSolo returned: " + JSON.stringify(message));
+				// Check error
+				if (message.name === "error") {
+					// failed - dont change the boolean
+					index.errorNotification(message.payload);
+					return false;
+				}
+			});
+		}
+	},
+
 	onchange: function (ele, updater) {
 		var id = ele.id;
 		console.log("changed: " + id);
@@ -108,6 +141,16 @@ let viewVCE_voice = {
 
 			//--- OSC
 			td.innerHTML = osc + 1; // Osc
+			// Mute 
+			span = document.createElement("span");
+			span.innerHTML = `&nbsp;&nbsp;<span onclick="viewVCE_voice.toggleOsc(this)" class="vceEditToggleText" id="MUTE[${osc + 1}]">M</span>`;
+			td.append(span);
+
+			// Solo
+			span = document.createElement("span");
+			span.innerHTML = `&nbsp;<span onclick="viewVCE_voice.toggleOsc(this)" class="vceEditToggleText" id="SOLO[${osc + 1}]">S</span>`;
+			td.append(span);
+
 			tr.appendChild(td);
 
 			// FIXME: assumes envelopes are sorted in oscillator order
@@ -220,6 +263,13 @@ let viewVCE_voice = {
 			}
 			index.refreshConnectionStatus();
 
+			if (mode) {
+				// reset the SOLO arrays
+				for (osc = 0; osc < 16; osc++) {
+					viewVCE_voice.MUTE[osc] = false;
+					viewVCE_voice.SOLO[osc] = false;
+				}
+			}
 			$('.vceEdit').prop('disabled', !viewVCE_voice.voicingMode);
 			document.getElementById("voiceModeButtonImg").src = `static/images/red-button-${viewVCE_voice.voicingMode ? 'on' : 'off'}-full.png`;
 		});
