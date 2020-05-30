@@ -33,7 +33,7 @@ let viewVCE = {
         viewVCE_envs.init();
         viewVCE_filters.init();
 
-        $('.vceEdit').prop('disabled', !viewVCE_voice.voicingMode);
+        viewVCE_voice.voicingModeVisuals();
     }
 }
 

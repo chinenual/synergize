@@ -156,14 +156,18 @@ let index = {
 			crt_path = path;
 			crt_name = name;
 			crt = message.payload;
-			index.load("viewCRT.html", document.getElementById("content"));
-			viewCRT.init();
+			index.load("viewCRT.html", "content",
+				function () {
+					viewCRT.init();
+				});
 			index.refreshConnectionStatus();
 		});
 	},
 	viewLoadedCRT: function () {
-		index.load("viewCRT.html", document.getElementById("content"));
-		viewCRT.init();
+		index.load("viewCRT.html", "content",
+			function () {
+				viewCRT.init();
+			});
 	},
 	viewVCE: function (name, path) {
 		var name = "readVCE";
@@ -187,8 +191,10 @@ let index = {
 
 			crt_name = null;
 			crt_path = null;
-			index.load("viewVCE.html", document.getElementById("content"));
-			viewVCE.init();
+			index.load("viewVCE.html", "content",
+				function () {
+					viewVCE.init();
+				});
 			index.refreshConnectionStatus();
 		});
 	},
@@ -196,8 +202,10 @@ let index = {
 		vce = crt.Voices[slot];
 
 		console.log("view voice slot " + slot + " : " + vce);
-		index.load("viewVCE.html", document.getElementById("content"));
-		viewVCE.init();
+		index.load("viewVCE.html", "content",
+			function () {
+				viewVCE.init();
+			});
 	},
 	addFolder: function (name, path) {
 		let div = document.createElement("div");
@@ -361,26 +369,43 @@ let index = {
 		index.refreshConnectionStatus();
 	},
 
-	load: function (url, element) {
-		console.log("load " + url + " into " + JSON.stringify(element));
+	load: function (url, eleId, callback) {
+		console.log("load " + url + " into " + eleId + " " + $(('#' + eleId)));
+		console.dir($(('#' + eleId)));
+		$(("#" + eleId)).load(url, function () {
+			console.log("loaded url " + url);
+			if (callback != undefined) {
+				element = document.getElementById(eleId);
+				callback(element);
+			}
+		});
+
+		/*
+		timing bug - onreadystatechange fires before the DOM is ready to query
+		
+		element = document.getElementById(eleId);
 		req = new XMLHttpRequest();
 
 		req.onreadystatechange = function () {
 			if (this.readyState == 4 && this.status == 200) {
 				element.innerHTML = req.responseText;
+				if (callback != undefined) {
+					callback(element);
+				}
 			}
 		};
 
 		req.open("GET", url, false);
 		req.send(null);
+		*/
 	},
 	dropdownMenu: function (contentId) {
 		//console.log("toggle display on " + contentId);
 		document.getElementById(contentId).style.display = "block";
 	},
-	viewDiag: function () {
 
-		index.load("diag.html", document.getElementById("content"));
+	viewDiag: function () {
+		index.load("diag.html", "content");
 	},
 	showAbout: function () {
 		let message = { "name": "showAbout" };
@@ -412,8 +437,10 @@ let index = {
 				case "viewVCE":
 					console.log("viewVCE: " + JSON.stringify(message.payload));
 					vce = message.payload;
-					index.load("view.html", document.getElementById("content"));
-					viewVCE.init();
+					index.load("view.html", "content",
+						function () {
+							viewVCE.init();
+						});
 
 					return { payload: "ok" };
 					break;

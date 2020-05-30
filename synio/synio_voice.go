@@ -110,10 +110,10 @@ func SetOscSolo(mute, solo []bool) (oscStatus [16]bool, err error) {
 		}
 	}
 	// if no solo, then just mute the ones selected (if any):
-	for i, v := range mute {
+	for i, muted := range mute {
 		state[i] = 0
 		oscStatus[i] = true
-		if v {
+		if muted {
 			state[i] = 1
 			oscStatus[i] = false
 		}

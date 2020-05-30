@@ -252,12 +252,19 @@ let viewVCE_voice = {
 			} else {
 				viewVCE_voice.voicingMode = mode;
 				if (message.payload != null) {
-					vce = message.payload;
+					if (mode) {
+						vce = message.payload;
 
-					crt_name = null;
-					crt_path = null;
-					index.load("viewVCE.html", document.getElementById("content"));
-					viewVCE.init();
+						crt_name = null;
+						crt_path = null;
+						index.load("viewVCE.html", "content",
+							function (ele) {
+								viewVCE.init();
+							});
+					} else {
+						// if we just disabled voicing, clear the VCE view
+						document.getElementById("content").innerHTML = "";
+					}
 				}
 				index.infoNotification(`Voicing mode ${mode ? 'enabled' : 'disabled'}`);
 			}
@@ -268,11 +275,22 @@ let viewVCE_voice = {
 				for (osc = 0; osc < 16; osc++) {
 					viewVCE_voice.MUTE[osc] = false;
 					viewVCE_voice.SOLO[osc] = false;
+					$('.vceEditToggle').removeClass('on');
 				}
 			}
-			$('.vceEdit').prop('disabled', !viewVCE_voice.voicingMode);
-			document.getElementById("voiceModeButtonImg").src = `static/images/red-button-${viewVCE_voice.voicingMode ? 'on' : 'off'}-full.png`;
+			//			viewVCE_voice.voicingModeVisuals();
 		});
+	},
+
+	voicingModeVisuals: function () {
+		console.log("voicingModeVisuals " + viewVCE_voice.voicingMode);
+		$('.vceEdit').prop('disabled', !viewVCE_voice.voicingMode);
+		if (viewVCE_voice.voicingMode) {
+			$('.vceEditToggleText').show();
+		} else {
+			$('.vceEditToggleText').hide();
+		}
+		document.getElementById("voiceModeButtonImg").src = `static/images/red-button-${viewVCE_voice.voicingMode ? 'on' : 'off'}-full.png`;
 	},
 
 	chart: null,
