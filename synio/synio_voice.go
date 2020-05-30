@@ -2,7 +2,7 @@ package synio
 
 import (
 	"bytes"
-
+    "strconv"
 	"github.com/chinenual/synergize/data"
 )
 
@@ -29,7 +29,7 @@ func initMap() {
 	offsetMap["VIBDEP"] = offsetMapEle{data.Off_EDATA_VIBDEP, false}
 	offsetMap["APVIB"] = offsetMapEle{data.Off_EDATA_APVIB, false}
 
-	offsetMap["OPTCH"] = offsetMapEle{data.Off_EOSC_OPTCH, true}
+	offsetMap["OPTCH"] = offsetMapEle{data.Off_EOSC_OPTCH, false} // does require reload, but we do it after a batch
 	offsetMap["OHARM"] = offsetMapEle{data.Off_EOSC_OHARM, true}
 	offsetMap["FDETUN"] = offsetMapEle{data.Off_EOSC_FDETUN, true}
 
@@ -124,6 +124,18 @@ func SetOscSolo(mute, solo []bool) (oscStatus [16]bool, err error) {
 	return
 }
 
+func SetPatchType(index int) (patchBytes [16]byte, err error) {
+	// write all 16 oscillators whether they're in use or not
+	for osc := 1; osc <= 16; osc++ {
+		SetVoiceOscDataByte(osc, "OPTCH", data.PatchTypePerOscTable[index][osc-1])
+	}
+	if err = ReloadNoteGenerators(); err != nil {
+		return
+	}
+	patchBytes = data.PatchTypePerOscTable[index]
+	return
+}
+
 func LoadVceVoicingMode(vce data.VCE) (err error) {
 	if err = data.LoadVceIntoEDATA(vce); err != nil {
 		return
@@ -179,7 +191,7 @@ func SetVoiceHeadDataByte(fieldName string, value byte) (err error) {
 // osc is 1-based
 func SetVoiceOscDataByte(osc /*1-based*/ int, fieldName string, value byte) (err error) {
 	addr := VoiceOscAddr(osc, offsetMap[fieldName].Offset)
-	if err = LoadByte(addr, value, "set "+fieldName+"["+string(osc)+"]"); err != nil {
+	if err = LoadByte(addr, value, "set "+fieldName+"["+strconv.Itoa(osc)+"]"); err != nil {
 		return
 	}
 	if offsetMap[fieldName].ReloadGen {
@@ -193,7 +205,7 @@ func SetVoiceOscDataByte(osc /*1-based*/ int, fieldName string, value byte) (err
 // osc is 1-based
 func GetVoiceOscDataByte(osc /*1-based*/ int, fieldName string) (value byte, err error) {
 	addr := VoiceOscAddr(osc, offsetMap[fieldName].Offset)
-	if value, err = DumpByte(addr, "get "+fieldName+"["+string(osc)+"]"); err != nil {
+	if value, err = DumpByte(addr, "get "+fieldName+"["+strconv.Itoa(osc)+"]"); err != nil {
 		return
 	}
 	return

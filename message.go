@@ -81,12 +81,24 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		var oscStatus [16]bool
-		if oscStatus, err = synio.SetOscSolo(args.Mute, args.Solo); err != nil {
+		if payload, err = synio.SetOscSolo(args.Mute, args.Solo); err != nil {
 			payload = err.Error()
 			return
 		}
-		payload = oscStatus
+
+	case "setPatchType":
+		var index int
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &index); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if payload, err = synio.SetPatchType(index); err != nil {
+			payload = err.Error()
+			return
+		}
 
 	case "setVoiceByte":
 		var args struct {

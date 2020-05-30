@@ -171,6 +171,28 @@ var (
 		55, 55, 0, 0} // point16
 
 	VRAM_EDATA [Off_VRAM_EDATA + Off_EDATA_EOSC + 16*Sizeof_EOSC]byte
+
+	// as above but as a go struct that we can send back to the front end as JSON
+	DefaultEnvelope = Envelope{
+		FreqEnvelope: FreqEnvelopeTable{
+			OPTCH:     4,
+			OHARM:     1,
+			FDETUN:    0,
+			FENVL:     68,
+			ENVTYPE:   1,
+			NPOINTS:   1,
+			SUSTAINPT: 30,
+			LOOPPT:    30,
+			Table:     []byte{0, 0, 0x80, 0},
+		},
+		AmpEnvelope: AmpEnvelopeTable{
+			ENVTYPE:   1,
+			NPOINTS:   1,
+			SUSTAINPT: 30,
+			LOOPPT:    30,
+			Table:     []byte{55, 55, 0, 0},
+		},
+	}
 )
 
 func init() {

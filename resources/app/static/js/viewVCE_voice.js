@@ -234,6 +234,30 @@ let viewVCE_voice = {
 		}
 	},
 
+	changePatchType: function (newIndex) {
+		let message = {
+			"name": "setPatchType",
+			"payload": parseInt(newIndex, 10)
+		};
+		index.spinnerOn();
+		astilectron.sendMessage(message, function (message) {
+			index.spinnerOff();
+			console.log("setPatchType returned: " + JSON.stringify(message));
+			// Check error
+			if (message.name === "error") {
+				// failed - dont change the boolean
+				index.errorNotification(message.payload);
+			} else {
+				for (i = 0; i < vce.Envelopes.length; i++) {
+					vce.Envelopes[i].FreqEnvelope.OPTCH = message.payload[i];
+				}
+				vce.Extra.PatchType = patseInt(newIndex, 0);
+				viewVCE.init();
+			}
+			index.refreshConnectionStatus();
+		});
+	},
+
 	toggleVoicingMode: function (mode) {
 		console.log(`VoicingMode ${mode ? 'on' : 'off'}`);
 
