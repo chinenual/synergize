@@ -19,8 +19,8 @@ First check is full UI support; second check is lower-level IO and tests
 * Voicing System Main screen
     * [x] [x] Load a VCE directly into VRAM
     * [ ] [ ] Save a VCE from VRAM
-    * [ ] [ ] set # oscillators
-    * [ ] [ ] set default patch
+    * [x] [x] set # oscillators
+    * [x] [x] set default patch
     * [ ] [ ] clear filters
     * [ ] [ ] import filters from other voice
     * [ ] [ ] clear voicing system
@@ -38,7 +38,7 @@ First check is full UI support; second check is lower-level IO and tests
     * [ ] [ ] set portamento
     * [x] [x] set vibrato
     * [ ] [ ] toggle keyboard proportionalization per oscillator
-    * [ ] [ ] adjust the "patch" routing (adder, frequency, output registers)
+    * [x] [x] adjust the "patch" routing (adder, frequency, output registers)
 
 * Envelopes page (AKA Oscillator page)
     * [ ] [ ] Change number of points in an envelope
