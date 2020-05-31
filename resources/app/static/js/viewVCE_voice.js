@@ -239,9 +239,9 @@ let viewVCE_voice = {
 			"name": "setPatchType",
 			"payload": parseInt(newIndex, 10)
 		};
-		index.spinnerOn();
+		//index.spinnerOn();
 		astilectron.sendMessage(message, function (message) {
-			index.spinnerOff();
+			//index.spinnerOff();
 			console.log("setPatchType returned: " + JSON.stringify(message));
 			// Check error
 			if (message.name === "error") {
@@ -251,11 +251,49 @@ let viewVCE_voice = {
 				for (i = 0; i < vce.Envelopes.length; i++) {
 					vce.Envelopes[i].FreqEnvelope.OPTCH = message.payload[i];
 				}
-				vce.Extra.PatchType = patseInt(newIndex, 0);
+				vce.Extra.PatchType = parseInt(newIndex, 0);
 				viewVCE.init();
 			}
 			index.refreshConnectionStatus();
 		});
+	},
+
+	setNumOscillators: function (newNum) {
+		let message = {
+			"name": "setNumOscillators",
+			"payload": {
+				"NumOsc": parseInt(newNum, 10),
+				"PatchType": parseInt(document.getElementById("patchType").value, 10)
+			}
+		};
+		//index.spinnerOn();
+		astilectron.sendMessage(message, function (message) {
+			//index.spinnerOff();
+			console.log("setNumOscillators returned: " + JSON.stringify(message));
+			// Check error
+			if (message.name === "error") {
+				// failed - dont change the boolean
+				index.errorNotification(message.payload);
+			} else {
+				/// now the tricky part - update the in memory version of vce to reflect what just happened:
+				vce.Head.VOITAB = newNum - 1
+				var oldLength = vce.Envelopes.length
+				if (newNum <= oldLength) {
+					// nothing to do - just ignored the extra envelopes
+				} else {
+					for (i = oldLength; i < newNum; i++) {
+						// copy the envelope template into the vce:
+						// abuse JSON to do a deep copy:
+						vce.Envelopes[i] = JSON.parse(JSON.stringify(message.payload.EnvelopeTemplate))
+						// overwrite the default patch type 
+						vce.Envelopes[i].OPTCH = message.payload.PatchBytes[i]
+					}
+				}
+				viewVCE.init();
+			}
+			index.refreshConnectionStatus();
+		});
+
 	},
 
 	toggleVoicingMode: function (mode) {
@@ -379,6 +417,10 @@ let viewVCE_voice = {
 		console.log("timbreData: " + JSON.stringify(timbreData));
 
 		var ctx = document.getElementById('velocityChart').getContext('2d');
+		if (viewVCE_voice.chart != null) {
+			// kill off the old chart so we dont get conflicts
+			viewVCE_voice.chart.destroy();
+		}
 		viewVCE_voice.chart = new Chart(ctx, {
 
 			type: 'line',

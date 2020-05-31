@@ -97,7 +97,9 @@
 						</tr>
 						<tr>
 							<td>Oscillators</td>
-							<td><input class="vceEdit vceNum" type="number" id="nOsc" min="1" max="16" disabled /></td>
+							<td><input class="vceEdit vceNum" type="number" id="nOsc" min="1" max="16"
+									onchange="viewVCE_voice.onchange(viewVCE_voice.setNumOscillators(this.value))"
+									disabled /></td>
 						</tr>
 						<tr>
 							<td>Keys Playable</td>

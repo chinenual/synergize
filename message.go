@@ -100,6 +100,29 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			return
 		}
 
+	case "setNumOscillators":
+		var args struct {
+			NumOsc    int
+			PatchType int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		var resultPayload struct {
+			EnvelopeTemplate data.Envelope
+			PatchBytes       [16]byte
+		}
+		if resultPayload.PatchBytes, err = synio.SetNumOscillators(args.NumOsc, args.PatchType); err != nil {
+			payload = err.Error()
+			return
+		}
+		resultPayload.EnvelopeTemplate = data.DefaultEnvelope
+		payload = resultPayload
+
 	case "setVoiceByte":
 		var args struct {
 			Param string

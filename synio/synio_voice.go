@@ -2,7 +2,8 @@ package synio
 
 import (
 	"bytes"
-    "strconv"
+	"strconv"
+
 	"github.com/chinenual/synergize/data"
 )
 
@@ -133,6 +134,18 @@ func SetPatchType(index int) (patchBytes [16]byte, err error) {
 		return
 	}
 	patchBytes = data.PatchTypePerOscTable[index]
+	return
+}
+
+func SetNumOscillators(newNumOsc int, patchType int) (patchBytes [16]byte, err error) {
+	// assumes that we dont need to reininitialize freq and amp envelopes (they were initialized
+	// when we started voicing mode and if we are reusing one partially edited, we get those edits back)
+	if err = SetVoiceHeadDataByte("VOITAB", byte(newNumOsc-1)); err != nil {
+		return
+	}
+	if patchBytes, err = SetPatchType(patchType); err != nil {
+		return
+	}
 	return
 }
 
