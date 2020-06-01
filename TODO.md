@@ -32,12 +32,12 @@ First check is full UI support; second check is lower-level IO and tests
     * [x] [x] change harmonic
     * [x] [x] detune
     * [x] [x] aperiodic detune
-    * [ ] [ ] select sine vs. triangle
+    * [x] [x] select sine vs. triangle
     * [ ] [ ] assign A-filter, B-filter or no-filter to each oscillator
     * [x] [x] set timbre/amp sensitivity and center
-    * [ ] [ ] set portamento
+    * [ ] [ ] <s>set portamento</s>
     * [x] [x] set vibrato
-    * [ ] [ ] toggle keyboard proportionalization per oscillator
+    * [ x [x] toggle keyboard proportionalization per oscillator
     * [x] [x] adjust the "patch" routing (adder, frequency, output registers)
 
 * Envelopes page (AKA Oscillator page)

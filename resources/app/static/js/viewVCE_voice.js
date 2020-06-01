@@ -82,10 +82,16 @@ let viewVCE_voice = {
 
 		var param
 		var args
+		var filterPattern = /FILTER\[(\d+)\]/;
 		var waveKeyPattern = /wk([A-Z]+)\[(\d+)\]/;
 		var oscPattern = /([A-Z]+)\[(\d+)\]/;
 		var headPattern = /([A-Z]+)/;
-		if (ret = id.match(waveKeyPattern)) {
+		if (ret = id.match(filterPattern)) {
+			param = "FILTER"
+			funcname = "setOscFILTER";
+			osc = parseInt(ret[1])
+			args = [osc, parseInt(ele.value, 10)];
+		} else if (ret = id.match(waveKeyPattern)) {
 			param = ret[1]
 			osc = parseInt(ret[2], 10)
 			if (param == "WAVE") {
@@ -246,6 +252,15 @@ let viewVCE_voice = {
 			td.innerHTML =
 				(filter == 0) ? ''
 					: (filter > 0) ? ('Bf ' + filter) : ('Af ' + -filter);
+			td = document.createElement("td");
+			td.innerHTML = wave;
+			td.innerHTML = `<select class="vceEdit" id="FILTER[${osc + 1}]" value="${filter}" 
+					onchange="viewVCE_voice.onchange(this)" disabled/>
+					<option ${filter == 0 ? "selected" : ""} value=""></option>
+					<option ${filter < 0 ? "selected" : ""} value="-1">Af</option>
+					<option ${filter > 0 ? "selected" : ""} value="${osc + 1}">Bf</option>
+					</select>
+					`;
 			tr.appendChild(td);
 
 			tbody.appendChild(tr);

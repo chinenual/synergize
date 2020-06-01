@@ -28,6 +28,7 @@ func initMaps() {
 	voiceOffsetMap["VOITAB"] = offsetMapEle{data.Off_EDATA_VOITAB, false}
 	voiceOffsetMap["VTRANS"] = offsetMapEle{data.Off_EDATA_VTRANS, false}
 	voiceOffsetMap["APVIB"] = offsetMapEle{data.Off_EDATA_APVIB, false}
+	voiceOffsetMap["FILTER"] = offsetMapEle{data.Off_EDATA_FILTER_arr, false}
 
 	cmosOffsetMap["VTCENT"] = offsetMapEle{Off_CMOS_VTCENT, false}
 	cmosOffsetMap["VTSENS"] = offsetMapEle{Off_CMOS_VTSENS, false}
@@ -128,6 +129,17 @@ func SetOscSolo(mute, solo []bool) (oscStatus [16]bool, err error) {
 		}
 	}
 	if err = rawSetOscSolo(state); err != nil {
+		return
+	}
+	return
+}
+
+func SetOscFILTER(osc /*1-based*/ int, value int) (err error) {
+	addr := VoiceHeadAddr(data.Off_EDATA_FILTER_arr) + uint16(osc-1)
+	if err = LoadByte(addr, byte(value), "set FILTER["+strconv.Itoa(osc)+"]"); err != nil {
+		return
+	}
+	if err = ReloadNoteGenerators(); err != nil {
 		return
 	}
 	return
