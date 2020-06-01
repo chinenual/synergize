@@ -1,6 +1,7 @@
 * Fixed the voice amplitude proportionality chart - for certain
 combinations of center and sensitivity it could show an odd
 discontinuous curve.
+* Fixed display of Wave Type and Key Prop toggle on the Oscillator table.
 
 # 1.0.0
 

@@ -123,6 +123,48 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		resultPayload.EnvelopeTemplate = data.DefaultEnvelope
 		payload = resultPayload
 
+	case "setOscWAVE":
+		var args struct {
+			Args []int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		var val = false
+		if args.Args[1] == 1 {
+			val = true
+		}
+		if err = synio.SetOscWAVE(args.Args[0], val); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
+	case "setOscKEYPROP":
+		var args struct {
+			Args []int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		var val = false
+		if args.Args[1] == 1 {
+			val = true
+		}
+		if err = synio.SetOscKEYPROP(args.Args[0], val); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
 	case "setVoiceByte":
 		var args struct {
 			Param string

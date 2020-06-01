@@ -82,32 +82,45 @@ let viewVCE_voice = {
 
 		var param
 		var args
+		var waveKeyPattern = /wk([A-Z]+)\[(\d+)\]/;
 		var oscPattern = /([A-Z]+)\[(\d+)\]/;
 		var headPattern = /([A-Z]+)/;
-		if (ret = id.match(oscPattern)) {
+		if (ret = id.match(waveKeyPattern)) {
+			param = ret[1]
+			osc = parseInt(ret[2], 10)
+			if (param == "WAVE") {
+				funcname = "setOscWAVE"
+				args = [osc, ele.value == "Sin" ? 0 : 1];
+			} else {
+				funcname = "setOscKEYPROP"
+				args = [osc, ele.value ? 1 : 0];
+			}
+		} else if (ret = id.match(oscPattern)) {
 			param = ret[1];
 			osc = parseInt(ret[2], 10)
 			args = [osc, parseInt(ele.value, 10)]
 
 			console.log("changed: " + id + " param: " + param + " osc: " + osc);
 			vce.Envelopes[osc - 1][param] = ele.value;
+			funcname = "setVoiceByte"
 
 		} else if (ret = id.match(headPattern)) {
 			param = id;
 			args = [parseInt(ele.value, 10)]
 			vce.Head[param] = ele.value;
+			funcname = "setVoiceByte"
 		}
 		//console.dir(vce);
 		if (param != null) {
 			let message = {
-				"name": "setVoiceByte",
+				"name": funcname,
 				"payload": {
 					"Param": param,
 					"Args": args
 				}
 			};
 			astilectron.sendMessage(message, function (message) {
-				console.log("setVoiceByte returned: " + JSON.stringify(message));
+				console.log(funcname + " returned: " + JSON.stringify(message));
 				console.log("updater: " + updater);
 				// Check error
 				if (message.name === "error") {
@@ -204,13 +217,14 @@ let viewVCE_voice = {
 			tr.appendChild(td);
 
 			var waveByte = vce.Envelopes[osc].FreqEnvelope.Table[0][3];
-			var wave = ((waveByte & 0x7) == 0) ? 'Sin' : 'Tri';
-			var keyprop = ((waveByte & 0x8) == 0) ? 'Key' : '';
+			var wave = ((waveByte & 0x1) == 0) ? 'Sin' : 'Tri';
+			var keyprop = ((waveByte & 0x10) == 0) ? true : false;
 
 			//--- Wave
 			td = document.createElement("td");
 			td.innerHTML = wave;
-			td.innerHTML = `<select class="vceEdit" id="wave[${osc + 1}]" value="${keyprop}" disabled/>
+			td.innerHTML = `<select class="vceEdit" id="wkWAVE[${osc + 1}]" value="${keyprop}" 
+			onchange="viewVCE_voice.onchange(this)" disabled/>
 			<option value="Sin">Sin</option>
 			<option value="Tri">Tri</option>
 			</select>
@@ -219,7 +233,10 @@ let viewVCE_voice = {
 
 			//--- Key
 			td = document.createElement("td");
-			td.innerHTML = `<input type="text" class="vceEdit vceNum" id="keyprop[${osc + 1}]" value="${keyprop}" disabled/>`;
+			// can't use disabled attr - bootstrap styling hides it - use javascript hack to make it readonnly
+			td.innerHTML = `<input type="checkbox" id="wkKEYPROP[${osc + 1}]" value="true" 
+			${keyprop ? " checked " : ""} 
+			onchange="viewVCE_voice.voicingMode ? viewVCE_voice.onchange(this) : (this.checked=!this.checked)"/>`;
 			tr.appendChild(td);
 
 			//--- Flt

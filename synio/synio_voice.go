@@ -136,7 +136,9 @@ func SetOscSolo(mute, solo []bool) (oscStatus [16]bool, err error) {
 func SetPatchType(index int) (patchBytes [16]byte, err error) {
 	// write all 16 oscillators whether they're in use or not
 	for osc := 1; osc <= 16; osc++ {
-		SetVoiceOscDataByte(osc, "OPTCH", data.PatchTypePerOscTable[index][osc-1])
+		if err = SetVoiceOscDataByte(osc, "OPTCH", data.PatchTypePerOscTable[index][osc-1]); err != nil {
+			return
+		}
 	}
 	if err = ReloadNoteGenerators(); err != nil {
 		return
