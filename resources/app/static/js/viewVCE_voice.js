@@ -93,7 +93,7 @@ let viewVCE_voice = {
 				args = [osc, ele.value == "Sin" ? 0 : 1];
 			} else {
 				funcname = "setOscKEYPROP"
-				args = [osc, ele.value ? 1 : 0];
+				args = [osc, ele.checked ? 1 : 0];
 			}
 		} else if (ret = id.match(oscPattern)) {
 			param = ret[1];
@@ -216,17 +216,18 @@ let viewVCE_voice = {
 			disabled/>`;
 			tr.appendChild(td);
 
-			var waveByte = vce.Envelopes[osc].FreqEnvelope.Table[0][3];
+			var waveByte = vce.Envelopes[osc].FreqEnvelope.Table[3];
 			var wave = ((waveByte & 0x1) == 0) ? 'Sin' : 'Tri';
-			var keyprop = ((waveByte & 0x10) == 0) ? true : false;
+			var keyprop = ((waveByte & 0x10) == 0) ? false : true;
+			console.log("wavebyte " + waveByte + " wave: " + wave + " keyprop:" + keyprop);
 
 			//--- Wave
 			td = document.createElement("td");
 			td.innerHTML = wave;
-			td.innerHTML = `<select class="vceEdit" id="wkWAVE[${osc + 1}]" value="${keyprop}" 
+			td.innerHTML = `<select class="vceEdit" id="wkWAVE[${osc + 1}]" value="${wave}" 
 			onchange="viewVCE_voice.onchange(this)" disabled/>
-			<option value="Sin">Sin</option>
-			<option value="Tri">Tri</option>
+			<option ${wave == 'Sin' ? "selected" : ""} value="Sin">Sin</option>
+			<option ${wave == 'Tri' ? "selected" : ""} value="Tri">Tri</option>
 			</select>
 			`;
 			tr.appendChild(td);
