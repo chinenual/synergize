@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/chinenual/synergize/data"
+	"github.com/pkg/errors"
 )
 
 type offsetMapEle struct {
@@ -12,43 +13,50 @@ type offsetMapEle struct {
 	ReloadGen bool
 }
 
-var offsetMap map[string]offsetMapEle
+var oscOffsetMap map[string]offsetMapEle
+var voiceOffsetMap map[string]offsetMapEle
+var cmosOffsetMap map[string]offsetMapEle
 
-func initMap() {
-	if offsetMap != nil {
+func initMaps() {
+	if oscOffsetMap != nil {
 		return
 	}
-	offsetMap = make(map[string]offsetMapEle)
+	oscOffsetMap = make(map[string]offsetMapEle)
+	voiceOffsetMap = make(map[string]offsetMapEle)
+	cmosOffsetMap = make(map[string]offsetMapEle)
 
-	offsetMap["VTRANS"] = offsetMapEle{data.Off_EDATA_VTRANS, false}
-	offsetMap["VTCENT"] = offsetMapEle{data.Off_EDATA_VTCENT, false}
-	offsetMap["VTSENS"] = offsetMapEle{data.Off_EDATA_VTSENS, false}
-	offsetMap["VACENT"] = offsetMapEle{data.Off_EDATA_VACENT, false}
-	offsetMap["VASENS"] = offsetMapEle{data.Off_EDATA_VASENS, false}
-	offsetMap["VIBRAT"] = offsetMapEle{data.Off_EDATA_VIBRAT, false}
-	offsetMap["VIBDEL"] = offsetMapEle{data.Off_EDATA_VIBDEL, false}
-	offsetMap["VIBDEP"] = offsetMapEle{data.Off_EDATA_VIBDEP, false}
-	offsetMap["APVIB"] = offsetMapEle{data.Off_EDATA_APVIB, false}
+	voiceOffsetMap["VOITAB"] = offsetMapEle{data.Off_EDATA_VOITAB, false}
+	voiceOffsetMap["VTRANS"] = offsetMapEle{data.Off_EDATA_VTRANS, false}
+	voiceOffsetMap["APVIB"] = offsetMapEle{data.Off_EDATA_APVIB, false}
 
-	offsetMap["OPTCH"] = offsetMapEle{data.Off_EOSC_OPTCH, false} // does require reload, but we do it after a batch
-	offsetMap["OHARM"] = offsetMapEle{data.Off_EOSC_OHARM, true}
-	offsetMap["FDETUN"] = offsetMapEle{data.Off_EOSC_FDETUN, true}
+	cmosOffsetMap["VTCENT"] = offsetMapEle{Off_CMOS_VTCENT, false}
+	cmosOffsetMap["VTSENS"] = offsetMapEle{Off_CMOS_VTSENS, false}
+	cmosOffsetMap["VACENT"] = offsetMapEle{Off_CMOS_VACENT, false}
+	cmosOffsetMap["VASENS"] = offsetMapEle{Off_CMOS_VASENS, false}
+	cmosOffsetMap["VIBRAT"] = offsetMapEle{Off_CMOS_VVBRAT, false}
+	cmosOffsetMap["VIBDEL"] = offsetMapEle{Off_CMOS_VVBDLY, false}
+	cmosOffsetMap["VIBDEP"] = offsetMapEle{Off_CMOS_VVBDEP, false}
 
-	offsetMap["FreqENVTYPE"] = offsetMapEle{data.Off_EOSC_FreqENVTYPE, true}
-	offsetMap["FreqNPOINTS"] = offsetMapEle{data.Off_EOSC_FreqNPOINTS, true}
-	offsetMap["FreqSUSTAINPT"] = offsetMapEle{data.Off_EOSC_FreqSUSTAINPT, true}
-	offsetMap["FreqLOOPPT"] = offsetMapEle{data.Off_EOSC_FreqLOOPPT, true}
-	offsetMap["FreqPoints"] = offsetMapEle{data.Off_EOSC_FreqPoints, true}
+	oscOffsetMap["OPTCH"] = offsetMapEle{data.Off_EOSC_OPTCH, false} // does require reload, but we do it after a batch
+	oscOffsetMap["OHARM"] = offsetMapEle{data.Off_EOSC_OHARM, true}
+	oscOffsetMap["FDETUN"] = offsetMapEle{data.Off_EOSC_FDETUN, true}
 
-	offsetMap["AmpENVTYPE"] = offsetMapEle{data.Off_EOSC_AmpENVTYPE, true}
-	offsetMap["AmpNPOINTS"] = offsetMapEle{data.Off_EOSC_AmpNPOINTS, true}
-	offsetMap["AmpSUSTAINPT"] = offsetMapEle{data.Off_EOSC_AmpSUSTAINPT, true}
-	offsetMap["AmpLOOPPT"] = offsetMapEle{data.Off_EOSC_AmpLOOPPT, true}
-	offsetMap["AmpPoints"] = offsetMapEle{data.Off_EOSC_AmpPoints, true}
+	oscOffsetMap["FreqENVTYPE"] = offsetMapEle{data.Off_EOSC_FreqENVTYPE, true}
+	oscOffsetMap["FreqNPOINTS"] = offsetMapEle{data.Off_EOSC_FreqNPOINTS, true}
+	oscOffsetMap["FreqSUSTAINPT"] = offsetMapEle{data.Off_EOSC_FreqSUSTAINPT, true}
+	oscOffsetMap["FreqLOOPPT"] = offsetMapEle{data.Off_EOSC_FreqLOOPPT, true}
+	oscOffsetMap["FreqPoints"] = offsetMapEle{data.Off_EOSC_FreqPoints, true}
+	oscOffsetMap["FreqPoints_WAVE_KEYPROP"] = offsetMapEle{data.Off_EOSC_FreqPoints + 3, true}
+
+	oscOffsetMap["AmpENVTYPE"] = offsetMapEle{data.Off_EOSC_AmpENVTYPE, true}
+	oscOffsetMap["AmpNPOINTS"] = offsetMapEle{data.Off_EOSC_AmpNPOINTS, true}
+	oscOffsetMap["AmpSUSTAINPT"] = offsetMapEle{data.Off_EOSC_AmpSUSTAINPT, true}
+	oscOffsetMap["AmpLOOPPT"] = offsetMapEle{data.Off_EOSC_AmpLOOPPT, true}
+	oscOffsetMap["AmpPoints"] = offsetMapEle{data.Off_EOSC_AmpPoints, true}
 }
 
 func EnableVoicingMode() (vce data.VCE, err error) {
-	initMap()
+	initMaps()
 
 	if err = getSynergyAddrs(); err != nil {
 		return
@@ -176,7 +184,17 @@ func ReloadNoteGenerators() (err error) {
 // generators
 
 func SetVoiceHeadDataArray(fieldName string, value []byte) (err error) {
-	addr := VoiceHeadAddr(offsetMap[fieldName].Offset)
+	// some things that are stored in the head are actually stored in a different location in CMOS
+	// at runtime.  Deal with that here:
+	offsetMap := cmosOffsetMap
+	var addr uint16
+	if _, ok := voiceOffsetMap[fieldName]; ok {
+		offsetMap = voiceOffsetMap
+		addr = VoiceHeadAddr(offsetMap[fieldName].Offset)
+	} else {
+		addr = CmosAddr(offsetMap[fieldName].Offset)
+	}
+
 	if err = BlockLoad(addr, value, "set array "+fieldName); err != nil {
 		return
 	}
@@ -189,7 +207,14 @@ func SetVoiceHeadDataArray(fieldName string, value []byte) (err error) {
 }
 
 func SetVoiceHeadDataByte(fieldName string, value byte) (err error) {
-	addr := VoiceHeadAddr(offsetMap[fieldName].Offset)
+	offsetMap := cmosOffsetMap
+	var addr uint16
+	if _, ok := voiceOffsetMap[fieldName]; ok {
+		offsetMap = voiceOffsetMap
+		addr = VoiceHeadAddr(offsetMap[fieldName].Offset)
+	} else {
+		addr = CmosAddr(offsetMap[fieldName].Offset)
+	}
 	if err = LoadByte(addr, value, "set "+fieldName); err != nil {
 		return
 	}
@@ -203,11 +228,11 @@ func SetVoiceHeadDataByte(fieldName string, value byte) (err error) {
 
 // osc is 1-based
 func SetVoiceOscDataByte(osc /*1-based*/ int, fieldName string, value byte) (err error) {
-	addr := VoiceOscAddr(osc, offsetMap[fieldName].Offset)
+	addr := VoiceOscAddr(osc, oscOffsetMap[fieldName].Offset)
 	if err = LoadByte(addr, value, "set "+fieldName+"["+strconv.Itoa(osc)+"]"); err != nil {
 		return
 	}
-	if offsetMap[fieldName].ReloadGen {
+	if oscOffsetMap[fieldName].ReloadGen {
 		if err = ReloadNoteGenerators(); err != nil {
 			return
 		}
@@ -217,7 +242,7 @@ func SetVoiceOscDataByte(osc /*1-based*/ int, fieldName string, value byte) (err
 
 // osc is 1-based
 func GetVoiceOscDataByte(osc /*1-based*/ int, fieldName string) (value byte, err error) {
-	addr := VoiceOscAddr(osc, offsetMap[fieldName].Offset)
+	addr := VoiceOscAddr(osc, oscOffsetMap[fieldName].Offset)
 	if value, err = DumpByte(addr, "get "+fieldName+"["+strconv.Itoa(osc)+"]"); err != nil {
 		return
 	}
@@ -319,28 +344,8 @@ func DecodePatchControl(control byte) (outputDSR byte, inhibitAddr byte,
 	return
 }
 
-/****
-func GetOscPATCHControl(osc int) (value byte, err error) {
-	if value, err = GetVoiceOscDataByte(osc, data.Off_EOSC_OPTCH, "get OPATCH"); err != nil {
-		return
-	}
-	return
-}
-
-func SetOscPATCHControl(osc int, value byte) (err error) {
-	if err = SetVoiceOscDataByte(osc, data.Off_EOSC_OPTCH, value, "set OPATCH", true); err != nil {
-		return
-	}
-	return
-}
-
-func SetOscFREQControl(osc int, value byte) (err error) {
-	err = errors.New("not yet implemented")
-	return
-}
-
 func GetOscWAVEControl(osc int) (value byte, err error) {
-	if value, err = GetVoiceOscDataByte(osc, data.Off_EOSC_FreqPoints+3, "get fenv[3]"); err != nil {
+	if value, err = GetVoiceOscDataByte(osc, "FreqPoints_WAVE_KEYPROP"); err != nil {
 		return
 	}
 	return
@@ -377,18 +382,13 @@ func SetOscWAVEControl(osc int, value byte) (err error) {
 	//					1 = Enabled
 	//					0 = Disabled
 
-	if err = SetVoiceOscDataByte(osc, data.Off_EOSC_FreqPoints+3, value, "set fenv[3]", true); err != nil {
+	if err = SetVoiceOscDataByte(osc, "FreqPoints_WAVE_KEYPROP", value); err != nil {
 		return
 	}
 	return
 }
 
-func SetOscFILTER(osc int, filter int8) (err error) {
-	err = errors.New("not yet implemented")
-	return
-}
-
-func SetOscWAVE(osc int, triangle bool) (err error) {
+func SetOscWAVE(osc /*1-based*/ int, triangle bool) (err error) {
 	// FIXME: this requires a fetch before the set -- could avoid this if we keep a copy of each value
 	// on our side - like SYNHCS does.  For now, I'm trying to avoid that bookkeeping - as long as performance
 	// is ok...
@@ -426,56 +426,3 @@ func SetOscKEYPROP(osc int, usesKeypro bool) (err error) {
 	}
 	return
 }
-**/
-
-/*****
-func SetVoiceVTCENT(val byte) (err error) {
-	if err = SetVoiceOscDataByte(data.Off_EDATA_VTCENT, byte(value), "set VTCENT", false); err != nil {
-		return
-	}
-	return
-}
-
-func SetVoiceVTSENS(val byte) (err error) {
-	if err = SetVoiceOscDataByte(data.Off_EDATA_VTSENS, byte(value), "set VTSENS", false); err != nil {
-		return
-	}
-	return
-}
-
-func SetVoiceVACENT(val byte) (err error) {
-	if err = SetVoiceOscDataByte(data.Off_EDATA_VACENT, byte(value), "set VACENT", false); err != nil {
-		return
-	}
-	return
-}
-
-func SetVoiceVASENS(val byte) (err error) {
-	if err = SetVoiceOscDataByte(data.Off_EDATA_VASENS, byte(value), "set VASENS", false); err != nil {
-		return
-	}
-	return
-}
-
-func SetVoiceVIBRAT(val byte) (err error) {
-	if err = SetVoiceOscDataByte(data.Off_EDATA_VIBRAT, byte(value), "set VIBRAT", false); err != nil {
-		return
-	}
-	return
-}
-
-func SetVoiceVIBDEL(val byte) (err error) {
-	if err = SetVoiceOscDataByte(data.Off_EDATA_VIBDEL, byte(value), "set VIBDEL", false); err != nil {
-		return
-	}
-	return
-}
-
-func SetVoiceVIBDEP(val byte) (err error) {
-	if err = SetVoiceOscDataByte(data.Off_EDATA_VIBDEP, byte(value), "set VIBDEP", false); err != nil {
-		return
-	}
-	return
-}
-
-******/
