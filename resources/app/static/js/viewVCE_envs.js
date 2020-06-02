@@ -1,5 +1,7 @@
 let viewVCE_envs = {
 
+	chart: null,
+
 	init: function () {
 		var selectEle = document.getElementById("envOscSelect");
 		// remove old options:
@@ -251,10 +253,10 @@ let viewVCE_envs = {
 			filteredDatasets.push(datasets[envNum])
 		}
 		var ctx = document.getElementById('envChart').getContext('2d');
-		if (vceEnvChart != null) {
-			vceEnvChart.destroy();
+		if (viewVCE_envs.chart != null) {
+			viewVCE_envs.chart.destroy();
 		}
-		vceEnvChart = new Chart(ctx, {
+		viewVCE_envs.chart = new Chart(ctx, {
 
 			type: 'line',
 			data: {

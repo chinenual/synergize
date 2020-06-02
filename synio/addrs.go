@@ -23,6 +23,10 @@ func CmosAddr(fieldOffset int) uint16 {
 	return synAddrs.CMOS + uint16(fieldOffset)
 }
 
+func VramAddr(fieldOffset int) uint16 {
+	return synAddrs.VRAM + uint16(fieldOffset)
+}
+
 func VoiceHeadAddr(voiceFieldOffset int) uint16 {
 	return synAddrs.VRAM + data.VRAMVoiceHeadOffset(voiceFieldOffset)
 }

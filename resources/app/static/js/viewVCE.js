@@ -1,6 +1,4 @@
 let vce = {};
-let vceFiltersChart = null;
-let vceEnvChart = null;
 let vceFilterNames = null;
 
 // https://www.color-hex.com/color-palette/89750

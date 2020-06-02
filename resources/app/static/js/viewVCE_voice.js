@@ -76,6 +76,24 @@ let viewVCE_voice = {
 		}
 	},
 
+	filterChanged: function (ele) {
+		var id = ele.id;
+		var filterPattern = /FILTER\[(\d+)\]/;
+		if (ret = id.match(filterPattern)) {
+			osc = parseInt(ret[1])
+		} else {
+			console.log("ERROR: filterCHanged called with bad ele " + ele);
+		}
+		var filterValue;
+		if (ele.value == "") {
+			filterValue = 0;
+		} else {
+			filterValue = parseInt(ele.value, 10);
+		}
+		vce.Head.FILTER[osc - 1] = filterValue;
+		viewVCE_filters.init();
+	},
+
 	onchange: function (ele, updater) {
 		var id = ele.id;
 		console.log("changed: " + id);
@@ -134,7 +152,7 @@ let viewVCE_voice = {
 					index.errorNotification(message.payload);
 					return false;
 				} else if (updater != undefined) {
-					updater();
+					updater(ele);
 				}
 			});
 
@@ -150,8 +168,6 @@ let viewVCE_voice = {
 		while (tbody.firstChild) {
 			tbody.removeChild(tbody.firstChild);
 		}
-		console.log("vceEnv" + JSON.stringify(vce.Envelopes));
-		console.log("vceFilters" + JSON.stringify(vce.Filters));
 
 		// populate new ones:
 		for (osc = 0; osc <= vce.Head.VOITAB; osc++) {
@@ -255,7 +271,7 @@ let viewVCE_voice = {
 			td = document.createElement("td");
 			td.innerHTML = wave;
 			td.innerHTML = `<select class="vceEdit" id="FILTER[${osc + 1}]" value="${filter}" 
-					onchange="viewVCE_voice.onchange(this)" disabled/>
+					onchange="viewVCE_voice.onchange(this,viewVCE_voice.filterChanged)" disabled/>
 					<option ${filter == 0 ? "selected" : ""} value=""></option>
 					<option ${filter < 0 ? "selected" : ""} value="-1">Af</option>
 					<option ${filter > 0 ? "selected" : ""} value="${osc + 1}">Bf</option>

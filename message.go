@@ -20,6 +20,7 @@ import (
 
 // handleMessages handles messages
 func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload interface{}, err error) {
+	log.Printf("Handle message: %s %s\n", m.Name, string(m.Payload))
 	switch m.Name {
 	case "connectToSynergy":
 		if err = connectToSynergy(); err != nil {
@@ -177,6 +178,25 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			}
 		}
 		if err = synio.SetOscFILTER(args.Args[0], args.Args[1]); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
+	case "setFilterEle":
+		var args struct {
+			FilterValue int
+			Index       int
+			Value       int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetFilterEle(args.FilterValue, args.Index, args.Value); err != nil {
 			payload = err.Error()
 			return
 		}
@@ -401,7 +421,9 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		}
 
 	default:
-		payload = errors.New("Unhandled message " + m.Name)
+		err = errors.New("Unhandled message " + m.Name)
+		payload = err.Error()
+		log.Printf("ERROR: %v %v\n", payload, err)
 	}
 	return
 }
