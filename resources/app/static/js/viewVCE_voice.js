@@ -94,6 +94,58 @@ let viewVCE_voice = {
 		viewVCE_filters.init();
 	},
 
+	updateOHARM: function (ele) {
+		var annotation = "";
+		var val = parseInt(ele.value,10);
+		if (val < 0) {
+			annotation = "&nbsp;(s" + (-val) + ")";
+		}
+
+		var index;
+		var id = ele.id;
+		var pattern = /.*\[(\d+)\]/;
+		if (ret = id.match(pattern)) {
+			index = ret[1];
+		}
+		console.log("OHARM-annotation["+index+"] = " + annotation);
+		document.getElementById("OHARM-annotation["+index+"]").innerHTML = annotation;
+
+	},
+
+	updateFDETUN: function (ele) {
+		/* THIS IS UGLY.  The Synergy uses a non-linear mapping of this byte to a 1/30Hz increment, 
+		* with 5 positive values reserved for "random" settings. Ick ick ick.  
+		*
+		* See D.DTN routine in VOIDSP.Z80 in the SYNHCS sourcecode.
+		*/
+		var annotation = "";
+		var val = parseInt(ele.value,10);
+		if (val == 0) {
+			// leave it blank
+		} else if (val > 58) {
+			annotation = "&nbsp;(ran" + (val-58) + ")";
+		} else if (val >= -32 && val <= 32) {
+			val = val*3;
+			annotation = "&nbsp;(" + (val) + ")";
+		} else if (val > 0) {
+			val = ((val * 2) - 32) * 3;
+			annotation = "&nbsp;(" + (val) + ")";
+		} else { // negative
+			val = ((val * 2) + 32) * 3;
+			annotation = "&nbsp;(" + (val) + ")";
+		}
+
+		var index;
+		var id = ele.id;
+		var pattern = /.*\[(\d+)\]/;
+		if (ret = id.match(pattern)) {
+			index = ret[1];
+		}
+		console.log("FDETUN-annotation["+index+"] = " + annotation);
+		document.getElementById("FDETUN-annotation["+index+"]").innerHTML = annotation;
+
+	},
+
 	onchange: function (ele, updater) {
 		var id = ele.id;
 		console.log("changed: " + id);
@@ -225,17 +277,19 @@ let viewVCE_voice = {
 			//--- Hrm
 			td = document.createElement("td");
 			td.innerHTML = `<input type="number" class="vceEdit vceNum" id="OHARM[${osc + 1}]" 
-			onchange="viewVCE_voice.onchange(this)" value="${vce.Envelopes[osc].FreqEnvelope.OHARM}" 
+			onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateOHARM)" value="${vce.Envelopes[osc].FreqEnvelope.OHARM}" 
 			min="-11" max="30"
-			disabled/>`;
+			disabled/>
+			<span id="OHARM-annotation[${osc + 1}]"/>`;
 			tr.appendChild(td);
 
 			//--- Detn
 			td = document.createElement("td");
 			td.innerHTML = `<input type="number" class="vceEdit vceNum" id="FDETUN[${osc + 1}]" 
-			onchange="viewVCE_voice.onchange(this)" value="${vce.Envelopes[osc].FreqEnvelope.FDETUN}" 
-			min="-127" max="128"
-			disabled/>`;
+			onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateFDETUN)" value="${vce.Envelopes[osc].FreqEnvelope.FDETUN}" 
+			min="-63" max="63"
+			disabled/>
+			<span id="FDETUN-annotation[${osc + 1}]"/>`;
 			tr.appendChild(td);
 
 			var waveByte = vce.Envelopes[osc].FreqEnvelope.Table[3];
@@ -280,6 +334,9 @@ let viewVCE_voice = {
 			tr.appendChild(td);
 
 			tbody.appendChild(tr);
+
+			viewVCE_voice.updateOHARM(document.getElementById(`OHARM[${osc + 1}]`));
+			viewVCE_voice.updateFDETUN(document.getElementById(`FDETUN[${osc + 1}]`));
 		}
 	},
 
