@@ -183,11 +183,47 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		}
 		payload = "ok"
 
+	case "setVoiceVEQEle":
+		var args struct {
+			Index int
+			Value int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetVoiceVEQEle(args.Index, args.Value); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
+	case "setVoiceKPROPEle":
+		var args struct {
+			Index int
+			Value int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetVoiceKPROPEle(args.Index, args.Value); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
 	case "setFilterEle":
 		var args struct {
 			UiFilterIndex int // 0=Af, 1..16=Bf
-			Index       int
-			Value       int
+			Index         int
+			Value         int
 		}
 		if len(m.Payload) > 0 {
 			// Unmarshal payload

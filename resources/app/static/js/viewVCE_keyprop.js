@@ -1,4 +1,5 @@
 let viewVCE_keyprop = {
+	chart: null,
 
 	keyPropCurve: function (kprop) {
 		var result = [];
@@ -10,21 +11,55 @@ let viewVCE_keyprop = {
 		return result;
 	},
 
+	onchange: function (ele) {
+		var id = ele.id;
+		console.log("changed: " + id);
+
+		var pattern = /keyprop\[(\d+)\]/;
+		if (ret = id.match(pattern)) {
+			index = parseInt(ret[1])
+			value = parseInt(ele.value, 10);
+		}
+		let message = {
+			"name": "setVoiceKPROPEle",
+			"payload": {
+				"Index": index,
+				"Value": value
+			}
+		};
+		astilectron.sendMessage(message, function (message) {
+			console.log("setVoiceKPROPEle returned: " + JSON.stringify(message));
+			// Check error
+			if (message.name === "error") {
+				// failed - dont change the value
+				index.errorNotification(message.payload);
+				return false;
+			} else {
+				vce.Head.KPROP[index - 1] = value;
+				viewVCE_keyprop.init();
+			}
+		});
+		return true;
+	},
+
 	init: function () {
 		console.log("keyPropChart init");
 		var propData = viewVCE_keyprop.keyPropCurve(vce.Head.KPROP);
 
-		$('#keyPropTable td.val').each(function (i, obj) {
+		$('#keyPropTable td.val input').each(function (i, obj) {
 			var id = obj.id;
-			// id is "kp<n>" - we need the <n> part
-			console.log("id: " + id + " str: " + idxString);
-			var idxString = id.substring(2);
-			var idx = parseInt(idxString, 10) - 1;
-			obj.innerHTML = propData[idx];
-		});
 
+			// id is "keyprop[<n>]" - we need the <n> part
+			var idxString = id.substring(8);
+			var idx = parseInt(idxString, 10) - 1;
+
+			obj.value = propData[idx];
+		});
+		if (viewVCE_keyprop.chart != null) {
+			viewVCE_keyprop.chart.destroy();
+		}
 		var ctx = document.getElementById('keyPropChart').getContext('2d');
-		var chart = new Chart(ctx, {
+		viewVCE_keyprop.chart = new Chart(ctx, {
 
 			type: 'line',
 
@@ -57,6 +92,10 @@ let viewVCE_keyprop = {
 
 			// Configuration options go here
 			options: {
+				animation: {
+					duration: 0
+				},
+
 				onClick: function (e) {
 					console.log("onClick: " + JSON.stringify(e));
 				},

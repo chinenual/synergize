@@ -28,6 +28,8 @@ func initMaps() {
 	voiceOffsetMap["VOITAB"] = offsetMapEle{data.Off_EDATA_VOITAB, false}
 	voiceOffsetMap["VTRANS"] = offsetMapEle{data.Off_EDATA_VTRANS, false}
 	voiceOffsetMap["APVIB"] = offsetMapEle{data.Off_EDATA_APVIB, false}
+	voiceOffsetMap["KPROP"] = offsetMapEle{data.Off_EDATA_KPROP, false}
+	voiceOffsetMap["VEQ"] = offsetMapEle{data.Off_EDATA_VEQ, false}
 	voiceOffsetMap["FILTER"] = offsetMapEle{data.Off_EDATA_FILTER_arr, false}
 
 	cmosOffsetMap["VTCENT"] = offsetMapEle{Off_CMOS_VTCENT, false}
@@ -197,6 +199,19 @@ func LoadVceVoicingMode(vce data.VCE) (err error) {
 	return
 }
 
+func RecalcEq() (err error) {
+	if err = command(OP_EXECUTE, "OP_EXECUTE"); err != nil {
+		return
+	}
+	if err = writeU16(synAddrs.exec_REAEQ, "REAEQ addr"); err != nil {
+		return
+	}
+	if err = writeU16(0, "REAEQ args"); err != nil {
+		return
+	}
+	return
+}
+
 func RecalcFilters() (err error) {
 	if err = command(OP_EXECUTE, "OP_EXECUTE"); err != nil {
 		return
@@ -292,56 +307,24 @@ func GetVoiceOscDataByte(osc /*1-based*/ int, fieldName string) (value byte, err
 	return
 }
 
-/****
-func SetVoiceVEQValue(index, value byte) (err error) {
-	if err = SetVoiceHeadDataByte(data.Off_EDATA_VEQ+int(index), value, "set VEQ", false); err != nil {
+func SetVoiceVEQEle(index /* 1-based */ int, value int) (err error) {
+	addr := VoiceHeadAddr(data.Off_EDATA_VEQ) + uint16(index-1)
+	if err = LoadByte(addr, byte(value), "set VEQ["+strconv.Itoa(index)+"]"); err != nil {
+		return
+	}
+	if err = RecalcEq(); err != nil {
 		return
 	}
 	return
 }
 
-func SetVoiceVEQArray(value []byte) (err error) {
-	if err = SetVoiceHeadDataArray(data.Off_EDATA_VEQ, value, "set VEQ", false); err != nil {
+func SetVoiceKPROPEle(index /* 1-based */ int, value int) (err error) {
+	addr := VoiceHeadAddr(data.Off_EDATA_KPROP) + uint16(index-1)
+	if err = LoadByte(addr, byte(value), "set KPROP["+strconv.Itoa(index)+"]"); err != nil {
 		return
 	}
 	return
 }
-
-func SetVoiceKPROPValue(index, value byte) (err error) {
-	if err = SetVoiceHeadDataByte(data.Off_EDATA_KPROP+int(index), value, "set Kprop", false); err != nil {
-		return
-	}
-	return
-}
-
-func SetVoiceKPROPArray(value []byte) (err error) {
-	if err = SetVoiceHeadDataArray(data.Off_EDATA_KPROP, value, "set Kprop", false); err != nil {
-		return
-	}
-	return
-}
-
-func SetVoiceAPVIB(value byte) (err error) {
-	if err = SetVoiceHeadDataByte(data.Off_EDATA_APVIB, value, "set APVIB", true); err != nil {
-		return
-	}
-	return
-}
-
-func SetVoiceOscOHARM(osc int, value int8) (err error) {
-	if err = SetVoiceOscDataByte(osc, data.Off_EOSC_OHARM, byte(value), "set OHARM", true); err != nil {
-		return
-	}
-	return
-}
-
-func SetVoiceOscFDETUN(osc int, value int8) (err error) {
-	if err = SetVoiceOscDataByte(osc, data.Off_EOSC_FDETUN, byte(value), "set FDETUN", true); err != nil {
-		return
-	}
-	return
-}
-*****/
 
 // emulate the SYNHCS GEDPTR subroutine: get OSC specific offset into the EDATA array
 func gedptr(osc int) uint16 {

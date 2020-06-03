@@ -1,4 +1,6 @@
 let viewVCE_keyeq = {
+	chart: null,
+
 	keyEqCurve: function (keq) {
 		var result = [];
 		// y = -24..6
@@ -9,20 +11,55 @@ let viewVCE_keyeq = {
 		return result;
 	},
 
+	onchange: function (ele) {
+		var id = ele.id;
+		console.log("changed: " + id);
+
+		var pattern = /keyeq\[(\d+)\]/;
+		if (ret = id.match(pattern)) {
+			index = parseInt(ret[1])
+			value = parseInt(ele.value, 10);
+		}
+		let message = {
+			"name": "setVoiceVEQEle",
+			"payload": {
+				"Index": index,
+				"Value": value
+			}
+		};
+		astilectron.sendMessage(message, function (message) {
+			console.log("setVoiceVEQEle returned: " + JSON.stringify(message));
+			// Check error
+			if (message.name === "error") {
+				// failed - dont change the value
+				index.errorNotification(message.payload);
+				return false;
+			} else {
+				vce.Head.VEQ[index - 1] = value;
+				viewVCE_keyeq.init();
+			}
+		});
+		return true;
+	},
+
 	init: function () {
 		console.log("keyEqChart init");
 		var propData = viewVCE_keyeq.keyEqCurve(vce.Head.VEQ);
 
-		$('#keyEqTable td.val').each(function (i, obj) {
+		$('#keyEqTable td.val input').each(function (i, obj) {
 			var id = obj.id;
-			// id is "keq<n>" - we need the <n> part
-			var idxString = id.substring(3);
+			// id is "keyeq[<n>]" - we need the <n> part
+			var idxString = id.substring(6);
 			var idx = parseInt(idxString, 10) - 1;
-			obj.innerHTML = propData[idx];
+
+			obj.value = propData[idx];
 		});
+		if (viewVCE_keyeq.chart != null) {
+			viewVCE_keyeq.chart.destroy();
+		}
 
 		var ctx = document.getElementById('keyEqChart').getContext('2d');
-		var chart = new Chart(ctx, {
+		viewVCE_keyeq.chart = new Chart(ctx, {
 
 			type: 'line',
 			data: {
@@ -41,6 +78,10 @@ let viewVCE_keyeq = {
 
 			// Configuration options go here
 			options: {
+				animation: {
+					duration: 0
+				},
+
 				tooltips: {
 					mode: 'index',
 				},
