@@ -185,7 +185,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 
 	case "setFilterEle":
 		var args struct {
-			FilterValue int
+			UiFilterIndex int // 0=Af, 1..16=Bf
 			Index       int
 			Value       int
 		}
@@ -196,7 +196,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		if err = synio.SetFilterEle(args.FilterValue, args.Index, args.Value); err != nil {
+		if err = synio.SetFilterEle(args.UiFilterIndex, args.Index, args.Value); err != nil {
 			payload = err.Error()
 			return
 		}

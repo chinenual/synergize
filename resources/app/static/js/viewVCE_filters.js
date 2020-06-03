@@ -6,15 +6,16 @@ let viewVCE_filters = {
 		console.log("changed: " + id);
 
 		var selectEle = document.getElementById("filterSelect");
-		var filterIndex = selectEle.selectedIndex;
-		var filterValue = vce.Head.FILTER[filterIndex];
+		var filterIndex = parseInt(selectEle.value,10); // index into the uncompressedFilters array
+		var filterName = selectEle.options[selectEle.selectedIndex].innerHTML;
+		var filterValue = vce.Head.FILTER[filterIndex]; 
 
+		console.log("filter ele change " + filterIndex + " " + filterValue);
 		var param
 		var args
 		var filterPattern = /filter\[(\d+)\]/;
 		if (ret = id.match(filterPattern)) {
 			funcname = "setFILTEREle";
-			filterValue = filterValue;
 			index = parseInt(ret[1])
 			value = parseInt(ele.value, 10);
 		}
@@ -22,7 +23,7 @@ let viewVCE_filters = {
 		let message = {
 			"name": "setFilterEle",
 			"payload": {
-				"FilterValue": filterValue,
+				"UiFilterIndex": filterIndex,
 				"Index": index,
 				"Value": value
 			}
@@ -36,7 +37,7 @@ let viewVCE_filters = {
 				return false;
 			} else {
 				vce.Extra.uncompressedFilters[filterIndex][index - 1] = value;
-				viewVCE_filters.filtersChartUpdate(selectEle.options[filterIndex].value, selectEle.options[filterIndex].innerHTML);
+				viewVCE_filters.filtersChartUpdate(filterIndex, filterName, false);
 			}
 		});
 		return true;
@@ -142,14 +143,14 @@ let viewVCE_filters = {
 			document.getElementById("filtersChart").style.display = "none";
 		} else if (filterNames.length > 1) {
 			// "All" == -1
-			viewVCE_filters.filtersChartUpdate(-1, 'All');
+			viewVCE_filters.filtersChartUpdate(-1, 'All',true);
 		} else {
 			// first filter
-			viewVCE_filters.filtersChartUpdate(filterValues[0], filterNames[0]);
+			viewVCE_filters.filtersChartUpdate(filterValues[0], filterNames[0],true);
 		}
 	},
 
-	filtersChartUpdate: function (filterIndex, filterName) {
+	filtersChartUpdate: function (filterIndex, filterName, animate) {
 		filterIndex = parseInt(filterIndex, 10);
 		console.log("filtersChart init " + filterIndex);
 		var datasets = [];
@@ -246,6 +247,10 @@ let viewVCE_filters = {
 		if (viewVCE_filters.chart != null) {
 			viewVCE_filters.chart.destroy();
 		}
+
+		var animation_duration = animate ? 1000 : 0;
+		console.log("animate: " + animate + " duration: " + animation_duration);
+		
 		viewVCE_filters.chart = new Chart(ctx, {
 
 			type: 'line',
@@ -256,6 +261,10 @@ let viewVCE_filters = {
 
 			// Configuration options go here
 			options: {
+				animation: {
+					duration: animation_duration
+				},
+
 				tooltips: {
 					mode: 'index',
 				},

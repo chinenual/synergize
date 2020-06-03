@@ -134,24 +134,15 @@ func SetOscSolo(mute, solo []bool) (oscStatus [16]bool, err error) {
 	return
 }
 
-func SetFilterEle(filterValue /*-1 for Af, one-based osc# for Bf */ int, index /* one-based */ int, value int) (err error) {
+func SetFilterEle(uiFilterIndex /*0 for Af, one-based osc# for Bf */ int, index /* one-based */ int, value int) (err error) {
 	// ASSUMES we're only editing voice #1.
 	// AFilter is always at 0 in the FILTAB;
 	// Bfilters start at 2, so osc #1's filter is at zero-based index 1 of the FILTAB
 	// Bfilter value is the one-based osc#
 
-	if filterValue < 0 {
-		// A-filter
-		addr := VramAddr(data.Off_VRAM_FILTAB) + uint16(index-1)
-		if err = LoadByte(addr, byte(value), "set AFILTER["+strconv.Itoa(index)+"]"); err != nil {
-			return
-		}
-	} else {
-		// B-filter
-		addr := VramAddr(data.Off_VRAM_FILTAB) + uint16((filterValue*data.VRAM_FILTR_length)+(index-1))
-		if err = LoadByte(addr, byte(value), "set BFILTER["+strconv.Itoa(index)+"]"); err != nil {
-			return
-		}
+	addr := VramAddr(data.Off_VRAM_FILTAB) + uint16((uiFilterIndex*data.VRAM_FILTR_length)+(index-1))
+	if err = LoadByte(addr, byte(value), "set BFILTER["+strconv.Itoa(index)+"]"); err != nil {
+		return
 	}
 	if err = RecalcFilters(); err != nil {
 		return
