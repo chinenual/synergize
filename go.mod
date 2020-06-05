@@ -19,6 +19,8 @@ require (
 	github.com/orcaman/writerseeker v0.0.0-20180723184025-774071c66cec
 	github.com/pkg/errors v0.9.1
 	github.com/snksoft/crc v1.1.0
+	gitlab.com/gomidi/midi v1.17.0 // indirect
+	gitlab.com/gomidi/rtmididrv v0.10.1 // indirect
 	golang.org/x/sys v0.0.0-20200513112337-417ce2331b5c // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )

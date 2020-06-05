@@ -89,7 +89,8 @@
 					<table>
 						<tr>
 							<td>Voice Name</td>
-							<td><span id="name" /></td>
+							<!-- HACK: add margin to align with TouchSpin styled fields -->
+							<td><span <span class="spinNOSPIN" id="name" /></td>
 						</tr>
 						<tr>
 							<td>&nbsp;</td>
@@ -97,13 +98,14 @@
 						</tr>
 						<tr>
 							<td>Oscillators</td>
-							<td><input class="vceEdit vceNum ts" type="text" id="nOsc" min="1" max="16"
-									onchange="viewVCE_voice.onchange(viewVCE_voice.setNumOscillators(this.value))"
+							<td><input class="vceEdit vceNum spinPLAIN" type="text" id="nOsc" min="1" max="16"
+									onchange="viewVCE_voice.setNumOscillators(this.value)"
 									disabled /></td>
 						</tr>
 						<tr>
 							<td>Keys Playable</td>
-							<td><span id="keysPlayable" /></td>
+							<!-- HACK: add margin to align with TouchSpin styled fields -->
+							<td><span class="spinNOSPIN" id="keysPlayable" /></td>
 						</tr>
 
 
@@ -114,28 +116,29 @@
 						<tr>
 							<td>Vibrato Type</td>
 							<td>
-								<span id="vibType"></span>
+							<!-- HACK: add margin to align with TouchSpin styled fields -->
+							<span class="spinNOSPIN" id="vibType"></span>
 							</td>
 						</tr>
 						<tr>
 							<td>Vibrato Depth</td>
-							<td><input class="vceEdit vceNum" type="text" id="VIBDEP" min="-128" max="128"
+							<td><input class="vceEdit vceNum spinPLAIN" type="text" id="VIBDEP" min="-128" max="128"
 									onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateVibType)" disabled /></td>
 						</tr>
 						<tr>
 							<td>Vibrato Rate</td>
-							<td><input class="vceEdit vceNum" type="text" id="VIBRAT" min="0" max="127"
+							<td><input class="vceEdit vceNum spinPLAIN" type="text" id="VIBRAT" min="0" max="127"
 									onchange="viewVCE_voice.onchange(this)" disabled /></td>
 						</tr>
 						<tr>
 							<td>Vibrato Delay</td>
-							<td><input class="vceEdit vceNum" type="text" id="VIBDEL" min="0" max="127"
+							<td><input class="vceEdit vceNum spinPLAIN" type="text" id="VIBDEL" min="0" max="127"
 									onchange="viewVCE_voice.onchange(this);" disabled />
 							</td>
 						</tr>
 						<tr>
 							<td>Aperiodic Vibrato</td>
-							<td><input class="vceEdit vceNum" type="text" id="APVIB" min="-128" max="128"
+							<td><input class="vceEdit vceNum spinPLAIN" type="text" id="APVIB" min="-128" max="128"
 									onchange="viewVCE_voice.onchange(this)" disabled />
 								<!--FIXME:validate range-->
 							</td>
@@ -146,13 +149,13 @@
 						</tr>
 						<tr>
 							<td>Amp Center</td>
-							<td><input class="vceEdit vceNum" type="text" id="VACENT" min="0" max="32"
+							<td><input class="vceEdit vceNum spinPLAIN" type="text" id="VACENT" min="0" max="32"
 									onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled />
 							</td>
 						</tr>
 						<tr>
 							<td>Amp Sensitivity</td>
-							<td><input class="vceEdit vceNum" type="text" id="VASENS" min="0" max="31"
+							<td><input class="vceEdit vceNum spinPLAIN" type="text" id="VASENS" min="0" max="31"
 									onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled />
 							</td>
 						</tr>
@@ -162,13 +165,13 @@
 						</tr>
 						<tr>
 							<td>Timbre Center</td>
-							<td><input class="vceEdit vceNum" type="text" id="VTCENT" min="0" max="32"
+							<td><input class="vceEdit vceNum spinPLAIN" type="text" id="VTCENT" min="0" max="32"
 									onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled />
 							</td>
 						</tr>
 						<tr>
 							<td>Timbre Sensitivity</td>
-							<td><input class="vceEdit vceNum" type="text" id="VTSENS" min="0" max="31"
+							<td><input class="vceEdit vceNum spinPLAIN" type="text" id="VTSENS" min="0" max="31"
 									onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled />
 							</td>
 						</tr>
@@ -178,7 +181,7 @@
 						</tr>
 						<tr>
 							<td>Transpose</td>
-							<td><input class="vceEdit vceNum" type="text" id="VTRANS" min="-127" max="128"
+							<td><input class="vceEdit vceNum spinPLAIN" type="text" id="VTRANS" min="-127" max="128"
 									onchange="viewVCE_voice.onchange(this)" disabled /></td>
 						</tr>
 						<tr>
@@ -187,7 +190,8 @@
 						</tr>
 						<tr>
 							<td>Filters Used</td>
-							<td><span id="nFilter" /></td>
+							<!-- HACK: add margin to align with TouchSpin styled fields -->
+							<td><span class="spinNOSPIN" id="nFilter" /></td>
 						</tr>
 					</table>
 				</td>
@@ -646,7 +650,7 @@
 					<td>1</td>
 					<td>11</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[1]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[1]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 
@@ -655,7 +659,7 @@
 					<td>9</td>
 					<td>72</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[9]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[9]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 
@@ -665,7 +669,7 @@
 					<td>17</td>
 					<td>461</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[17]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[17]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 
@@ -675,7 +679,7 @@
 					<td>25</td>
 					<td>2929</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[25]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[25]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 				</tr>
@@ -684,25 +688,25 @@
 					<td>2</td>
 					<td>14</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[2]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[2]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>10</td>
 					<td>91</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[10]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[10]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>18</td>
 					<td>581</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[18]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[18]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>26</td>
 					<td>3691</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[26]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[26]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 				</tr>
@@ -711,25 +715,25 @@
 					<td>3</td>
 					<td>18</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[3]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[3]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>11</td>
 					<td>115</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[11]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[11]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>19</td>
 					<td>732</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[19]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[19]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>27</td>
 					<td>4650</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[27]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[27]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 				</tr>
@@ -738,25 +742,25 @@
 					<td>4</td>
 					<td>72</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[4]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[4]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>12</td>
 					<td>145</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[12]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[12]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>20</td>
 					<td>922</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[20]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[20]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>28</td>
 					<td>5859</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[28]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[28]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 				</tr>
@@ -765,25 +769,25 @@
 					<td>5</td>
 					<td>28</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[5]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[5]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>13</td>
 					<td>183</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[13]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[13]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>21</td>
 					<td>1162</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[21]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[21]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>29</td>
 					<td>7382</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[29]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[29]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 				</tr>
 
@@ -791,25 +795,25 @@
 					<td>6</td>
 					<td>36</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[6]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[6]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>14</td>
 					<td>230</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[14]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[14]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>22</td>
 					<td>1464</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[22]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[22]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>30</td>
 					<td>9300</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[30]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[30]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 				</tr>
@@ -818,25 +822,25 @@
 					<td>7</td>
 					<td>45</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[7]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[7]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>15</td>
 					<td>290</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[15]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[15]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>23</td>
 					<td>1845</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[23]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[23]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>31</td>
 					<td>11718</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[31]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[31]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 				</tr>
@@ -845,25 +849,25 @@
 					<td>8</td>
 					<td>57</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[8]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[8]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>16</td>
 					<td>366</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[16]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[16]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>24</td>
 					<td>2325</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[24]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[24]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 					<td>32</td>
 					<td>14764</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="filter[32]" min="-64" max="63"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="filter[32]" min="-64" max="63"
 							onchange="viewVCE_filters.onchange(this)" disabled />
 					</td>
 				</tr>
@@ -909,7 +913,7 @@
 					<td>1</td>
 					<td>E1</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyeq[1]" min="-24" max="6"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[1]" min="-24" max="6"
 							onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 
@@ -918,7 +922,7 @@
 					<td>7</td>
 					<td>B3</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyeq[7]" min="-24" max="6"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[7]" min="-24" max="6"
 							onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 					<td rowspan="8" style="padding:10px;"></td>
@@ -926,7 +930,7 @@
 					<td>13</td>
 					<td>E4</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[13]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[13]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 
@@ -936,7 +940,7 @@
 					<td>19</td>
 					<td>B6</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[19]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[19]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 
@@ -946,25 +950,25 @@
 					<td>2</td>
 					<td>G#1</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[2]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[2]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 					<td>8</td>
 					<td>D4</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[8]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[8]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 					<td>14</td>
 					<td>G#5</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[14]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[14]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 					<td>20</td>
 					<td>D7</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[20]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[20]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 				</tr>
@@ -973,25 +977,25 @@
 					<td>3</td>
 					<td>B1</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[3]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[3]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 					<td>9</td>
 					<td>E4</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[9]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[9]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 					<td>15</td>
 					<td>B5</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[15]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[15]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 					<td>21</td>
 					<td>E6</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[21]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[21]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 				</tr>
@@ -1000,25 +1004,25 @@
 					<td>4</td>
 					<td>D3</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[4]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[4]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 					<td>10</td>
 					<td>G#4</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[10]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[10]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 					<td>16</td>
 					<td>D6</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[16]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[16]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 					<td>22</td>
 					<td>G#7</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[22]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[22]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 				</tr>
@@ -1027,25 +1031,25 @@
 					<td>5</td>
 					<td>E2</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[5]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[5]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 					<td>11</td>
 					<td>B4</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[11]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[11]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 					<td>17</td>
 					<td>E6</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[17]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[17]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 					<td>23</td>
 					<td>B7</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[23]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[23]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 				</tr>
@@ -1054,25 +1058,25 @@
 					<td>6</td>
 					<td>G#3</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[6]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[6]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 					<td>12</td>
 					<td>D5</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[12]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[12]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 					<td>18</td>
 					<td>G#6</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[18]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[18]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 					<td>24</td>
 					<td>D8</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyeq[24]" min="-24" max="6"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[24]" min="-24" max="6"
 						onchange="viewVCE_keyeq.onchange(this)" disabled />
 					</td>
 				</tr>
@@ -1117,7 +1121,7 @@
 					<td>1</td>
 					<td>E1</td>
 					<td class="val">
-					<input class="vceEdit vceNum" type="text" id="keyprop[1]" min="0" max="32"
+					<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[1]" min="0" max="32"
 						onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 
@@ -1126,7 +1130,7 @@
 					<td>7</td>
 					<td>B3</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[7]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[7]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 
@@ -1135,7 +1139,7 @@
 					<td>13</td>
 					<td>E4</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[13]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[13]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 
@@ -1145,7 +1149,7 @@
 					<td>19</td>
 					<td>B6</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[19]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[19]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 
@@ -1155,25 +1159,25 @@
 					<td>2</td>
 					<td>G#1</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[2]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[2]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 					<td>8</td>
 					<td>D4</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[8]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[8]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 					<td>14</td>
 					<td>G#5</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[14]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[14]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 					<td>20</td>
 					<td>D7</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[20]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[20]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 				</tr>
@@ -1182,25 +1186,25 @@
 					<td>3</td>
 					<td>B1</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[3]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[3]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 					<td>9</td>
 					<td>E4</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[9]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[9]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 					<td>15</td>
 					<td>B5</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[15]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[15]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 					<td>21</td>
 					<td>E6</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[21]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[21]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 				</tr>
@@ -1209,25 +1213,25 @@
 					<td>4</td>
 					<td>D3</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[4]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[4]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 					<td>10</td>
 					<td>G#4</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[10]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[10]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 					<td>16</td>
 					<td>D6</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[16]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[16]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 					<td>22</td>
 					<td>G#7</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[22]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[22]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 				</tr>
@@ -1236,25 +1240,25 @@
 					<td>5</td>
 					<td>E2</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[5]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[5]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 					<td>11</td>
 					<td>B4</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[11]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[11]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 					<td>17</td>
 					<td>E6</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[17]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[17]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 					<td>23</td>
 					<td>B7</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[23]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[23]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 				</tr>
@@ -1263,25 +1267,25 @@
 					<td>6</td>
 					<td>G#3</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[6]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[6]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 					<td>12</td>
 					<td>D5</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[12]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[12]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 					<td>18</td>
 					<td>G#6</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[18]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[18]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 					<td>24</td>
 					<td>D8</td>
 					<td class="val">
-						<input class="vceEdit vceNum" type="text" id="keyprop[24]" min="0" max="32"
+						<input class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[24]" min="0" max="32"
 							onchange="viewVCE_keyprop.onchange(this)" disabled />
 					</td>
 				</tr>

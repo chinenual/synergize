@@ -94,82 +94,117 @@ let viewVCE_voice = {
 		viewVCE_filters.init();
 	},
 
-	updateOHARM: function (ele) {
-		var annotation = "";
-		var val = parseInt(ele.value, 10);
+	OHARMToText: function (str) {
+		var newStr;
+		var val = parseInt(str, 10);
 		if (val < 0) {
-			annotation = "&nbsp;(s" + (-val) + ")";
-		}
-
-		var index;
-		var id = ele.id;
-		var pattern = /.*\[(\d+)\]/;
-		if (ret = id.match(pattern)) {
-			index = ret[1];
-		}
-		console.log("OHARM-annotation[" + index + "] = " + annotation);
-		document.getElementById("OHARM-annotation[" + index + "]").innerHTML = annotation;
-
-	},
-
-	OHARMtoText: function (val) {
-		if (val < 0) {
-			return "s" + (-val);
+			newStr = "s" + (-val);
 		} else {
-			return val;
+			newStr = str;
 		}
+		//console.log("   OHARMToText(" + str + ") returns " + newStr);
+		return newStr;
 	},
 
-	TextToOHARM: function (val) {
-		if (typeof val === 'number') {
-			return val;
-		} else if (ret = val.match(/s(\d+)/)) {
+	TextToOHARM: function (str) {
+		var newStr;
+		if (ret = str.match(/s(\d+)/)) {
 			val = parseInt(ret[1], 10);
-			return -val;
+			newStr = '' + (-val);
+		} else if (ret = str.match(/\d+/)) {
+			newStr = str;
 		} else {
 			/// error! 
-			console.log("ERROR: TextToOHARM cant decode " + val);
-			return val;
+			console.log("ERROR: TextToOHARM cant decode " + str);
+			newStr = str;
 		}
+		//console.log("   TextToOHARM(" + str + ") returns " + newStr);
+		return newStr;
 	},
 
-	updateFDETUN: function (ele) {
+	FDETUNToText: function (str) {
 		/* THIS IS UGLY.  The Synergy uses a non-linear mapping of this byte to a 1/30Hz increment, 
 		* with 5 positive values reserved for "random" settings. Ick ick ick.  
 		*
 		* See D.DTN routine in VOIDSP.Z80 in the SYNHCS sourcecode.
 		*/
-		var annotation = "";
-		var val = parseInt(ele.value, 10);
-		if (val == 0) {
-			// leave it blank
-		} else if (val > 58) {
-			annotation = "&nbsp;(ran" + (val - 58) + ")";
+		var newStr;
+		var val = parseInt(str, 10);
+		if (val > 58) {
+			// CASE A
+			newStr = "ran" + (val - 58);
 		} else if (val >= -32 && val <= 32) {
+			// CASE B
 			val = val * 3;
-			annotation = "&nbsp;(" + (val) + ")";
+			newStr = ''+val;
 		} else if (val > 0) {
+			// CASE C
 			val = ((val * 2) - 32) * 3;
-			annotation = "&nbsp;(" + (val) + ")";
+			newStr = ''+val;
 		} else { // negative
+			// CASE D
 			val = ((val * 2) + 32) * 3;
-			annotation = "&nbsp;(" + (val) + ")";
+			newStr = ''+val;
 		}
-
-		var index;
-		var id = ele.id;
-		var pattern = /.*\[(\d+)\]/;
-		if (ret = id.match(pattern)) {
-			index = ret[1];
-		}
-		console.log("FDETUN-annotation[" + index + "] = " + annotation);
-		document.getElementById("FDETUN-annotation[" + index + "]").innerHTML = annotation;
-
+		//console.log("   FDETUNToText(" + str + ") returns " + newStr);
+		return newStr;
 	},
 
-	onchange: function (ele, updater) {
+	TextToFDETUN: function (str) {
+		// See FDETUNToText.  This "reverses" that attrocity
+		var newStr;
+		if (ret = str.match(/ran(\d+)/)) {
+			// CASE A
+			var val = parseInt(ret[1],10);
+			val += 58;
+			newStr = '' + val;
+		} else {
+			var val = parseInt(str,10);
+			if (val >= (-32*3) && val <= (32*3)) {
+				// CASE B
+				val /= 3;
+			} else if (val > 0) {
+				// CASE C
+				val = ((val/3) + 32) / 2;
+			} else {
+				// CASE D
+				val = ((val/3) - 32) / 2;			
+			}
+			newStr = '' + val;
+		}
+		//console.log("   TextToFDETUN(" + str + ") returns " + newStr);
+		return newStr;
+	},
+
+	testConversionFunctions: function() {
+		var ok = true;
+		for (var i = -11; i <= 30; i++) {
+			var str = viewVCE_voice.OHARMToText(''+i);
+			var reverseStr = viewVCE_voice.TextToOHARM(str);
+			if ((''+i) != reverseStr) {
+				ok = false;
+				console.log("ERROR: OHARM " + i + " totext: " + str + " reversed to " + reverseStr)
+			}
+		}
+		for (var i = -63; i <= 63; i++) {
+			var str = viewVCE_voice.FDETUNToText(''+i);
+			var reverseStr = viewVCE_voice.TextToFDETUN(str);
+			if ((''+i) != reverseStr) {
+				ok = false;
+				console.log("ERROR: FDETUN " + i + " totext: " + str + " reversed to " + reverseStr)
+			}
+		}
+		console.log("viewVCE_voice.testConversionFunctions: " + (ok ? "PASS" : "FAIL"));
+	},
+
+	onchange: function (ele, updater, valueConverter) {
 		var id = ele.id;
-		console.log("changed: " + id);
+		console.log("changed: " + id + ", new value: " + ele.value);
+
+		if (valueConverter == undefined) {
+			// identity function if none passed
+			valueConverter = function (v) { return v };
+		}
 
 		var param
 		var args
@@ -181,7 +216,7 @@ let viewVCE_voice = {
 			param = "FILTER"
 			funcname = "setOscFILTER";
 			osc = parseInt(ret[1])
-			args = [osc, parseInt(ele.value, 10)];
+			args = [osc, parseInt(valueConverter(ele.value), 10)];
 		} else if (ret = id.match(waveKeyPattern)) {
 			param = ret[1]
 			osc = parseInt(ret[2], 10)
@@ -195,16 +230,16 @@ let viewVCE_voice = {
 		} else if (ret = id.match(oscPattern)) {
 			param = ret[1];
 			osc = parseInt(ret[2], 10)
-			args = [osc, parseInt(ele.value, 10)]
+			args = [osc, parseInt(valueConverter(ele.value), 10)]
 
 			console.log("changed: " + id + " param: " + param + " osc: " + osc);
-			vce.Envelopes[osc - 1][param] = ele.value;
+			vce.Envelopes[osc - 1][param] = valueConverter(ele.value);
 			funcname = "setVoiceByte"
 
 		} else if (ret = id.match(headPattern)) {
 			param = id;
-			args = [parseInt(ele.value, 10)]
-			vce.Head[param] = ele.value;
+			args = [parseInt(valueConverter(ele.value), 10)]
+			vce.Head[param] = valueConverter(ele.value);
 			funcname = "setVoiceByte"
 		}
 		//console.dir(vce);
@@ -297,20 +332,18 @@ let viewVCE_voice = {
 
 			//--- Hrm
 			td = document.createElement("td");
-			td.innerHTML = `<input type="number" class="vceEdit vceNum" id="OHARM[${osc + 1}]" 
-			onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateOHARM)" value="${vce.Envelopes[osc].FreqEnvelope.OHARM}" 
+			td.innerHTML = `<input type="text" class="vceEdit vceNum spinOHARM" id="OHARM[${osc + 1}]" 
+			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToOHARM)" value="${viewVCE_voice.OHARMToText(vce.Envelopes[osc].FreqEnvelope.OHARM)}" 
 			min="-11" max="30"
-			disabled/>
-			<span id="OHARM-annotation[${osc + 1}]"/>`;
+			disabled/>`;
 			tr.appendChild(td);
 
 			//--- Detn
 			td = document.createElement("td");
-			td.innerHTML = `<input type="number" class="vceEdit vceNum" id="FDETUN[${osc + 1}]" 
-			onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateFDETUN)" value="${vce.Envelopes[osc].FreqEnvelope.FDETUN}" 
+			td.innerHTML = `<input type="text" class="vceEdit vceNum spinFDETUN" id="FDETUN[${osc + 1}]" 
+			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToFDETUN)" value="${viewVCE_voice.FDETUNToText(vce.Envelopes[osc].FreqEnvelope.FDETUN)}" 
 			min="-63" max="63"
-			disabled/>
-			<span id="FDETUN-annotation[${osc + 1}]"/>`;
+			disabled/>`;
 			tr.appendChild(td);
 
 			var waveByte = vce.Envelopes[osc].FreqEnvelope.Table[3];
@@ -355,9 +388,6 @@ let viewVCE_voice = {
 			tr.appendChild(td);
 
 			tbody.appendChild(tr);
-
-			viewVCE_voice.updateOHARM(document.getElementById(`OHARM[${osc + 1}]`));
-			viewVCE_voice.updateFDETUN(document.getElementById(`FDETUN[${osc + 1}]`));
 		}
 	},
 
@@ -473,11 +503,37 @@ let viewVCE_voice = {
 
 	voicingModeVisuals: function () {
 		console.log("voicingModeVisuals " + viewVCE_voice.voicingMode);
+
 		if (viewVCE_voice.voicingMode) {
-			$('.vceNum').TouchSpin({
+			// CSS for styling the buttons when disabled is HARD.  So avoid it.
+			$('.vceNum.spinOHARM').TouchSpin({
+				buttonup_txt: '\u25b4', //'\u25b2',
+				buttondown_txt: '\u25be', //'\u25bc',
+				callback_before_calculation: function (value) {
+					return viewVCE_voice.TextToOHARM(value);
+				},
+				callback_after_calculation: function (value) {
+					return viewVCE_voice.OHARMToText(value);
+				}
+			});
+			$('.vceNum.spinFDETUN').TouchSpin({
+				buttonup_txt: '\u25b4', //'\u25b2',
+				buttondown_txt: '\u25be', //'\u25bc',
+				callback_before_calculation: function (value) {
+					return viewVCE_voice.TextToFDETUN(value);
+				},
+				callback_after_calculation: function (value) {
+					return viewVCE_voice.FDETUNToText(value);
+				}
+			});
+			// plain number variant:
+			$('.vceNum.spinPLAIN').TouchSpin({
 				buttonup_txt: '\u25b4', //'\u25b2',
 				buttondown_txt: '\u25be', //'\u25bc',
 			});
+			// make any plain-text spans align:
+			$('.spinNOSPIN').addClass("spinNOSPIN-Enabled");
+			
 		}
 		$('.vceEdit').prop('disabled', !viewVCE_voice.voicingMode);
 		if (viewVCE_voice.voicingMode) {
@@ -505,6 +561,8 @@ let viewVCE_voice = {
 
 	init: function () {
 		console.log("vceVoiceTab init");
+
+		viewVCE_voice.testConversionFunctions();
 
 		viewVCE_voice.patchTable();
 

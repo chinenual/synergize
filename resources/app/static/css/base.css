@@ -250,6 +250,11 @@ input[disabled].vceEdit:hover, input[disabled].vceEdit:active, input[disabled].v
     background-color: #fff;
 }
 
+.bootstrap-touchspin-injected .form-control:disabled,
+.bootstrap-touchspin-injected .form-control[readonly] {
+    background-color: #222;
+}
+
 .bootstrap-touchspin-injected input {
      /* override bootstrappy css for the TouchSpin module */
      flex-grow: 0 !important;
@@ -279,16 +284,20 @@ input[disabled].vceEdit:hover, input[disabled].vceEdit:active, input[disabled].v
      height: 19px;
      font-size: inherit;
 }
-/* hide spinner buttons unless focussed */
+/* hide spinner buttons unless focused */
 .bootstrap-touchspin-injected:focus-within .btn,
 .bootstrap-touchspin-injected:hover .btn {
     flex-basis: 12px;
     display:block;
 }
-/* hide spinner buttons unless focussed */
+/* hide spinner buttons unless focused */
 .bootstrap-touchspin-injected:focus-within input,
 .bootstrap-touchspin-injected:hover input {
     flex-basis: 3.7em;
     border-radius: 5px;
 }
 
+/* plain text that needs to align with SPIN controls. See voicingModeVisuals() for the hack */
+span.spinNOSPIN-Enabled {
+    margin-left: 12px;
+}
