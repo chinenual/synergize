@@ -6,14 +6,27 @@
 	<meta charset="UTF-8">
 
 	<link rel="stylesheet" href="static/css/bootstrap.min-darkly.css">
+	<link rel="stylesheet" href="static/css/jquery.bootstrap-touchspin.css"/>
 	<link rel="stylesheet" href="static/css/base.css">
 
-	<!-- jQuery/Electron "bug": https://techsparx.com/nodejs/electron/load-jquery-bootstrap.html -->
-	<script src="static/js/jquery-3.4.1.min.js" type="text/javascript"
-		onload="window.$ = window.jQuery = module.exports;"></script>
+	<script>
+    	  <!-- https://www.electronjs.org/docs/faq -->
+    	  window.nodeRequire = require;
+	  delete window.require;
+	  delete window.exports;
+	  delete window.module;
+	</script>
+	<script src="static/js/jquery-3.4.1.min.js" type="text/javascript"></script>
+  
 	<script src="static/js/popper.min.js"></script>
 	<script src="static/js/bootstrap.min.js"></script>
+	<script src="static/js/jquery.bootstrap-touchspin.js"></script>
 	<script src="static/js/Chart.bundle.min.js"></script>
+
+	<script>
+    	  window.require = window.nodeRequire;
+	</script>
+	
 	<script src="static/js/index.js"></script>
 	<script src="static/js/viewVCE.js"></script>
 	<script src="static/js/viewVCE_voice.js"></script>
@@ -22,6 +35,8 @@
 	<script src="static/js/viewVCE_keyeq.js"></script>
 	<script src="static/js/viewVCE_keyprop.js"></script>
 	<script src="static/js/viewCRT.js"></script>
+
+
 
 </head>
 
@@ -201,7 +216,7 @@ TEST a "more button" design:
 	</div>
 
 	<script type="text/javascript">
-		index.init();
+	  index.init();
 	</script>
 
 </body>

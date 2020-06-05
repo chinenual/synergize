@@ -218,7 +218,7 @@ td.centered span {
     border-radius: 5px;
 }
 .vceNum {
-    width: 3em;
+    width: 3.5em;
 }
 
 input[disabled].vceEdit:hover, input[disabled].vceEdit:active, input[disabled].vceEdit:focus, .vceEdit:disabled  {
@@ -249,3 +249,46 @@ input[disabled].vceEdit:hover, input[disabled].vceEdit:active, input[disabled].v
     color: #222;
     background-color: #fff;
 }
+
+.bootstrap-touchspin-injected input {
+     /* override bootstrappy css for the TouchSpin module */
+     flex-grow: 0 !important;
+     flex-shrink: 0 !important;
+     flex-basis: 3em !important;
+     height: 19px;
+     padding: 0px 0px;
+     font-size: inherit;
+     border-radius: 5px !important;
+     margin-left: 12px;
+     margin-right: 12px;
+}
+
+.bootstrap-touchspin-injected:focus-within input,
+.bootstrap-touchspin-injected:hover input {
+     border-radius: 0px !important;
+     margin-left: 0px !important;
+     margin-right: 0px !important;
+}
+
+.bootstrap-touchspin-injected .btn {
+     display: none;
+     background-color: #222;
+     color: #fff;
+     border-color: #aaa;
+     padding: 0px 2px;
+     height: 19px;
+     font-size: inherit;
+}
+/* hide spinner buttons unless focussed */
+.bootstrap-touchspin-injected:focus-within .btn,
+.bootstrap-touchspin-injected:hover .btn {
+    flex-basis: 12px;
+    display:block;
+}
+/* hide spinner buttons unless focussed */
+.bootstrap-touchspin-injected:focus-within input,
+.bootstrap-touchspin-injected:hover input {
+    flex-basis: 3.7em;
+    border-radius: 5px;
+}
+

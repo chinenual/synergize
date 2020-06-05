@@ -96,7 +96,7 @@ let viewVCE_voice = {
 
 	updateOHARM: function (ele) {
 		var annotation = "";
-		var val = parseInt(ele.value,10);
+		var val = parseInt(ele.value, 10);
 		if (val < 0) {
 			annotation = "&nbsp;(s" + (-val) + ")";
 		}
@@ -107,8 +107,8 @@ let viewVCE_voice = {
 		if (ret = id.match(pattern)) {
 			index = ret[1];
 		}
-		console.log("OHARM-annotation["+index+"] = " + annotation);
-		document.getElementById("OHARM-annotation["+index+"]").innerHTML = annotation;
+		console.log("OHARM-annotation[" + index + "] = " + annotation);
+		document.getElementById("OHARM-annotation[" + index + "]").innerHTML = annotation;
 
 	},
 
@@ -119,13 +119,13 @@ let viewVCE_voice = {
 		* See D.DTN routine in VOIDSP.Z80 in the SYNHCS sourcecode.
 		*/
 		var annotation = "";
-		var val = parseInt(ele.value,10);
+		var val = parseInt(ele.value, 10);
 		if (val == 0) {
 			// leave it blank
 		} else if (val > 58) {
-			annotation = "&nbsp;(ran" + (val-58) + ")";
+			annotation = "&nbsp;(ran" + (val - 58) + ")";
 		} else if (val >= -32 && val <= 32) {
-			val = val*3;
+			val = val * 3;
 			annotation = "&nbsp;(" + (val) + ")";
 		} else if (val > 0) {
 			val = ((val * 2) - 32) * 3;
@@ -141,8 +141,8 @@ let viewVCE_voice = {
 		if (ret = id.match(pattern)) {
 			index = ret[1];
 		}
-		console.log("FDETUN-annotation["+index+"] = " + annotation);
-		document.getElementById("FDETUN-annotation["+index+"]").innerHTML = annotation;
+		console.log("FDETUN-annotation[" + index + "] = " + annotation);
+		document.getElementById("FDETUN-annotation[" + index + "]").innerHTML = annotation;
 
 	},
 
@@ -452,6 +452,12 @@ let viewVCE_voice = {
 
 	voicingModeVisuals: function () {
 		console.log("voicingModeVisuals " + viewVCE_voice.voicingMode);
+		if (viewVCE_voice.voicingMode) {
+			$('.vceNum').TouchSpin({
+				buttonup_txt: '\u25b4', //'\u25b2',
+				buttondown_txt: '\u25be', //'\u25bc',
+			});
+		}
 		$('.vceEdit').prop('disabled', !viewVCE_voice.voicingMode);
 		if (viewVCE_voice.voicingMode) {
 			$('.vceEditToggleText').show();

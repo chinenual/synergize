@@ -24,6 +24,7 @@ const OP_VCELOD = byte(0x6e)
 const OP_DISABLEVRAM = byte(0x6f)
 const OP_ENABLEVRAM = byte(0x70)
 const OP_BLOCKLOAD = byte(0x71)
+
 const OP_BLOCKDUMP = byte(0x72)
 const OP_GETID = byte(0x74)
 const OP_EXECUTE = byte(0x75)

@@ -2,6 +2,7 @@
 combinations of center and sensitivity it could show an odd
 discontinuous curve.
 * Fixed display of Wave Type and Key Prop toggle on the Oscillator table.
+* Fixed display of Sustain and Loop points on frequency envelopes.
 
 # 1.0.0
 

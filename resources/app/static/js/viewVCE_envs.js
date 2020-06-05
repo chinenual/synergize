@@ -176,10 +176,10 @@ let viewVCE_envs = {
 			tr.find('td:eq(6)').html(totalTimeLow);
 			tr.find('td:eq(7)').html(totalTimeUp);
 
-			if (envelopes.AmpEnvelope.SUSTAINPT == (i + 1)) {
+			if (envelopes.FreqEnvelope.SUSTAINPT == (i + 1)) {
 				tr.find('td:eq(1)').html("S-&gt;");
 			}
-			if (envelopes.AmpEnvelope.LOOPNPT == (i + 1)) {
+			if (envelopes.FreqEnvelope.LOOPNPT == (i + 1)) {
 				tr.find('td:eq(1)').html("L-&gt;");
 			}
 		}
