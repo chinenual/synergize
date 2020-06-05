@@ -13,6 +13,21 @@ let index = {
 		})
 		// Wait for astilectron to be ready
 		document.addEventListener('astilectron-ready', function () {
+			let message = {
+				"name": "isHTTPDebug",
+				"payload": ""
+			};
+			// Send message
+			astilectron.sendMessage(message, function (message) {
+				// Check error
+				if (message.name === "error") {
+					index.errorNotification(message.payload);
+				} else {
+					if (message.payload) {
+						debug.configDebugContextMenu();
+					}
+				}
+			});
 
 			// Listen
 			index.listen();

@@ -112,6 +112,27 @@ let viewVCE_voice = {
 
 	},
 
+	OHARMtoText: function (val) {
+		if (val < 0) {
+			return "s" + (-val);
+		} else {
+			return val;
+		}
+	},
+
+	TextToOHARM: function (val) {
+		if (typeof val === 'number') {
+			return val;
+		} else if (ret = val.match(/s(\d+)/)) {
+			val = parseInt(ret[1], 10);
+			return -val;
+		} else {
+			/// error! 
+			console.log("ERROR: TextToOHARM cant decode " + val);
+			return val;
+		}
+	},
+
 	updateFDETUN: function (ele) {
 		/* THIS IS UGLY.  The Synergy uses a non-linear mapping of this byte to a 1/30Hz increment, 
 		* with 5 positive values reserved for "random" settings. Ick ick ick.  

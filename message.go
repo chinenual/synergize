@@ -22,6 +22,9 @@ import (
 func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload interface{}, err error) {
 	log.Printf("Handle message: %s %s\n", m.Name, string(m.Payload))
 	switch m.Name {
+	case "isHTTPDebug":
+		payload = prefsUserPreferences.HTTPDebug
+		
 	case "connectToSynergy":
 		if err = connectToSynergy(); err != nil {
 			payload = err.Error()
