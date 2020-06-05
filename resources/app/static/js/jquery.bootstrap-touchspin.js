@@ -230,6 +230,8 @@
           parentelement = originalinput.parent();
 
         if (initval !== '') {
+	  // initval may not be parsable as a number (callback_after_calculation() may decorate it so it cant be parsed).  Use the callbacks if provided.
+	  initval = settings.callback_before_calculation(initval);
           initval = settings.callback_after_calculation(Number(initval).toFixed(settings.decimals));
         }
 
