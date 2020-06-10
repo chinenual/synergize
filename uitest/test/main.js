@@ -2,6 +2,9 @@ const hooks = require('./hooks');
 const config = require('../config').get(process.env.NODE_ENV);
 //const SearchPage = require('./page-objects/search.page');
 
+// switchWindow seems unreliable - ~20% of the time I call it to check the About window, it crashes electron.  I can't find a way to "wait" for it to be visible (assuming the problem is a timing error and switchToWindow doesnt know what to do with a hidden window) 
+var mainWindow, aboutWindow, prefsWindow;
+
 describe('Sample Test', () => {
   let app;
 
@@ -21,13 +24,34 @@ describe('Sample Test', () => {
       .saveScreenshot('screenshots-mainWindow-startup.png')
       .getTitle()
       .should.eventually.equal('Synergize')
+
+    await app.client.windowHandles()
+      .then((handles) => {
+        console.log("***** window handles: " + JSON.stringify(handles));
+        mainWindow = handles.value[0];
+        aboutWindow = handles.value[1];
+        prefsWindow = handles.value[2];
+      });
+
+      var n = await app.client.window(mainWindow).getTitle();
+      console.log(" title[mainWindow]: " + n)
+      var n = await app.client.window(aboutWindow).getTitle();
+      console.log(" title[aboutWindow]: " + n)
+      var n = await app.client.window(prefsWindow).getTitle();
+      console.log(" title[prefsWindow]: " + n)
+
+      await app.client.window(mainWindow)
+
   });
 
   it('click Help/About', async () => {
     await app.client
       .click('#helpButton')
+      .waitForVisible("#aboutMenuItem")
       .click('#aboutMenuItem')
-      .switchWindow('About Synergize')
+
+      .window(aboutWindow)
+      //      .switchWindow('About Synergize')
       .saveScreenshot('screenshots-aboutWindow.png')
       .getTitle()
       .should.eventually.equal('About Synergize')
