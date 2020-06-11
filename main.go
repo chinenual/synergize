@@ -68,6 +68,13 @@ func getWorkingDirectory() (path string) {
 	// don't do this if we are running from the source tree
 	_, err := os.Stat("bundler.json")
 	if !os.IsNotExist(err) {
+		// running from source directory
+		path = "."
+		return
+	}
+	_, err = os.Stat("../bundler.json")
+	if !os.IsNotExist(err) {
+		// running from uitest directory
 		path = "."
 		return
 	}
