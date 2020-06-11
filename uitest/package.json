@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Selenium/Spectron based UI automation to test Synergize",
   "scripts": {
-    "test": "node ./node_modules/mocha/bin/_mocha"
+    "test": "node ./node_modules/mocha/bin/_mocha test/test.js"
   },
   "devDependencies": {
     "chai": "^4.1.2",

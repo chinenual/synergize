@@ -25,6 +25,10 @@ module.exports = {
   });
   },
 
+  async getApp() {
+    return module.exports.app;
+  },
+
   async startApp() {
     module.exports.startMainApp();
    
@@ -39,6 +43,7 @@ module.exports = {
 
     }).start();
     chaiAsPromised.transferPromiseness = rendererApp.transferPromiseness;
+    module.exports.app = rendererApp;
     return rendererApp;
   },
 
