@@ -314,20 +314,24 @@ let viewVCE_voice = {
 			//--- Patch F
 			td = document.createElement("td");
 			if (!patchInhibitF0) {
-				td.innerHTML = patchFOInputDSR + 1;
+				td.innerHTML = `<span id="patchFOInputDSR[${osc+1}]">${patchFOInputDSR + 1}</span>`;
+			} else {
+				td.innerHTML = `<span id="patchFOInputDSR[${osc+1}]"></span>`;
 			}
 			tr.appendChild(td);
 
 			//--- Patch A
 			td = document.createElement("td");
 			if (!patchInhibitAddr) {
-				td.innerHTML = patchAdderInDSR + 1;
+			    td.innerHTML = `<span id="patchAdderInDSR[${osc+1}]">${patchAdderInDSR + 1}</span>`;
+			} else {
+			    td.innerHTML = `<span id="patchAdderInDSR[${osc+1}]"></span>`;
 			}
 			tr.appendChild(td);
 
 			//--- Patch O
-			td = document.createElement("td");
-			td.innerHTML = patchOutputDSR + 1;
+		        td = document.createElement("td");
+		        td.innerHTML = `<span id="patchOutputDSR[${osc+1}]">${patchOutputDSR + 1}</span>`;
 			tr.appendChild(td);
 
 			//--- Hrm

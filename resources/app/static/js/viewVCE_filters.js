@@ -13,7 +13,7 @@ let viewVCE_filters = {
 		console.log("filter ele change " + filterIndex + " " + filterValue);
 		var param
 		var args
-		var filterPattern = /filter\[(\d+)\]/;
+		var filterPattern = /flt\[(\d+)\]/;
 		if (ret = id.match(filterPattern)) {
 			funcname = "setFILTEREle";
 			index = parseInt(ret[1])
@@ -160,8 +160,8 @@ let viewVCE_filters = {
 			$('#filterTable').show();
 			$('#filterTable td.val input').each(function (i, obj) {
 				var id = obj.id;
-				// id is "filter[<n>]" - we need the <n> part
-				var idxString = id.substring(7);
+				// id is "flt[<n>]" - we need the <n> part
+				var idxString = id.substring(4);
 				var idx = parseInt(idxString, 10) - 1;
 				obj.value = vce.Extra.uncompressedFilters[filterIndex][idx];
 			});
