@@ -503,7 +503,7 @@ let viewVCE_voice = {
 					$('.vceEditToggle').removeClass('on');
 				}
 			}
-			//			viewVCE_voice.voicingModeVisuals();
+			viewVCE_voice.voicingModeVisuals();
 		});
 	},
 

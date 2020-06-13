@@ -20,8 +20,7 @@ describe('Test Voicing Mode OFF', () => {
 
       .click('#alertModal button')
       .waitForVisible('#alertText', 1000, true) // wait to disappear
-
-      .then(() => {return hooks.screenshotAndCompare(app, 'voicingModeOff')})
+      
       .getAttribute("#voicingModeButton img", "src").should.eventually.include('static/images/red-button-off-full.png')
 
       .then(() => {return hooks.screenshotAndCompare(app, 'voicingModeOff')})
