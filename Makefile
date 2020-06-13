@@ -101,6 +101,10 @@ endif
 itest:
 	cd synio && go test -v -synio -port $(PORT)
 
+.PHONY: uitest
+uitest:
+	cd uitest && npm test
+
 version.go : VERSION
 	echo package main > version.go
 	echo const Version = \"$(VERSION)\" >> version.go
