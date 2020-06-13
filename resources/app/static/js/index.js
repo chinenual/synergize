@@ -43,10 +43,14 @@ let index = {
 		document.getElementById("spinner").style.display = "none";
 	},
 	errorNotification: function (message) {
-		alert("ERROR: " + message);
+		document.getElementById("alertTitle").innerHTML = "Error";
+		document.getElementById("alertText").innerHTML = message;
+		$('#alertModal').modal();
 	},
 	infoNotification: function (message) {
-		alert("INFO: " + message);
+		document.getElementById("alertTitle").innerHTML = "Info";
+		document.getElementById("alertText").innerHTML = message;
+		$('#alertModal').modal();
 	},
 	saveSYNDialog: function () {
 

@@ -143,7 +143,8 @@ TEST a "more button" design:
 					</div>
 
 					<div class="navbar-text dropdown" style="width:30em;">
-						<table onclick="viewVCE_voice.toggleVoicingMode(!viewVCE_voice.voicingMode)" class="dropbtn">
+						<table id="voicingModeButton"
+							onclick="viewVCE_voice.toggleVoicingMode(!viewVCE_voice.voicingMode)" class="dropbtn">
 							<tr>
 								<td class="centered"><img id="voiceModeButtonImg"
 										src="static/images/red-button-off-full.png" height="30"></td>
@@ -165,14 +166,14 @@ TEST a "more button" design:
 							</tr>
 						</table>
 						<div class="dropdown-content" id="helpDropdown-content">
-						  q
+							q
 
 
-						  :q
+							:q
 
 
 
-						  <a id="aboutMenuItem" href="#" onclick="index.showAbout();">About</a>
+							<a id="aboutMenuItem" href="#" onclick="index.showAbout();">About</a>
 							<a id="preferencesMenuItem" href="#" onclick="index.showPreferences();">Preferences</a>
 						</div>
 					</div>
@@ -203,6 +204,27 @@ TEST a "more button" design:
 			</div>
 		</div>
 
+		<!-- Modal -->
+		<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+			aria-hidden="true" >
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="alertTitle">Alert Title</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<span id="alertText"></span>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
 		<div class="row flex-fill" style="min-height:0">
 			<div class="col-3 mh-100 hiddenscroll">
 				<div id="path"></div>
