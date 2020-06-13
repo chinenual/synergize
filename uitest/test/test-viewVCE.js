@@ -2,17 +2,29 @@ const hooks = require('./hooks');
 const WINDOW_PAUSE = 1000;
 const LOAD_VCE_TIMEOUT = 20000; // loading in voicing mode can take a while...
 
+let app;
+
 module.exports = {
 
-  testViewVCE(arrayOfVoices) {
+  loadVCEViaLeftPanel(name) {
+    describe('Load ' + name + '.VCE from left panel', () => {
+      it('click load ' + name, async () => {
+        await app.client
+          .click('.file=' + name)
+          .waitUntilTextExists("#name", name, LOAD_VCE_TIMEOUT)
+          .getText('#name').should.eventually.equal(name)
+      });
+    });
+  },
 
-    let app;
+  testViewVCE(arrayOfVoices, voiceLoader, context) {
+
 
     function cssQuoteId(id) {
       return id.replace(/\[/g, '\\[').replace(/\]/g, '\\]');
     }
 
-    describe('Test VCE loading', () => {
+    describe('Test VCE loading - ' + context, () => {
       before(async () => {
         console.log("====== reuse the app");
         app = await hooks.getApp();
@@ -21,17 +33,15 @@ module.exports = {
       arrayOfVoices.forEach(function (vv, vidx) {
         let v = vv;
 
-        describe('Load ' + v.name + '.VCE', () => {
-
-          it('click load ' + v.name, async () => {
-            await app.client
-              .click('.file=' + v.name)
-              .waitUntilTextExists("#name", v.name, LOAD_VCE_TIMEOUT)
-              .getText('#name').should.eventually.equal(v.name)
-              .saveScreenshot(`screenshots-${v.name}-voiceTab.png`)
-            });
-
+        if (voiceLoader != null) {
+          voiceLoader(v.name);
+        }
+        describe('Check fields for ' + v.name, () => {
           describe('check voice-tab', () => {
+            it('grab screenshot', async() => {
+              await app.client
+              .saveScreenshot(`screenshots-${v.name}-${context}-voiceTab.png`)
+            });
             for (k in v) {
               let key = k; // without this let, the value is not consistnent inside the it()'s
               let value = v[key];
