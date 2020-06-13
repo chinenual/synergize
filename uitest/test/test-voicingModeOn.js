@@ -17,7 +17,7 @@ describe('Test Voicing Mode ON', () => {
       .click('#voicingModeButton')
 
       .waitForVisible('#alertText', INIT_VOICING_TIMEOUT)
-      .saveScreenshot('screenshots-voicingModeOn-alert.png')
+      .then(() => {return hooks.screenshotAndCompare(app, 'voicingModeOn-alert')})
 
       .getText('#alertText').should.eventually.include('enabled')
 
@@ -26,7 +26,7 @@ describe('Test Voicing Mode ON', () => {
 
       .getAttribute("#voicingModeButton img", "src").should.eventually.include('static/images/red-button-on-full.png')
 
-      .saveScreenshot('screenshots-voicingModeOn.png')
+      .then(() => {return hooks.screenshotAndCompare(app, 'voicingModeOn')})
   });
 
   describe('initial VRAM image should be loaded', () => {

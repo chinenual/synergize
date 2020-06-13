@@ -19,7 +19,8 @@ describe('About window', () => {
         .pause(WINDOW_PAUSE) // HACK: but without this switching windows is unreliable. 
   
         .switchWindow('About Synergize')
-        .saveScreenshot('screenshots-aboutWindow.png')
+        .then(() => {return hooks.screenshotAndCompare(app, 'aboutWindow')})
+
         .getTitle().should.eventually.equal('About Synergize')
     });
   

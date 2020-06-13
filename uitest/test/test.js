@@ -36,7 +36,10 @@ describe('Setup', () => {
       .waitUntilWindowLoaded()
       .getWindowCount()
       .should.eventually.be.above(0)
-      .saveScreenshot('screenshots-mainWindow-startup.png')
+
+      // no screenshot: default lib directory is my $HOME - which can change from minute to minute
+      // .then(() => {return hooks.screenshotAndCompare(app, 'mainWindow-startup')})
+
       .getTitle().should.eventually.equal('Synergize')
   });
 

@@ -54,7 +54,7 @@ module.exports = {
           describe('check voice-tab', () => {
             it('grab screenshot', async() => {
               await app.client
-              .saveScreenshot(`screenshots-${v.name}-${context}-voiceTab.png`)
+              .then(() => {return hooks.screenshotAndCompare(app, `${v.name}-${context}-voiceTab`)})
             });
             for (k in v) {
               let key = k; // without this let, the value is not consistnent inside the it()'s

@@ -19,7 +19,8 @@ describe('Check initial preferences', () => {
           .pause(WINDOW_PAUSE) // HACK: but without this switching windows is unreliable. 
     
           .switchWindow('Synergize Preferences')
-          .saveScreenshot('screenshots-prefsWindow.png')
+          .then(() => {return hooks.screenshotAndCompare(app, 'prefsWindow')})
+
           .getTitle().should.eventually.equal('Synergize Preferences')
 
           .$('#libraryPath').setValue('../data/testfiles')
@@ -30,7 +31,7 @@ describe('Check initial preferences', () => {
           .switchWindow('Synergize')
           .getTitle().should.eventually.equal('Synergize')
 
-          .saveScreenshot('screenshots-mainAfterSetLibraryPath.png')
+          .then(() => {return hooks.screenshotAndCompare(app, 'mainAfterSetLibraryPath')})
 
           .getText('#path').should.eventually.equal('testfiles')
         });

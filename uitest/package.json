@@ -11,7 +11,8 @@
     "electron": "^6.0.12",
     "mocha": "^5.2.0",
     "webdriverio": "^6.0.0",
-    "spectron": "^10.0.0"
+    "spectron": "^10.0.0",
+    "pngjs": "^3.4.0"
   },
   "engines": {
     "node": "^8.12.0"
