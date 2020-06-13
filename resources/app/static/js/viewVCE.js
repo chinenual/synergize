@@ -21,7 +21,13 @@ let chartColors = [
 ];
 
 let viewVCE = {
+    // flag to prevent programatic voice changes from triggering onchange updates to the Synergy
+    supressOnchange: false, 
+    
     init: function () {
+        // no onchange events while we update input and text for the new voice
+        viewVCE.supressOnchange = true;
+
         Chart.defaults.global.defaultFontColor = 'white';
         Chart.defaults.global.defaultFontSize = 14;
 
@@ -32,6 +38,9 @@ let viewVCE = {
         viewVCE_filters.init();
 
         viewVCE_voice.voicingModeVisuals();
+
+        // back to normal:
+        viewVCE.supressOnchange = false;
     }
 }
 

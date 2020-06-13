@@ -2,6 +2,8 @@ let viewVCE_filters = {
 	chart: null,
 
 	onchange: function (ele) {
+		if (viewVCE.supressOnchange) {return;}
+		
 		var id = ele.id;
 		console.log("changed: " + id);
 

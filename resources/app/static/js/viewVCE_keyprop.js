@@ -12,6 +12,8 @@ let viewVCE_keyprop = {
 	},
 
 	onchange: function (ele) {
+		if (viewVCE.supressOnchange) {return;}
+		
 		var id = ele.id;
 		console.log("changed: " + id);
 

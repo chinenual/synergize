@@ -198,6 +198,8 @@ let viewVCE_voice = {
 	},
 
 	onchange: function (ele, updater, valueConverter) {
+		if (viewVCE.supressOnchange) {return;}
+		
 		var id = ele.id;
 		console.log("changed: " + id + ", new value: " + ele.value);
 
