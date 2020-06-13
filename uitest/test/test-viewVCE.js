@@ -17,6 +17,20 @@ module.exports = {
     });
   },
 
+  loadVCEViaINTERNALCRT(name) {
+    describe('Load ' + name + ' from Internal CRT', () => {
+      it('click load ' + name, async () => {
+        await app.client
+          .click('.file=INTERNAL')
+          .waitUntilTextExists("#crt_path", 'INTERNAL', LOAD_VCE_TIMEOUT)
+          .getText('#crt_path').should.eventually.equal('INTERNAL')
+          .click(`//*[text()='${name}']`)
+          .waitUntilTextExists("#name", name, LOAD_VCE_TIMEOUT)
+          .getText('#name').should.eventually.equal(name)
+      });
+    });
+  },
+
   testViewVCE(arrayOfVoices, voiceLoader, context) {
 
 

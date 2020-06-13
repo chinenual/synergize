@@ -46,7 +46,8 @@ require('./test-about');
 
 require('./test-prefs');
 describe('Test READ-ONLY views', () => {
-  viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaLeftPanel, "readonly");
+  viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaLeftPanel, "readonlyVCE");
+  viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaINTERNALCRT, "readonlyCRT");
 });
 describe('Test Voicing Mode views', () => {
   require('./test-voicingModeOn');
