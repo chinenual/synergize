@@ -1,13 +1,20 @@
 const hooks = require('./hooks');
 const config = require('../config').get(process.env.NODE_ENV);
+const viewVCE = require('./test-viewVCE');
+
+
 const WINDOW_PAUSE = 1000;
+
+const voiceG7S = require('./page-objects/voice-G7S');
+const voiceCATHERG = require('./page-objects/voice-CATHERG');
+const voiceGUITAR2A = require('./page-objects/voice-GUITAR2A');
+
 
 //const SearchPage = require('./page-objects/search.page');
 
 var app;
 
 describe('Setup', () => {
-
   before(async () => {
     console.log("====== remove test preferences.json file if exists");
 
@@ -31,10 +38,17 @@ describe('Setup', () => {
 
 });
 
-
 require('./test-about');
+
 require('./test-prefs');
-require('./test-viewVCE');
+describe('Test READ-ONLY views', () => {
+  viewVCE.testViewVCE([voiceG7S,voiceCATHERG,voiceGUITAR2A]);
+});
+describe('Test Voicing Mode views', () => {
+  require('./test-voicingModeOn');
+  viewVCE.testViewVCE([voiceG7S,voiceCATHERG,voiceGUITAR2A]);
+  require('./test-voicingModeOff');
+});
 
 
 
