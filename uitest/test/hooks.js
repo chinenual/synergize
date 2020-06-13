@@ -90,6 +90,14 @@ module.exports = {
   async startApp() {
     module.exports.startMainApp();
 
+    // give the main exe a little time to initialize itself    
+    await sleep(10000)
+    function sleep(ms) {
+      return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+      });
+    } 
+
     console.log(`Starting electron exe: ${electronExe()}`);
     const rendererApp = await new Application({
 
