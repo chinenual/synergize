@@ -5,6 +5,7 @@ let viewVCE_filters = {
 		var id = ele.id;
 		console.log("changed: " + id);
 
+		var eleIndex;
 		var selectEle = document.getElementById("filterSelect");
 		var filterIndex = parseInt(selectEle.value,10); // index into the uncompressedFilters array
 		var filterName = selectEle.options[selectEle.selectedIndex].innerHTML;
@@ -16,7 +17,7 @@ let viewVCE_filters = {
 		var filterPattern = /flt\[(\d+)\]/;
 		if (ret = id.match(filterPattern)) {
 			funcname = "setFILTEREle";
-			index = parseInt(ret[1])
+			eleIndex = parseInt(ret[1])
 			value = parseInt(ele.value, 10);
 		}
 		//console.dir(vce);
@@ -24,7 +25,7 @@ let viewVCE_filters = {
 			"name": "setFilterEle",
 			"payload": {
 				"UiFilterIndex": filterIndex,
-				"Index": index,
+				"Index": eleIndex,
 				"Value": value
 			}
 		};
@@ -36,7 +37,7 @@ let viewVCE_filters = {
 				index.errorNotification(message.payload);
 				return false;
 			} else {
-				vce.Extra.uncompressedFilters[filterIndex][index - 1] = value;
+				vce.Extra.uncompressedFilters[filterIndex][eleIndex - 1] = value;
 				viewVCE_filters.filtersChartUpdate(filterIndex, filterName, false);
 			}
 		});

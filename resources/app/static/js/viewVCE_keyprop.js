@@ -15,15 +15,16 @@ let viewVCE_keyprop = {
 		var id = ele.id;
 		console.log("changed: " + id);
 
+		var eleIndex;
 		var pattern = /keyprop\[(\d+)\]/;
 		if (ret = id.match(pattern)) {
-			index = parseInt(ret[1])
+			eleIndex = parseInt(ret[1])
 			value = parseInt(ele.value, 10);
 		}
 		let message = {
 			"name": "setVoiceKPROPEle",
 			"payload": {
-				"Index": index,
+				"Index": eleIndex,
 				"Value": value
 			}
 		};
@@ -35,7 +36,7 @@ let viewVCE_keyprop = {
 				index.errorNotification(message.payload);
 				return false;
 			} else {
-				vce.Head.KPROP[index - 1] = value;
+				vce.Head.KPROP[eleIndex - 1] = value;
 				viewVCE_keyprop.init();
 			}
 		});

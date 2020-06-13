@@ -15,15 +15,16 @@ let viewVCE_keyeq = {
 		var id = ele.id;
 		console.log("changed: " + id);
 
+		var eleIndex;
 		var pattern = /keyeq\[(\d+)\]/;
 		if (ret = id.match(pattern)) {
-			index = parseInt(ret[1])
+			eleIndex = parseInt(ret[1])
 			value = parseInt(ele.value, 10);
 		}
 		let message = {
 			"name": "setVoiceVEQEle",
 			"payload": {
-				"Index": index,
+				"Index": eleIndex,
 				"Value": value
 			}
 		};
@@ -35,7 +36,7 @@ let viewVCE_keyeq = {
 				index.errorNotification(message.payload);
 				return false;
 			} else {
-				vce.Head.VEQ[index - 1] = value;
+				vce.Head.VEQ[eleIndex - 1] = value;
 				viewVCE_keyeq.init();
 			}
 		});
