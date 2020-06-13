@@ -18,17 +18,18 @@ module.exports = {
         app = await hooks.getApp();
       });
 
-      arrayOfVoices.forEach(function (v, vidx) {
+      arrayOfVoices.forEach(function (vv, vidx) {
+        let v = vv;
 
-        describe('Load ' + v.name, () => {
+        describe('Load ' + v.name + '.VCE', () => {
 
-          it('load ' + v.name, async () => {
+          it('click load ' + v.name, async () => {
             await app.client
               .click('.file=' + v.name)
-              .waitForText('#name', v.name, LOAD_VCE_TIMEOUT)
-            await app.client
+              .waitUntilTextExists("#name", v.name, LOAD_VCE_TIMEOUT)
+              .getText('#name').should.eventually.equal(v.name)
               .saveScreenshot(`screenshots-${v.name}-voiceTab.png`)
-          });
+            });
 
           describe('check voice-tab', () => {
             for (k in v) {

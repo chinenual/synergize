@@ -19,7 +19,7 @@ describe('Test Voicing Mode OFF', () => {
       .getText('#alertText').should.eventually.include('disabled')
 
       .click('#alertModal button')
-      .waitForVisible('#alertText', {reverse: true})
+      .waitForVisible('#alertText', 1000, true) // wait to disappear
 
       //.saveScreenshot('screenshots-voicingModeOffXXX.png')
       //.getAttribute("#voicingModeButton img", "src").should.eventually.include('static/images/red-button-off-full.png')

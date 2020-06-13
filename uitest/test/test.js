@@ -29,6 +29,10 @@ describe('Setup', () => {
 
   it('opens a window', async () => {
     await app.client
+      // HACK:  astilectron seems to not have executed onWait if we start too fast - 
+      // we often get a segfault when trying to display the about window - prob because 
+      // the about_w variable hasnt been initialized yet?  So wait a bit...
+      .pause(5000)
       .waitUntilWindowLoaded()
       .getWindowCount()
       .should.eventually.be.above(0)
@@ -42,11 +46,11 @@ require('./test-about');
 
 require('./test-prefs');
 describe('Test READ-ONLY views', () => {
-  viewVCE.testViewVCE([voiceG7S,voiceCATHERG,voiceGUITAR2A]);
+  viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A]);
 });
 describe('Test Voicing Mode views', () => {
   require('./test-voicingModeOn');
-  viewVCE.testViewVCE([voiceG7S,voiceCATHERG,voiceGUITAR2A]);
+  viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A]);
   require('./test-voicingModeOff');
 });
 

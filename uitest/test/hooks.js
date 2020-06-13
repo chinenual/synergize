@@ -69,7 +69,7 @@ module.exports = {
   async startMainApp() {
     console.log(`node arch: "${process.arch}"   golang arch: "${archMap[process.arch]}"`)
     console.log(`Starting main exe: ${mainExe()}`);
-    exec(`"${mainExe()}" -UITEST ${PORT}`, (error, stdout, stderr) => {
+    exec(`"${mainExe()}" -UITEST ${PORT} -SERIALVERBOSE`, (error, stdout, stderr) => {
       if (error) {
         console.log(`error: ${error.message}`);
         return;
@@ -91,7 +91,7 @@ module.exports = {
     module.exports.startMainApp();
 
     // give the main exe a little time to initialize itself    
-    await sleep(10000)
+    await sleep(4000)
     function sleep(ms) {
       return new Promise((resolve) => {
         setTimeout(resolve, ms);
