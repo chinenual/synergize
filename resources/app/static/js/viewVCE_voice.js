@@ -337,19 +337,21 @@ let viewVCE_voice = {
 			tr.appendChild(td);
 
 			//--- Hrm
+			// HACK: we wrap these elements in <div> of a fixed size to keep the up/down buttons positioned properly.
+			// Someone more skilled in the ways of CSS would surely have a cleaner solution.
 			td = document.createElement("td");
-			td.innerHTML = `<input type="text" class="vceEdit vceNum spinOHARM" id="OHARM[${osc + 1}]" 
+			td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinOHARM" id="OHARM[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToOHARM)" value="${viewVCE_voice.OHARMToText(vce.Envelopes[osc].FreqEnvelope.OHARM)}" 
 			min="-11" max="30"
-			disabled/>`;
+			disabled/></div>`;
 			tr.appendChild(td);
 
 			//--- Detn
 			td = document.createElement("td");
-			td.innerHTML = `<input type="text" class="vceEdit vceNum spinFDETUN" id="FDETUN[${osc + 1}]" 
+			td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinFDETUN" id="FDETUN[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToFDETUN)" value="${viewVCE_voice.FDETUNToText(vce.Envelopes[osc].FreqEnvelope.FDETUN)}" 
 			min="-63" max="63"
-			disabled/>`;
+			disabled/></div>`;
 			tr.appendChild(td);
 
 			var waveByte = vce.Envelopes[osc].FreqEnvelope.Table[3];
@@ -510,9 +512,15 @@ let viewVCE_voice = {
 	voicingModeVisuals: function () {
 		console.log("voicingModeVisuals " + viewVCE_voice.voicingMode);
 
-		if (viewVCE_voice.voicingMode) {
+		var mode = viewVCE_voice.voicingMode;
+		//mode = true; // For debugging and CSS tweaking: force edit controls to be visible
+
+		if (mode) {
 			// CSS for styling the buttons when disabled is HARD.  So avoid it.
 			$('.vceNum.spinOHARM').TouchSpin({
+				verticalbuttons: true,
+				verticalup: '\u25b4', //'\u25b2',
+				verticaldown: '\u25be', //'\u25bc',
 				buttonup_txt: '\u25b4', //'\u25b2',
 				buttondown_txt: '\u25be', //'\u25bc',
 				callback_before_calculation: function (value) {
@@ -523,6 +531,9 @@ let viewVCE_voice = {
 				}
 			});
 			$('.vceNum.spinFDETUN').TouchSpin({
+				verticalbuttons: true,
+				verticalup: '\u25b4', //'\u25b2',
+				verticaldown: '\u25be', //'\u25bc',
 				buttonup_txt: '\u25b4', //'\u25b2',
 				buttondown_txt: '\u25be', //'\u25bc',
 				callback_before_calculation: function (value) {
@@ -534,6 +545,9 @@ let viewVCE_voice = {
 			});
 			// plain number variant:
 			$('.vceNum.spinPLAIN').TouchSpin({
+				verticalbuttons: true,
+				verticalup: '\u25b4', //'\u25b2',
+				verticaldown: '\u25be', //'\u25bc',
 				buttonup_txt: '\u25b4', //'\u25b2',
 				buttondown_txt: '\u25be', //'\u25bc',
 			});
@@ -541,8 +555,8 @@ let viewVCE_voice = {
 			$('.spinNOSPIN').addClass("spinNOSPIN-Enabled");
 			
 		}
-		$('.vceEdit').prop('disabled', !viewVCE_voice.voicingMode);
-		if (viewVCE_voice.voicingMode) {
+		$('.vceEdit').prop('disabled', !mode);
+		if (mode) {
 			$('.vceEditToggleText').show();
 		} else {
 			$('.vceEditToggleText').hide();

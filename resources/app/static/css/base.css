@@ -251,8 +251,10 @@ input[disabled].vceEdit:hover, input[disabled].vceEdit:active, input[disabled].v
 }
 
 .bootstrap-touchspin-injected .form-control:disabled,
+.bootstrap-touchspin-injected .form-control:focus,
 .bootstrap-touchspin-injected .form-control[readonly] {
     background-color: #222;
+    color: #fff;
 }
 
 .bootstrap-touchspin-injected input {
@@ -264,8 +266,10 @@ input[disabled].vceEdit:hover, input[disabled].vceEdit:active, input[disabled].v
      padding: 0px 0px;
      font-size: inherit;
      border-radius: 5px !important;
+/*
      margin-left: 12px;
      margin-right: 12px;
+     */
 }
 
 .bootstrap-touchspin-injected:focus-within input,
@@ -300,4 +304,26 @@ input[disabled].vceEdit:hover, input[disabled].vceEdit:active, input[disabled].v
 /* plain text that needs to align with SPIN controls. See voicingModeVisuals() for the hack */
 span.spinNOSPIN-Enabled {
     margin-left: 12px;
+}
+
+/* make the spin buttons appear inside the input -- just like a native select */
+.bootstrap-touchspin .input-group-btn-vertical .btn {
+    width: 7px;
+    right: 9px;
+    /*top: -3;*/
+    border: none;
+    background-color: transparent;
+}
+
+
+.bootstrap-touchspin .input-group-btn-vertical .bootstrap-touchspin-down {
+    bottom: 4;
+}
+/*
+.bootstrap-touchspin .input-group-btn-vertical .bootstrap-touchspin-up {
+    top: -10;
+}*/
+
+.spinwrapper {
+    width: 3.5em;
 }
