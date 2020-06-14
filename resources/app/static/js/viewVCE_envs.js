@@ -44,17 +44,26 @@ let viewVCE_envs = {
 		return viewVCE_envs.ftab[v - 1];
 	},
 
+	// Freq values:
+	//   as displayed: -61 .. 63
+	//   byte range:   0xc3 .. 0x3f
 	scaleFreqEnvValue: function (v) {
 		// See OSCDSP.Z80 DISVAL: DVAL10:
 		return v; // TODO
 	},
 
+	// Amp values:
+	//   as displayed: 0 .. 72
+	//   byte range:   0x37 .. 0x7f
 	scaleAmpEnvValue: function (v, last) {
 		// See OSCDSP.Z80 DISVAL: DVAL30:
 		if (last) return 0;
 		return Math.max(0, v - 55);
 	},
 
+	// Freq Time values:
+	//   as displayed: 0 .. 29528
+	//   byte range:   0x0 .. 0x54
 	scaleFreqTimeValue: function (v, first) {
 		// See OSCDSP.Z80 DISVAL:
 		if (first) return 0;
@@ -62,6 +71,9 @@ let viewVCE_envs = {
 		return viewVCE_envs.scaleViaRtab((2 * v) - 14);
 	},
 
+	// Freq Time values:
+	//   as displayed: 0 .. 6576
+	//   byte range:   0x0 .. 0x54
 	scaleAmpTimeValue: function (v) {
 		// See OSCDSP.Z80 DISVAL: DVAL20:
 		if (v < 39) return v;
@@ -136,10 +148,14 @@ let viewVCE_envs = {
 		];
 
 		// clear old values:
+		$('#envTable td.val input').val('');
+		$('#envTable td.total span').html('');
+		// clear the loop points
+		$(`#envTable select option[value='']`).prop('selected', true);
+		$(`#envTable select option[value='L']`).prop('selected', false);
+		$(`#envTable select option[value='S']`).prop('selected', false);
+		$(`#envTable select option[value='R']`).prop('selected', false);
 
-		$('#envTable td.val').each(function (i, obj) {
-			obj.innerHTML = '';
-		});
 		// fill in freq env data:
 
 		// scaling algorithms derived from DISVAL: in OSCDSP.Z80
@@ -169,18 +185,18 @@ let viewVCE_envs = {
 			datasets[freqLowIdx].data.push({ x: totalTimeLow, y: freqLow });
 			datasets[freqUpIdx].data.push({ x: totalTimeUp, y: freqUp });
 
-			tr.find('td:eq(2)').html(freqLow);
-			tr.find('td:eq(3)').html(freqUp);
-			tr.find('td:eq(4)').html(timeLow);
-			tr.find('td:eq(5)').html(timeUp);
-			tr.find('td:eq(6)').html(totalTimeLow);
-			tr.find('td:eq(7)').html(totalTimeUp);
+			document.getElementById(`envFreqLowVal[${i + 1}]`).value = freqLow;
+			document.getElementById(`envFreqUpVal[${i + 1}]`).value = freqUp;
+			document.getElementById(`envFreqLowTime[${i + 1}]`).value = timeLow;
+			document.getElementById(`envFreqUpTime[${i + 1}]`).value = timeUp;
+			document.getElementById(`envFreqTotLowTime[${i + 1}]`).innerHTML = totalTimeLow;
+			document.getElementById(`envFreqTotUpTime[${i + 1}]`).innerHTML = totalTimeUp;
 
 			if (envelopes.FreqEnvelope.SUSTAINPT == (i + 1)) {
-				tr.find('td:eq(1)').html("S-&gt;");
+				$(`#envFreqLoop\\[${i + 1}\\] option[value='S']`).prop('selected', true);
 			}
-			if (envelopes.FreqEnvelope.LOOPNPT == (i + 1)) {
-				tr.find('td:eq(1)').html("L-&gt;");
+			if (envelopes.FreqEnvelope.LOOPPT == (i + 1)) {
+				$(`#envFreqLoop\\[${i + 1}\\] option[value='L']`).prop('selected', true);
 			}
 		}
 		var maxTotalTime = Math.max(totalTimeLow, totalTimeUp);
@@ -216,18 +232,18 @@ let viewVCE_envs = {
 
 			//	    console.dir(datasets[ampLowIdx]);
 
-			tr.find('td:eq(' + (j + 0) + ')').html(ampLow);
-			tr.find('td:eq(' + (j + 1) + ')').html(ampUp);
-			tr.find('td:eq(' + (j + 2) + ')').html(timeLow);
-			tr.find('td:eq(' + (j + 3) + ')').html(timeUp);
-			tr.find('td:eq(' + (j + 4) + ')').html(totalTimeLow);
-			tr.find('td:eq(' + (j + 5) + ')').html(totalTimeUp);
+			document.getElementById(`envAmpLowVal[${i + 1}]`).value = ampLow;
+			document.getElementById(`envAmpUpVal[${i + 1}]`).value = ampUp;
+			document.getElementById(`envAmpLowTime[${i + 1}]`).value = timeLow;
+			document.getElementById(`envAmpUpTime[${i + 1}]`).value = timeUp;
+			document.getElementById(`envAmpTotLowTime[${i + 1}]`).innerHTML = totalTimeLow;
+			document.getElementById(`envAmpTotUpTime[${i + 1}]`).innerHTML = totalTimeUp;
 
 			if (envelopes.AmpEnvelope.SUSTAINPT == (i + 1)) {
-				tr.find('td:eq(' + (j - 1) + ')').html("S-&gt;");
+				$(`#envAmpLoop\\[${i + 1}\\] option[value='S']`).prop('selected', true);
 			}
-			if (envelopes.AmpEnvelope.LOOPNPT == (i + 1)) {
-				tr.find('td:eq(' + (j - 1) + ')').html("L-&gt;");
+			if (envelopes.AmpEnvelope.LOOPPT == (i + 1)) {
+				$(`#envAmpLoop\\[${i + 1}\\] option[value='L']`).prop('selected', true);
 			}
 		}
 

@@ -1,5 +1,3 @@
-const { select } = require("async");
-
 let viewVCE_filters = {
 	chart: null,
 
