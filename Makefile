@@ -88,12 +88,15 @@ test:
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
+SCREENSHOT_ARCH=darwin
 PORT=/dev/tty.usbserial-AL05OC8S
 endif
 ifeq ($(UNAME_S),Linux)
+SCREENSHOT_ARCH=linux
 PORT=/dev/ttyS0
 endif
 ifeq ($(PORT),'')
+SCREENSHOT_ARCH=win32
 PORT=COM1
 endif
 
@@ -103,7 +106,20 @@ itest:
 
 .PHONY: uitest
 uitest:
+	/bin/rm -f uitest/test/screenshots/$(SCREENSHOT_ARCH)/*failed.png
 	cd uitest && npm test
+
+.PHONY: uitest-diff
+uitest-diff:
+	for f in uitest/test/screenshots/$(SCREENSHOT_ARCH)/*.failed.png; do \
+		echo f: $$f; \
+		s=`basename "$$f" .failed.png`; \
+		echo s: $$s; \
+		compare "uitest/test/screenshots/$(SCREENSHOT_ARCH)/$${s}.png" "$$f" /tmp/diff.png; \
+		open /tmp/diff.png ;\
+		echo press RETURN for next image; \
+		read;\
+	done
 
 version.go : VERSION
 	echo package main > version.go

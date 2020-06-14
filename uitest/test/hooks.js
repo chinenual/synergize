@@ -142,7 +142,8 @@ module.exports = {
       ssBuf = Buffer.alloc(0)
     }
 
-    return app.client.pause(1).then(function () {
+      // many pages have animated charts that last about a second; pause to let them finish
+    return app.client.pause(1500).then(function () {
       return app.browserWindow.capturePage()
     }).then(function (buffer) {
       if (ssBuf.length === 0) {
@@ -155,13 +156,13 @@ module.exports = {
           console.log('Screenshot matches ' + ssPath)
           return chai.assert.isOk(true, 'screenshots match') // return a non-failure promise
         } else {
-          const ssFailedPath = path.join(ssDir, name + '-failed.png')
+          const ssFailedPath = path.join(ssDir, name + '.failed.png')
           console.log('Saving screenshot, failed comparison: ' + ssFailedPath)
           fs.writeFileSync(ssFailedPath, buffer)
           // FIXME: for now, don't make this fail the test -- some of the graphic charts draw lines at slightly
           // different offsets for some reason.  until that gets debugged and fixed, just warn but don't fail
-          return chai.assert.isOk(true, 'ignorning screenshot failed comparison ' + ssFailedPath)
-          //return chai.assert.fail('screenshot failed comparison ' + ssFailedPath)
+          //return chai.assert.isOk(true, 'ignorning screenshot failed comparison ' + ssFailedPath)
+          return chai.assert.fail('screenshot failed comparison ' + ssFailedPath)
         }
       }
     })
