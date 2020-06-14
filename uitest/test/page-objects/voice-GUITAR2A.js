@@ -62,23 +62,22 @@ module.exports = {
   filterstab: {
     select: { selector: '#filterSelect', value: '-1', text: 'All' },
     selections: [
-      {}, // "all has no values displayed"
       {
-        select: { value: '1', text: 'Bf1' },
+        select: { value: '1', text: 'Bf 1' },
         "flt[8]": { value: '-18' },
         "flt[16]": { value: '-18' },
         "flt[24]": { value: '0' },
         "flt[32]": { value: '0' },
       },
       {
-        select: { value: '2', text: 'Bf2' },
+        select: { value: '2', text: 'Bf 2' },
         "flt[8]": { value: '-4' },
         "flt[16]": { value: '0' },
         "flt[24]": { value: '0' },
         "flt[32]": { value: '0' },
       },
       {
-        select: { value: '3', text: 'Bf3' },
+        select: { value: '3', text: 'Bf 3' },
         "flt[8]": { value: '-20' },
         "flt[16]": { value: '-5' },
         "flt[24]": { value: '0' },

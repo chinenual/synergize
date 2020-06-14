@@ -60,10 +60,10 @@ module.exports = {
     "FILTER[4]": { value: '' },
   },
   filterstab: {
-    select: { selector: '#filterSelect', value: '1', text: 'Bf1' },
+    select: { selector: '#filterSelect', value: '3', text: 'Bf 1' },
     selections: [
       {
-        select: { value: '1', text: 'Bf1' },
+        select: { value: '3', text: 'Bf 1' },
         "flt[8]": { value: '0' },
         "flt[16]": { value: '0' },
         "flt[24]": { value: '0' },

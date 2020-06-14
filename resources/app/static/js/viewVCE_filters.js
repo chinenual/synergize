@@ -1,3 +1,5 @@
+const { select } = require("async");
+
 let viewVCE_filters = {
 	chart: null,
 
@@ -120,6 +122,9 @@ let viewVCE_filters = {
 		// now the b-filters
 		for (i = 0; i <= vce.Head.VOITAB; i++) {
 			if (vce.Head.FILTER[i] > 0) {
+				// FIXME: naming/numbering can be confusing.  For example, INTERNAL/CATHERG voice uses
+				// one B-filter - for osc#3.  So we name it "Bf1",but it shows as index "3" in the select. 
+				// Should we name it Bf3 to match the osc?
 				filterNames.push('Bf ' + vce.Head.FILTER[i]);
 				filterValues.push(i + 1);
 			}
