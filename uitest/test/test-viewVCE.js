@@ -52,13 +52,13 @@ module.exports = {
         }
         describe('Check fields for ' + v.name, () => {
           describe('check voice-tab', () => {
-            it('grab screenshot', async() => {
+            it('grab screenshot', async () => {
               await app.client
-              .then(() => {return hooks.screenshotAndCompare(app, `${v.name}-${context}-voiceTab`)})
+                .then(() => { return hooks.screenshotAndCompare(app, `${v.name}-${context}-voiceTab`) })
             });
-            for (k in v) {
+            for (k in v.voicetab) {
               let key = k; // without this let, the value is not consistnent inside the it()'s
-              let value = v[key];
+              let value = v.voicetab[key];
               if (typeof value === 'string') {
                 it(`${key} should be ${value}`, async () => {
                   await app.client
@@ -84,6 +84,45 @@ module.exports = {
               }
             }
           });
+          describe('check envelopes-tab', () => {
+          });
+          describe('check filters-tab', () => {
+          });
+          describe('check keyeq-tab', () => {
+            it('keyeq tab should display', async () => {
+              await app.client
+                .click(`#vceTabs a[href='#vceKeyEqTab']`)
+                .getAttribute(`#vceTabs a[href='#vceKeyEqTab']`, 'class').should.eventually.include('active')
+                .waitForVisible('#keyEqTable')
+                .then(() => { return hooks.screenshotAndCompare(app, `${v.name}-${context}-keyeqTab`) })
+            });
+            for (k in v.keyeqtab) {
+              let key = k; // without this let, the value is not consistnent inside the it()'s
+              let value = v.keyeqtab[key];
+              it(`${key} should be ${value.value}`, async () => {
+                await app.client
+                  .getValue('#' + cssQuoteId(key)).should.eventually.equal(value.value)
+              });
+            }
+          });
+          describe('check keyprop-tab', () => {
+            it('keyprop tab should display', async () => {
+              await app.client
+                .click(`#vceTabs a[href='#vceKeyPropTab']`)
+                .getAttribute(`#vceTabs a[href='#vceKeyPropTab']`, 'class').should.eventually.include('active')
+                .waitForVisible('#keyPropTable')
+                .then(() => { return hooks.screenshotAndCompare(app, `${v.name}-${context}-keypropTab`) })
+            });
+            for (k in v.keyproptab) {
+              let key = k; // without this let, the value is not consistnent inside the it()'s
+              let value = v.keyproptab[key];
+              it(`${key} should be ${value.value}`, async () => {
+                await app.client
+                  .getValue('#' + cssQuoteId(key)).should.eventually.equal(value.value)
+              });
+            }
+          });
+
         });
 
       });
