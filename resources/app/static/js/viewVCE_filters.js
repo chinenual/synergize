@@ -2,16 +2,16 @@ let viewVCE_filters = {
 	chart: null,
 
 	onchange: function (ele) {
-		if (viewVCE.supressOnchange) {return;}
-		
+		if (viewVCE.supressOnchange) { return; }
+
 		var id = ele.id;
 		console.log("changed: " + id);
 
 		var eleIndex;
 		var selectEle = document.getElementById("filterSelect");
-		var filterIndex = parseInt(selectEle.value,10); // index into the uncompressedFilters array
+		var filterIndex = parseInt(selectEle.value, 10); // index into the uncompressedFilters array
 		var filterName = selectEle.options[selectEle.selectedIndex].innerHTML;
-		var filterValue = vce.Head.FILTER[filterIndex]; 
+		var filterValue = vce.Head.FILTER[filterIndex];
 
 		console.log("filter ele change " + filterIndex + " " + filterValue);
 		var param
@@ -121,11 +121,11 @@ let viewVCE_filters = {
 		for (i = 0; i <= vce.Head.VOITAB; i++) {
 			if (vce.Head.FILTER[i] > 0) {
 				filterNames.push('Bf ' + vce.Head.FILTER[i]);
-				filterValues.push(i+1);
+				filterValues.push(i + 1);
 			}
 		}
 
-	console.log("filter names: " + filterNames);
+		console.log("filter names: " + filterNames);
 
 		// Option values are index into the vce.Head.FILTERS array (and one extra with value -1 for "All")
 		if (filterNames.length > 1) {
@@ -141,15 +141,18 @@ let viewVCE_filters = {
 			option.innerHTML = filterNames[i];
 			selectEle.appendChild(option);
 		}
+		document.getElementById("filtersChart").style.display = "block";
+		document.getElementById("filterTable").style.display = "block";
 		if (filterNames.length <= 0) {
 			// no filters
 			document.getElementById("filtersChart").style.display = "none";
+			document.getElementById("filterTable").style.display = "none";
 		} else if (filterNames.length > 1) {
 			// "All" == -1
-			viewVCE_filters.filtersChartUpdate(-1, 'All',true);
+			viewVCE_filters.filtersChartUpdate(-1, 'All', true);
 		} else {
 			// first filter
-			viewVCE_filters.filtersChartUpdate(filterValues[0], filterNames[0],true);
+			viewVCE_filters.filtersChartUpdate(filterValues[0], filterNames[0], true);
 		}
 	},
 
@@ -253,7 +256,7 @@ let viewVCE_filters = {
 
 		var animation_duration = animate ? 1000 : 0;
 		console.log("animate: " + animate + " duration: " + animation_duration);
-		
+
 		viewVCE_filters.chart = new Chart(ctx, {
 
 			type: 'line',
