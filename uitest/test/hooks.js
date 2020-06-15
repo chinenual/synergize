@@ -153,7 +153,7 @@ module.exports = {
       } else {
         const match = compareIgnoringTransparency(buffer, ssBuf);
         if (match) {
-          console.log('Screenshot matches ' + ssPath)
+          //console.log('Screenshot matches ' + ssPath)
           return chai.assert.isOk(true, 'screenshots match') // return a non-failure promise
         } else {
           const ssFailedPath = path.join(ssDir, name + '.failed.png')
@@ -174,7 +174,7 @@ module.exports = {
 function compareIgnoringTransparency(bufActual, bufExpected) {
   // Common case: exact byte-for-byte match
   if (Buffer.compare(bufActual, bufExpected) === 0) return true
-
+    
   // Otherwise, compare pixel by pixel
   let sumSquareDiff = 0
   let numDiff = 0
