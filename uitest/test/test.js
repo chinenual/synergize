@@ -41,9 +41,29 @@ describe('Setup', () => {
       // .then(() => {return hooks.screenshotAndCompare(app, 'mainWindow-startup')})
 
       .getTitle().should.eventually.equal('Synergize')
+
   });
 
 });
+
+describe('Render unit tests', () => {
+  it('voice page text conversions', async () => {
+    await app.webContents
+      .executeJavaScript('viewVCE_voice.testConversionFunctions()').should.eventually.be.true
+  });
+  it('env page text conversions', async () => {
+    await app.webContents
+      .executeJavaScript('viewVCE_envs.testConversionFunctions()').should.eventually.be.true
+  });
+  it('capture render logs', async () => {
+    await app.client.getRenderProcessLogs().then(function (logs) {
+      logs.forEach(function (log) {
+        console.log("RENDER: " + log.level + ": " + log.source + " : " + log.message);
+      });
+    });
+  });
+});
+
 
 require('./test-about');
 
