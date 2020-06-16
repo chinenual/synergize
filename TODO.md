@@ -11,7 +11,7 @@ First check is full UI support; second check is lower-level IO and tests
 * [x] [x] Save Synergy Machine State
 * [x] [x] Load VRAM image
 * [ ] [x] Save VRAM image
-* [ ] [ ] Edit VRAM image
+* [-] [-] Edit VRAM image
 * [x] [x] Disable VRAM
 * [x] [x] Test communications
 * [ ] [ ] <s>"Extended programmer" Performance Program controller (sequence of CRT/SYN files for live performance)</s>
@@ -33,11 +33,11 @@ First check is full UI support; second check is lower-level IO and tests
     * [x] [x] detune
     * [x] [x] aperiodic detune
     * [x] [x] select sine vs. triangle
-    * [ ] [ ] assign A-filter, B-filter or no-filter to each oscillator
+    * [x] [x] assign A-filter, B-filter or no-filter to each oscillator
     * [x] [x] set timbre/amp sensitivity and center
-    * [ ] [ ] <s>set portamento</s>
+    * [x] [x] <s>set portamento</s>
     * [x] [x] set vibrato
-    * [ x [x] toggle keyboard proportionalization per oscillator
+    * [x] [x] toggle keyboard proportionalization per oscillator
     * [x] [x] adjust the "patch" routing (adder, frequency, output registers)
 
 * Envelopes page (AKA Oscillator page)
@@ -45,17 +45,17 @@ First check is full UI support; second check is lower-level IO and tests
     * [ ] [ ] set Sustain point
     * [ ] [ ] set Loop point
     * [ ] [ ] change envelope type
-    * [ ] [ ] scale up/down
+    * [ ] [ ] <s>scale up/down</s>
     * [ ] [ ] change freq, amp or time values for both upper and lower bounds
     * [ ] [ ] copy upper <-> lower
 
 * Filters
-    * [ ] [ ] set each point in the curve
-    * [ ] [ ] scale display
+    * [x] [x] set each point in the curve
+    * [ ] [ ] <s>scale display</s>
     * [ ] [ ] copy other oscillator's filter
 
 * Keyboard Equalization
-    * [ ] [x] set each point in the curve
+    * [x] [x] set each point in the curve
 
 * Keyboard Proportion
-    * [ ] [x] set each point in the curve
+    * [x] [x] set each point in the curve
