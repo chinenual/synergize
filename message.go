@@ -24,7 +24,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 	switch m.Name {
 	case "isHTTPDebug":
 		payload = prefsUserPreferences.HTTPDebug
-		
+
 	case "connectToSynergy":
 		if err = connectToSynergy(); err != nil {
 			payload = err.Error()
@@ -263,6 +263,50 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				payload = err.Error()
 				return
 			}
+		}
+		payload = "ok"
+
+	case "setEnvFreqLowVal",
+		"setEnvFreqUpVal",
+		"setEnvAmpLowVal",
+		"setEnvAmpUpVal",
+		"setEnvFreqLowTime",
+		"setEnvFreqUpTime",
+		"setEnvAmpLowTime",
+		"setEnvAmpUpTime":
+		var args struct {
+			Osc   int
+			Index int
+			Value int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		switch m.Name {
+		case "setEnvFreqLowVal":
+			err = synio.SetEnvFreqLowVal(args.Osc, args.Index, byte(args.Value))
+		case "setEnvFreqUpVal":
+			err = synio.SetEnvFreqUpVal(args.Osc, args.Index, byte(args.Value))
+		case "setEnvAmpLowVal":
+			err = synio.SetEnvAmpLowVal(args.Osc, args.Index, byte(args.Value))
+		case "setEnvAmpUpVal":
+			err = synio.SetEnvAmpUpVal(args.Osc, args.Index, byte(args.Value))
+		case "setEnvFreqLowTime":
+			err = synio.SetEnvFreqLowTime(args.Osc, args.Index, byte(args.Value))
+		case "setEnvFreqUpTime":
+			err = synio.SetEnvFreqUpTime(args.Osc, args.Index, byte(args.Value))
+		case "setEnvAmpLowTime":
+			err = synio.SetEnvAmpLowTime(args.Osc, args.Index, byte(args.Value))
+		case "setEnvAmpUpTime":
+			err = synio.SetEnvAmpUpTime(args.Osc, args.Index, byte(args.Value))
+		}
+		if err != nil {
+			payload = err.Error()
+			return
 		}
 		payload = "ok"
 

@@ -1,11 +1,10 @@
 package synio
 
 import (
-	"log"
 	"github.com/chinenual/synergize/data"
 	"github.com/pkg/errors"
+	"log"
 )
-
 
 func LoadVCE(slotnum byte, vce []byte) (err error) {
 	if err = InitVRAM(); err != nil {
@@ -39,7 +38,7 @@ func LoadVCE(slotnum byte, vce []byte) (err error) {
 		// done - no filters
 		// errors will implicitly show  up in the log but we need to explicitly log success
 		if synioVerbose {
-			log.Printf("VCELOD Success\n")
+			log.Printf("synio: VCELOD Success\n")
 		}
 		return
 	}
@@ -60,7 +59,7 @@ func LoadCRT(crt []byte) (err error) {
 
 	var length = uint16(len(crt))
 	if synioVerbose {
-		log.Printf("length: %d (dec) %x (hex)\n", length, length)
+		log.Printf("synio: LoadCRT: length: %d (dec) %x (hex)\n", length, length)
 	}
 
 	lenHob, lenLob := data.WordToBytes(length)
@@ -83,7 +82,7 @@ func LoadCRT(crt []byte) (err error) {
 
 	crc := crcHash.CRC16()
 	if synioVerbose {
-		log.Printf("CRC: %d (dec) %x (hex) %x\n", crc, crc, crcHash.CRC())
+		log.Printf("synio: CRC: %d (dec) %x (hex) %x\n", crc, crc, crcHash.CRC())
 	}
 
 	crcHob, crcLob := data.WordToBytes(crc)
@@ -103,14 +102,13 @@ func LoadCRT(crt []byte) (err error) {
 	if status == ACK {
 		// errors will implicitly show  up in the log but we need to explicitly log success
 		if synioVerbose {
-			log.Printf("VRLOD Success\n")
+			log.Printf("synio: VRLOD Success\n")
 		}
 		return
 	}
 	err = errors.Errorf("Invalid CRC ACK from CRT upload")
 	return
 }
-
 
 // Send Synergy "state" (STLOAD in the Z80 sources)
 func LoadSYN(bytes []byte) (err error) {
@@ -131,7 +129,7 @@ func LoadSYN(bytes []byte) (err error) {
 	if status == ACK {
 		// errors will implicitly show  up in the log but we need to explicitly log success
 		if synioVerbose {
-			log.Printf("STLOD Success\n")
+			log.Printf("synio: STLOD Success\n")
 		}
 		return
 	}
@@ -155,7 +153,7 @@ func SaveSYN() (bytes []byte, err error) {
 	// read two CMOS data banks and the length of the sequencer (2 more bytes);
 
 	if synioVerbose {
-		log.Printf("CMOS LEN %d so read %d\n", cmos_len, cmos_len*2+2)
+		log.Printf("synio: CMOS LEN %d so read %d\n", cmos_len, cmos_len*2+2)
 	}
 
 	var cmos_buf []byte
@@ -166,7 +164,7 @@ func SaveSYN() (bytes []byte, err error) {
 	// decode sequencer length and possibly grab more
 	seq_len := data.BytesToWord(cmos_buf[len(cmos_buf)-1], cmos_buf[len(cmos_buf)-2])
 	if synioVerbose {
-		log.Printf("SEQ LEN from synergy %d\n", seq_len)
+		log.Printf("synio: SEQ LEN from synergy %d\n", seq_len)
 	}
 
 	// empty buf unless we have non-zero length to read
@@ -182,7 +180,8 @@ func SaveSYN() (bytes []byte, err error) {
 		return
 	}
 
-	// FIXME: these bytes seem out of order vs the length HOB/LOB yet seem to be transmitted the same from INTF.Z80 firmware sourcecode - I dont understand something..
+	// FIXME: these bytes seem out of order vs the length HOB/LOB yet seem to be transmitted the same
+	// from INTF.Z80 firmware sourcecode - I dont understand something..
 	crcFromSynergy := data.BytesToWord(crc_buf[0], crc_buf[1])
 
 	crcHash.Reset()
@@ -191,7 +190,7 @@ func SaveSYN() (bytes []byte, err error) {
 	calcCRCBytes(cmos_buf)
 	calcCRCBytes(seq_buf)
 	if synioVerbose {
-		log.Printf("CRC from synergy %04x - our calculation %04x\n", crcFromSynergy, crcHash.CRC16())
+		log.Printf("synio: CRC from synergy %04x - our calculation %04x\n", crcFromSynergy, crcHash.CRC16())
 	}
 
 	if crcFromSynergy != crcHash.CRC16() {
@@ -201,7 +200,7 @@ func SaveSYN() (bytes []byte, err error) {
 	}
 	// errors will implicitly show  up in the log but we need to explicitly log success
 	if synioVerbose {
-		log.Printf("STDUMP Success\n")
+		log.Printf("synio: STDUMP Success\n")
 	}
 
 	bytes = append(len_buf, cmos_buf...)

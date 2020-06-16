@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/chinenual/synergize/data"
-	"github.com/pkg/errors"
 )
 
 type offsetMapEle struct {
@@ -326,11 +325,6 @@ func SetVoiceKPROPEle(index /* 1-based */ int, value int) (err error) {
 	return
 }
 
-// emulate the SYNHCS GEDPTR subroutine: get OSC specific offset into the EDATA array
-func gedptr(osc int) uint16 {
-	return uint16(2*osc) + synAddrs.EDATA + 1
-}
-
 func EncodePatchControl(outputDSR byte, inhibitAddr byte,
 	adderInputDSR byte, inhibitF0 byte, f0InputDSR byte) (control byte) {
 
@@ -378,7 +372,6 @@ func GetOscWAVEControl(osc int) (value byte, err error) {
 }
 
 func SetOscWAVEControl(osc int, value byte) (err error) {
-	err = errors.New("not yet implemented")
 	// based on snooping the serial line, wave is stored in 3 bits the
 	// 4th entry in the freq envelope. eesh.
 	// 0x633e, 0x01 == sine, 0x00 == triangle
@@ -448,6 +441,72 @@ func SetOscKEYPROP(osc int, usesKeypro bool) (err error) {
 		value = 0x10 &^ value
 	}
 	if err = SetOscWAVEControl(osc, value); err != nil {
+		return
+	}
+	return
+}
+
+// Each point in the Freq or Amp table has 4 values:  valLow, valUp, timeLow, TimeUp
+
+func SetEnvFreqLowVal(osc /* 1-based */ int, pointIndex /* 1-based */ int, value byte) (err error) {
+	var addr = VoiceOscAddr(osc, data.Off_EOSC_FreqPoints) + uint16(4*(pointIndex-1)+0)
+	if err = LoadByte(addr, byte(value), "set EnvFreqLowVal["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
+		return
+	}
+	return
+}
+
+func SetEnvFreqUpVal(osc /* 1-based */ int, pointIndex /* 1-based */ int, value byte) (err error) {
+	var addr = VoiceOscAddr(osc, data.Off_EOSC_FreqPoints) + uint16(4*(pointIndex-1)+1)
+	if err = LoadByte(addr, byte(value), "set EnvFreqUpVal["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
+		return
+	}
+	return
+}
+
+func SetEnvFreqLowTime(osc /* 1-based */ int, pointIndex /* 1-based */ int, value byte) (err error) {
+	var addr = VoiceOscAddr(osc, data.Off_EOSC_FreqPoints) + uint16(4*(pointIndex-1)+2)
+	if err = LoadByte(addr, byte(value), "set EnvFreqLowTime["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
+		return
+	}
+	return
+}
+
+func SetEnvFreqUpTime(osc /* 1-based */ int, pointIndex /* 1-based */ int, value byte) (err error) {
+	var addr = VoiceOscAddr(osc, data.Off_EOSC_FreqPoints) + uint16(4*(pointIndex-1)+3)
+	if err = LoadByte(addr, byte(value), "set EnvFreqUpTime["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
+		return
+	}
+	return
+}
+
+func SetEnvAmpLowVal(osc /* 1-based */ int, pointIndex /* 1-based */ int, value byte) (err error) {
+	var addr = VoiceOscAddr(osc, data.Off_EOSC_AmpPoints) + uint16(4*(pointIndex-1)+0)
+	if err = LoadByte(addr, byte(value), "set EnvAmpLowVal["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
+		return
+	}
+	return
+}
+
+func SetEnvAmpUpVal(osc /* 1-based */ int, pointIndex /* 1-based */ int, value byte) (err error) {
+	var addr = VoiceOscAddr(osc, data.Off_EOSC_AmpPoints) + uint16(4*(pointIndex-1)+1)
+	if err = LoadByte(addr, byte(value), "set EnvAmpUpVal["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
+		return
+	}
+	return
+}
+
+func SetEnvAmpLowTime(osc /* 1-based */ int, pointIndex /* 1-based */ int, value byte) (err error) {
+	var addr = VoiceOscAddr(osc, data.Off_EOSC_AmpPoints) + uint16(4*(pointIndex-1)+2)
+	if err = LoadByte(addr, byte(value), "set EnvAmpLowTime["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
+		return
+	}
+	return
+}
+
+func SetEnvAmpUpTime(osc /* 1-based */ int, pointIndex /* 1-based */ int, value byte) (err error) {
+	var addr = VoiceOscAddr(osc, data.Off_EOSC_AmpPoints) + uint16(4*(pointIndex-1)+3)
+	if err = LoadByte(addr, byte(value), "set EnvAmpUpTime["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
 		return
 	}
 	return

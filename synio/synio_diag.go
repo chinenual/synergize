@@ -25,7 +25,7 @@ func DiagCOMTST() (err error) {
 	}
 	// errors will implicitly show  up in the log but we need to explicitly log success
 	if synioVerbose {
-		log.Printf("COMTST Success\n")
+		log.Printf("synio: COMTST Success\n")
 	}
 	return nil
 }

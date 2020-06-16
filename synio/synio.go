@@ -73,7 +73,7 @@ func command(opcode byte, name string) (err error) {
 	// then send our opcode and loop until ACK'd
 
 	if synioVerbose {
-		log.Printf("send command opcode %02x - %s\n", opcode, name)
+		log.Printf("synio: Send command opcode %02x - %s\n", opcode, name)
 	}
 
 	var status byte
@@ -155,6 +155,9 @@ func command(opcode byte, name string) (err error) {
 
 func LoadByte(addr uint16, value byte, purpose string) (err error) {
 	var arr = []byte{value}
+	if synioVerbose {
+		log.Printf("synio: SetByte, addr: %04x, val: %02x (%s)", addr, value, purpose)
+	}
 	if err = BlockLoad(addr, arr, purpose); err != nil {
 		return
 	}
@@ -167,6 +170,9 @@ func DumpByte(addr uint16, purpose string) (value byte, err error) {
 		return
 	}
 	value = arr[0]
+	if synioVerbose {
+		log.Printf("synio: GetByte, addr: %04x, val: %02x (%s)", addr, value, purpose)
+	}
 	return
 }
 
@@ -289,7 +295,7 @@ func getSynergyAddrs() (err error) {
 	synAddrs.exec_SETCON = uint16(0x00b9)
 
 	if synioVerbose {
-		log.Printf("Addrs: %#v\n", synAddrs)
+		log.Printf("synio: Synergy Addrs: %#v\n", synAddrs)
 	}
 	return
 }
@@ -303,7 +309,7 @@ func InitVRAM() (err error) {
 	}
 	// errors will implicitly show  up in the log but we need to explicitly log success
 	if synioVerbose {
-		log.Printf("ENABLEVRAM Success\n")
+		log.Printf("synio: ENABLEVRAM Success\n")
 	}
 	return
 }
@@ -321,7 +327,7 @@ func DumpVRAM() (bytes []byte, err error) {
 	vram_len := data.BytesToWord(len_buf[1], len_buf[0])
 
 	if synioVerbose {
-		log.Printf("len: %d bytes\n", vram_len)
+		log.Printf("synio: DumpVRAM: len: %d bytes\n", vram_len)
 	}
 
 	if bytes, err = serialReadBytes(LONG_TIMEOUT_MS, vram_len, "read VRAM"); err != nil {
@@ -342,7 +348,7 @@ func DumpVRAM() (bytes []byte, err error) {
 	//	calcCRCBytes(crc_buf)
 
 	if synioVerbose {
-		log.Printf("CRC from synergy %04x - our calculation %04x\n", crcFromSynergy, crcHash.CRC16())
+		log.Printf("synio: CRC from synergy %04x - our calculation %04x\n", crcFromSynergy, crcHash.CRC16())
 	}
 
 	if crcFromSynergy != crcHash.CRC16() {
@@ -352,13 +358,12 @@ func DumpVRAM() (bytes []byte, err error) {
 	}
 	// errors will implicitly show  up in the log but we need to explicitly log success
 	if synioVerbose {
-		log.Printf("VRDUMP Success\n")
+		log.Printf("synio: VRDUMP Success\n")
 	}
 
 	return
 
 }
-
 
 func GetID() (versionID [2]byte, err error) {
 	if err = command(OP_GETID, "GETID"); err != nil {
@@ -373,7 +378,7 @@ func GetID() (versionID [2]byte, err error) {
 
 	// errors will implicitly show  up in the log but we need to explicitly log success
 	if synioVerbose {
-		log.Printf("GETID Success\n")
+		log.Printf("synio: GETID Success\n")
 	}
 	return
 }
@@ -382,7 +387,7 @@ func DisableVRAM() (err error) {
 	if err = command(OP_DISABLEVRAM, "DISABLEVRAM"); err == nil {
 		// errors will implicitly show  up in the log but we need to explicitly log success
 		if synioVerbose {
-			log.Printf("DISABLEVRAM Success\n")
+			log.Printf("synio: DISABLEVRAM Success\n")
 		}
 	}
 	return

@@ -195,6 +195,7 @@ let viewVCE_voice = {
 			}
 		}
 		console.log("viewVCE_voice.testConversionFunctions: " + (ok ? "PASS" : "FAIL"));
+		return ok;
 	},
 
 	onchange: function (ele, updater, valueConverter) {
@@ -543,6 +544,45 @@ let viewVCE_voice = {
 					return viewVCE_voice.FDETUNToText(value);
 				}
 			});
+			$('.vceNum.spinAmpEnv').TouchSpin({
+				verticalbuttons: true,
+				verticalup: '\u25b4', //'\u25b2',
+				verticaldown: '\u25be', //'\u25bc',
+				buttonup_txt: '\u25b4', //'\u25b2',
+				buttondown_txt: '\u25be', //'\u25bc',
+				callback_before_calculation: function (value) {
+					return viewVCE_envs.TextToAmpEnvValue(value);
+				},
+				callback_after_calculation: function (value) {
+					return viewVCE_envs.AmpEnvValueToText(value);
+				}
+			});
+			$('.vceNum.spinAmpTime').TouchSpin({
+				verticalbuttons: true,
+				verticalup: '\u25b4', //'\u25b2',
+				verticaldown: '\u25be', //'\u25bc',
+				buttonup_txt: '\u25b4', //'\u25b2',
+				buttondown_txt: '\u25be', //'\u25bc',
+				callback_before_calculation: function (value) {
+					return viewVCE_envs.TextToAmpTimeValue(value);
+				},
+				callback_after_calculation: function (value) {
+					return viewVCE_envs.AmpTimeValueToText(value);
+				}
+			});
+			$('.vceNum.spinFreqTime').TouchSpin({
+				verticalbuttons: true,
+				verticalup: '\u25b4', //'\u25b2',
+				verticaldown: '\u25be', //'\u25bc',
+				buttonup_txt: '\u25b4', //'\u25b2',
+				buttondown_txt: '\u25be', //'\u25bc',
+				callback_before_calculation: function (value) {
+					return viewVCE_envs.TextToFreqTimeValue(value);
+				},
+				callback_after_calculation: function (value) {
+					return viewVCE_envs.FreqTimeValueToText(value);
+				}
+			});
 			// plain number variant:
 			$('.vceNum.spinPLAIN').TouchSpin({
 				verticalbuttons: true,
@@ -581,8 +621,6 @@ let viewVCE_voice = {
 
 	init: function () {
 		console.log("vceVoiceTab init");
-
-		viewVCE_voice.testConversionFunctions();
 
 		viewVCE_voice.patchTable();
 
