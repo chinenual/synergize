@@ -19,43 +19,6 @@ let viewVCE_envs = {
 		viewVCE_envs.envChartUpdate(1, -1)
 	},
 
-	// SYNHCS COMMON.Z80 FTAB:
-	ftab: [
-		//Reference frequency table
-		0, 2, 4, 6, 8, 10, 12, 14,
-		15, 16, 17, 18, 19, 20, 21, 22,
-		24, 25, 27, 28, 30, 32, 34, 36,
-		38, 40, 43, 45, 48, 51, 54, 57,
-		61, 64, 68, 72, 76, 81, 86, 91,
-		96, 102, 108, 115, 122, 129, 137, 145,
-		153, 163, 172, 183, 193, 205, 217, 230,
-		244, 258, 274, 290, 307, 326, 345, 366,
-		387, 411, 435, 461, 488, 517, 548, 581,
-		615, 652, 691, 732, 775, 822, 870, 922,
-		977, 1035, 1097, 1162, 1231, 1304, 1382, 1464,
-		1551, 1644, 1741, 1845, 1955, 2071, 2194, 2325,
-		2463, 2609, 2765, 2929, 3103, 3288, 3483, 3691,
-		3910, 4143, 4389, 4650, 4926, 5219, 5530, 5859,
-		6207, 6576, 6967, 7382, 7820, 8286, 8778, 9300,
-		9853, 10439, 11060, 11718, 12414, 13153, 13935, 14764],
-
-	// http://curve.fit sez:
-	// Curve fit for the above using index as "x" and the table as "y" : (for x>8 )
-	//    y = A * e^(B * x) + C 
-	// where
-	//		PARAMETER   NOTE                     VALUE       ERROR      
-	//      A           --                       9.622e+00   1.141e-03  
-	//      B           --                       5.776e-02   9.672e-07  
-	//      C           --                      -5.220e-01   4.070e-02  
-	// inverse would be:
-	// e^(B*x) = (y + C) / A 
-	// 
-
-	scaleViaRtab(v) {
-		if (v <= 0) return 0;
-		if (v >= viewVCE_envs.ftab.length) return viewVCE_envs.ftab[viewVCE_envs.ftab.length - 1];
-		return viewVCE_envs.ftab[v - 1];
-	},
 
 	// Freq values:
 	//   as displayed: -61 .. 63
@@ -70,7 +33,7 @@ let viewVCE_envs = {
 
 	// Amp values:
 	//   as displayed: 0 .. 72
-	//   byte range:   0x37 .. 0x7f (52 .. 127)
+	//   byte range:   0x37 .. 0x7f (55 .. 127)
 	scaleAmpEnvValue: function (v, last) {
 		// See OSCDSP.Z80 DISVAL: DVAL30:
 		if (last) return 0;
@@ -86,39 +49,63 @@ let viewVCE_envs = {
 		return '' + viewVCE_envs.unscaleAmpEnvValue(parseInt(v, 10));
 	},
 
-	// FIXME: this isn't done yet:
+	// NOTE: the ftab based scaling functions as done in SYNHCS are not reversable (for the freq case, 
+	// several values of x map to the same y, so reversing y can never map to some x's.  In SYNHCS, 
+	// this didnt matter since the mapping was one-way (the raw x values go to the synergy, the y values 
+	// were only used to show the values to the user. For us, we need to convert the "user y" values to 
+	// the "x" values to send to the synergy.)
 	//
-	// NOTE: the ftab based scaling functions as done in SYNHCS are not reversable (several values of 
-	// x map to the same y, so reversing y can never map to some x's.  In SYNHCS, this didnt matter 
-	// since the mapping was one-way (the raw x values go to the synergy, the y values were only used 
-	// to show the values to the user. For us, we need to convert the "user y" values to the "x" values 
-	// to send to the synergy.)
+	// Problem is the exponential nature of the scaling would lead to HUGE numbers.  (my guess is that 
+	// few real patches use these large time values.)  In any case, I've chosen to just create a table 
+	// based mapping approach rather than do all the math that SYNHCS does. This allows me to substitute 
+	// some unique values at the end of the range to keep things unique, but not allow them to
+	// get outrageously large.
 	//
-	// So I've curve-fitted each mapping function and produced a mapping array for each value type.  
 	// For most values, it's exactly the same as SYNHCS, but for those extra values of x, there are 
-	// new interpolated y's so the editor can do its job
+	// new y's so the editor can do its job
+
+	freqTimeScale: [0, 1, 2, 3, 4, 5, 6, 7,
+		8, 9, 10, 11, 12, 13, 14, 15,
+		25, 28, 32, 36, 40, 45, 51, 57,
+		64, 72, 81, 91, 102, 115, 129, 145,
+		163, 183, 205, 230, 258, 290, 326, 366,
+		411, 461, 517, 581, 652, 732, 822, 922,
+		1035, 1162, 1304, 1464, 1644, 1845, 2071, 2325,
+		2609, 2929, 3288, 3691, 4143, 4650, 5219, 5859,
+		6576, 7382, 8286, 9300, 10439, 11718, 13153, 14764,
+		16572, 18600, 20078, 23436, 26306, 29528, 29529, 29530,
+		29531, 29532, 29533, 29534, 29535],
+	ampTimeScale: [0, 1, 2, 3, 4, 5, 6, 7,
+		8, 9, 10, 11, 12, 13, 14, 15,
+		16, 17, 18, 19, 20, 21, 22, 23,
+		24, 25, 26, 27, 28, 29, 30, 31,
+		32, 33, 34, 35, 36, 37, 38, 39,
+		40, 45, 51, 57, 64, 72, 81, 91,
+		102, 115, 129, 145, 163, 183, 205, 230,
+		258, 290, 326, 366, 411, 461, 517, 581,
+		652, 732, 822, 922, 1035, 1162, 1304, 1464,
+		1644, 1845, 2071, 2325, 2609, 2929, 3288, 3691,
+		4143, 4650, 5219, 5859, 6576],
+
 
 	// Freq Time values:
 	//   as displayed: 0 .. 29528
 	//   byte range:   0x0 .. 0x54 (0 .. 84)
-	scaleFreqTimeValue: function (v, first) {
-		// See OSCDSP.Z80 DISVAL for the original ftab-baased scaling:
-		if (first) return 0;
-		if (v < 15) return v;
-		return viewVCE_envs.scaleViaRtab((2 * v) - 14);
+	scaleFreqTimeValue: function (v) {
+		// See OSCDSP.Z80 DISVAL for the original ftab-baased scaling which is roughly:
+		//	if (v <= 15) return v;
+		//  return viewVCE_envs.scaleViaRtab((2 * v) - 14);
+		return viewVCE_envs.freqTimeScale[v];
 	},
 	unscaleFreqTimeValue: function (v) {
-		if (v < 15) return v;
 		// fixme: linear search is brute force - but the list is short - performance is "ok" as is...
-		for (var i = 0; i < viewVCE_envs.ftab.length; i++) {
-			if (viewVCE_envs.ftab[i] >= v) {
-				// so... i == (2*v-14)
-				// v = (i+14)/2
-				return Math.round((i + 14) / 2);
+		for (var i = 0; i < viewVCE_envs.freqTimeScale.length; i++) {
+			if (viewVCE_envs.freqTimeScale[i] >= v) {
+				return i;
 			}
 		}
 		// shouldnt happen!
-		return viewVCE_envs.ftab.length - 1;
+		return viewVCE_envs.freqTimeScale.length - 1;
 	},
 	FreqTimeValueToText(v) {
 		return '' + viewVCE_envs.scaleFreqTimeValue(v);
@@ -127,26 +114,26 @@ let viewVCE_envs = {
 		return '' + viewVCE_envs.unscaleFreqTimeValue(parseInt(v, 10));
 	},
 
+
 	// Freq Time values:
 	//   as displayed: 0 .. 6576
 	//   byte range:   0x0 .. 0x54 (0 .. 84)
 	scaleAmpTimeValue: function (v) {
-		// See OSCDSP.Z80 DISVAL: DVAL20:
-		if (v < 39) return v;
-		return viewVCE_envs.scaleViaRtab((v * 2) - 54);
+		// See OSCDSP.Z80 DISVAL: DVAL20: which is:
+		// if (v < 39) return v;
+		// return viewVCE_envs.scaleViaRtab((v * 2) - 54);
+		return viewVCE_envs.ampTimeScale[v];
+
 	},
 	unscaleAmpTimeValue: function (v) {
-		if (v < 39) return v;
 		// fixme: linear search is brute force - but the list is short - performance is "ok" as is...
-		for (var i = 0; i < viewVCE_envs.ftab.length; i++) {
-			if (viewVCE_envs.ftab[i] >= v) {
-				// so... i == (2*v-54)
-				// v = (i+54)/2
-				return Math.round((i + 54) / 2);
+		for (var i = 0; i < viewVCE_envs.ampTimeScale.length; i++) {
+			if (viewVCE_envs.ampTimeScale[i] >= v) {
+				return i;
 			}
 		}
 		// shouldnt happen!
-		return viewVCE_envs.ftab.length - 1;
+		return viewVCE_envs.ampTimeScale.length - 1;
 	},
 	AmpTimeValueToText(v) {
 		return '' + viewVCE_envs.scaleAmpTimeValue(v);
@@ -208,7 +195,7 @@ let viewVCE_envs = {
 				func: viewVCE_envs.scaleFreqEnvValue,
 			},
 			{
-				arr: [[52, 0], [53, 1], [126, 71], [127, 72]],
+				arr: [[55, 0], [56, 1], [126, 71], [127, 72]],
 				name: "ampValue",
 				func: viewVCE_envs.scaleAmpEnvValue,
 			}
