@@ -76,6 +76,12 @@ table {
     padding: 18px;
 }
 
+#spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
 .dir {
     cursor: pointer;
     padding: 3px;
