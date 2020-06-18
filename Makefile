@@ -26,7 +26,7 @@ $(EXE_WINDOWS_TEST): $(SRCS)
 	GOOS=windows GOARCH=386 go build -o $(EXE_WINDOWS_TEST)
 
 .PHONY: mac
-mac:
+mac: version.go
 	astilectron-bundler -c bundler-mac-only.json
 
 .PHONY: package
