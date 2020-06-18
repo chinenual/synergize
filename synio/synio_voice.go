@@ -524,3 +524,28 @@ func SetOscEnvLengths(osc /* 1-based */ int, freqLength int, ampLength int) (err
 	return
 
 }
+
+func SetEnvLoopPoint(osc /* 1-based */ int, env string, envtype int, sustainPt int, loopPt int) (err error) {
+	var typeAddr uint16
+	var susAddr uint16
+	var loopAddr uint16
+	if env == "Freq" {
+		typeAddr = VoiceOscAddr(osc, data.Off_EOSC_FreqENVTYPE)
+		susAddr = VoiceOscAddr(osc, data.Off_EOSC_FreqSUSTAINPT)
+		loopAddr = VoiceOscAddr(osc, data.Off_EOSC_FreqLOOPPT)
+	} else {
+		typeAddr = VoiceOscAddr(osc, data.Off_EOSC_AmpENVTYPE)
+		susAddr = VoiceOscAddr(osc, data.Off_EOSC_AmpSUSTAINPT)
+		loopAddr = VoiceOscAddr(osc, data.Off_EOSC_AmpLOOPPT)
+	}
+	if err = LoadByte(typeAddr, byte(envtype), "set Env"+env+" type["+strconv.Itoa(osc)+"]"); err != nil {
+		return
+	}
+	if err = LoadByte(susAddr, byte(sustainPt), "set Env"+env+" sustainpt["+strconv.Itoa(osc)+"]"); err != nil {
+		return
+	}
+	if err = LoadByte(loopAddr, byte(loopPt), "set Env"+env+" looppt["+strconv.Itoa(osc)+"]"); err != nil {
+		return
+	}
+	return
+}

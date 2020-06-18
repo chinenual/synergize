@@ -1,3 +1,5 @@
+const { lookupService } = require("dns");
+
 let viewVCE_envs = {
 
 	chart: null,
@@ -224,6 +226,170 @@ let viewVCE_envs = {
 
 	supressOnChange: false,
 
+	onchangeLoop: function (ele) {
+		if (viewVCE.supressOnchange) { return; }
+		if (viewVCE_envs.supressOnchange) { return; }
+
+		var eleIndex;
+		var envOscSelectEle = document.getElementById("envOscSelect");
+		var osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
+		var envEnvSelectEle = document.getElementById("envEnvSelect");
+		var selectedEnv = parseInt(envEnvSelectEle.value, 10);
+		var eleValue = ele.value;
+
+		var pattern = /([A-Za-z]+)\[(\d+)\]/;
+		if (ret = ele.id.match(pattern)) {
+			eleIndex = parseInt(ret[2])
+		}
+
+		var env;
+		var selectorPrefix;
+		if (ele.id.includes('Freq')) {
+			env = vce.Envelopes[osc - 1].FreqEnvelope;
+			selectorPrefix = "envFreqLoop";
+		} else {
+			env = vce.Envelopes[osc - 1].AmpEnvelope;
+			selectorPrefix = "envAmpLoop";
+		}
+
+		var accelLow = 30; // defaults
+		var accelUp = 30; // defaults
+
+		if (env.ENVTYPE == 1) {
+			accelLow = env.SUSTAINPT;
+			accelUp = env.LOOPPT;
+
+			// temporarily replace the accellerations with point indexes to make all the validations below less messy than they might be
+			env.SUSTAINPT = 0;
+			env.LOOPPT = 0;
+		}
+
+		// type = 1  : no loop (and LOOPPT and SUSTAINPT are accelleration rates not point positions)
+		// type = 2  : S only
+		// type = 3  : L and S - L must be before S
+		// type = 4  : R and S - R must be before S
+		// WARNING: when type1, the LOOPPT and SUSTAINPT values are _acceleration_ rates, not point positions. What a pain.
+		console.log("loop change " + eleIndex + " " + eleValue);
+		console.dir(env);
+		if (eleValue == '') {
+			// always safe to remove a loop point
+			if (env.LOOPPT == eleIndex) {
+				env.LOOPPT = 0;
+				env.ENVTYPE = 2; // sustain only
+			}
+			// can't remove SUSTAIN POINT if there's a loop point
+			if (env.SUSTAINPT == eleIndex) {
+				if (env.ENVTYPE === 3 || env.ENVTYPE == 4) {
+					index.errorNotification('Cannot remove SUSTAIN point if there are LOOP or REPEAT points')
+					ele.value = 'S';
+					if (env.ENVTYPE == 1) {
+						// restore the accellerations
+						env.SUSTAINPT = accelLow;
+						env.LOOPPT = accelUp;
+					}
+					return;
+				}
+				env.SUSTAINPT = 0;
+			}
+			if (env.LOOPPT === 0 && env.SUSTAINPT === 0) {
+				env.ENVTYPE = 1; // no loops
+			} if (env.LOOPPT === 0) {
+				env.ENVTYPE = 2; // sustain-only 
+			}
+		} else if (eleValue === 'S') {
+			if (env.LOOPPT > eleIndex) {
+				index.errorNotification('Cannot set SUSTAIN point before LOOP or REPEAT point');
+				ele.value = '';
+				if (env.ENVTYPE == 1) {
+					// restore the accellerations
+					env.SUSTAINPT = accelLow;
+					env.LOOPPT = accelUp;
+				}
+				return;
+			} else if (env.LOOPPT === eleIndex) {
+				// replacing a L or R with an S:
+				env.ENVTYPE = 2;
+				env.LOOPPT = 0;
+				env.SUSTAINPT = eleIndex;
+			} else if (env.SUSTAINPT == 0) {
+				env.ENVTYPE = 2;
+				env.SUSTAINPT = eleIndex;
+			} else {
+				// S is after an L/R
+				// env type remains unchanged
+				env.SUSTAINPT = eleIndex;
+			}
+		} else { // 'R' or 'L'
+			if (env.SUSTAINPT <= eleIndex) {
+				index.errorNotification('SUSTAIN point must be after LOOP or REPEAT');
+				ele.value = '';
+				if (env.ENVTYPE == 1) {
+					// restore the accellerations
+					env.SUSTAINPT = accelLow;
+					env.LOOPPT = accelUp;
+				}
+				return;
+			} else {
+				// we use the most recent change to set the env type
+				env.ENVTYPE = eleValue === 'L' ? 3 : 4;
+				env.LOOPPT = eleIndex;
+			}
+		}
+
+		if (env.ENVTYPE == 1) {
+			// restore the accellerations
+			env.SUSTAINPT = accelLow;
+			env.LOOPPT = accelUp;
+
+			// show the acceleration inputs
+		} else {
+			// hide the accelleration inputs
+		}
+
+		// validation is OK, but now need to clean up any selects (i.e. if loop point moved, need to set the previous location to '')
+		// easiest thing to do is just brute force reset each ele to reflect the value in the envelope
+		for (var p = 0; p < 16; p++) {
+			$(`#${selectorPrefix}\\[${p + 1}\\] option[value='']`).prop('selected', true);
+			$(`#${selectorPrefix}\\[${p + 1}\\] option[value='L']`).prop('selected', false);
+			$(`#${selectorPrefix}\\[${p + 1}\\] option[value='R']`).prop('selected', false);
+			$(`#${selectorPrefix}\\[${p + 1}\\] option[value='S']`).prop('selected', false);
+		}
+		if (env.ENVTYPE != 1 && env.SUSTAINPT > 0) {
+			$(`#${selectorPrefix}\\[${env.SUSTAINPT}\\] option[value='S']`).prop('selected', true);
+		}
+		if (env.ENVTYPE != 1 && env.LOOPPT > 0) {
+			var v = env.ENVTYPE == 3 ? 'L' : 'R'
+			$(`#${selectorPrefix}\\[${env.LOOPPT}\\] option[value='${v}']`).prop('selected', true);
+		}
+
+		// Validate and determine envelope "type code"
+
+		let message = {
+			"name": "setLoopPoint",
+			"payload": {
+				"Osc": osc,
+				"Env": ele.id.includes('Freq') ? "Freq" : "Amp",
+				"EnvType": env.ENVTYPE,
+				"SustainPt": env.SUSTAINPT,
+				"LoopPt": env.LOOPPT,
+			}
+		};
+		astilectron.sendMessage(message, function (message) {
+			console.log("setLoopPoint returned: " + JSON.stringify(message));
+			// Check error
+			if (message.name === "error") {
+				// failed - dont change the value
+				index.errorNotification(message.payload);
+				return false;
+			} else {
+				// currently there's no visual rendering of the loop, so no need to refresh the chart
+				//				viewVCE_envs.envChartUpdate(osc, selectedEnv, false);
+			}
+		});
+		return true;
+
+	},
+
 	onchange: function (ele) {
 		if (viewVCE.supressOnchange) { return; }
 		if (viewVCE_envs.supressOnchange) { return; }
@@ -248,35 +414,35 @@ let viewVCE_envs = {
 			switch (fieldType) {
 				case "envFreqLowVal":
 					value = viewVCE_envs.unscaleFreqEnvValue(value);
-					vce.Envelopes[osc-1].FreqEnvelope.Table[((eleIndex-1)*4) + 0] = value;
+					vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 0] = value;
 					break;
 				case "envFreqUpVal":
 					value = viewVCE_envs.unscaleFreqEnvValue(value);
-					vce.Envelopes[osc-1].FreqEnvelope.Table[((eleIndex-1)*4) + 1] = value;
+					vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 1] = value;
 					break;
 				case "envFreqLowTime":
 					value = viewVCE_envs.unscaleFreqTimeValue(value);
-					vce.Envelopes[osc-1].FreqEnvelope.Table[((eleIndex-1)*4) + 2] = value;
+					vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 2] = value;
 					break;
 				case "envFreqUpTime":
 					value = viewVCE_envs.unscaleFreqTimeValue(value);
-					vce.Envelopes[osc-1].FreqEnvelope.Table[((eleIndex-1)*4) + 3] = value;
+					vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 3] = value;
 					break;
 				case "envAmpLowVal":
 					value = viewVCE_envs.unscaleAmpEnvValue(value);
-					vce.Envelopes[osc-1].AmpEnvelope.Table[((eleIndex-1)*4) + 0] = value;
+					vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 0] = value;
 					break;
 				case "envAmpUpVal":
 					value = viewVCE_envs.unscaleAmpEnvValue(value);
-					vce.Envelopes[osc-1].AmpEnvelope.Table[((eleIndex-1)*4) + 1] = value;
+					vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 1] = value;
 					break;
 				case "envAmpLowTime":
 					value = viewVCE_envs.unscaleAmpTimeValue(value);
-					vce.Envelopes[osc-1].AmpEnvelope.Table[((eleIndex-1)*4) + 2] = value;
+					vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 2] = value;
 					break;
 				case "envAmpUpTime":
 					value = viewVCE_envs.unscaleAmpTimeValue(value);
-					vce.Envelopes[osc-1].AmpEnvelope.Table[((eleIndex-1)*4) + 3] = value;
+					vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 3] = value;
 					break;
 			}
 		}
@@ -528,7 +694,8 @@ let viewVCE_envs = {
 				$(`#envFreqLoop\\[${i + 1}\\] option[value='S']`).prop('selected', true);
 			}
 			if (envelopes.FreqEnvelope.LOOPPT == (i + 1)) {
-				$(`#envFreqLoop\\[${i + 1}\\] option[value='L']`).prop('selected', true);
+				var v = envelopes.FreqEnvelope.ENVTYPE == 3 ? 'L' : 'R'
+				$(`#envFreqLoop\\[${i + 1}\\] option[value='${v}']`).prop('selected', true);
 			}
 		}
 		var maxTotalTime = Math.max(totalTimeLow, totalTimeUp);
@@ -597,7 +764,8 @@ let viewVCE_envs = {
 				$(`#envAmpLoop\\[${i + 1}\\] option[value='S']`).prop('selected', true);
 			}
 			if (envelopes.AmpEnvelope.LOOPPT == (i + 1)) {
-				$(`#envAmpLoop\\[${i + 1}\\] option[value='L']`).prop('selected', true);
+				var v = envelopes.AmpEnvelope.ENVTYPE == 3 ? 'L' : 'R'
+				$(`#envAmpLoop\\[${i + 1}\\] option[value='${v}']`).prop('selected', true);
 			}
 		}
 

@@ -268,9 +268,9 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 
 	case "setOscEnvLengths":
 		var args struct {
-			Osc   int
+			Osc        int
 			FreqLength int
-			AmpLength int
+			AmpLength  int
 		}
 		if len(m.Payload) > 0 {
 			// Unmarshal payload
@@ -280,6 +280,27 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			}
 		}
 		if err = synio.SetOscEnvLengths(args.Osc, args.FreqLength, args.AmpLength); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
+	case "setLoopPoint":
+		var args struct {
+			Osc       int
+			Env       string
+			EnvType   int
+			SustainPt int
+			LoopPt    int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetEnvLoopPoint(args.Osc, args.Env, args.EnvType, args.SustainPt, args.LoopPt); err != nil {
 			payload = err.Error()
 			return
 		}
