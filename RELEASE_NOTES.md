@@ -1,8 +1,44 @@
-* Fixed the voice amplitude proportionality chart - for certain
-combinations of center and sensitivity it could show an odd
-discontinuous curve.
-* Fixed display of Wave Type and Key Prop toggle on the Oscillator table.
-* Fixed display of Sustain and Loop points on frequency envelopes.
+# 2.0.0-beta1
+
+* Beta test release.
+* This release introduces voice editing functionality.  The editor is
+  modeled on, but is not exactly the same as the Kaypro SYNHCS
+  software:
+    * Unlike SYNHCS, all editing is done in the application -
+      not via buttons and knobs on the Synergy. Changes made in the editor
+      are immediately transmitted to the Synergy, so you can hear the
+      effect of the parameter change in real time.
+	* In some cases (e.g. Vibrato, Timbre, Amplitude and Transpose
+      settings), the Synergy front panel can also be used to alter the
+      values - however if used, the values are not reflected in the
+      Synergize display - only in the Synergy's VRAM. 
+    * Most parameter editing is one-for-one the same as in SYNHCS,
+      except for the Oscillator Mute and Solo features.  Instead of
+      adopting the Ensemble/Group concepts from SYNHCS, Synergize uses
+      Mute and Solo buttons modelled on DAW conventions (e.g. Logic
+      Pro, Ableton Live - hopefully this is intuitive).
+* SYNHCS functionality that is not implemented:
+    * Not yet implemented, but planned:
+        * This version only supports the 10 "factory" patch types; "user
+	      defined" patches are not yet handled.
+	* Functionality not planned to be supported (use a github issue or
+      start a discussion in the Synergize Slack group if you want to
+      make a case that these should be implemented):
+	    * Performance Program controller (sequence of performance
+ 		  parameters for live performance support).
+	    * Support for creating or viewing .DOC files
+		* Support for printing voicing parameters
+        * Support for changing portamento settings via Synergize.
+          Since these values are not stored in the voice file (VCE or
+          CRT), you must change them via the Synergy front panel.
+		* "Scaling" the envelope and filter displays.  In Synergize,
+          these auto-scale - there's no support for zooming in or out.
+*  Some miscellaneous bug fixes found while implementing the editor:
+    * Fixed the voice amplitude proportionality chart - for certain
+      combinations of center and sensitivity it could show an odd
+      discontinuous curve.
+    * Fixed display of Wave Type and Key Prop toggle on the Oscillator table.
+    * Fixed display of Sustain and Loop points.
 
 # 1.0.0
 
