@@ -266,6 +266,25 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		}
 		payload = "ok"
 
+	case "setOscEnvLengths":
+		var args struct {
+			Osc   int
+			FreqLength int
+			AmpLength int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetOscEnvLengths(args.Osc, args.FreqLength, args.AmpLength); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
 	case "setEnvFreqLowVal",
 		"setEnvFreqUpVal",
 		"setEnvAmpLowVal",

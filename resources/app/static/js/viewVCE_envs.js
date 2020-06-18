@@ -34,9 +34,9 @@ let viewVCE_envs = {
 	// Amp values:
 	//   as displayed: 0 .. 72
 	//   byte range:   0x37 .. 0x7f (55 .. 127)
-	scaleAmpEnvValue: function (v, last) {
+	scaleAmpEnvValue: function (v) {
 		// See OSCDSP.Z80 DISVAL: DVAL30:
-		if (last) return 0;
+		//if (last) return 0;
 		return Math.max(0, v - 55);
 	},
 	unscaleAmpEnvValue: function (v) {
@@ -245,8 +245,11 @@ let viewVCE_envs = {
 		console.log(" AmpTimeValue 0..84: " + JSON.stringify(arr));
 	},
 
+	supressOnChange: false,
+
 	onchange: function (ele) {
 		if (viewVCE.supressOnchange) { return; }
+		if (viewVCE_envs.supressOnchange) { return; }
 
 		var eleIndex;
 		var envOscSelectEle = document.getElementById("envOscSelect");
@@ -308,7 +311,78 @@ let viewVCE_envs = {
 
 	},
 
+	changeEnvPoints: function (whichEnv, increment) {
+		var eleIndex;
+		var envOscSelectEle = document.getElementById("envOscSelect");
+		var osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
+		var envEnvSelectEle = document.getElementById("envOscSelect");
+		var selectedEnv = parseInt(envEnvSelectEle.value, 10);
+		var envs = vce.Envelopes[osc - 1];
+
+		var changed = false;
+		if (whichEnv === 'freq') {
+			newlen = envs.FreqEnvelope.NPOINTS + increment;
+			if (newlen >= 1 && newlen <= 16) {
+				envs.FreqEnvelope.NPOINTS = newlen;
+				changed = true;
+			}
+		} else {
+			newlen = envs.AmpEnvelope.NPOINTS + increment;
+			if (newlen >= 1 && newlen <= 16) {
+				envs.AmpEnvelope.NPOINTS = newlen;
+				changed = true;
+			}
+		}
+		if (changed) {
+			let message = {
+				"name": "setOscEnvLengths",
+				"payload": {
+					"Osc": osc,
+					"FreqLength": envs.FreqEnvelope.NPOINTS,
+					"AmpLength": envs.AmpEnvelope.NPOINTS
+				}
+			};
+			astilectron.sendMessage(message, function (message) {
+				console.log("setOscEnvLengths returned: " + JSON.stringify(message));
+				// Check error
+				if (message.name === "error") {
+					// failed - dont change the value
+					index.errorNotification(message.payload);
+					return false;
+				} else {
+					viewVCE_envs.envChartUpdate(osc, selectedEnv);
+				}
+			});
+		}
+	},
+
+	uncompressEnvelopes: function () {
+		// the first time we evaluate this vce, the envelopes may be compressed.  To make it easier to add/remove 
+		// filters in the editor, we rewrite the envelopes arrays such each has the max amount of elements and each are initialized
+		// as SYNHCS does.
+		if (vce.Extra["uncompressedEnvelopes"] != undefined) {
+			// no need to do it again
+			return;
+		}
+		// only need to worry about the number of oscillators in the Envelopes table; any addition osc's added will automatically
+		// fill in "full length" envelopes (but use the length of the array not the current value of VOITAB lowered the number of osc's)
+		for (i = 0; i < vce.Envelopes.length; i++) {
+			const FULL_LENGTH = 16 * 4; // 16 rows, each with 4 values
+			for (j = vce.Envelopes[i].FreqEnvelope.Table.length; j < FULL_LENGTH; j++) {
+				vce.Envelopes[i].FreqEnvelope.Table.push(0);
+			}
+			for (j = vce.Envelopes[i].AmpEnvelope.Table.length; j < FULL_LENGTH; j++) {
+				vce.Envelopes[i].AmpEnvelope.Table.push(0);
+			}
+		}
+		vce.Extra.uncompressedEnvelopes = true;
+	},
+
 	envChartUpdate: function (oscNum, envNum) {
+		viewVCE_envs.supressOnchange = true;
+
+		viewVCE_envs.uncompressEnvelopes();
+
 		var oscIndex = oscNum - 1;
 		var envelopes = vce.Envelopes[oscIndex];
 
@@ -396,6 +470,20 @@ let viewVCE_envs = {
 		var lastAmpLow = 0;
 		var lastAmpUp = 0;
 
+		for (i = 0; i < 16; i++) {
+			// completely hide the rows for rows not used by either envelope
+			var tr = $('#envTable tbody tr:eq(' + i + ')');
+			if (i < Math.max(envelopes.FreqEnvelope.NPOINTS, envelopes.AmpEnvelope.NPOINTS)) {
+				tr.show();
+			} else {
+				tr.hide();
+			}
+		}
+		if (viewVCE_voice.voicingMode) {
+			$(".listplusminus div").show();
+		} else {
+			$(".listplusminus div").hide();
+		}
 		for (i = envelopes.FreqEnvelope.NPOINTS; i < 16; i++) {
 			// hide unused rows
 			var tr = $('#envTable tbody tr:eq(' + i + ')');
@@ -424,6 +512,11 @@ let viewVCE_envs = {
 			var timeLow = viewVCE_envs.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i * 4 + 2], i == 0);
 			var timeUp = viewVCE_envs.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i * 4 + 3], i == 0);
 
+			if (i == 0) {
+				// first row's time values are fixed at zero (the entries in the table are used for wave/kprop markers)
+				timeLow = 0;
+				timeUp = 0;
+			}
 			lastFreqLow = freqLow;
 			lastFreqUp = freqUp;
 			totalTimeLow += timeLow;
@@ -434,10 +527,16 @@ let viewVCE_envs = {
 
 			document.getElementById(`envFreqLowVal[${i + 1}]`).value = freqLow;
 			document.getElementById(`envFreqUpVal[${i + 1}]`).value = freqUp;
-			document.getElementById(`envFreqLowTime[${i + 1}]`).value = timeLow;
-			document.getElementById(`envFreqUpTime[${i + 1}]`).value = timeUp;
+			if (i !== 0) {
+				document.getElementById(`envFreqLowTime[${i + 1}]`).value = timeLow;
+				document.getElementById(`envFreqUpTime[${i + 1}]`).value = timeUp;
+			}
 			document.getElementById(`envFreqTotLowTime[${i + 1}]`).innerHTML = totalTimeLow;
 			document.getElementById(`envFreqTotUpTime[${i + 1}]`).innerHTML = totalTimeUp;
+
+			console.log(`freq raw row ${i + 1} ${envelopes.FreqEnvelope.Table[i * 4 + 0]} ${envelopes.FreqEnvelope.Table[i * 4 + 1]} ${envelopes.FreqEnvelope.Table[i * 4 + 2]} ${envelopes.FreqEnvelope.Table[i * 4 + 3]}`);
+			console.log(`freq scaled row ${i + 1} ${freqLow} ${freqUp} ${timeLow} ${timeUp}`);
+
 
 			if (envelopes.FreqEnvelope.SUSTAINPT == (i + 1)) {
 				$(`#envFreqLoop\\[${i + 1}\\] option[value='S']`).prop('selected', true);
@@ -480,12 +579,9 @@ let viewVCE_envs = {
 			console.log("j " + j);
 			//	    console.dir(tr);
 			//	    console.dir(tr.find('td:eq(' +(j+0)+ ')'));
-			var ampLow =
-				viewVCE_envs.scaleAmpEnvValue(envelopes.AmpEnvelope.Table[i * 4 + 0],
-					(i + 1) >= envelopes.AmpEnvelope.NPOINTS);
-			var ampUp =
-				viewVCE_envs.scaleAmpEnvValue(envelopes.AmpEnvelope.Table[i * 4 + 1],
-					(i + 1) >= envelopes.AmpEnvelope.NPOINTS);
+			var isLast = (i + 1) >= envelopes.AmpEnvelope.NPOINTS;
+			var ampLow = viewVCE_envs.scaleAmpEnvValue(envelopes.AmpEnvelope.Table[i * 4 + 0]);
+			var ampUp = viewVCE_envs.scaleAmpEnvValue(envelopes.AmpEnvelope.Table[i * 4 + 1]);
 			var timeLow = viewVCE_envs.scaleAmpTimeValue(envelopes.AmpEnvelope.Table[i * 4 + 2]);
 			var timeUp = viewVCE_envs.scaleAmpTimeValue(envelopes.AmpEnvelope.Table[i * 4 + 3]);
 			lastAmpLow = ampLow;
@@ -504,6 +600,14 @@ let viewVCE_envs = {
 			document.getElementById(`envAmpUpTime[${i + 1}]`).value = timeUp;
 			document.getElementById(`envAmpTotLowTime[${i + 1}]`).innerHTML = totalTimeLow;
 			document.getElementById(`envAmpTotUpTime[${i + 1}]`).innerHTML = totalTimeUp;
+
+			if (isLast) {
+				document.getElementById(`envAmpLowVal[${i + 1}]`).disabled = true;
+				document.getElementById(`envAmpUpVal[${i + 1}]`).disabled = true;
+			} else {
+				document.getElementById(`envAmpLowVal[${i + 1}]`).disabled = false;
+				document.getElementById(`envAmpUpVal[${i + 1}]`).disabled = false;
+			}
 
 			if (envelopes.AmpEnvelope.SUSTAINPT == (i + 1)) {
 				$(`#envAmpLoop\\[${i + 1}\\] option[value='S']`).prop('selected', true);
@@ -625,7 +729,7 @@ let viewVCE_envs = {
 				maintainAspectRatio: false
 			}
 		});
-
+		viewVCE_envs.supressOnchange = false;
 	}
 
 };

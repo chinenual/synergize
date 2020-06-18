@@ -511,3 +511,16 @@ func SetEnvAmpUpTime(osc /* 1-based */ int, pointIndex /* 1-based */ int, value 
 	}
 	return
 }
+
+func SetOscEnvLengths(osc /* 1-based */ int, freqLength int, ampLength int) (err error) {
+	var addr = VoiceOscAddr(osc, data.Off_EOSC_FreqNPOINTS)
+	if err = LoadByte(addr, byte(freqLength), "set EnvFreq NPOINTS["+strconv.Itoa(osc)+"]"); err != nil {
+		return
+	}
+	addr = VoiceOscAddr(osc, data.Off_EOSC_AmpNPOINTS)
+	if err = LoadByte(addr, byte(ampLength), "set EnvAmp NPOINTS["+strconv.Itoa(osc)+"]"); err != nil {
+		return
+	}
+	return
+
+}

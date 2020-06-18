@@ -82,6 +82,23 @@ table {
     left: 50%;
 }
 
+.listplusminus div {
+    margin-top: 5px; 
+    float: left;
+}
+
+.listplusminus input {
+    height: 25px;
+    width: 25px;
+    font-size: larger;
+    color: #fff;
+    background-color: #222;
+    border: 1px solid #aaa;
+    border-style: solid;
+    border-radius: 5px;
+
+}
+
 .dir {
     cursor: pointer;
     padding: 3px;
