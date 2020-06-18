@@ -41,12 +41,13 @@ First check is full UI support; second check is lower-level IO and tests
     * [x] [x] adjust the "patch" routing (adder, frequency, output registers)
 
 * Envelopes page (AKA Oscillator page)
-    * [ ] [ ] Change number of points in an envelope
-    * [ ] [ ] set Sustain point
-    * [ ] [ ] set Loop point
-    * [ ] [ ] change envelope type
+    * [x] [x] Change number of points in an envelope
+    * [x] [x] set Sustain point
+    * [x] [x] set Loop point
+    * [x] [x] change envelope type
     * [ ] [ ] <s>scale up/down</s>
-    * [ ] [ ] change freq, amp or time values for both upper and lower bounds
+    * [x] [x] change freq, amp or time values for both upper and lower bounds
+    * [x] [x] change type1 accelerations
     * [ ] [ ] copy upper <-> lower
 
 * Filters
