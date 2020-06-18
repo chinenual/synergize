@@ -243,19 +243,20 @@ let viewVCE_envs = {
 		}
 
 		var env;
-		var selectorPrefix;
+		var envid;
 		if (ele.id.includes('Freq')) {
 			env = vce.Envelopes[osc - 1].FreqEnvelope;
-			selectorPrefix = "envFreqLoop";
+			envid = "Freq";
 		} else {
 			env = vce.Envelopes[osc - 1].AmpEnvelope;
-			selectorPrefix = "envAmpLoop";
+			envid = "Amp";
 		}
 
 		var accelLow = 30; // defaults
 		var accelUp = 30; // defaults
 
 		if (env.ENVTYPE == 1) {
+			console.log('p');
 			accelLow = env.SUSTAINPT;
 			accelUp = env.LOOPPT;
 
@@ -269,7 +270,7 @@ let viewVCE_envs = {
 		// type = 3  : L and S - L must be before S
 		// type = 4  : R and S - R must be before S
 		// WARNING: when type1, the LOOPPT and SUSTAINPT values are _acceleration_ rates, not point positions. What a pain.
-		console.log("loop change " + eleIndex + " " + eleValue);
+		console.log("loop change " + eleIndex + " " + eleValue + " " + envid);
 		console.dir(env);
 		if (eleValue == '') {
 			// always safe to remove a loop point
@@ -293,7 +294,7 @@ let viewVCE_envs = {
 			}
 			if (env.LOOPPT === 0 && env.SUSTAINPT === 0) {
 				env.ENVTYPE = 1; // no loops
-			} if (env.LOOPPT === 0) {
+			} else if (env.LOOPPT === 0) {
 				env.ENVTYPE = 2; // sustain-only 
 			}
 		} else if (eleValue === 'S') {
@@ -340,35 +341,97 @@ let viewVCE_envs = {
 			// restore the accellerations
 			env.SUSTAINPT = accelLow;
 			env.LOOPPT = accelUp;
-
-			// show the acceleration inputs
-		} else {
-			// hide the accelleration inputs
 		}
 
 		// validation is OK, but now need to clean up any selects (i.e. if loop point moved, need to set the previous location to '')
 		// easiest thing to do is just brute force reset each ele to reflect the value in the envelope
 		for (var p = 0; p < 16; p++) {
-			$(`#${selectorPrefix}\\[${p + 1}\\] option[value='']`).prop('selected', true);
-			$(`#${selectorPrefix}\\[${p + 1}\\] option[value='L']`).prop('selected', false);
-			$(`#${selectorPrefix}\\[${p + 1}\\] option[value='R']`).prop('selected', false);
-			$(`#${selectorPrefix}\\[${p + 1}\\] option[value='S']`).prop('selected', false);
+			$(`#env${envid}Loop\\[${p + 1}\\] option[value='']`).prop('selected', true);
+			$(`#env${envid}Loop\\[${p + 1}\\] option[value='L']`).prop('selected', false);
+			$(`#env${envid}Loop\\[${p + 1}\\] option[value='R']`).prop('selected', false);
+			$(`#env${envid}Loop\\[${p + 1}\\] option[value='S']`).prop('selected', false);
 		}
 		if (env.ENVTYPE != 1 && env.SUSTAINPT > 0) {
-			$(`#${selectorPrefix}\\[${env.SUSTAINPT}\\] option[value='S']`).prop('selected', true);
+			$(`#env${envid}Loop\\[${env.SUSTAINPT}\\] option[value='S']`).prop('selected', true);
 		}
 		if (env.ENVTYPE != 1 && env.LOOPPT > 0) {
 			var v = env.ENVTYPE == 3 ? 'L' : 'R'
-			$(`#${selectorPrefix}\\[${env.LOOPPT}\\] option[value='${v}']`).prop('selected', true);
+			$(`#env${envid}Loop\\[${env.LOOPPT}\\] option[value='${v}']`).prop('selected', true);
 		}
 
-		// Validate and determine envelope "type code"
+		// only show accelleration values if type1 envelope
+		if (env.ENVTYPE === 1) {
+			$(`.type1accel div.${envid}`).show();
+			$(`#accel${envid}Low`).val(env.SUSTAINPT);
+			$(`#accel${envid}Up`).val(env.LOOPPT);
+		} else {
+			$(`.type1accel div.${envid}`).hide();
+		}
+
+		console.log("resulting env: " + envid);
+		console.dir(env);
+		let message = {
+			"name": "setLoopPoint",
+			"payload": {
+				"Osc": osc,
+				"Env": envid,
+				"EnvType": env.ENVTYPE,
+				"SustainPt": env.SUSTAINPT,
+				"LoopPt": env.LOOPPT,
+			}
+		};
+		astilectron.sendMessage(message, function (message) {
+			console.log("setLoopPoint returned: " + JSON.stringify(message));
+			// Check error
+			if (message.name === "error") {
+				// failed - dont change the value
+				index.errorNotification(message.payload);
+				return false;
+			} else {
+				// currently there's no visual rendering of the loop, so no need to refresh the chart
+				//				viewVCE_envs.envChartUpdate(osc, selectedEnv, false);
+			}
+		});
+		return true;
+
+	},
+
+	onchangeEnvAccel: function (ele) {
+		// type1 accelerations are really just the SUSTAIN and LOOP points.  We use the same backend function as the loop change event
+
+		if (viewVCE.supressOnchange) { return; }
+		if (viewVCE_envs.supressOnchange) { return; }
+
+		var envOscSelectEle = document.getElementById("envOscSelect");
+		var osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
+		var envEnvSelectEle = document.getElementById("envEnvSelect");
+		var selectedEnv = parseInt(envEnvSelectEle.value, 10);
+		var eleValue = ele.value;
+
+		var env;
+		var envid;
+		// id is accelFreqUp , accelAmpLow etc.
+		if (ele.id.includes('Freq')) {
+			env = vce.Envelopes[osc - 1].FreqEnvelope;
+			envid = "Freq";
+		} else {
+			env = vce.Envelopes[osc - 1].AmpEnvelope;
+			envid = "Amp";
+		}
+		if (ele.id.includes('Low')) {
+			env.SUSTAINPT = parseInt(eleValue,10);
+		} else {
+			env.LOOPPT = parseInt(eleValue,10);
+		}
+		
+		console.log("ACCEL change " + ele.id  + " " + eleValue + " " + envid);
+
 
 		let message = {
 			"name": "setLoopPoint",
 			"payload": {
 				"Osc": osc,
-				"Env": ele.id.includes('Freq') ? "Freq" : "Amp",
+				"Env": envid,
 				"EnvType": env.ENVTYPE,
 				"SustainPt": env.SUSTAINPT,
 				"LoopPt": env.LOOPPT,
@@ -642,6 +705,23 @@ let viewVCE_envs = {
 		} else {
 			$(".listplusminus div").hide();
 		}
+		// only show accelleration values if type1 envelope
+		if (envelopes.FreqEnvelope.ENVTYPE === 1) {
+			$('.type1accel .Freq').show();
+			$('#accelFreqLow').val(envelopes.FreqEnvelope.SUSTAINPT);
+			$('#accelFreqUp').val(envelopes.FreqEnvelope.LOOPPT);
+		} else {
+			$('.type1accell .Freq').hide();
+		}
+		// only show accelleration values if type1 envelope
+		if (envelopes.AmpEnvelope.ENVTYPE === 1) {
+			$('.type1accel .Amp').show();
+			$('#accelAmpLow').val(envelopes.AmpEnvelope.SUSTAINPT);
+			$('#accelAmpUp').val(envelopes.AmpEnvelope.LOOPPT);
+		} else {
+			$('.type1accell .Amp').hide();
+		}
+
 		for (i = envelopes.FreqEnvelope.NPOINTS; i < 16; i++) {
 			// hide unused rows
 			var tr = $('#envTable tbody tr:eq(' + i + ')');

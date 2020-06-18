@@ -349,4 +349,5 @@ span.spinNOSPIN-Enabled {
 
 .spinwrapper {
     width: 3.5em;
+    display: inline-block;
 }
