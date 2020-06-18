@@ -16,7 +16,7 @@ let viewVCE_envs = {
 			selectEle.appendChild(option);
 		}
 
-		viewVCE_envs.envChartUpdate(1, -1)
+		viewVCE_envs.envChartUpdate(1, -1, true)
 	},
 
 
@@ -28,6 +28,12 @@ let viewVCE_envs = {
 		return v;
 	},
 	unscaleFreqEnvValue: function (v) {
+		return v;
+	},
+	FreqEnvValueToText(v) {
+		return v;
+	},
+	TextToFreqEnvValue(v) {
 		return v;
 	},
 
@@ -216,35 +222,6 @@ let viewVCE_envs = {
 		return ok;
 	},
 
-	logConversionFunctions: function () {
-		var ok = true;
-		var arr = [];
-		for (var i = -61; i <= 63; i++) {
-			var scaled = viewVCE_envs.scaleFreqEnvValue(i);
-			arr.push(scaled);
-		}
-		console.log(" FreqEnvValue -16..63: " + JSON.stringify(arr));
-
-		arr = [];
-		for (var i = 55; i <= 127; i++) {
-			var scaled = viewVCE_envs.scaleAmpEnvValue(i);
-			arr.push(scaled);
-		}
-		console.log(" AmpEnvValue 55..127: " + JSON.stringify(arr));
-		arr = [];
-		for (var i = 0; i <= 84; i++) {
-			var scaled = viewVCE_envs.scaleFreqTimeValue(i);
-			arr.push(scaled);
-		}
-		console.log(" FreqTimeValue 0..84: " + JSON.stringify(arr));
-		arr = [];
-		for (var i = 0; i <= 84; i++) {
-			var scaled = viewVCE_envs.scaleAmpTimeValue(i);
-			arr.push(scaled);
-		}
-		console.log(" AmpTimeValue 0..84: " + JSON.stringify(arr));
-	},
-
 	supressOnChange: false,
 
 	onchange: function (ele) {
@@ -254,7 +231,7 @@ let viewVCE_envs = {
 		var eleIndex;
 		var envOscSelectEle = document.getElementById("envOscSelect");
 		var osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
-		var envEnvSelectEle = document.getElementById("envOscSelect");
+		var envEnvSelectEle = document.getElementById("envEnvSelect");
 		var selectedEnv = parseInt(envEnvSelectEle.value, 10);
 
 		console.log("env ele change " + ele.id + " " + ele.value);
@@ -270,20 +247,36 @@ let viewVCE_envs = {
 			// now scale the value to the byte value the synergy wants to see:
 			switch (fieldType) {
 				case "envFreqLowVal":
+					value = viewVCE_envs.unscaleFreqEnvValue(value);
+					vce.Envelopes[osc-1].FreqEnvelope.Table[((eleIndex-1)*4) + 0] = value;
+					break;
 				case "envFreqUpVal":
 					value = viewVCE_envs.unscaleFreqEnvValue(value);
+					vce.Envelopes[osc-1].FreqEnvelope.Table[((eleIndex-1)*4) + 1] = value;
 					break;
 				case "envFreqLowTime":
+					value = viewVCE_envs.unscaleFreqTimeValue(value);
+					vce.Envelopes[osc-1].FreqEnvelope.Table[((eleIndex-1)*4) + 2] = value;
+					break;
 				case "envFreqUpTime":
 					value = viewVCE_envs.unscaleFreqTimeValue(value);
+					vce.Envelopes[osc-1].FreqEnvelope.Table[((eleIndex-1)*4) + 3] = value;
 					break;
 				case "envAmpLowVal":
+					value = viewVCE_envs.unscaleAmpEnvValue(value);
+					vce.Envelopes[osc-1].AmpEnvelope.Table[((eleIndex-1)*4) + 0] = value;
+					break;
 				case "envAmpUpVal":
 					value = viewVCE_envs.unscaleAmpEnvValue(value);
+					vce.Envelopes[osc-1].AmpEnvelope.Table[((eleIndex-1)*4) + 1] = value;
 					break;
 				case "envAmpLowTime":
+					value = viewVCE_envs.unscaleAmpTimeValue(value);
+					vce.Envelopes[osc-1].AmpEnvelope.Table[((eleIndex-1)*4) + 2] = value;
+					break;
 				case "envAmpUpTime":
 					value = viewVCE_envs.unscaleAmpTimeValue(value);
+					vce.Envelopes[osc-1].AmpEnvelope.Table[((eleIndex-1)*4) + 3] = value;
 					break;
 			}
 		}
@@ -304,7 +297,7 @@ let viewVCE_envs = {
 				index.errorNotification(message.payload);
 				return false;
 			} else {
-				viewVCE_envs.envChartUpdate(osc, selectedEnv);
+				viewVCE_envs.envChartUpdate(osc, selectedEnv, false);
 			}
 		});
 		return true;
@@ -378,7 +371,7 @@ let viewVCE_envs = {
 		vce.Extra.uncompressedEnvelopes = true;
 	},
 
-	envChartUpdate: function (oscNum, envNum) {
+	envChartUpdate: function (oscNum, envNum, animate) {
 		viewVCE_envs.supressOnchange = true;
 
 		viewVCE_envs.uncompressEnvelopes();
@@ -462,7 +455,6 @@ let viewVCE_envs = {
 
 		// scaling algorithms derived from DISVAL: in OSCDSP.Z80
 
-		console.log("env freq npt " + envelopes.FreqEnvelope.NPOINTS);
 		var totalTimeLow = 0;
 		var totalTimeUp = 0;
 		var lastFreqLow = 0;
@@ -487,7 +479,6 @@ let viewVCE_envs = {
 		for (i = envelopes.FreqEnvelope.NPOINTS; i < 16; i++) {
 			// hide unused rows
 			var tr = $('#envTable tbody tr:eq(' + i + ')');
-			console.log("hide row " + i);
 
 			$(`#envFreqLoop\\[${i + 1}\\]`).hide();
 			$(`#envFreqLowVal\\[${i + 1}\\]`).hide();
@@ -498,7 +489,6 @@ let viewVCE_envs = {
 		}
 		for (i = 0; i < envelopes.FreqEnvelope.NPOINTS; i++) {
 			var tr = $('#envTable tbody tr:eq(' + i + ')');
-			console.log("show row " + i);
 
 			$(`#envFreqLoop\\[${i + 1}\\]`).show();
 			$(`#envFreqLowVal\\[${i + 1}\\]`).show();
@@ -534,10 +524,6 @@ let viewVCE_envs = {
 			document.getElementById(`envFreqTotLowTime[${i + 1}]`).innerHTML = totalTimeLow;
 			document.getElementById(`envFreqTotUpTime[${i + 1}]`).innerHTML = totalTimeUp;
 
-			console.log(`freq raw row ${i + 1} ${envelopes.FreqEnvelope.Table[i * 4 + 0]} ${envelopes.FreqEnvelope.Table[i * 4 + 1]} ${envelopes.FreqEnvelope.Table[i * 4 + 2]} ${envelopes.FreqEnvelope.Table[i * 4 + 3]}`);
-			console.log(`freq scaled row ${i + 1} ${freqLow} ${freqUp} ${timeLow} ${timeUp}`);
-
-
 			if (envelopes.FreqEnvelope.SUSTAINPT == (i + 1)) {
 				$(`#envFreqLoop\\[${i + 1}\\] option[value='S']`).prop('selected', true);
 			}
@@ -547,14 +533,12 @@ let viewVCE_envs = {
 		}
 		var maxTotalTime = Math.max(totalTimeLow, totalTimeUp);
 
-		console.log("env amp npt " + envelopes.AmpEnvelope.NPOINTS);
 		totalTimeLow = 0;
 		totalTimeUp = 0;
 
 
 		for (i = envelopes.FreqEnvelope.NPOINTS; i < 16; i++) {
 			// hide unused rows
-			console.log("hide row " + i);
 
 			$(`#envAmpLoop\\[${i + 1}\\]`).hide();
 			$(`#envAmpLowVal\\[${i + 1}\\]`).hide();
@@ -576,7 +560,7 @@ let viewVCE_envs = {
 			// "j" accounts for the difference in column index due to the
 			// row-spanning separators (only in i==0):
 			j = (i == 0) ? 11 : 9;
-			console.log("j " + j);
+
 			//	    console.dir(tr);
 			//	    console.dir(tr.find('td:eq(' +(j+0)+ ')'));
 			var isLast = (i + 1) >= envelopes.AmpEnvelope.NPOINTS;
@@ -631,6 +615,8 @@ let viewVCE_envs = {
 
 		//	console.dir(datasets);
 
+		var animation_duration = animate ? 1000 : 0;
+
 		var filteredDatasets = [];
 		if (envNum < 0) {
 			// all of them:
@@ -652,6 +638,9 @@ let viewVCE_envs = {
 
 			// Configuration options go here
 			options: {
+				animation: {
+					duration: animation_duration
+				},
 				tooltips: {
 					mode: 'index',
 				},
