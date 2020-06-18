@@ -46,7 +46,6 @@ let viewVCE_keyeq = {
 	},
 
 	init: function () {
-		console.log("keyEqChart init");
 		var propData = viewVCE_keyeq.keyEqCurve(vce.Head.VEQ);
 
 		$('#keyEqTable td.val input').each(function (i, obj) {

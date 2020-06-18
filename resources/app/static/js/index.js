@@ -390,7 +390,7 @@ let index = {
 
 	load: function (url, eleId, callback) {
 		console.log("load " + url + " into " + eleId + " " + $(('#' + eleId)));
-		console.dir($(('#' + eleId)));
+//		console.dir($(('#' + eleId)));
 		$(("#" + eleId)).load(url, function () {
 			console.log("loaded url " + url);
 			if (callback != undefined) {

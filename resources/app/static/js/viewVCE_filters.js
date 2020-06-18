@@ -5,7 +5,6 @@ let viewVCE_filters = {
 		if (viewVCE.supressOnchange) { return; }
 
 		var id = ele.id;
-		console.log("changed: " + id);
 
 		var eleIndex;
 		var selectEle = document.getElementById("filterSelect");
@@ -61,7 +60,6 @@ let viewVCE_filters = {
 		for (var i = 0; i <= vce.Head.VOITAB; i++) {
 			if (vce.Head.FILTER[i] < 0) {
 				// the zeroth entry in the compressed array is the a-filter
-				console.log("copying zeroth filter as A-filter");
 				newFilters[0] = vce.Filters[0];
 				oldFilterIdx++;
 				break;
@@ -76,7 +74,6 @@ let viewVCE_filters = {
 		// now for b filters -
 		for (var i = 0; i <= vce.Head.VOITAB; i++) {
 			if (vce.Head.FILTER[i] > 0) {
-				console.log("copying " + oldFilterIdx + " filter as B-filter to osc #" + (i + 1));
 				newFilters[i + 1] = vce.Filters[oldFilterIdx];
 				oldFilterIdx++;
 			}
@@ -84,7 +81,6 @@ let viewVCE_filters = {
 		// prepopulate oscillators not yet in use "just in case":
 		for (var osc = 1; osc <= 16; osc++) {
 			if (newFilters[osc] == undefined) {
-				console.log("dummy filter for osc #" + osc);
 				newFilters[osc] = new Array(32);
 				for (i = 0; i < 32; i++) {
 					newFilters[osc][i] = 0;
@@ -92,8 +88,6 @@ let viewVCE_filters = {
 			}
 		}
 		vce.Extra.uncompressedFilters = newFilters;
-		console.log("Uncompressed filters:");
-		console.dir(vce);
 	},
 
 	init: function () {
@@ -128,8 +122,6 @@ let viewVCE_filters = {
 			}
 		}
 
-		console.log("filter names: " + filterNames);
-
 		// Option values are index into the vce.Head.FILTERS array (and one extra with value -1 for "All")
 		if (filterNames.length > 1) {
 			var option = document.createElement("option");
@@ -161,11 +153,9 @@ let viewVCE_filters = {
 
 	filtersChartUpdate: function (filterIndex, filterName, animate) {
 		filterIndex = parseInt(filterIndex, 10);
-		console.log("filtersChart init " + filterIndex);
 		var datasets = [];
 
 		if (filterIndex >= 0) {
-			console.log("filter " + filterIndex + ": " + vce.Extra.uncompressedFilters[filterIndex]);
 			$('#filterTable').show();
 			$('#filterTable td.val input').each(function (i, obj) {
 				var id = obj.id;
@@ -202,7 +192,6 @@ let viewVCE_filters = {
 		} else {
 			// "all"
 			$('#filterTable').hide();
-			console.log("filter len : " + vce.Extra.uncompressedFilters.length);
 			// only include the ones actually in use (see vce.Head.FILTER entry)
 			for (i = 0; i <= vce.Head.VOITAB; i++) {
 				// A-table if in use goes first:
@@ -247,10 +236,9 @@ let viewVCE_filters = {
 			}
 			// now B-filters:
 
-			console.log("datasets = " + JSON.stringify(datasets));
 		}
 
-		console.dir(datasets);
+//		console.dir(datasets);
 
 		var ctx = document.getElementById('filtersChart').getContext('2d');
 		if (viewVCE_filters.chart != null) {
@@ -258,7 +246,6 @@ let viewVCE_filters = {
 		}
 
 		var animation_duration = animate ? 1000 : 0;
-		console.log("animate: " + animate + " duration: " + animation_duration);
 
 		viewVCE_filters.chart = new Chart(ctx, {
 

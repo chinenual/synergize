@@ -2,7 +2,6 @@ let viewVCE_voice = {
 	voicingMode: false,
 
 	timbreProportionCurve: function (center, sensitivity) {
-		console.log("timbre prop " + center + " " + sensitivity)
 		var result = [];
 		if (sensitivity == 0) {
 			for (v = 0; v < 32; v++) {
@@ -23,7 +22,6 @@ let viewVCE_voice = {
 	},
 
 	ampProportionCurve: function (center, sensitivity) {
-		console.log("amp prop " + center + " " + sensitivity)
 		var result = [];
 		if (sensitivity == 0) {
 			for (v = 0; v < 32; v++) {
@@ -307,12 +305,12 @@ let viewVCE_voice = {
 			var patchAdderInDSR = ((patchByte & 0x18) >> 3);
 			var patchFOInputDSR = (patchByte & 0x03);
 
-			console.log(osc + " patch byte: " + patchByte + "\n" +
-				" patchInhibitAddr : " + patchInhibitAddr + "\n" +
-				" patchInhibitF0   : " + patchInhibitF0 + "\n" +
-				" patchOutputDSR   : " + patchOutputDSR + "\n" +
-				" patchAdderInDSR  : " + patchAdderInDSR + "\n" +
-				" patchFOInputDSR  : " + patchFOInputDSR + "\n");
+//			console.log(osc + " patch byte: " + patchByte + "\n" +
+//				" patchInhibitAddr : " + patchInhibitAddr + "\n" +
+//				" patchInhibitF0   : " + patchInhibitF0 + "\n" +
+//				" patchOutputDSR   : " + patchOutputDSR + "\n" +
+//				" patchAdderInDSR  : " + patchAdderInDSR + "\n" +
+//				" patchFOInputDSR  : " + patchFOInputDSR + "\n");
 
 			//--- Patch F
 			td = document.createElement("td");
@@ -358,7 +356,6 @@ let viewVCE_voice = {
 			var waveByte = vce.Envelopes[osc].FreqEnvelope.Table[3];
 			var wave = ((waveByte & 0x1) == 0) ? 'Sin' : 'Tri';
 			var keyprop = ((waveByte & 0x10) == 0) ? false : true;
-			console.log("wavebyte " + waveByte + " wave: " + wave + " keyprop:" + keyprop);
 
 			//--- Wave
 			td = document.createElement("td");
@@ -511,8 +508,6 @@ let viewVCE_voice = {
 	},
 
 	voicingModeVisuals: function () {
-		console.log("voicingModeVisuals " + viewVCE_voice.voicingMode);
-
 		var mode = viewVCE_voice.voicingMode;
 		//mode = true; // For debugging and CSS tweaking: force edit controls to be visible
 
@@ -620,7 +615,6 @@ let viewVCE_voice = {
 	},
 
 	init: function () {
-		console.log("vceVoiceTab init");
 
 		viewVCE_voice.patchTable();
 
@@ -661,9 +655,6 @@ let viewVCE_voice = {
 
 		var ampData = viewVCE_voice.ampProportionCurve(vce.Head.VACENT, vce.Head.VASENS);
 		var timbreData = viewVCE_voice.timbreProportionCurve(vce.Head.VTCENT, vce.Head.VTSENS);
-
-		console.log("ampData: " + JSON.stringify(ampData));
-		console.log("timbreData: " + JSON.stringify(timbreData));
 
 		var ctx = document.getElementById('velocityChart').getContext('2d');
 		if (viewVCE_voice.chart != null) {

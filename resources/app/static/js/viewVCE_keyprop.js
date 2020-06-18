@@ -46,7 +46,6 @@ let viewVCE_keyprop = {
 	},
 
 	init: function () {
-		console.log("keyPropChart init");
 		var propData = viewVCE_keyprop.keyPropCurve(vce.Head.KPROP);
 
 		$('#keyPropTable td.val input').each(function (i, obj) {
@@ -70,18 +69,18 @@ let viewVCE_keyprop = {
 
 				labels: ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
 				datasets: [{
-					mouseover: function (e) {
-						console.log("mouseover: " + JSON.stringify(e));
-					},
-					mousemove: function (e) {
-						console.log("mousemove: " + JSON.stringify(e));
-					},
-					mouseout: function (e) {
-						console.log("mouseout: " + JSON.stringify(e));
-					},
-					click: function (e) {
-						console.log("click: " + JSON.stringify(e));
-					},
+//					mouseover: function (e) {
+//						console.log("mouseover: " + JSON.stringify(e));
+//					},
+//					mousemove: function (e) {
+//						console.log("mousemove: " + JSON.stringify(e));
+//					},
+//					mouseout: function (e) {
+//						console.log("mouseout: " + JSON.stringify(e));
+//					},
+//					click: function (e) {
+//						console.log("click: " + JSON.stringify(e));
+//					},
 
 					fill: false,
 					lineTension: 0,
