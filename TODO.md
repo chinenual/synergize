@@ -60,3 +60,20 @@ First check is full UI support; second check is lower-level IO and tests
 
 * Keyboard Proportion
     * [x] [x] set each point in the curve
+
+
+
+# Adhoc list of tasks or known bugs:
+
+* NEWKIT uses custom user-defined patch type. 
+* VCART6 doesnt load
+* need a sample voice with an A-Filter
+* download VCE
+* edit CRT
+* refresh
+* "are you sure" confirm when loading new voice into voicing mode
+* disabled spinner inputs have arrows
+* spinner arrows - can make them bigger?
+* spinner arrows - prevent tab-focus
+* timbre changes aren't audible - need to re-validate address and EXECUTE settings for _every_ parameter
+

@@ -1,4 +1,5 @@
 const { lookupService } = require("dns");
+const { env } = require("process");
 
 let viewVCE_envs = {
 
@@ -419,12 +420,12 @@ let viewVCE_envs = {
 			envid = "Amp";
 		}
 		if (ele.id.includes('Low')) {
-			env.SUSTAINPT = parseInt(eleValue,10);
+			env.SUSTAINPT = parseInt(eleValue, 10);
 		} else {
-			env.LOOPPT = parseInt(eleValue,10);
+			env.LOOPPT = parseInt(eleValue, 10);
 		}
-		
-		console.log("ACCEL change " + ele.id  + " " + eleValue + " " + envid);
+
+		console.log("ACCEL change " + ele.id + " " + eleValue + " " + envid);
 
 
 		let message = {
@@ -545,12 +546,20 @@ let viewVCE_envs = {
 		if (whichEnv === 'freq') {
 			newlen = envs.FreqEnvelope.NPOINTS + increment;
 			if (newlen >= 1 && newlen <= 16) {
+				if (increment === -1 && envs.FreqEnvelope.ENVTYPE != 1 && (envs.FreqEnvelope.LOOPPT > newlen || envs.FreqEnvelope.SUSTAINPT > newlen)) {
+					index.errorNotification("Can't remove envelope point with Sustain/Loop marker.  Remove the Sustain/Loop marker before trying to remove points.");
+					return;
+				}
 				envs.FreqEnvelope.NPOINTS = newlen;
 				changed = true;
 			}
 		} else {
 			newlen = envs.AmpEnvelope.NPOINTS + increment;
 			if (newlen >= 1 && newlen <= 16) {
+				if (increment === -1 && envs.AmpEnvelope.ENVTYPE != 1 && (envs.AmpEnvelope.LOOPPT > newlen || envs.AmpEnvelope.SUSTAINPT > newlen)) {
+					index.errorNotification("Can't remove envelope point with Sustain/Loop marker.  Remove the Sustain/Loop marker before trying to remove points.");
+					return;
+				}
 				envs.AmpEnvelope.NPOINTS = newlen;
 				changed = true;
 			}
@@ -966,7 +975,7 @@ let viewVCE_envs = {
 				maintainAspectRatio: false
 			}
 		});
-		document.getElementById('tabTelltaleContent').value=`osc:${oscNum}`;
+		document.getElementById('tabTelltaleContent').value = `osc:${oscNum}`;
 		viewVCE_envs.supressOnchange = false;
 	}
 
