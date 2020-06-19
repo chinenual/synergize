@@ -13,8 +13,11 @@
 	<li class="nav-item"><a class="nav-link" data-toggle="pill" href="#vceKeyPropTab">Key Prop</a></li>
 </ul>
 
-
 <div class="tab-content">
+
+	<!-- used to help the UITEST to know when a tab content has been updated and ready to test (e.g. after changing osc on the Env page) -->
+<input type="text" hidden id="tabTelltaleContent" value="">
+
 	<div id="vceVoiceTab" class="tab-pane fade show active">
 
 		<!-- Old School - table layout -->
@@ -98,8 +101,8 @@
 						</tr>
 						<tr>
 							<td>Oscillators</td>
-							<td>`<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="nOsc" min="1" max="16"
-									onchange="viewVCE_voice.setNumOscillators(this.value)" disabled /></div>d/td>
+							<td><div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="nOsc" min="1" max="16"
+									onchange="viewVCE_voice.setNumOscillators(this.value)" disabled /></div></td>
 						</tr>
 						<tr>
 							<td>Keys Playable</td>

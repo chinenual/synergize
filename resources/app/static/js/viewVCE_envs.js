@@ -966,6 +966,7 @@ let viewVCE_envs = {
 				maintainAspectRatio: false
 			}
 		});
+		document.getElementById('tabTelltaleContent').value=`osc:${oscNum}`;
 		viewVCE_envs.supressOnchange = false;
 	}
 

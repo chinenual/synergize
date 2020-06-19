@@ -112,6 +112,7 @@ module.exports = {
                       .selectByVisibleText('#envOscSelect', osc.select.text)
                       .getValue(cssQuoteId('#envOscSelect')).should.eventually.equal(osc.select.value)
                       .waitForVisible('#envTable')
+                      .getValue('#tabTelltaleContent').should.eventually.equal(`osc:${osc.select.text}`)
                       .then(() => { return hooks.screenshotAndCompare(app, `${v.name}-${context}-envTab-${osc.select.text}`) })
                   });
                   // spot check some elements
