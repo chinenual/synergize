@@ -74,6 +74,5 @@ First check is full UI support; second check is lower-level IO and tests
 * "are you sure" confirm when loading new voice into voicing mode
 * disabled spinner inputs have arrows
 * spinner arrows - can make them bigger?
-* spinner arrows - prevent tab-focus
 * timbre changes aren't audible - need to re-validate address and EXECUTE settings for _every_ parameter
 
