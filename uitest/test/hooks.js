@@ -166,7 +166,8 @@ module.exports = {
           if (SCREEN_DIFFS_ARE_FAILURES) {
             return chai.assert.fail('screenshot failed comparison ' + ssFailedPath)
           } else {
-            return chai.assert.isOk(true, 'ignorning screenshot failed comparison ' + ssFailedPath)
+          console.log('ERROR: Screenshot doesnt match - but not flagging as ERROR: ' + ssFailedPath)
+          return chai.assert.isOk(true, 'ignorning screenshot failed comparison ' + ssFailedPath)
           }
         }
       }
