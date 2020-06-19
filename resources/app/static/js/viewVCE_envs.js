@@ -707,19 +707,19 @@ let viewVCE_envs = {
 		}
 		// only show accelleration values if type1 envelope
 		if (envelopes.FreqEnvelope.ENVTYPE === 1) {
-			$('.type1accel .Freq').show();
+			$('.type1accel div.Freq').show();
 			$('#accelFreqLow').val(envelopes.FreqEnvelope.SUSTAINPT);
 			$('#accelFreqUp').val(envelopes.FreqEnvelope.LOOPPT);
 		} else {
-			$('.type1accell .Freq').hide();
+			$('.type1accel div.Freq').hide();
 		}
 		// only show accelleration values if type1 envelope
 		if (envelopes.AmpEnvelope.ENVTYPE === 1) {
-			$('.type1accel .Amp').show();
+			$('.type1accel div.Amp').show();
 			$('#accelAmpLow').val(envelopes.AmpEnvelope.SUSTAINPT);
 			$('#accelAmpUp').val(envelopes.AmpEnvelope.LOOPPT);
 		} else {
-			$('.type1accell .Amp').hide();
+			$('.type1accel div.Amp').hide();
 		}
 
 		for (i = envelopes.FreqEnvelope.NPOINTS; i < 16; i++) {
