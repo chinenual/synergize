@@ -35,6 +35,37 @@ module.exports = {
 
     "FILTER[1]": { value: '' },
   },
+
+  envelopestab: {
+    selections: [
+      {
+        select: { value: '1', text: '1' },
+        "envFreqLoop[1]": { value: '' },
+        "envFreqLowVal[1]": { value: '0' },
+        "envFreqUpVal[1]": { value: '0' },
+        //"envFreqTime[1]": { value: '0' }, // times in first row are fixed
+        //"envFreqUpTime[1]": { value: '0' },
+
+        "envFreqLoop[2]": { visible: false },
+
+        "envAmpLoop[1]": { value: '' },
+        "envAmpLowVal[1]": { value: '0' },
+        "envAmpUpVal[1]": { value: '0' },
+        "envAmpLowTime[1]": { value: '0' },
+        "envAmpUpTime[1]": { value: '0' },
+
+        "envAmpLoop[2]": { visible: false },
+
+        "accelFreqLow": { value: '30' },
+        "accelFreqUp": { value: '30' },
+        "accelAmpLow": { value: '30' },
+        "accelAmpUp": { value: '30' },
+
+      },
+    ],
+  },
+
+  
   filterstab: {
     select: { selector: '#filterSelect', value: '', text: '' },
     selections: [

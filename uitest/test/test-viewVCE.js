@@ -70,6 +70,12 @@ module.exports = {
                     .isExisting('#' + cssQuoteId(key)).should.eventually.equal(value.exist)
                 });
 
+              } else if (value["visible"] != undefined) {
+                it(`${key} should ${value.exist ? '' : 'not '}be visible`, async () => {
+                  await app.client
+                    .isVisible('#' + cssQuoteId(key)).should.eventually.equal(value.visible)
+                });
+
               } else if (value["value"] != undefined) {
                 it(`${key} should be ${value.value}`, async () => {
                   await app.client
@@ -85,7 +91,73 @@ module.exports = {
             }
           });
           describe('check envelopes-tab', () => {
-            // TODO
+            it('env tab should display', async () => {
+              await app.client
+                .click(`#vceTabs a[href='#vceEnvsTab']`)
+                .getAttribute(`#vceTabs a[href='#vceEnvsTab']`, 'class').should.eventually.include('active')
+                .waitForVisible('#vceEnvsTab')
+                .then(() => { return hooks.screenshotAndCompare(app, `${v.name}-${context}-envTab`) })
+            });
+            it('default osc should be 1 and env should be All', async () => {
+              await app.client
+                .getValue('#envOscSelect').should.eventually.equal('1')
+                .getValue('#envEnvSelect').should.eventually.equal('-1')
+            });
+            describe('check fields for each osc', () => {
+              // for each filter, spot check some fields
+              v.envelopestab.selections.forEach(function (osc, oidx) {
+                describe('check fields for osc ' + osc.select.text, () => {
+                  it('select osc ' + osc.select.text, async () => {
+                    await app.client
+                      .selectByVisibleText('#envOscSelect', osc.select.text)
+                      .getValue(cssQuoteId('#envOscSelect')).should.eventually.equal(osc.select.value)
+                      .waitForVisible('#envTable')
+                      .then(() => { return hooks.screenshotAndCompare(app, `${v.name}-${context}-envTab-${osc.select.text}`) })
+                  });
+                  // spot check some elements
+                  for (k in osc) {
+                    let key = k; // without this let, the value is not consistnent inside the it()
+                    if (key != 'select') {
+
+                      let value = osc[key];
+                      if (typeof value === 'string') {
+                        it(`${key} should be ${value}`, async () => {
+                          await app.client
+                            .isVisible('#' + cssQuoteId(key)).should.eventually.equal(true)
+                            .getText('#' + cssQuoteId(key)).should.eventually.equal(value)
+                        });
+                      } else if (value["exist"] != undefined) {
+                        it(`${key} should ${value.exist ? '' : 'not '}exist`, async () => {
+                          await app.client
+                            .isExisting('#' + cssQuoteId(key)).should.eventually.equal(value.exist)
+                        });
+
+                      } else if (value["visible"] != undefined) {
+                        it(`${key} should ${value.exist ? '' : 'not '}be visible`, async () => {
+                          await app.client
+                            .isVisible('#' + cssQuoteId(key)).should.eventually.equal(value.visible)
+                        });
+
+                      } else if (value["value"] != undefined) {
+                        it(`${key} should be ${value.value}`, async () => {
+                          await app.client
+                            .isVisible('#' + cssQuoteId(key)).should.eventually.equal(true)
+                            .getValue('#' + cssQuoteId(key)).should.eventually.equal(value.value)
+                        });
+
+                      } else if (value["selected"] != undefined) {
+                        it(`${key} should be ${value.selected}`, async () => {
+                          await app.client
+                            .isVisible('#' + cssQuoteId(key)).should.eventually.equal(true)
+                            .$('#' + cssQuoteId(key)).isSelected().should.eventually.equal(value.selected)
+                        });
+                      }
+                    }
+                  }
+                });
+              });
+            });
+
           });
           describe('check filters-tab', () => {
             it('filters tab should display', async () => {
@@ -104,7 +176,7 @@ module.exports = {
             v.filterstab.selections.forEach(function (flt, fidx) {
               it('check filter ' + fidx, async () => {
                 await app.client
-                  .selectByVisibleText(v.filterstab.select.selector,flt.select.text)
+                  .selectByVisibleText(v.filterstab.select.selector, flt.select.text)
                   .getValue(cssQuoteId(v.filterstab.select.selector)).should.eventually.equal(flt.select.value)
                   .waitForVisible('#filterTable')
                   .then(() => { return hooks.screenshotAndCompare(app, `${v.name}-${context}-filtersTab-${flt.select.text}`) })
