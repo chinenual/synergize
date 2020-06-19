@@ -72,7 +72,9 @@ First check is full UI support; second check is lower-level IO and tests
 * edit CRT
 * refresh
 * "are you sure" confirm when loading new voice into voicing mode
-* disabled spinner inputs have arrows
+* check that we cant upload CRT while in voicing mode
+* disabled spinner inputs have arrows (can't reproduce...)
 * spinner arrows - can make them bigger?
 * timbre changes aren't audible - need to re-validate address and EXECUTE settings for _every_ parameter
+* test env page error handling
 

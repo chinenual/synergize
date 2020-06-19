@@ -21,7 +21,16 @@
     * Not yet implemented, but planned:
         * This version only supports the 10 "factory" patch types; "user
 	      defined" patches are not yet handled.
-	* Functionality not planned to be supported (use a github issue or
+		* No support, yet, to copy another oscillator's
+          parameters/filters, or import filters from another voice.
+        * No support yet for creating new CRT's from existing VCE's.
+          This will be added, but the main point of this beta is to
+          get user feedback on the basic "editing" functionality and
+          catch any errors in the way parameters are displayed on
+          screen vs. how they affect a Synergy voice.
+        * The only way to "clear" the voicing system is to turn off
+          Voicing mode and restart.
+    * Functionality not planned to be supported (use a github issue or
       start a discussion in the Synergize Slack group if you want to
       make a case that these should be implemented):
 	    * Performance Program controller (sequence of performance
@@ -33,6 +42,20 @@
           CRT), you must change them via the Synergy front panel.
 		* "Scaling" the envelope and filter displays.  In Synergize,
           these auto-scale - there's no support for zooming in or out.
+* Other known limitations with this "beta" release:
+    * The menu and buttons are subject to change and improvement.
+    * The UI does not warn the user from attempting to load a voice
+      during an active voice editing session.  There are probably
+      other places where the UI to popup a warning before proceeding.
+    * There is an as-yet undiagnosed bug in the CRT parser: the
+       VCART6.CRT can't be loaded.
+	* When you "save" a voice, you are saving
+      what you hear in the Synergy. If there is a serial communication error during editing, the
+      values displayed on the screen may not reflect what has been
+      loaded into the Synergy. I will add some sort of mechanism to
+      re-sync the display with the state of the Synergy. But for now,
+      if you get a timeout during editing, just be aware that the
+      screen no longer displays reality.
 *  Some miscellaneous bug fixes found while implementing the editor:
     * Fixed the voice amplitude proportionality chart - for certain
       combinations of center and sensitivity it could show an odd
