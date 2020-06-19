@@ -844,7 +844,7 @@ let viewVCE_envs = {
 			if (isLast) {
 				document.getElementById(`envAmpLowVal[${i + 1}]`).disabled = true;
 				document.getElementById(`envAmpUpVal[${i + 1}]`).disabled = true;
-			} else {
+			} else if (viewVCE_voice.voicingMode) {
 				document.getElementById(`envAmpLowVal[${i + 1}]`).disabled = false;
 				document.getElementById(`envAmpUpVal[${i + 1}]`).disabled = false;
 			}
