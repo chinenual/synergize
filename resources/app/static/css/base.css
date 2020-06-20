@@ -336,11 +336,16 @@ span.spinNOSPIN-Enabled {
     /*top: -3;*/
     border: none;
     background-color: transparent;
+    height: 30%;
 }
 
-
 .bootstrap-touchspin .input-group-btn-vertical .bootstrap-touchspin-down {
-    bottom: 4;
+    bottom: 6;
+    cursor: s-resize;
+}
+.bootstrap-touchspin .input-group-btn-vertical .bootstrap-touchspin-up {
+    top: 1;
+    cursor: n-resize;
 }
 /*
 .bootstrap-touchspin .input-group-btn-vertical .bootstrap-touchspin-up {
