@@ -11,7 +11,9 @@ let viewVCE_keyprop = {
 		return result;
 	},
 
-	onchange: function (ele) {
+	onchange: null, // initialized during init()
+
+	raw_onchange: function (ele) {
 		if (viewVCE.supressOnchange) {return;}
 
 		var id = ele.id;
@@ -51,6 +53,10 @@ let viewVCE_keyprop = {
 	},
 
 	init: function () {
+		if (viewVCE_keyprop.onchange == null) {
+			viewVCE_keyprop.onchange = _.debounce(viewVCE_keyprop.raw_onchange, 250);
+		}
+
 		var propData = viewVCE_keyprop.keyPropCurve(vce.Head.KPROP);
 
 		$('#keyPropTable td.val input').each(function (i, obj) {

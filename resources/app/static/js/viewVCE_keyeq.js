@@ -11,9 +11,11 @@ let viewVCE_keyeq = {
 		return result;
 	},
 
-	onchange: function (ele) {
-		if (viewVCE.supressOnchange) {return;}
-		
+	onchange: null, // initialized during init()
+
+	raw_onchange: function (ele) {
+		if (viewVCE.supressOnchange) { return; }
+
 		var value = index.checkInputElementValue(ele);
 		if (value == undefined) {
 			return;
@@ -50,6 +52,10 @@ let viewVCE_keyeq = {
 	},
 
 	init: function () {
+		if (viewVCE_keyeq.onchange == null) {
+			viewVCE_keyeq.onchange = _.debounce(viewVCE_keyeq.raw_onchange, 250);
+		}
+
 		var propData = viewVCE_keyeq.keyEqCurve(vce.Head.VEQ);
 
 		$('#keyEqTable td.val input').each(function (i, obj) {
