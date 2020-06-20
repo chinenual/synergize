@@ -407,7 +407,12 @@ let viewVCE_envs = {
 		var osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
 		var envEnvSelectEle = document.getElementById("envEnvSelect");
 		var selectedEnv = parseInt(envEnvSelectEle.value, 10);
-		var eleValue = ele.value;
+		var eleValue = index.checkInputElementValue(ele.value);
+		if (eleValue == undefined) {
+			return;
+		}
+
+		console.log("changed: " + ele.id + " val: " + ele.value);
 
 		var env;
 		var envid;
@@ -464,49 +469,53 @@ let viewVCE_envs = {
 		var envEnvSelectEle = document.getElementById("envEnvSelect");
 		var selectedEnv = parseInt(envEnvSelectEle.value, 10);
 
-		console.log("env ele change " + ele.id + " " + ele.value);
+		var value = index.checkInputElementValue(ele.value);
+		if (value == undefined) {
+			return;
+		}
+
+		console.log("env ele change " + ele.id + " val: " + ele.value);
 		var pattern = /([A-Za-z]+)\[(\d+)\]/;
 		var funcName;
 		var eleIndex;
-		var value;
 		if (ret = ele.id.match(pattern)) {
 			fieldType = ret[1];
 			funcName = 'set' + fieldType.charAt(0).toUpperCase() + fieldType.slice(1);
 			eleIndex = parseInt(ret[2])
-			value = parseInt(ele.value, 10);
+			var bytevalue;
 			// now scale the value to the byte value the synergy wants to see:
 			switch (fieldType) {
 				case "envFreqLowVal":
-					value = viewVCE_envs.unscaleFreqEnvValue(value);
-					vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 0] = value;
+					bytevalue = viewVCE_envs.unscaleFreqEnvValue(value);
+					vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 0] = bytevalue;
 					break;
 				case "envFreqUpVal":
-					value = viewVCE_envs.unscaleFreqEnvValue(value);
-					vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 1] = value;
+					bytevalue = viewVCE_envs.unscaleFreqEnvValue(value);
+					vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 1] = bytevalue;
 					break;
 				case "envFreqLowTime":
-					value = viewVCE_envs.unscaleFreqTimeValue(value);
-					vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 2] = value;
+					bytevalue = viewVCE_envs.unscaleFreqTimeValue(value);
+					vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 2] = bytevalue;
 					break;
 				case "envFreqUpTime":
-					value = viewVCE_envs.unscaleFreqTimeValue(value);
-					vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 3] = value;
+					bytevalue = viewVCE_envs.unscaleFreqTimeValue(value);
+					vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 3] = bytevalue;
 					break;
 				case "envAmpLowVal":
-					value = viewVCE_envs.unscaleAmpEnvValue(value);
-					vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 0] = value;
+					bytevalue = viewVCE_envs.unscaleAmpEnvValue(value);
+					vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 0] = bytevalue;
 					break;
 				case "envAmpUpVal":
-					value = viewVCE_envs.unscaleAmpEnvValue(value);
-					vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 1] = value;
+					bytevalue = viewVCE_envs.unscaleAmpEnvValue(value);
+					vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 1] = bytevalue;
 					break;
 				case "envAmpLowTime":
-					value = viewVCE_envs.unscaleAmpTimeValue(value);
-					vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 2] = value;
+					bytevalue = viewVCE_envs.unscaleAmpTimeValue(value);
+					vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 2] = bytevalue;
 					break;
 				case "envAmpUpTime":
-					value = viewVCE_envs.unscaleAmpTimeValue(value);
-					vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 3] = value;
+					bytevalue = viewVCE_envs.unscaleAmpTimeValue(value);
+					vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 3] = bytevalue;
 					break;
 			}
 		}
@@ -516,7 +525,7 @@ let viewVCE_envs = {
 			"payload": {
 				"Osc": osc,
 				"Index": eleIndex,
-				"Value": value
+				"Value": bytevalue
 			}
 		};
 		astilectron.sendMessage(message, function (message) {
@@ -541,6 +550,8 @@ let viewVCE_envs = {
 		var envEnvSelectEle = document.getElementById("envOscSelect");
 		var selectedEnv = parseInt(envEnvSelectEle.value, 10);
 		var envs = vce.Envelopes[osc - 1];
+
+		console.log("#points changed: " + whichEnv + " increment: " + increment);
 
 		var changed = false;
 		if (whichEnv === 'freq') {

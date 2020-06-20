@@ -13,15 +13,20 @@ let viewVCE_keyprop = {
 
 	onchange: function (ele) {
 		if (viewVCE.supressOnchange) {return;}
-		
+
 		var id = ele.id;
-		console.log("changed: " + id);
+
+		var value = index.checkInputElementValue(ele);
+		if (value === undefined) {
+			return;
+		}
+
+		console.log("changed: " + id + " val: " + value);
 
 		var eleIndex;
 		var pattern = /keyprop\[(\d+)\]/;
 		if (ret = id.match(pattern)) {
 			eleIndex = parseInt(ret[1])
-			value = parseInt(ele.value, 10);
 		}
 		let message = {
 			"name": "setVoiceKPROPEle",
@@ -55,7 +60,7 @@ let viewVCE_keyprop = {
 			var idxString = id.substring(8);
 			var idx = parseInt(idxString, 10) - 1;
 
-			obj.value = propData[idx];
+			obj.value = ''+propData[idx];
 		});
 		if (viewVCE_keyprop.chart != null) {
 			viewVCE_keyprop.chart.destroy();

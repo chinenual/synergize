@@ -14,14 +14,18 @@ let viewVCE_keyeq = {
 	onchange: function (ele) {
 		if (viewVCE.supressOnchange) {return;}
 		
+		var value = index.checkInputElementValue(ele.value);
+		if (value == undefined) {
+			return;
+		}
+
 		var id = ele.id;
-		console.log("changed: " + id);
+		console.log("changed: " + id + " val: " + ele.value);
 
 		var eleIndex;
 		var pattern = /keyeq\[(\d+)\]/;
 		if (ret = id.match(pattern)) {
 			eleIndex = parseInt(ret[1])
-			value = parseInt(ele.value, 10);
 		}
 		let message = {
 			"name": "setVoiceVEQEle",

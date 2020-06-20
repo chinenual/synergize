@@ -76,6 +76,8 @@ let viewVCE_voice = {
 
 	filterChanged: function (ele) {
 		var id = ele.id;
+		console.log("filterChanged: " + id + " val: " + ele.value);
+
 		var filterPattern = /FILTER\[(\d+)\]/;
 		if (ret = id.match(filterPattern)) {
 			osc = parseInt(ret[1])
@@ -422,6 +424,8 @@ let viewVCE_voice = {
 	},
 
 	setNumOscillators: function (newNum) {
+		console.log("setNumOscillators: " + newNum);
+
 		let message = {
 			"name": "setNumOscillators",
 			"payload": {

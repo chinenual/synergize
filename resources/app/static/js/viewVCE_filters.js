@@ -6,20 +6,25 @@ let viewVCE_filters = {
 
 		var id = ele.id;
 
+		var value = index.checkInputElementValue(ele.value);
+		if (value === undefined) {
+			return;
+		}
+
 		var eleIndex;
 		var selectEle = document.getElementById("filterSelect");
 		var filterIndex = parseInt(selectEle.value, 10); // index into the uncompressedFilters array
 		var filterName = selectEle.options[selectEle.selectedIndex].innerHTML;
 		var filterValue = vce.Head.FILTER[filterIndex];
 
-		console.log("filter ele change " + filterIndex + " " + filterValue);
+		console.log("filter ele change " + filterIndex + " val: " + filterValue);
+
 		var param
 		var args
 		var filterPattern = /flt\[(\d+)\]/;
 		if (ret = id.match(filterPattern)) {
 			funcname = "setFILTEREle";
 			eleIndex = parseInt(ret[1])
-			value = parseInt(ele.value, 10);
 		}
 		//console.dir(vce);
 		let message = {
