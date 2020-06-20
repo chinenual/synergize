@@ -407,7 +407,7 @@ let viewVCE_envs = {
 		var osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
 		var envEnvSelectEle = document.getElementById("envEnvSelect");
 		var selectedEnv = parseInt(envEnvSelectEle.value, 10);
-		var eleValue = index.checkInputElementValue(ele.value);
+		var eleValue = index.checkInputElementValue(ele);
 		if (eleValue == undefined) {
 			return;
 		}
@@ -469,7 +469,7 @@ let viewVCE_envs = {
 		var envEnvSelectEle = document.getElementById("envEnvSelect");
 		var selectedEnv = parseInt(envEnvSelectEle.value, 10);
 
-		var value = index.checkInputElementValue(ele.value);
+		var value = index.checkInputElementValue(ele);
 		if (value == undefined) {
 			return;
 		}

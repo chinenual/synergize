@@ -14,7 +14,7 @@ let viewVCE_keyeq = {
 	onchange: function (ele) {
 		if (viewVCE.supressOnchange) {return;}
 		
-		var value = index.checkInputElementValue(ele.value);
+		var value = index.checkInputElementValue(ele);
 		if (value == undefined) {
 			return;
 		}

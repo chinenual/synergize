@@ -6,7 +6,7 @@ let viewVCE_filters = {
 
 		var id = ele.id;
 
-		var value = index.checkInputElementValue(ele.value);
+		var value = index.checkInputElementValue(ele);
 		if (value === undefined) {
 			return;
 		}

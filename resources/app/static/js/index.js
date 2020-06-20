@@ -37,7 +37,7 @@ let index = {
 
 	},
 	checkInputElementValue: function (ele) {
-		if (!ele.value.match(/^\d+$/)) {
+		if (!ele.value.match(/^-?\d+$/)) {
 			return undefined;
 		}
 		var result = parseInt(ele.value, 10);
