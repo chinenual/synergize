@@ -76,8 +76,8 @@ describe('Test Voicing Mode views', () => {
   require('./test-voicingModeOn');
 //  viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaLeftPanel, "voicemode");
 
-  require('./test-voice-edit');
-//  require('./test-envs-edit');
+//  require('./test-voice-edit');
+  require('./test-envs-edit');
 //  require('./test-filter-edit');
 //  require('./test-keyeq-edit');
 //  require('./test-keyprop-edit');

@@ -569,7 +569,7 @@ let viewVCE_envs = {
 			newlen = envs.FreqEnvelope.NPOINTS + increment;
 			if (newlen >= 1 && newlen <= 16) {
 				if (increment === -1 && envs.FreqEnvelope.ENVTYPE != 1 && (envs.FreqEnvelope.LOOPPT > newlen || envs.FreqEnvelope.SUSTAINPT > newlen)) {
-					index.errorNotification("Can't remove envelope point with Sustain/Loop marker.  Remove the Sustain/Loop marker before trying to remove points.");
+					index.errorNotification("Cannot remove envelope point with SUSTAIN/LOOP marker.  Remove the SUSTAIN/LOOP marker before trying to remove points.");
 					return;
 				}
 				envs.FreqEnvelope.NPOINTS = newlen;
@@ -579,7 +579,7 @@ let viewVCE_envs = {
 			newlen = envs.AmpEnvelope.NPOINTS + increment;
 			if (newlen >= 1 && newlen <= 16) {
 				if (increment === -1 && envs.AmpEnvelope.ENVTYPE != 1 && (envs.AmpEnvelope.LOOPPT > newlen || envs.AmpEnvelope.SUSTAINPT > newlen)) {
-					index.errorNotification("Can't remove envelope point with Sustain/Loop marker.  Remove the Sustain/Loop marker before trying to remove points.");
+					index.errorNotification("Cannot remove envelope point with SUSTAIN/LOOP marker.  Remove the SUSTAIN/LOOP marker before trying to remove points.");
 					return;
 				}
 				envs.AmpEnvelope.NPOINTS = newlen;
