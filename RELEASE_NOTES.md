@@ -20,8 +20,8 @@
 * SYNHCS functionality that is not implemented:
     * Not yet implemented, but planned:
         * This version only supports the 10 "factory" patch types; "user
-	      defined" patches are not yet handled.
-		* No support, yet, to copy another oscillator's
+	      defined" patch routing is not yet handled.
+		* No support yet to copy another oscillator's
           parameters/filters, or import filters from another voice.
         * No support yet for creating new CRT's from existing VCE's.
           This will be added, but the main point of this beta is to
@@ -46,7 +46,7 @@
     * The menu and buttons are subject to change and improvement.
     * The UI does not warn the user from attempting to load a voice
       during an active voice editing session.  There are probably
-      other places where the UI to popup a warning before proceeding.
+      other places where the UI should popup a warning before proceeding.
     * There is an as-yet undiagnosed bug in the CRT parser: the
        VCART6.CRT can't be loaded.
 	* When you "save" a voice, you are saving
