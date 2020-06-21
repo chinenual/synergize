@@ -1,7 +1,9 @@
 let viewVCE_filters = {
 	chart: null,
 
-	onchange: function (ele) {
+	onchange: null, // initialized during init()
+
+	raw_onchange: function (ele) {
 		if (viewVCE.supressOnchange) { return; }
 
 		var id = ele.id;
@@ -96,6 +98,10 @@ let viewVCE_filters = {
 	},
 
 	init: function () {
+		if (viewVCE_filters.onchange == null) {
+			viewVCE_filters.onchange = _.debounce(viewVCE_filters.raw_onchange, 250);
+		}
+		
 		var selectEle = document.getElementById("filterSelect");
 		// remove old options:
 		while (selectEle.firstChild) {

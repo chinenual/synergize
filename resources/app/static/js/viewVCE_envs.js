@@ -6,6 +6,13 @@ let viewVCE_envs = {
 	chart: null,
 
 	init: function () {
+		if (viewVCE_envs.onchange == null) {
+			viewVCE_envs.onchange = _.debounce(viewVCE_envs.raw_onchange, 250);
+		}
+		if (viewVCE_envs.onchangeEnvAccel == null) {
+			viewVCE_envs.ononchangeEnvAccelchange = _.debounce(viewVCE_envs.raw_onchangeEnvAccel, 250);
+		}
+
 		var selectEle = document.getElementById("envOscSelect");
 		// remove old options:
 		while (selectEle.firstChild) {
@@ -397,7 +404,9 @@ let viewVCE_envs = {
 
 	},
 
-	onchangeEnvAccel: function (ele) {
+	onchangeEnvAccel: null,
+
+	raw_onchangeEnvAccel: function (ele) {
 		// type1 accelerations are really just the SUSTAIN and LOOP points.  We use the same backend function as the loop change event
 
 		if (viewVCE.supressOnchange) { return; }
@@ -459,7 +468,9 @@ let viewVCE_envs = {
 
 	},
 
-	onchange: function (ele) {
+	onchange: null, // initialized during init()
+
+	raw_onchange: function (ele) {
 		if (viewVCE.supressOnchange) { return; }
 		if (viewVCE_envs.supressOnchange) { return; }
 

@@ -198,7 +198,9 @@ let viewVCE_voice = {
 		return ok;
 	},
 
-	onchange: function (ele, updater, valueConverter) {
+	onchange: null,
+
+	raw_onchange: function (ele, updater, valueConverter) {
 		if (viewVCE.supressOnchange) {return;}
 		
 		var id = ele.id;
@@ -423,7 +425,9 @@ let viewVCE_voice = {
 		});
 	},
 
-	setNumOscillators: function (newNum) {
+	setNumOscillators : null,
+
+	raw_setNumOscillators: function (newNum) {
 		console.log("setNumOscillators: " + newNum);
 
 		let message = {
@@ -619,6 +623,12 @@ let viewVCE_voice = {
 	},
 
 	init: function () {
+		if (viewVCE_voice.onchange == null) {
+			viewVCE_voice.onchange = _.debounce(viewVCE_voice.raw_onchange, 250);
+		}
+		if (viewVCE_voice.setNumOscillators == null) {
+			viewVCE_voice.setNumOscillators = _.debounce(viewVCE_voice.raw_setNumOscillators, 250);
+		}
 
 		viewVCE_voice.patchTable();
 
