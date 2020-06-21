@@ -55,10 +55,10 @@ describe('Render unit tests', () => {
     await app.webContents
       .executeJavaScript('viewVCE_envs.testConversionFunctions()').should.eventually.be.true
   });
-  it('capture render logs', async () => {
+  it('capture renderer logs', async () => {
     await app.client.getRenderProcessLogs().then(function (logs) {
       logs.forEach(function (log) {
-        console.log("RENDER: " + log.level + ": " + log.source + " : " + log.message);
+        console.log("RENDERER: " + log.level + ": " + log.source + " : " + log.message);
       });
     });
   });
@@ -75,6 +75,13 @@ describe('Test READ-ONLY views', () => {
 describe('Test Voicing Mode views', () => {
   require('./test-voicingModeOn');
   viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaLeftPanel, "voicemode");
+
+//  require('./test-voice-edit');
+//  require('./test-envs-edit');
+//  require('./test-filter-edit');
+  require('./test-keyeq-edit');
+  require('./test-keyprop-edit');
+
   require('./test-voicingModeOff');
 });
 
