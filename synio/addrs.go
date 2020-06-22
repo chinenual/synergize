@@ -16,7 +16,7 @@ const (
 	Off_CMOS_VVBDLY = 116 // 0x74
 	Off_CMOS_VVBDEP = 140 // 0x8c
 	Off_CMOS_VVBRAT = 164 // 0xa4
-	Off_CMOS_VTRANS = 188 // 0xbc
+	Off_CMOS_VTRANS = 212 //
 )
 
 func CmosAddr(fieldOffset int) uint16 {

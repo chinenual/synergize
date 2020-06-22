@@ -31,13 +31,19 @@ func initMaps() {
 	voiceOffsetMap["VEQ"] = offsetMapEle{data.Off_EDATA_VEQ, false}
 	voiceOffsetMap["FILTER"] = offsetMapEle{data.Off_EDATA_FILTER_arr, false}
 
+	//voiceOffsetMap["VIBRAT"] = offsetMapEle{data.Off_EDATA_VIBRAT, true}
+	//voiceOffsetMap["VIBDEL"] = offsetMapEle{data.Off_EDATA_VIBDEL, true}
+	//voiceOffsetMap["VIBDEP"] = offsetMapEle{data.Off_EDATA_VIBDEP, true}
+	// from trial and error, the Timbre and Amp settings need to be updated in CMOS - but vibrato and transpose are in the voice header
+	// go figure
+	cmosOffsetMap["VIBRAT"] = offsetMapEle{Off_CMOS_VVBRAT, false}
+	cmosOffsetMap["VIBDEL"] = offsetMapEle{Off_CMOS_VVBDLY, false}
+	cmosOffsetMap["VIBDEP"] = offsetMapEle{Off_CMOS_VVBDEP, false}
+
 	cmosOffsetMap["VTCENT"] = offsetMapEle{Off_CMOS_VTCENT, false}
 	cmosOffsetMap["VTSENS"] = offsetMapEle{Off_CMOS_VTSENS, false}
 	cmosOffsetMap["VACENT"] = offsetMapEle{Off_CMOS_VACENT, false}
 	cmosOffsetMap["VASENS"] = offsetMapEle{Off_CMOS_VASENS, false}
-	cmosOffsetMap["VIBRAT"] = offsetMapEle{Off_CMOS_VVBRAT, false}
-	cmosOffsetMap["VIBDEL"] = offsetMapEle{Off_CMOS_VVBDLY, false}
-	cmosOffsetMap["VIBDEP"] = offsetMapEle{Off_CMOS_VVBDEP, false}
 
 	oscOffsetMap["OPTCH"] = offsetMapEle{data.Off_EOSC_OPTCH, false} // does require reload, but we do it after a batch
 	oscOffsetMap["OHARM"] = offsetMapEle{data.Off_EOSC_OHARM, true}
@@ -224,6 +230,19 @@ func RecalcFilters() (err error) {
 	return
 }
 
+func ReloadPerformanceControls() (err error) {
+	if err = command(OP_EXECUTE, "OP_EXECUTE"); err != nil {
+		return
+	}
+	if err = writeU16(synAddrs.exec_SETCON, "SETCON addr"); err != nil {
+		return
+	}
+	if err = writeU16(0, "SETCON args"); err != nil {
+		return
+	}
+	return
+}
+
 func ReloadNoteGenerators() (err error) {
 	if err = command(OP_EXECUTE, "OP_EXECUTE"); err != nil {
 		return
@@ -244,11 +263,13 @@ func SetVoiceHeadDataArray(fieldName string, value []byte) (err error) {
 	// some things that are stored in the head are actually stored in a different location in CMOS
 	// at runtime.  Deal with that here:
 	offsetMap := cmosOffsetMap
+	var cmosUpdated = false
 	var addr uint16
 	if _, ok := voiceOffsetMap[fieldName]; ok {
 		offsetMap = voiceOffsetMap
 		addr = VoiceHeadAddr(offsetMap[fieldName].Offset)
 	} else {
+		cmosUpdated = true
 		addr = CmosAddr(offsetMap[fieldName].Offset)
 	}
 
@@ -260,16 +281,23 @@ func SetVoiceHeadDataArray(fieldName string, value []byte) (err error) {
 			return
 		}
 	}
+	if cmosUpdated {
+		if err = ReloadPerformanceControls(); err != nil {
+			return
+		}
+	}
 	return
 }
 
 func SetVoiceHeadDataByte(fieldName string, value byte) (err error) {
 	offsetMap := cmosOffsetMap
+	var cmosUpdated = false
 	var addr uint16
 	if _, ok := voiceOffsetMap[fieldName]; ok {
 		offsetMap = voiceOffsetMap
 		addr = VoiceHeadAddr(offsetMap[fieldName].Offset)
 	} else {
+		cmosUpdated = true
 		addr = CmosAddr(offsetMap[fieldName].Offset)
 	}
 	if err = LoadByte(addr, value, "set "+fieldName); err != nil {
@@ -277,6 +305,11 @@ func SetVoiceHeadDataByte(fieldName string, value byte) (err error) {
 	}
 	if offsetMap[fieldName].ReloadGen {
 		if err = ReloadNoteGenerators(); err != nil {
+			return
+		}
+	}
+	if cmosUpdated {
+		if err = ReloadPerformanceControls(); err != nil {
 			return
 		}
 	}
