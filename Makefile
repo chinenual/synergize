@@ -112,7 +112,8 @@ uitest:
 
 .PHONY: uitest-diff
 uitest-diff:
-	for f in uitest/test/screenshots/$(SCREENSHOT_ARCH)/*.failed.png; do \
+	-open uitest/test/screenshots/$(SCREENSHOT_ARCH)/AFTERHOOK*.failed.png
+	for f in `/bin/ls -1 uitest/test/screenshots/$(SCREENSHOT_ARCH)/*.failed.png | grep -v AFTERHOOK`; do \
 		echo f: $$f; \
 		s=`basename "$$f" .failed.png`; \
 		echo s: $$s; \
