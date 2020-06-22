@@ -605,9 +605,11 @@ let viewVCE_voice = {
 
 		// Load/Save menu items get disabled/enabled:
 		if (mode) {
+			$('#disableVRAMMenuItem').addClass('disabled');
 			$('#loadCRTMenuItem').addClass('disabled');
 			$('#saveVCEMenuItem').removeClass('disabled');
 		} else {
+			$('#disableVRAMMenuItem'),removeClass('disabled');
 			$('#loadCRTMenuItem').removeClass('disabled');
 			$('#saveVCEMenuItem').addClass('disabled');
 		}

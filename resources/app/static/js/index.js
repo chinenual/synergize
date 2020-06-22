@@ -403,7 +403,13 @@ let index = {
 	updateConnectionStatus: function (status) {
 		console.log("update status: " + status);
 		document.getElementById("firmwareVersion").innerHTML = status;
+		if (status.includes("Not")) {
+			document.getElementById("connectButtonImg").src = `static/images/red-button-off-full.png`;
+		} else {
+			document.getElementById("connectButtonImg").src = `static/images/red-button-on-full.png`;
+		}
 	},
+
 	fileDialog: function () {
 		files = dialog.showOpenDialogSync({
 			//electron bug? filter files cause the dialog to look wonky
