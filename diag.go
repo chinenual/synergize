@@ -1,11 +1,11 @@
 package main
 
 import (
-	"log"
 	"flag"
 	"io/ioutil"
-	"runtime"
+	"log"
 	"path/filepath"
+	"runtime"
 
 	"github.com/chinenual/synergize/synio"
 )
@@ -18,7 +18,7 @@ var (
 func getDefaultBaud() uint {
 	// FIXME: loads the prefs twice - harmless, but annoying
 	prefsLoadPreferences()
-	
+
 	if prefsUserPreferences.SerialBaud != 0 {
 		return prefsUserPreferences.SerialBaud
 	}
@@ -28,23 +28,23 @@ func getDefaultBaud() uint {
 func getDefaultPort() string {
 	// FIXME: loads the prefs twice - harmless, but annoying
 	prefsLoadPreferences()
-	
+
 	if prefsUserPreferences.SerialPort != "" {
 		return prefsUserPreferences.SerialPort
 	}
 	if runtime.GOOS == "darwin" {
 		files, _ := filepath.Glob("/dev/tty.usbserial*")
-		for _,f := range(files) {
+		for _, f := range files {
 			return f
 		}
 	} else if runtime.GOOS == "linux" {
 		files, _ := filepath.Glob("/dev/ttyUSB*")
-		for _,f := range(files) {
+		for _, f := range files {
 			return f
 		}
 		// if no USB serial, assume /dev/ttyS0
 		return "/dev/ttyS0"
-		
+
 	} else {
 		// windows
 		return "COM1"
@@ -56,7 +56,7 @@ func diagCOMTST() {
 	flag.Parse()
 
 	log.Printf("%s at %d baud\n",
-		prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud);
+		prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
 
 	if err := synio.Init(prefsUserPreferences.SerialPort,
 		prefsUserPreferences.SerialBaud, true, *serialVerboseFlag); err != nil {
@@ -65,7 +65,7 @@ func diagCOMTST() {
 	}
 	if err := synio.DiagCOMTST(); err != nil {
 		log.Printf("ERROR: %s\n", err)
-		log.Printf("Note:\n\tThe Synergy must be running in COMTST mode before executing this test.\n\tPress RESTORE + PROGRAM 4 on the Synergy then rerun this program.\n");
+		log.Printf("Note:\n\tThe Synergy must be running in COMTST mode before executing this test.\n\tPress RESTORE + PROGRAM 4 on the Synergy then rerun this program.\n")
 	} else {
 		log.Printf("SUCCESS!\n")
 	}
@@ -75,7 +75,7 @@ func diagLOOPTST() {
 	flag.Parse()
 
 	log.Printf("%s at %d baud\n",
-		prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud);
+		prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
 
 	if err := synio.Init(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag); err != nil {
 		log.Printf("ERROR: %s\n", err)
@@ -85,40 +85,40 @@ func diagLOOPTST() {
 	log.Printf("Entering LOOPBACK mode - any byte recieved from the Synergy is echo'd back\n")
 	log.Printf("Start the test by pressing RESTORE + RESTORE + PROGRAM 1 on the Synergy\n")
 
-	if err := synio.DiagLOOPTST();  err != nil {
+	if err := synio.DiagLOOPTST(); err != nil {
 		log.Printf("ERROR: %s\n", err)
 	}
 }
 
 func diagInitAndPrintFirmwareID() (err error) {
 	flag.Parse()
-	
+
 	log.Printf("%s at %d baud\n",
-		prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud);
-	
+		prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
+
 	if err = synio.Init(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag); err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
 	}
 
 	var version [2]byte
-	if version,err = synio.GetID(); err != nil {
+	if version, err = synio.GetID(); err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
 	}
-	log.Printf("Synergy is running firmware version %d.%d\n", version[0],version[1]);
+	log.Printf("Synergy is running firmware version %d.%d\n", version[0], version[1])
 	return
 }
 
 var slotnum byte = 1
 
 func diagLoadVCE(path string) (err error) {
-	err = connectToSynergyIfNotConnected();
+	err = connectToSynergyIfNotConnected()
 	if err != nil {
 		return
-	} 
+	}
 	var vce_bytes []byte
-	if vce_bytes,err = ioutil.ReadFile(path); err != nil {
+	if vce_bytes, err = ioutil.ReadFile(path); err != nil {
 		return
 	}
 
@@ -127,19 +127,19 @@ func diagLoadVCE(path string) (err error) {
 	if err = synio.LoadVCE(slotnum, vce_bytes); err != nil {
 		return
 	}
-	
+
 	// load the next one in the next slot
 	slotnum++
 	return
-	
+
 }
 
 func diagLoadCRT(path string) (err error) {
 	if err = connectToSynergyIfNotConnected(); err != nil {
 		return
-	} 
+	}
 	var crt_bytes []byte
-	if crt_bytes,err = ioutil.ReadFile(path); err != nil {
+	if crt_bytes, err = ioutil.ReadFile(path); err != nil {
 		return
 	}
 
@@ -152,7 +152,7 @@ func diagLoadCRT(path string) (err error) {
 func diagSaveSYN(path string) (err error) {
 	if err = connectToSynergyIfNotConnected(); err != nil {
 		return
-	} 
+	}
 	var syn_bytes []byte
 
 	if syn_bytes, err = synio.SaveSYN(); err != nil {
@@ -164,11 +164,26 @@ func diagSaveSYN(path string) (err error) {
 	err = ioutil.WriteFile(path, syn_bytes, 0644)
 	return
 }
-
-func diagLoadSYN(path string) (err error) {	
+func diagSaveVCE(path string) (err error) {
 	if err = connectToSynergyIfNotConnected(); err != nil {
 		return
-	} 
+	}
+	var syn_bytes []byte
+
+	if syn_bytes, err = synio.DumpVRAM(); err != nil {
+		return
+	}
+
+	log.Printf("VCE %s -- %d bytes \n", path, len(syn_bytes))
+
+	err = ioutil.WriteFile(path, syn_bytes, 0644)
+	return
+}
+
+func diagLoadSYN(path string) (err error) {
+	if err = connectToSynergyIfNotConnected(); err != nil {
+		return
+	}
 	var syn_bytes []byte
 
 	if syn_bytes, err = ioutil.ReadFile(path); err != nil {

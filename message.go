@@ -422,6 +422,22 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = "ok"
 		}
 
+	case "saveVCE":
+		var path string
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &path); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = diagSaveVCE(path); err != nil {
+			payload = err.Error()
+			return
+		} else {
+			payload = "ok"
+		}
+
 	case "loadCRT":
 		var path string
 		if len(m.Payload) > 0 {

@@ -205,6 +205,11 @@ td.centered span {
 
 .dropdown a:hover {background-color: #ddd;}
 
+.dropdown a.disabled {
+    pointer-events:none;
+    opacity:0.6;    
+}
+
 .show {display: block;}
 
 

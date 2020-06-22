@@ -34,6 +34,7 @@ var (
 	serialVerboseFlag = flag.Bool("SERIALVERBOSE", false, "Show each byte operation through the serial port")
 	comtst            = flag.Bool("COMTST", false, "run command line diagnostics rather than the GUI")
 	looptst           = flag.Bool("LOOPTST", false, "run command line diagnostics rather than the GUI")
+	savevce           = flag.String("SAVEVCE", "", "save the Synergy VRAM state to the named VCE file ")
 	loadvce           = flag.String("LOADVCE", "", "load the named VCE file into Synergy")
 	loadcrt           = flag.String("LOADCRT", "", "load the named CRT file into Synergy")
 	savesyn           = flag.String("SAVESYN", "", "save the Synergy state to the named SYN file")
@@ -175,6 +176,12 @@ func main() {
 		} else if *looptst {
 			diagLOOPTST()
 			os.Exit(0)
+		} else if *savevce != "" {
+			if err = diagSaveVCE(*savevce); err != nil {
+				code = 1
+				log.Println(err)
+			}
+			os.Exit(code)
 		} else if *loadvce != "" {
 			if err = diagLoadVCE(*loadvce); err != nil {
 				code = 1

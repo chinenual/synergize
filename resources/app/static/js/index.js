@@ -43,12 +43,12 @@ let index = {
 		var result = parseInt(ele.value, 10);
 		if (ele.hasAttribute("min")) {
 			var min = parseInt(ele.getAttribute("min"), 10);
-			console.log("min : " +min);
+			console.log("min : " + min);
 			if (result < min) result = min;
 		}
 		if (ele.hasAttribute("max")) {
 			var max = parseInt(ele.getAttribute("max"), 10);
-			console.log("max : " +max);
+			console.log("max : " + max);
 			if (result > max) result = max;
 		}
 		return result;
@@ -136,6 +136,33 @@ let index = {
 			index.viewVCE(path[0], path[0]);
 		}
 	},
+	saveVCEDialog: function () {
+		path = dialog.showSaveDialogSync({
+			filters: [
+				{ name: 'Voice', extensions: ['vce'] },
+				{ name: 'All Files', extensions: ['*'] }],
+			properties: ['openFile', 'promptToCreate']
+		});
+		console.log("in saveVCEDialog: " + path);
+		if (path != undefined) {
+			let message = {
+				"name": "saveVCE",
+				"payload": path
+			};
+			// Send message
+			index.spinnerOn();
+			astilectron.sendMessage(message, function (message) {
+				index.spinnerOff();
+				// Check error
+				if (message.name === "error") {
+					index.errorNotification(message.payload);
+				} else {
+					index.infoNotification("Successfully saved Synergy voice file to " + path);
+				}
+				index.refreshConnectionStatus();
+			});
+		}
+	},
 	loadSYN: function (name, path) {
 		if (confirm("Load Synergy state file " + path)) {
 			let message = {
@@ -208,7 +235,7 @@ let index = {
 	},
 	viewVCE: function (name, path) {
 		var name = "readVCE";
-		if (viewVCE_voice.voicingMode) {
+		if (viewVCE_voice.voicingMode && (confirm("Loading voice file will overwrite any pending edits - continue?"))) {
 			name = "loadVceVoicingMode"
 		}
 		let message = {
@@ -422,7 +449,7 @@ let index = {
 		
 		element = document.getElementById(eleId);
 		req = new XMLHttpRequest();
-
+	
 		req.onreadystatechange = function () {
 			if (this.readyState == 4 && this.status == 200) {
 				element.innerHTML = req.responseText;
@@ -431,7 +458,7 @@ let index = {
 				}
 			}
 		};
-
+	
 		req.open("GET", url, false);
 		req.send(null);
 		*/

@@ -136,15 +136,15 @@ let viewVCE_voice = {
 		} else if (val >= -32 && val <= 32) {
 			// CASE B
 			val = val * 3;
-			newStr = ''+val;
+			newStr = '' + val;
 		} else if (val > 0) {
 			// CASE C
 			val = ((val * 2) - 32) * 3;
-			newStr = ''+val;
+			newStr = '' + val;
 		} else { // negative
 			// CASE D
 			val = ((val * 2) + 32) * 3;
-			newStr = ''+val;
+			newStr = '' + val;
 		}
 		//console.log("   FDETUNToText(" + str + ") returns " + newStr);
 		return newStr;
@@ -155,20 +155,20 @@ let viewVCE_voice = {
 		var newStr;
 		if (ret = str.match(/ran(\d+)/)) {
 			// CASE A
-			var val = parseInt(ret[1],10);
+			var val = parseInt(ret[1], 10);
 			val += 58;
 			newStr = '' + val;
 		} else {
-			var val = parseInt(str,10);
-			if (val >= (-32*3) && val <= (32*3)) {
+			var val = parseInt(str, 10);
+			if (val >= (-32 * 3) && val <= (32 * 3)) {
 				// CASE B
 				val /= 3;
 			} else if (val > 0) {
 				// CASE C
-				val = ((val/3) + 32) / 2;
+				val = ((val / 3) + 32) / 2;
 			} else {
 				// CASE D
-				val = ((val/3) - 32) / 2;			
+				val = ((val / 3) - 32) / 2;
 			}
 			newStr = '' + val;
 		}
@@ -176,20 +176,20 @@ let viewVCE_voice = {
 		return newStr;
 	},
 
-	testConversionFunctions: function() {
+	testConversionFunctions: function () {
 		var ok = true;
 		for (var i = -11; i <= 30; i++) {
-			var str = viewVCE_voice.OHARMToText(''+i);
+			var str = viewVCE_voice.OHARMToText('' + i);
 			var reverseStr = viewVCE_voice.TextToOHARM(str);
-			if ((''+i) != reverseStr) {
+			if (('' + i) != reverseStr) {
 				ok = false;
 				console.log("ERROR: OHARM " + i + " totext: " + str + " reversed to " + reverseStr)
 			}
 		}
 		for (var i = -63; i <= 63; i++) {
-			var str = viewVCE_voice.FDETUNToText(''+i);
+			var str = viewVCE_voice.FDETUNToText('' + i);
 			var reverseStr = viewVCE_voice.TextToFDETUN(str);
-			if ((''+i) != reverseStr) {
+			if (('' + i) != reverseStr) {
 				ok = false;
 				console.log("ERROR: FDETUN " + i + " totext: " + str + " reversed to " + reverseStr)
 			}
@@ -201,8 +201,8 @@ let viewVCE_voice = {
 	onchange: null,
 
 	raw_onchange: function (ele, updater, valueConverter) {
-		if (viewVCE.supressOnchange) {return;}
-		
+		if (viewVCE.supressOnchange) { return; }
+
 		var id = ele.id;
 		console.log("changed: " + id + ", new value: " + ele.value);
 
@@ -309,34 +309,34 @@ let viewVCE_voice = {
 			var patchAdderInDSR = ((patchByte & 0x18) >> 3);
 			var patchFOInputDSR = (patchByte & 0x03);
 
-//			console.log(osc + " patch byte: " + patchByte + "\n" +
-//				" patchInhibitAddr : " + patchInhibitAddr + "\n" +
-//				" patchInhibitF0   : " + patchInhibitF0 + "\n" +
-//				" patchOutputDSR   : " + patchOutputDSR + "\n" +
-//				" patchAdderInDSR  : " + patchAdderInDSR + "\n" +
-//				" patchFOInputDSR  : " + patchFOInputDSR + "\n");
+			//			console.log(osc + " patch byte: " + patchByte + "\n" +
+			//				" patchInhibitAddr : " + patchInhibitAddr + "\n" +
+			//				" patchInhibitF0   : " + patchInhibitF0 + "\n" +
+			//				" patchOutputDSR   : " + patchOutputDSR + "\n" +
+			//				" patchAdderInDSR  : " + patchAdderInDSR + "\n" +
+			//				" patchFOInputDSR  : " + patchFOInputDSR + "\n");
 
 			//--- Patch F
 			td = document.createElement("td");
 			if (!patchInhibitF0) {
-				td.innerHTML = `<span id="patchFOInputDSR[${osc+1}]">${patchFOInputDSR + 1}</span>`;
+				td.innerHTML = `<span id="patchFOInputDSR[${osc + 1}]">${patchFOInputDSR + 1}</span>`;
 			} else {
-				td.innerHTML = `<span id="patchFOInputDSR[${osc+1}]"></span>`;
+				td.innerHTML = `<span id="patchFOInputDSR[${osc + 1}]"></span>`;
 			}
 			tr.appendChild(td);
 
 			//--- Patch A
 			td = document.createElement("td");
 			if (!patchInhibitAddr) {
-			    td.innerHTML = `<span id="patchAdderInDSR[${osc+1}]">${patchAdderInDSR + 1}</span>`;
+				td.innerHTML = `<span id="patchAdderInDSR[${osc + 1}]">${patchAdderInDSR + 1}</span>`;
 			} else {
-			    td.innerHTML = `<span id="patchAdderInDSR[${osc+1}]"></span>`;
+				td.innerHTML = `<span id="patchAdderInDSR[${osc + 1}]"></span>`;
 			}
 			tr.appendChild(td);
 
 			//--- Patch O
-		        td = document.createElement("td");
-		        td.innerHTML = `<span id="patchOutputDSR[${osc+1}]">${patchOutputDSR + 1}</span>`;
+			td = document.createElement("td");
+			td.innerHTML = `<span id="patchOutputDSR[${osc + 1}]">${patchOutputDSR + 1}</span>`;
 			tr.appendChild(td);
 
 			//--- Hrm
@@ -425,7 +425,7 @@ let viewVCE_voice = {
 		});
 	},
 
-	setNumOscillators : null,
+	setNumOscillators: null,
 
 	raw_setNumOscillators: function (newNum) {
 		console.log("setNumOscillators: " + newNum);
@@ -469,7 +469,11 @@ let viewVCE_voice = {
 
 	toggleVoicingMode: function (mode) {
 		console.log(`VoicingMode ${mode ? 'on' : 'off'}`);
-
+		if (!mode) {
+			if (!confirm("Disabling Voicing Mode will discard any pending edits. Are you sure?")) {
+				return;
+			}
+		}
 		let message = {
 			"name": "toggleVoicingMode",
 			"payload": mode
@@ -596,8 +600,18 @@ let viewVCE_voice = {
 			});
 			// make any plain-text spans align:
 			$('.spinNOSPIN').addClass("spinNOSPIN-Enabled");
-			
+
 		}
+
+		// Load/Save menu items get disabled/enabled:
+		if (mode) {
+			$('#loadCRTMenuItem').addClass('disabled');
+			$('#saveVCEMenuItem').removeClass('disabled');
+		} else {
+			$('#loadCRTMenuItem').removeClass('disabled');
+			$('#saveVCEMenuItem').addClass('disabled');
+		}
+
 		$('.vceEdit').prop('disabled', !mode);
 		if (mode) {
 			$('.vceEditToggleText').show();
