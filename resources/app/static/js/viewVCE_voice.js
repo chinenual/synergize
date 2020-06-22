@@ -467,13 +467,18 @@ let viewVCE_voice = {
 
 	},
 
-	toggleVoicingMode: function (mode) {
-		console.log(`VoicingMode ${mode ? 'on' : 'off'}`);
+	toggleVoicingMode(mode) {
 		if (!mode) {
-			if (!confirm("Disabling Voicing Mode will discard any pending edits. Are you sure?")) {
-				return;
-			}
+			index.confirmDialog("Disabling Voicing Mode will discard any pending edits. Are you sure?", function() {
+				viewVCE_voice.raw_toggleVoicingMode(mode);
+			});
+		} else {
+		viewVCE_voice.raw_toggleVoicingMode(mode);
 		}
+	},
+
+	raw_toggleVoicingMode: function (mode) {
+		console.log(`VoicingMode ${mode ? 'on' : 'off'}`);
 		let message = {
 			"name": "toggleVoicingMode",
 			"payload": mode
@@ -609,7 +614,7 @@ let viewVCE_voice = {
 			$('#loadCRTMenuItem').addClass('disabled');
 			$('#saveVCEMenuItem').removeClass('disabled');
 		} else {
-			$('#disableVRAMMenuItem'),removeClass('disabled');
+			$('#disableVRAMMenuItem').removeClass('disabled');
 			$('#loadCRTMenuItem').removeClass('disabled');
 			$('#saveVCEMenuItem').addClass('disabled');
 		}

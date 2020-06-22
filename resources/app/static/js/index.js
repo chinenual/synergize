@@ -60,6 +60,16 @@ let index = {
 	spinnerOff: function () {
 		document.getElementById("spinner").style.display = "none";
 	},
+
+	confirmDialog: function (message, successCallback) {
+		document.getElementById("confirmTitle").innerHTML = "Confirm";
+		document.getElementById("confirmText").innerHTML = message;
+		document.getElementById("confirmOKButton").onclick = successCallback;
+		$('#confirmModal').modal({
+			backdrop: "static" // clicking outside the dialog doesnt close the dialog
+		});
+	},
+
 	errorNotification: function (message) {
 		document.getElementById("alertTitle").innerHTML = "Error";
 		document.getElementById("alertText").innerHTML = message;
@@ -164,7 +174,7 @@ let index = {
 		}
 	},
 	loadSYN: function (name, path) {
-		if (confirm("Load Synergy state file " + path)) {
+		index.confirmDialog("Load Synergy state file " + path, function () {
 			let message = {
 				"name": "loadSYN",
 				"payload": path
@@ -181,7 +191,7 @@ let index = {
 				}
 				index.refreshConnectionStatus();
 			});
-		}
+		});
 	},
 	loadCRT: function (name, path) {
 		if (confirm("Load Voice Cartridge file " + path)) {
@@ -234,8 +244,17 @@ let index = {
 			});
 	},
 	viewVCE: function (name, path) {
+		if (viewVCE_voice.voicingMode) {
+			index.confirmDialog("Loading voice file will overwrite any pending edits - continue?", function () {
+				index.raw_viewVCE(name, path);
+			});
+		} else {
+			index.raw_viewVCE(name, path);
+		}
+	},
+	raw_viewVCE: function (name, path) {
 		var name = "readVCE";
-		if (viewVCE_voice.voicingMode && (confirm("Loading voice file will overwrite any pending edits - continue?"))) {
+		if (viewVCE_voice.voicingMode) {
 			name = "loadVceVoicingMode"
 		}
 		let message = {
@@ -455,7 +474,7 @@ let index = {
 		
 		element = document.getElementById(eleId);
 		req = new XMLHttpRequest();
-	
+		
 		req.onreadystatechange = function () {
 			if (this.readyState == 4 && this.status == 200) {
 				element.innerHTML = req.responseText;
@@ -464,7 +483,7 @@ let index = {
 				}
 			}
 		};
-	
+		
 		req.open("GET", url, false);
 		req.send(null);
 		*/

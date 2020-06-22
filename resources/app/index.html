@@ -201,7 +201,7 @@ TEST a "more button" design:
 		</div>
 
 		<!-- Modal -->
-		<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+		<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" 
 			aria-hidden="true" >
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
@@ -216,6 +216,24 @@ TEST a "more button" design:
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Modal -->
+		<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" 
+			aria-hidden="true" >
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="confirmTitle">Confirm Title</h5>
+					</div>
+					<div class="modal-body">
+						<span id="confirmText"></span>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal" id="confirmCancelButton">Cancel</button>
+						<button type="button" class="btn btn-primary" data-dismiss="modal" id="confirmOKButton"">OK</button>
 					</div>
 				</div>
 			</div>
