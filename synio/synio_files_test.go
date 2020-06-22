@@ -47,9 +47,3 @@ func TestLoadCRT(t *testing.T) {
 		t.Fatalf("LoadCRT failed %v", err)
 	}
 }
-
-func TestLoadVCE(t *testing.T) {
-}
-
-
-

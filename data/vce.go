@@ -630,7 +630,7 @@ func vceToString(vce VCE) (result string) {
 	return
 }
 
-func vceToJson(vce VCE) (result string) {
+func VceToJson(vce VCE) (result string) {
 	b, _ := json.Marshal(vce)
 	result = string(b)
 

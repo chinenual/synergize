@@ -168,15 +168,24 @@ func diagSaveVCE(path string) (err error) {
 	if err = connectToSynergyIfNotConnected(); err != nil {
 		return
 	}
-	var syn_bytes []byte
+	var dumpedBytes []byte
 
-	if syn_bytes, err = synio.DumpVRAM(); err != nil {
+	if dumpedBytes, err = synio.DumpVRAM(); err != nil {
 		return
 	}
 
+	var readbuf = bytes.NewReader(dumpedBytes)
+	var dumpedCrt data.CRT
+	var dumpedVce data.VCE
+
+	if dumpedCrt, err = data.ReadCrt(readbuf); err != nil {
+		t.Errorf("error parsing dumpedVRAM %v", err)
+		return
+	}
+	dumpedVce = dumpedCrt.Voices[0]
 	log.Printf("VCE %s -- %d bytes \n", path, len(syn_bytes))
 
-	err = ioutil.WriteFile(path, syn_bytes, 0644)
+	err = data.WriteVceFile(path, dumpedVce)
 	return
 }
 

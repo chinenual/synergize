@@ -3,6 +3,7 @@ package data
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/json"
 	"io"
 	"io/ioutil"
 	"log"
@@ -37,6 +38,15 @@ func ReadCrtFile(filename string) (crt CRT, err error) {
 		return
 	}
 	buf := bytes.NewReader(b)
+
+	if crt, err = ReadCrt(buf); err != nil {
+		return
+	}
+	return
+}
+
+func ReadCrt(buf io.ReadSeeker) (crt CRT, err error) {
+	// A CRT file is a long header containing filter info, followed by a list of CCE fragments (each voice missing the filter params since they are concatenated elsewhere in the file).
 
 	if err = binary.Read(buf, binary.LittleEndian, &crt.Head); err != nil {
 		log.Println("binary.Read failed:", err)
@@ -88,6 +98,13 @@ func ReadCrtFile(filename string) (crt CRT, err error) {
 			crt.Voices = append(crt.Voices, vce)
 		}
 	}
+
+	return
+}
+
+func CrtToJson(crt CRT) (result string) {
+	b, _ := json.Marshal(crt)
+	result = string(b)
 
 	return
 }

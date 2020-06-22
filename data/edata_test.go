@@ -80,7 +80,7 @@ func TestReadVceFromVRAM(t *testing.T) {
 
 	if vce_from_vram, err = ReadVceFromVRAM(read_bytes); err != nil {
 		t.Errorf("error reading vce: %v", err)
-		t.Errorf("  parsed so far: %s\n", vceToJson(vce_from_vram))
+		t.Errorf("  parsed so far: %s\n", VceToJson(vce_from_vram))
 		return
 	}
 
@@ -101,7 +101,7 @@ func TestReadVceFromVRAM(t *testing.T) {
 	var vce_from_vram2 VCE
 	if vce_from_vram2, err = ReadVce(readbuf, false); err != nil {
 		t.Errorf("error parsing generated stream: %v", err)
-		t.Errorf("  parsed so far: %s\n", vceToJson(vce_from_vram2))
+		t.Errorf("  parsed so far: %s\n", VceToJson(vce_from_vram2))
 		return
 	}
 
