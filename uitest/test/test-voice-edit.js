@@ -9,7 +9,8 @@ function cssQuoteId(id) {
     return id.replace(/\[/g, '\\[').replace(/\]/g, '\\]');
 }
 
-describe('Test keyeq page edits', () => {
+describe('Test voice page edits', () => {
+    afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
     before(async () => {
         console.log("====== reuse the app");
         app = await hooks.getApp();

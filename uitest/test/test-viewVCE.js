@@ -39,6 +39,7 @@ module.exports = {
     }
 
     describe('Test VCE loading - ' + context, () => {
+      afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
       before(async () => {
         console.log("====== reuse the app");
         app = await hooks.getApp();

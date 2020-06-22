@@ -10,6 +10,7 @@ function cssQuoteId(id) {
 }
 
 describe('Test envs page edits', () => {
+    afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
     before(async () => {
         console.log("====== reuse the app");
         app = await hooks.getApp();
@@ -102,12 +103,6 @@ describe('Test envs page edits', () => {
             .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
     });
 
-    it('SCREENSHOT', async () => {
-        await app.client
-            .then(() => { return hooks.screenshotAndCompare(app, `TEMP4.failed.`) })
-
-    });
-
     it('now should be able to add a LOOP or REPEAT', async () => {
         await app.client
             .selectByValue(cssQuoteId('#envFreqLoop[1]'), 'L')
@@ -117,11 +112,6 @@ describe('Test envs page edits', () => {
             .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
     });
 
-    it('SCREENSHOT', async () => {
-        await app.client
-            .then(() => { return hooks.screenshotAndCompare(app, `TEMP3.failed.`) })
-
-    });
     it('now should be able to move the loop', async () => {
         await app.client
             .getValue(cssQuoteId('#envFreqLoop[1]')).should.eventually.equal('L')
@@ -131,11 +121,6 @@ describe('Test envs page edits', () => {
             .isVisible(cssQuoteId('#accelFreqLow')).should.eventually.equal(false)
             .isVisible(cssQuoteId('#accelFreqUp')).should.eventually.equal(false)
             .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
-    });
-    it('SCREENSHOT', async () => {
-        await app.client
-            .then(() => { return hooks.screenshotAndCompare(app, `TEMP2.failed.`) })
-
     });
 
     it('should disallow removing row if it contains a loop point', async () => {
@@ -149,11 +134,6 @@ describe('Test envs page edits', () => {
 
             .click('#alertModal button')
             .waitForVisible('#alertText', 1000, true) // wait to disappear
-    });
-    it('SCREENSHOT', async () => {
-        await app.client
-            .then(() => { return hooks.screenshotAndCompare(app, `TEMP1.failed.`) })
-
     });
 
     it('cannot delete sustain point if there are loop points', async () => {

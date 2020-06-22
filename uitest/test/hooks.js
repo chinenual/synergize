@@ -125,6 +125,22 @@ module.exports = {
     }
   },
 
+  screenshotIfFailed(mochaInstance, app) {
+    if (mochaInstance.currentTest.state !== "passed") {
+      const ssDir = path.join(__dirname, 'screenshots', process.platform)
+      // check that path exists otherwise create it
+      if (!fs.existsSync(ssDir)) {
+        fs.mkdirSync(ssDir)
+      }
+      var name = "AFTERHOOK-FAILED-" + mochaInstance.currentTest.title;
+      // sanitize the name (replace spaces, slashes with underscores)
+      name = name.replace(/[^A-Za-z0-9_-]/g,'_')
+      const ssPath = path.join(ssDir, name + '.failed.png')
+      console.log('ERROR:  afterEach write screeshot to ' + ssPath);
+      app.client.saveScreenshot(ssPath);
+    }
+  },
+
   screenshotAndCompare(app, name) {
     // adapted from https://github.com/webtorrent/webtorrent-desktop/blob/master/test/setup.js
 
@@ -166,8 +182,8 @@ module.exports = {
           if (SCREEN_DIFFS_ARE_FAILURES) {
             return chai.assert.fail('screenshot failed comparison ' + ssFailedPath)
           } else {
-          console.log('ERROR: Screenshot doesnt match - but not flagging as ERROR: ' + ssFailedPath)
-          return chai.assert.isOk(true, 'ignorning screenshot failed comparison ' + ssFailedPath)
+            console.log('ERROR: Screenshot doesnt match - but not flagging as ERROR: ' + ssFailedPath)
+            return chai.assert.isOk(true, 'ignorning screenshot failed comparison ' + ssFailedPath)
           }
         }
       }

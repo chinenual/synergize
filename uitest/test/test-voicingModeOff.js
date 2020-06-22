@@ -4,6 +4,7 @@ const WINDOW_PAUSE = 1000;
 let app;
 
 describe('Test Voicing Mode OFF', () => {
+  afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
   before(async () => {
     console.log("====== reuse the app");
     app = await hooks.getApp();

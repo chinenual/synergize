@@ -2,6 +2,9 @@ const hooks = require('./hooks');
 const config = require('../config').get(process.env.NODE_ENV);
 const viewVCE = require('./test-viewVCE');
 
+var chai = require('chai')
+chai.config.includeStack = true
+
 
 const WINDOW_PAUSE = 1000;
 
@@ -15,6 +18,8 @@ const voiceGUITAR2A = require('./page-objects/voice-GUITAR2A');
 var app;
 
 describe('Setup', () => {
+  afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
+
   before(async () => {
     console.log("====== remove test preferences.json file if exists");
 
@@ -47,6 +52,7 @@ describe('Setup', () => {
 });
 
 describe('Render unit tests', () => {
+
   it('voice page text conversions', async () => {
     await app.webContents
       .executeJavaScript('viewVCE_voice.testConversionFunctions()').should.eventually.be.true
@@ -65,29 +71,37 @@ describe('Render unit tests', () => {
 });
 
 
-//require('./test-about');
+require('./test-about');
 
 require('./test-prefs');
-//describe('Test READ-ONLY views', () => {
-//  viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaLeftPanel, "readonlyVCE");
-//  viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaINTERNALCRT, "readonlyCRT");
-//});
-describe('Test Voicing Mode views', () => {
-  require('./test-voicingModeOn');
-//  viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaLeftPanel, "voicemode");
 
-//  require('./test-voice-edit');
+describe('Test Voicing Mode views', () => {
+  afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
+
+  require('./test-voicingModeOn');
+
+  require('./test-voice-edit');
   require('./test-envs-edit');
 //  require('./test-filter-edit');
-//  require('./test-keyeq-edit');
-//  require('./test-keyprop-edit');
+  require('./test-keyeq-edit');
+  require('./test-keyprop-edit');
+
+  viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaLeftPanel, "voicemode");
 
   require('./test-voicingModeOff');
+});
+
+describe('Test READ-ONLY views', () => {
+  afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
+
+  viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaLeftPanel, "readonlyVCE");
+  viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaINTERNALCRT, "readonlyCRT");
 });
 
 
 
 describe('Tear Down', () => {
+  afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
   after(async () => {
     console.log("====== tear down the app");
     await hooks.stopApp(app);
