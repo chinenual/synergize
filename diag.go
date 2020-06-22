@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"io/ioutil"
 	"log"
 	"path/filepath"
 	"runtime"
 
+	"github.com/chinenual/synergize/data"
 	"github.com/chinenual/synergize/synio"
 )
 
@@ -179,11 +181,11 @@ func diagSaveVCE(path string) (err error) {
 	var dumpedVce data.VCE
 
 	if dumpedCrt, err = data.ReadCrt(readbuf); err != nil {
-		t.Errorf("error parsing dumpedVRAM %v", err)
+		log.Printf("error parsing dumpedVRAM %v", err)
 		return
 	}
 	dumpedVce = dumpedCrt.Voices[0]
-	log.Printf("VCE %s -- %d bytes \n", path, len(syn_bytes))
+	log.Printf("VCE %s -- %d bytes: %s\n", path, len(dumpedBytes), data.VceToJson(dumpedVce))
 
 	err = data.WriteVceFile(path, dumpedVce)
 	return

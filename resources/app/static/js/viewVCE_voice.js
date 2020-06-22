@@ -198,9 +198,9 @@ let viewVCE_voice = {
 		return ok;
 	},
 
-	onchange: function(ele,updater,valueConverter) {
+	onchange: function (ele, updater, valueConverter) {
 		if (viewVCE.supressOnchange) { return; }
-		viewVCE_voice.deb_onchange(ele,updater,valueConverter);
+		viewVCE_voice.deb_onchange(ele, updater, valueConverter);
 	},
 
 	deb_onchange: null,
@@ -222,7 +222,11 @@ let viewVCE_voice = {
 		var waveKeyPattern = /wk([A-Z]+)\[(\d+)\]/;
 		var oscPattern = /([A-Z]+)\[(\d+)\]/;
 		var headPattern = /([A-Z]+)/;
-		if (ret = id.match(filterPattern)) {
+		if (id === "VNAME") {
+			param = "VNAME"
+			funcname = "setVNAME";
+			args = ele.value;
+		} else if (ret = id.match(filterPattern)) {
 			param = "FILTER"
 			funcname = "setOscFILTER";
 			osc = parseInt(ret[1])
@@ -430,7 +434,7 @@ let viewVCE_voice = {
 		});
 	},
 
-	setNumOscillators: function(newNum) {
+	setNumOscillators: function (newNum) {
 		if (viewVCE.supressOnchange) { return; }
 		viewVCE_voice.deb_setNumOscillators(newNum);
 	},
@@ -479,11 +483,11 @@ let viewVCE_voice = {
 
 	toggleVoicingMode(mode) {
 		if (!mode) {
-			index.confirmDialog("Disabling Voicing Mode will discard any pending edits. Are you sure?", function() {
+			index.confirmDialog("Disabling Voicing Mode will discard any pending edits. Are you sure?", function () {
 				viewVCE_voice.raw_toggleVoicingMode(mode);
 			});
 		} else {
-		viewVCE_voice.raw_toggleVoicingMode(mode);
+			viewVCE_voice.raw_toggleVoicingMode(mode);
 		}
 	},
 
@@ -672,7 +676,7 @@ let viewVCE_voice = {
 		document.getElementById("vce_crt_name").innerHTML = crt_name;
 		document.getElementById("vce_name").innerHTML = vce.Head.VNAME;
 
-		document.getElementById("name").innerHTML = vce.Head.VNAME;
+		document.getElementById("VNAME").value = vce.Head.VNAME.replace(/ +$/g,''); // trim trailing spaces for editing
 		document.getElementById("nOsc").value = vce.Head.VOITAB + 1;
 		document.getElementById("keysPlayable").innerHTML = Math.floor(32 / (vce.Head.VOITAB + 1));
 		viewVCE_voice.updateVibType();

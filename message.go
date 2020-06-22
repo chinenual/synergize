@@ -241,6 +241,24 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		}
 		payload = "ok"
 
+	case "setVNAME":
+		var args struct {
+			Param string
+			Args  string // HACK: just a string - the JS code shares some logic with the other voice bytes that use setVoiceByte
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetVNAME(args.Args); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
 	case "setVoiceByte":
 		var args struct {
 			Param string

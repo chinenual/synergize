@@ -16,7 +16,7 @@
 <div class="tab-content">
 
 	<!-- used to help the UITEST to know when a tab content has been updated and ready to test (e.g. after changing osc on the Env page) -->
-<input type="text" hidden id="tabTelltaleContent" value="">
+	<input type="text" hidden id="tabTelltaleContent" value="">
 
 	<div id="vceVoiceTab" class="tab-pane fade show active">
 
@@ -92,8 +92,10 @@
 					<table>
 						<tr>
 							<td>Voice Name</td>
-							<!-- HACK: add margin to align with TouchSpin styled fields -->
-							<td><span <span class="spinNOSPIN" id="name" /></td>
+							<td>
+								<input class="vceEdit" type="text" id="VNAME" maxlength="8" style="width: 8em;"
+									onchange="viewVCE_voice.onchange(this)" disabled />
+							</td>
 						</tr>
 						<tr>
 							<td>&nbsp;</td>
@@ -101,8 +103,11 @@
 						</tr>
 						<tr>
 							<td>Oscillators</td>
-							<td><div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="nOsc" min="1" max="16"
-									onchange="viewVCE_voice.setNumOscillators(this.value)" disabled /></div></td>
+							<td>
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="nOsc"
+										min="1" max="16" onchange="viewVCE_voice.setNumOscillators(this.value)"
+										disabled /></div>
+							</td>
 						</tr>
 						<tr>
 							<td>Keys Playable</td>
@@ -124,24 +129,32 @@
 						</tr>
 						<tr>
 							<td>Vibrato Depth</td>
-							<td><div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VIBDEP" min="-128" max="128"
-									onchange="viewVCE_voice.onchange(this, viewVCE_voice.updateVibType)" disabled /></div></td>
+							<td>
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VIBDEP"
+										min="-128" max="128"
+										onchange="viewVCE_voice.onchange(this, viewVCE_voice.updateVibType)" disabled />
+								</div>
+							</td>
 						</tr>
 						<tr>
 							<td>Vibrato Rate</td>
-							<td><div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VIBRAT" min="0" max="127"
-									onchange="viewVCE_voice.onchange(this)" disabled /></div></td>
+							<td>
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VIBRAT"
+										min="0" max="127" onchange="viewVCE_voice.onchange(this)" disabled /></div>
+							</td>
 						</tr>
 						<tr>
 							<td>Vibrato Delay</td>
-							<td><div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VIBDEL" min="0" max="127"
-									onchange="viewVCE_voice.onchange(this);" disabled /></div>
+							<td>
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VIBDEL"
+										min="0" max="127" onchange="viewVCE_voice.onchange(this);" disabled /></div>
 							</td>
 						</tr>
 						<tr>
 							<td>Aperiodic Vibrato</td>
-							<td><div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="APVIB" min="-128" max="128"
-									onchange="viewVCE_voice.onchange(this)" disabled /></div>
+							<td>
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="APVIB"
+										min="-128" max="128" onchange="viewVCE_voice.onchange(this)" disabled /></div>
 								<!--FIXME:validate range-->
 							</td>
 						</tr>
@@ -151,14 +164,20 @@
 						</tr>
 						<tr>
 							<td>Amp Center</td>
-							<td><div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VACENT" min="0" max="32"
-									onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled /></div>
+							<td>
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VACENT"
+										min="0" max="32"
+										onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled />
+								</div>
 							</td>
 						</tr>
 						<tr>
 							<td>Amp Sensitivity</td>
-							<td><div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VASENS" min="0" max="31"
-									onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled /></div>
+							<td>
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VASENS"
+										min="0" max="31"
+										onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled />
+								</div>
 							</td>
 						</tr>
 						<tr>
@@ -167,14 +186,20 @@
 						</tr>
 						<tr>
 							<td>Timbre Center</td>
-							<td><div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VTCENT" min="0" max="32"
-									onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled /></div>
+							<td>
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VTCENT"
+										min="0" max="32"
+										onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled />
+								</div>
 							</td>
 						</tr>
 						<tr>
 							<td>Timbre Sensitivity</td>
-							<td><div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VTSENS" min="0" max="31"
-									onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled /></div>
+							<td>
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VTSENS"
+										min="0" max="31"
+										onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled />
+								</div>
 							</td>
 						</tr>
 						<tr>
@@ -183,8 +208,10 @@
 						</tr>
 						<tr>
 							<td>Transpose</td>
-							<td><div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VTRANS" min="-127" max="128"
-									onchange="viewVCE_voice.onchange(this)" disabled /></div></td>
+							<td>
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VTRANS"
+										min="-127" max="128" onchange="viewVCE_voice.onchange(this)" disabled /></div>
+							</td>
 						</tr>
 						<tr>
 							<td>&nbsp;</td>
@@ -807,7 +834,8 @@
 				<tr>
 					<td>10</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[10]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" id="envFreqLoop[10]" onchange="viewVCE_envs.onchangeLoop(this)"
+							disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -866,7 +894,8 @@
 				<tr>
 					<td>11</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[11]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" id="envFreqLoop[11]" onchange="viewVCE_envs.onchangeLoop(this)"
+							disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -925,7 +954,8 @@
 				<tr>
 					<td>12</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[12]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" id="envFreqLoop[12]" onchange="viewVCE_envs.onchangeLoop(this)"
+							disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -984,7 +1014,8 @@
 				<tr>
 					<td>13</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[13]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" id="envFreqLoop[13]" onchange="viewVCE_envs.onchangeLoop(this)"
+							disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -1043,7 +1074,8 @@
 				<tr>
 					<td>14</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[14]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" id="envFreqLoop[14]" onchange="viewVCE_envs.onchangeLoop(this)"
+							disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -1102,7 +1134,8 @@
 				<tr>
 					<td>15</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[15]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" id="envFreqLoop[15]" onchange="viewVCE_envs.onchangeLoop(this)"
+							disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -1161,7 +1194,8 @@
 				<tr>
 					<td>16</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[16]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" id="envFreqLoop[16]" onchange="viewVCE_envs.onchangeLoop(this)"
+							disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -1217,16 +1251,25 @@
 					<td>16</td>
 				</tr>
 				<tr class="type1accel">
-					<td colspan="8" >
+					<td colspan="8">
 						<div style="margin-top: 5px" class="Freq">
-							Accel Low:&nbsp;&nbsp;<div class="spinwrapper"><input id="accelFreqLow" type='text' min=0 max=127 class="vceEdit vceNum spinPLAIN" onchange=' viewVCE_envs.onchangeEnvAccel(this)' /></div>
-							&nbsp;Up:&nbsp;&nbsp;<div class="spinwrapper"><input id="accelFreqUp" type='text' min=0 max=127 class="vceEdit vceNum spinPLAIN" onchange='viewVCE_envs.onchangeEnvAccel(this)' /></div>
+							Accel Low:&nbsp;&nbsp;<div class="spinwrapper"><input id="accelFreqLow" type='text' min=0
+									max=127 class="vceEdit vceNum spinPLAIN"
+									onchange=' viewVCE_envs.onchangeEnvAccel(this)' /></div>
+							&nbsp;Up:&nbsp;&nbsp;<div class="spinwrapper"><input id="accelFreqUp" type='text' min=0
+									max=127 class="vceEdit vceNum spinPLAIN"
+									onchange='viewVCE_envs.onchangeEnvAccel(this)' /></div>
 						</div>
 					</td>
-					<td colspan="8" >
+					<td colspan="8">
 						<div style="margin-top: 5px;" class="Amp">
-							Accel Low:&nbsp;&nbsp;<div class="spinwrapper"><input id="accelAmpLow" type='text' min=0 max=127 class="vceEdit vceNum spinPLAIN" onchange=' viewVCE_envs.onchangeEnvAccel(this)' /></div>
-							&nbsp;Up:&nbsp;&nbsp;<div class="spinwrapper"><input id="accelAmpUp" type='text' min=0 max=127 class="vceEdit vceNum spinPLAIN" onchange='viewVCE_envs.onchangeEnvAccel(this)' /></div>
+							Accel Low:&nbsp;&nbsp;<div class="spinwrapper"><input id="accelAmpLow" type='text' min=0
+									max=127 class="vceEdit vceNum spinPLAIN"
+									onchange=' viewVCE_envs.onchangeEnvAccel(this)' />
+							</div>
+							&nbsp;Up:&nbsp;&nbsp;<div class="spinwrapper"><input id="accelAmpUp" type='text' min=0
+									max=127 class="vceEdit vceNum spinPLAIN"
+									onchange='viewVCE_envs.onchangeEnvAccel(this)' /></div>
 						</div>
 					</td>
 
@@ -1234,14 +1277,18 @@
 				<tr class="listplusminus">
 					<td colspan="8">
 						<div style="margin-top: 5px; float: left;">
-							<input id="delFreqPoint" type='button' value='-' onclick=' viewVCE_envs.changeEnvPoints("freq", -1)' />
-							<input id="addFreqPoint" type='button' value='+' onclick='viewVCE_envs.changeEnvPoints("freq", 1)' />
+							<input id="delFreqPoint" type='button' value='-'
+								onclick=' viewVCE_envs.changeEnvPoints("freq", -1)' />
+							<input id="addFreqPoint" type='button' value='+'
+								onclick='viewVCE_envs.changeEnvPoints("freq", 1)' />
 						</div>
 					</td>
 					<td colspan="8">
 						<div style="margin-top: 5px; float: left;">
-							<input id="delAmpPoint" type='button' value='-' onclick=' viewVCE_envs.changeEnvPoints("amp", -1)' />
-							<input id="addAmpPoint" type='button' value='+' onclick='viewVCE_envs.changeEnvPoints("amp", 1)' />
+							<input id="delAmpPoint" type='button' value='-'
+								onclick=' viewVCE_envs.changeEnvPoints("amp", -1)' />
+							<input id="addAmpPoint" type='button' value='+'
+								onclick='viewVCE_envs.changeEnvPoints("amp", 1)' />
 						</div>
 					</td>
 				</tr>

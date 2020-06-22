@@ -141,6 +141,15 @@ func SetOscSolo(mute, solo []bool) (oscStatus [16]bool, err error) {
 	return
 }
 
+func SetVNAME(name string) (err error) {
+	addr := VoiceHeadAddr(data.Off_EDATA_VNAME)
+	var value = []byte(data.VcePaddedName(name))
+	if err = BlockLoad(addr, value, "set VNAME "); err != nil {
+		return
+	}
+	return
+}
+
 func SetFilterEle(uiFilterIndex /*0 for Af, one-based osc# for Bf */ int, index /* one-based */ int, value int) (err error) {
 	// ASSUMES we're only editing voice #1.
 	// AFilter is always at 0 in the FILTAB;

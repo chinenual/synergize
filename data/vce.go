@@ -188,11 +188,11 @@ func vceNameFromPathname(filename string) (name string) {
 	// remove .vce suffix
 	name = strings.ToUpper(name)
 	name = strings.TrimSuffix(name, ".VCE")
-	name = vcePaddedName(name)
+	name = VcePaddedName(name)
 	return name
 }
 
-func vcePaddedName(name string) (padded string) {
+func VcePaddedName(name string) (padded string) {
 	padded = name
 	if len(padded) > 8 {
 		padded = padded[:8]

@@ -99,6 +99,9 @@ func TestRoundTrip(t *testing.T) {
 	}
 	//	{Name: "VEQ    [24]int8
 	//	{Name: "KPROP  [24]byte
+	if err = SetVNAME("ROUNDTRIP"); err != nil { // GS7: GS7
+		t.Fatalf("Failed to set SetVNAME")
+	}
 	if err = SetVoiceVEQEle(1, 1); err != nil { // GS7: -4
 		t.Fatalf("Failed to set SetVoiceVEQEle")
 	}
@@ -135,11 +138,14 @@ func TestRoundTrip(t *testing.T) {
 	log.Printf("dumped CRT: %s\n", data.CrtToJson(dumpedCrt))
 	log.Printf("dumped VCE: %s\n", data.VceToJson(dumpedVce))
 
+	if data.VceName(dumpedVce.Head) != "ROUNDTRI" {
+		t.Errorf("Round trip value failed %s to %v - got %v", "VEQ[0]", "ROUNDTRI", data.VceName(dumpedVce.Head))
+	}
 	if dumpedVce.Head.VEQ[0] != 1 {
-		t.Errorf("Round trip value failed %s to %v - got %v", "VEQ[0]", dumpedVce.Head.VEQ[0], 1)
+		t.Errorf("Round trip value failed %s to %v - got %v", "VEQ[0]", 1, dumpedVce.Head.VEQ[0])
 	}
 	if dumpedVce.Head.KPROP[0] != 1 {
-		t.Errorf("Round trip value failed %s to %v - got %v", "KPROP[0]", dumpedVce.Head.KPROP[0], 1)
+		t.Errorf("Round trip value failed %s to %v - got %v", "KPROP[0]", 1, dumpedVce.Head.KPROP[0])
 	}
 	for _, v := range headValues {
 		var value byte
