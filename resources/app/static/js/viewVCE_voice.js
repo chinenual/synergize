@@ -198,7 +198,12 @@ let viewVCE_voice = {
 		return ok;
 	},
 
-	onchange: null,
+	onchange: function(ele,updater,valueConverter) {
+		if (viewVCE.supressOnchange) { return; }
+		viewVCE_voice.deb_onchange(ele,updater,valueConverter);
+	},
+
+	deb_onchange: null,
 
 	raw_onchange: function (ele, updater, valueConverter) {
 		if (viewVCE.supressOnchange) { return; }
@@ -425,7 +430,12 @@ let viewVCE_voice = {
 		});
 	},
 
-	setNumOscillators: null,
+	setNumOscillators: function(newNum) {
+		if (viewVCE.supressOnchange) { return; }
+		viewVCE_voice.deb_setNumOscillators(newNum);
+	},
+
+	deb_setNumOscillators: null,
 
 	raw_setNumOscillators: function (newNum) {
 		console.log("setNumOscillators: " + newNum);
@@ -644,11 +654,11 @@ let viewVCE_voice = {
 	},
 
 	init: function () {
-		if (viewVCE_voice.onchange == null) {
-			viewVCE_voice.onchange = _.debounce(viewVCE_voice.raw_onchange, 250);
+		if (viewVCE_voice.deb_onchange == null) {
+			viewVCE_voice.deb_onchange = _.debounce(viewVCE_voice.raw_onchange, 250);
 		}
-		if (viewVCE_voice.setNumOscillators == null) {
-			viewVCE_voice.setNumOscillators = _.debounce(viewVCE_voice.raw_setNumOscillators, 250);
+		if (viewVCE_voice.deb_setNumOscillators == null) {
+			viewVCE_voice.deb_setNumOscillators = _.debounce(viewVCE_voice.raw_setNumOscillators, 250);
 		}
 
 		viewVCE_voice.patchTable();

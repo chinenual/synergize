@@ -43,12 +43,10 @@ let index = {
 		var result = parseInt(ele.value, 10);
 		if (ele.hasAttribute("min")) {
 			var min = parseInt(ele.getAttribute("min"), 10);
-			console.log("min : " + min);
 			if (result < min) result = min;
 		}
 		if (ele.hasAttribute("max")) {
 			var max = parseInt(ele.getAttribute("max"), 10);
-			console.log("max : " + max);
 			if (result > max) result = max;
 		}
 		return result;

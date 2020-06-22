@@ -11,7 +11,12 @@ let viewVCE_keyprop = {
 		return result;
 	},
 
-	onchange: null, // initialized during init()
+	onchange: function(ele) {
+		if (viewVCE.supressOnchange) { return; }
+		viewVCE_keyprop.deb_onchange(ele);
+	},
+
+	deb_onchange: null, // initialized during init()
 
 	raw_onchange: function (ele) {
 		if (viewVCE.supressOnchange) {return;}
@@ -53,8 +58,8 @@ let viewVCE_keyprop = {
 	},
 
 	init: function () {
-		if (viewVCE_keyprop.onchange == null) {
-			viewVCE_keyprop.onchange = _.debounce(viewVCE_keyprop.raw_onchange, 250);
+		if (viewVCE_keyprop.deb_onchange == null) {
+			viewVCE_keyprop.deb_onchange = _.debounce(viewVCE_keyprop.raw_onchange, 250);
 		}
 
 		var propData = viewVCE_keyprop.keyPropCurve(vce.Head.KPROP);

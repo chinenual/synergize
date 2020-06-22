@@ -1,11 +1,15 @@
 let viewVCE_filters = {
 	chart: null,
 
-	onchange: null, // initialized during init()
+	onchange: function(ele) {
+		if (viewVCE.supressOnchange) { return; }
+		viewVCE_filters.deb_onchange(ele);
+	},
+
+	deb_onchange: null, // initialized during init()
 
 	raw_onchange: function (ele) {
-		if (viewVCE.supressOnchange) { return; }
-
+	
 		var id = ele.id;
 
 		var value = index.checkInputElementValue(ele);
@@ -98,8 +102,8 @@ let viewVCE_filters = {
 	},
 
 	init: function () {
-		if (viewVCE_filters.onchange == null) {
-			viewVCE_filters.onchange = _.debounce(viewVCE_filters.raw_onchange, 250);
+		if (viewVCE_filters.deb_onchange == null) {
+			viewVCE_filters.deb_onchange = _.debounce(viewVCE_filters.raw_onchange, 250);
 		}
 		
 		var selectEle = document.getElementById("filterSelect");

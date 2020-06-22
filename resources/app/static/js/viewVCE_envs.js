@@ -6,11 +6,11 @@ let viewVCE_envs = {
 	chart: null,
 
 	init: function () {
-		if (viewVCE_envs.onchange == null) {
-			viewVCE_envs.onchange = _.debounce(viewVCE_envs.raw_onchange, 250);
+		if (viewVCE_envs.deb_onchange == null) {
+			viewVCE_envs.deb_onchange = _.debounce(viewVCE_envs.raw_onchange, 250);
 		}
-		if (viewVCE_envs.onchangeEnvAccel == null) {
-			viewVCE_envs.ononchangeEnvAccelchange = _.debounce(viewVCE_envs.raw_onchangeEnvAccel, 250);
+		if (viewVCE_envs.deb_onchangeEnvAccel == null) {
+			viewVCE_envs.deb_ononchangeEnvAccelchange = _.debounce(viewVCE_envs.raw_onchangeEnvAccel, 250);
 		}
 
 		var selectEle = document.getElementById("envOscSelect");
@@ -404,13 +404,17 @@ let viewVCE_envs = {
 
 	},
 
-	onchangeEnvAccel: null,
+	onchangeEnvAccel: function(ele) {
+		if (viewVCE.supressOnchange) { return; }
+		if (viewVCE_envs.supressOnchange) { return; }
+		viewVCE_envs.deb_onchangeEnvAccel(ele);
+	},
+
+	deb_onchangeEnvAccel: null,
 
 	raw_onchangeEnvAccel: function (ele) {
 		// type1 accelerations are really just the SUSTAIN and LOOP points.  We use the same backend function as the loop change event
 
-		if (viewVCE.supressOnchange) { return; }
-		if (viewVCE_envs.supressOnchange) { return; }
 
 		var envOscSelectEle = document.getElementById("envOscSelect");
 		var osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
@@ -468,12 +472,15 @@ let viewVCE_envs = {
 
 	},
 
-	onchange: null, // initialized during init()
-
-	raw_onchange: function (ele) {
+	onchange: function(ele) {
 		if (viewVCE.supressOnchange) { return; }
 		if (viewVCE_envs.supressOnchange) { return; }
+		viewVCE_envs.deb_onchange(ele);
+	},
 
+	deb_onchange: null, // initialized during init()
+
+	raw_onchange: function (ele) {
 		var eleIndex;
 		var envOscSelectEle = document.getElementById("envOscSelect");
 		var osc = parseInt(envOscSelectEle.value, 10); // one-based osc index

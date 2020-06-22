@@ -11,7 +11,12 @@ let viewVCE_keyeq = {
 		return result;
 	},
 
-	onchange: null, // initialized during init()
+	onchange: function(ele) {
+		if (viewVCE.supressOnchange) { return; }
+		viewVCE_keyeq.deb_onchange(ele);
+	},
+
+	deb_onchange: null, // initialized during init()
 
 	raw_onchange: function (ele) {
 		if (viewVCE.supressOnchange) { return; }
@@ -52,8 +57,8 @@ let viewVCE_keyeq = {
 	},
 
 	init: function () {
-		if (viewVCE_keyeq.onchange == null) {
-			viewVCE_keyeq.onchange = _.debounce(viewVCE_keyeq.raw_onchange, 250);
+		if (viewVCE_keyeq.deb_onchange == null) {
+			viewVCE_keyeq.deb_onchange = _.debounce(viewVCE_keyeq.raw_onchange, 250);
 		}
 
 		var propData = viewVCE_keyeq.keyEqCurve(vce.Head.VEQ);
