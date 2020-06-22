@@ -17,6 +17,23 @@ module.exports = {
     });
   },
 
+  loadVCEViaLeftPanelVoicingMode(name) {
+    describe('Load ' + name + '.VCE from left panel', () => {
+      it('click load ' + name, async () => {
+        await app.client
+          .click('.file=' + name)
+
+          .waitForVisible('#confirmText')
+          .getText('#confirmText').should.eventually.include('pending edits')
+          .click('#confirmOKButton')
+          .waitForVisible('#confirmText', 1000, true) // wait to disappear
+
+          .waitUntilTextExists("#name", name, LOAD_VCE_TIMEOUT)
+          .getText('#name').should.eventually.equal(name)
+      });
+    });
+  },
+
   loadVCEViaINTERNALCRT(name) {
     describe('Load ' + name + ' from Internal CRT', () => {
       it('click load ' + name, async () => {
@@ -39,7 +56,7 @@ module.exports = {
     }
 
     describe('Test VCE loading - ' + context, () => {
-      afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
+      afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this, app); });
       before(async () => {
         console.log("====== reuse the app");
         app = await hooks.getApp();

@@ -19,6 +19,12 @@ describe('Test keyprop page edits', () => {
     it('click load G7S', async () => {
         await app.client
             .click('.file=G7S')
+
+            .waitForVisible('#confirmText')
+            .getText('#confirmText').should.eventually.include('pending edits')
+            .click('#confirmOKButton')
+            .waitForVisible('#confirmText', 1000, true) // wait to disappear
+
             .waitUntilTextExists("#name", 'G7S', LOAD_VCE_TIMEOUT)
             .getText('#name').should.eventually.equal('G7S')
     });

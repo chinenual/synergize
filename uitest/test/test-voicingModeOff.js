@@ -14,6 +14,11 @@ describe('Test Voicing Mode OFF', () => {
     await app.client
       .click('#voicingModeButton')
 
+      .waitForVisible('#confirmText')
+      .getText('#confirmText').should.eventually.include('pending edits')
+      .click('#confirmOKButton')
+      .waitForVisible('#confirmText', 1000, true) // wait to disappear
+
       .waitForVisible('#alertText')
       .then(() => {return hooks.screenshotAndCompare(app, 'voicingModeOff-alert')})
 
