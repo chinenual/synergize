@@ -99,6 +99,8 @@ let viewVCE_voice = {
 		var val = parseInt(str, 10);
 		if (val < 0) {
 			newStr = "s" + (-val);
+		} else if (val == 31) {
+			newStr = "dc";
 		} else {
 			newStr = str;
 		}
@@ -108,7 +110,9 @@ let viewVCE_voice = {
 
 	TextToOHARM: function (str) {
 		var newStr;
-		if (ret = str.match(/s(\d+)/)) {
+		if (str === "dc") {
+			newStr = '31';
+		} else if (ret = str.match(/s(\d+)/)) {
 			val = parseInt(ret[1], 10);
 			newStr = '' + (-val);
 		} else if (ret = str.match(/\d+/)) {
@@ -178,7 +182,7 @@ let viewVCE_voice = {
 
 	testConversionFunctions: function () {
 		var ok = true;
-		for (var i = -11; i <= 30; i++) {
+		for (var i = -11; i <= 31; i++) {
 			var str = viewVCE_voice.OHARMToText('' + i);
 			var reverseStr = viewVCE_voice.TextToOHARM(str);
 			if (('' + i) != reverseStr) {
@@ -353,7 +357,7 @@ let viewVCE_voice = {
 			td = document.createElement("td");
 			td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinOHARM" id="OHARM[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToOHARM)" value="${viewVCE_voice.OHARMToText(vce.Envelopes[osc].FreqEnvelope.OHARM)}" 
-			min="-11" max="30"
+			min="-11" max="31"
 			disabled/></div>`;
 			tr.appendChild(td);
 
