@@ -10,9 +10,7 @@ function cssQuoteId(id) {
 }
 
 describe('Test envs page edits', () => {
-    afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
     before(async () => {
-        console.log("====== reuse the app");
         app = await hooks.getApp();
     });
 
@@ -21,6 +19,7 @@ describe('Test envs page edits', () => {
             .click(`#vceTabs a[href='#vceEnvsTab']`)
             .getAttribute(`#vceTabs a[href='#vceEnvsTab']`, 'class').should.eventually.include('active')
             .waitForVisible('#envTable')
+            .pause(2000)//HACK
     });
 
     // assumes we are on the INITVRAM voice

@@ -10,9 +10,7 @@ function cssQuoteId(id) {
 }
 
 describe('Test voice page edits', () => {
-    afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
     before(async () => {
-        console.log("====== reuse the app");
         app = await hooks.getApp();
     });
 
@@ -22,6 +20,7 @@ describe('Test voice page edits', () => {
             .getAttribute(`#vceTabs a[href='#vceVoiceTab']`, 'class').should.eventually.include('active')
             .waitForVisible('#voiceOscTable')
             .waitForVisible('#voiceParamTable')
+            .pause(2000)//HACK
     });
 
     // assumes we are on the INITVRAM voice

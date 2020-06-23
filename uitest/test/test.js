@@ -84,14 +84,12 @@ describe('Test Voicing Mode views', () => {
   require('./test-voicingModeOff');
 });
 
-
 describe('Test READ-ONLY views', () => {
   afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
 
   viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaLeftPanel, "readonlyVCE");
   viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaINTERNALCRT, "readonlyCRT");
 });
-
 
 
 describe('Tear Down', () => {

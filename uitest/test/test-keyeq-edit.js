@@ -10,14 +10,25 @@ function cssQuoteId(id) {
 }
 
 describe('Test keyeq page edits', () => {
-    afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
     before(async () => {
-        console.log("====== reuse the app");
         app = await hooks.getApp();
+    });
+
+    it('voice tab should display', async () => {
+        await app.client
+            .click(`#vceTabs a[href='#vceVoiceTab']`)
+            .getAttribute(`#vceTabs a[href='#vceVoiceTab']`, 'class').should.eventually.include('active')
+            .waitForVisible('#voiceParamTable')
+            .waitUntil(() => {
+                return app.client.$('#voiceParamTable').isVisible()
+            })
+            .isVisible('#voiceParamTable').should.eventually.equal(true)
     });
 
     it('click load G7S', async () => {
         await app.client
+        // need to clear this since previous test may also be using same voice
+            .clearElement("#VNAME")
             .click('.file=G7S')
 
             .waitForVisible('#confirmText')
@@ -26,7 +37,6 @@ describe('Test keyeq page edits', () => {
             .waitForVisible('#confirmText', 1000, true) // wait to disappear
 
             .waitUntilTextExists("#vce_name", 'G7S', LOAD_VCE_TIMEOUT)
-            .pause(2000) // HACK
 
             .getValue('#VNAME').should.eventually.equal('G7S')
     });

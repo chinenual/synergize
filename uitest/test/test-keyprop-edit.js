@@ -10,14 +10,25 @@ function cssQuoteId(id) {
 }
 
 describe('Test keyprop page edits', () => {
-    afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
     before(async () => {
-        console.log("====== reuse the app");
         app = await hooks.getApp();
+    });
+
+    it('voice tab should display', async () => {
+        await app.client
+            .click(`#vceTabs a[href='#vceVoiceTab']`)
+            .getAttribute(`#vceTabs a[href='#vceVoiceTab']`, 'class').should.eventually.include('active')
+            .waitForVisible('#voiceParamTable')
+            .waitUntil(() => {
+                return app.client.$('#voiceParamTable').isVisible()
+            })
+            .isVisible('#voiceParamTable').should.eventually.equal(true)
     });
 
     it('click load G7S', async () => {
         await app.client
+        // need to clear this since previous test may also be using same voice
+            .clearElement("#VNAME")
             .click('.file=G7S')
 
             .waitForVisible('#confirmText')
@@ -25,16 +36,19 @@ describe('Test keyprop page edits', () => {
             .click('#confirmOKButton')
             .waitForVisible('#confirmText', 1000, true) // wait to disappear
 
-            .waitUntilTextExists("#vce_name", 'G7S', LOAD_VCE_TIMEOUT)
-            .pause(2000) // HACK
-            
+            .waitForValue("#VNAME", LOAD_VCE_TIMEOUT)
             .getValue('#VNAME').should.eventually.equal('G7S')
     });
+
     it('keyprop tab should display', async () => {
         await app.client
             .click(`#vceTabs a[href='#vceKeyPropTab']`)
             .getAttribute(`#vceTabs a[href='#vceKeyPropTab']`, 'class').should.eventually.include('active')
             .waitForVisible('#keyPropTable')
+            .waitUntil(() => {
+                return app.client.$('#keyPropTable').isVisible()
+            })
+            .isVisible('#keyPropTable').should.eventually.equal(true)
     });
 
     // element 1-4's initial value is 0 (min)
@@ -43,6 +57,7 @@ describe('Test keyprop page edits', () => {
     // Test up arrow, down arrow - both in and out of range
     it('up-arrow to element 1 - 0->1', async () => {
         await app.client
+            .then(() => { console.log('************************ top of first test'); })
             .click(cssQuoteId('#keyprop[1]')).keys('ArrowUp')
             .getValue(cssQuoteId('#keyprop[1]')).should.eventually.equal('1')
     });
