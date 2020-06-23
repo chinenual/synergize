@@ -19,6 +19,7 @@ module.exports = {
         await app.client
           .click('.file=' + name)
           .waitUntilTextExists("#vce_name", name, LOAD_VCE_TIMEOUT)
+          .pause(2000) // HACK
 
         await app.client
           .getValue('#VNAME').should.eventually.equal(name)
@@ -36,7 +37,9 @@ module.exports = {
           .getText('#confirmText').should.eventually.include('pending edits')
           .click('#confirmOKButton')
           .waitForVisible('#confirmText', 1000, true) // wait to disappear
+          
           .waitUntilTextExists("#vce_name", name, LOAD_VCE_TIMEOUT)
+          .pause(2000) // HACK
 
         await app.client
           .getValue('#VNAME').should.eventually.equal(name)
@@ -53,6 +56,7 @@ module.exports = {
           .getText('#crt_path').should.eventually.equal('INTERNAL')
           .click(`//*[@id='content']//span[text()='${padName(name)}']`)
           .waitUntilTextExists("#vce_name", name, LOAD_VCE_TIMEOUT)
+          .pause(2000) // HACK
 
         await app.client
           .getValue('#VNAME').should.eventually.equal(name)

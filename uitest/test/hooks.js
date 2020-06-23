@@ -156,7 +156,7 @@ module.exports = {
     if (!fs.existsSync(ssDir)) {
       fs.mkdirSync(ssDir)
     }
-
+    name = name.replace(/[^A-Za-z0-9_-]/g, '_')
     const ssPath = path.join(ssDir, name + '.png')
     let ssBuf
 

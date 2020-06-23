@@ -1,7 +1,7 @@
 module.exports = {
   name: 'INITVRAM',
   voicetab: {
-    VNAME: '',
+    VNAME: { value: '' },
     nOsc: { value: '1' },
     keysPlayable: '32',
     vibType: 'Sine',
@@ -65,11 +65,11 @@ module.exports = {
     ],
   },
 
-  
+
   filterstab: {
     select: { selector: '#filterSelect', value: '', text: '' },
     selections: [
-     ],
+    ],
   },
   keyeqtab: {
     "keyeq[6]": { value: '0' },

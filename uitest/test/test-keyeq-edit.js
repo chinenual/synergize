@@ -26,6 +26,8 @@ describe('Test keyeq page edits', () => {
             .waitForVisible('#confirmText', 1000, true) // wait to disappear
 
             .waitUntilTextExists("#vce_name", 'G7S', LOAD_VCE_TIMEOUT)
+            .pause(2000) // HACK
+
             .getValue('#VNAME').should.eventually.equal('G7S')
     });
     it('keyeq tab should display', async () => {
