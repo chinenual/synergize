@@ -423,9 +423,9 @@ let index = {
 		console.log("update status: " + status);
 		document.getElementById("firmwareVersion").innerHTML = status;
 		if (status.includes("Not")) {
-			document.getElementById("connectButtonImg").src = `static/images/red-button-off-full.png`;
+			document.getElementById("connectButtonImg").src = `static/images/grey-button-off-full.png`;
 		} else {
-			document.getElementById("connectButtonImg").src = `static/images/red-button-on-full.png`;
+			document.getElementById("connectButtonImg").src = `static/images/grey-button-on-full.png`;
 		}
 	},
 
