@@ -29,19 +29,31 @@ module.exports = {
 
   loadVCEViaLeftPanelVoicingMode(name) {
     describe('Load ' + name + '.VCE from left panel', () => {
+      // need to take extra care since previous test may have been editing G7S -- which could confuse the loader into
+      // thinking it's ok to go ahead -- but in fact while the old edited values are still populated.
+      // this is not necessary when not in voicing mode since the tests cycle through voices with different names
+      it('voice tab should display', async () => {
+        await app.client
+          .click(`#vceTabs a[href='#vceVoiceTab']`)
+          .getAttribute(`#vceTabs a[href='#vceVoiceTab']`, 'class').should.eventually.include('active')
+          .waitForVisible('#voiceParamTable')
+          .waitUntil(() => {
+            return app.client.$('#voiceParamTable').isVisible()
+          })
+          .isVisible('#voiceParamTable').should.eventually.equal(true)
+      });
       it('click load ' + name, async () => {
         await app.client
+          // need to clear this since previous test may also be using same voice
+          .clearElement("#VNAME")
           .click('.file=' + name)
 
           .waitForVisible('#confirmText')
           .getText('#confirmText').should.eventually.include('pending edits')
           .click('#confirmOKButton')
           .waitForVisible('#confirmText', 1000, true) // wait to disappear
-          
-          .waitUntilTextExists("#vce_name", name, LOAD_VCE_TIMEOUT)
-          .pause(2000) // HACK
 
-        await app.client
+          .waitForValue("#VNAME", LOAD_VCE_TIMEOUT)
           .getValue('#VNAME').should.eventually.equal(name)
       });
     });

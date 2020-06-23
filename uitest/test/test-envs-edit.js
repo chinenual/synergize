@@ -36,10 +36,12 @@ describe('Test envs page edits', () => {
         await app.client
             .isVisible(cssQuoteId('#envFreqLoop[2]')).should.eventually.equal(false)
             .click('#addFreqPoint')
+            .waitForVisible(cssQuoteId('#envFreqLoop[2]'))
             .click('#addFreqPoint')
+            .waitForVisible(cssQuoteId('#envFreqLoop[3]'))
             .click('#addFreqPoint')
+            .waitForVisible(cssQuoteId('#envFreqLoop[4]'))
             .click('#addFreqPoint')
-
             .waitForVisible(cssQuoteId('#envFreqLoop[5]'))
 
             .isVisible(cssQuoteId('#envFreqLoop[2]')).should.eventually.equal(true)
