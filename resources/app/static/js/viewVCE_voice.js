@@ -667,14 +667,13 @@ let viewVCE_voice = {
 
 		viewVCE_voice.patchTable();
 
+		console.log("view VCE, CRT:" + crt_name + ", VCE: " + vce.Head.VNAME)
+
 		if (crt_name == null) {
 			document.getElementById("backToCRT").hidden = true;
 		} else {
 			document.getElementById("backToCRT").hidden = false;
 		}
-
-		document.getElementById("vce_crt_name").innerHTML = crt_name;
-		document.getElementById("vce_name").innerHTML = vce.Head.VNAME;
 
 		document.getElementById("VNAME").value = vce.Head.VNAME.replace(/ +$/g,''); // trim trailing spaces for editing
 		document.getElementById("nOsc").value = vce.Head.VOITAB + 1;
@@ -778,5 +777,9 @@ let viewVCE_voice = {
 				maintainAspectRatio: false
 			}
 		});
+
+		document.getElementById("vce_crt_name").innerHTML = crt_name;
+		// do this last to help the uitest to not start testing too soon
+		document.getElementById("vce_name").innerHTML = vce.Head.VNAME;
 	}
 };
