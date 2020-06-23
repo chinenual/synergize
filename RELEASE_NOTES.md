@@ -44,19 +44,16 @@
           these auto-scale - there's no support for zooming in or out.
 * Other known limitations with this "beta" release:
     * The menu and buttons are subject to change and improvement.
-    * The UI does not warn the user from attempting to load a voice
-      during an active voice editing session.  There are probably
-      other places where the UI should popup a warning before proceeding.
     * There is an as-yet undiagnosed bug in the CRT parser: the
        VCART6.CRT can't be loaded.
-	* When you "save" a voice, you are saving
-      what you hear in the Synergy. If there is a serial communication error during editing, the
-      values displayed on the screen may not reflect what has been
-      loaded into the Synergy. I will add some sort of mechanism to
-      re-sync the display with the state of the Synergy. But for now,
-      if you get a timeout during editing, just be aware that the
-      screen no longer displays reality.
-*  Some miscellaneous bug fixes found while implementing the editor:
+	* When you "save" a voice, you are saving what you hear in the
+      Synergy. If there is a serial communication error during
+      editing, the values displayed on the screen may not reflect what
+      has been loaded into the Synergy. I will add some sort of
+      mechanism to re-sync the display with the state of the
+      Synergy. But for now, if you get a timeout during editing, just
+      be aware that the screen no longer displays reality. 
+*  Fixes some miscellaneous bugs found while implementing the editor:
     * Fixed the voice amplitude proportionality chart - for certain
       combinations of center and sensitivity it could show an odd
       discontinuous curve.
