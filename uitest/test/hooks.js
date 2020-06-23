@@ -138,7 +138,7 @@ module.exports = {
       if (!fs.existsSync(ssDir)) {
         fs.mkdirSync(ssDir)
       }
-      var name = "AFTERHOOK-FAILED-" + mochaInstance.currentTest.title;
+      var name = "AFTERHOOK-FAILED-" + mochaInstance.currentTest.fullTitle();
       // sanitize the name (replace spaces, slashes with underscores)
       name = name.replace(/[^A-Za-z0-9_-]/g, '_')
       const ssPath = path.join(ssDir, name + '.failed.png')
