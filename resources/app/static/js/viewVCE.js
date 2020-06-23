@@ -27,20 +27,21 @@ let viewVCE = {
     init: function () {
         // no onchange events while we update input and text for the new voice
         viewVCE.supressOnchange = true;
-
+        console.log('--- start viewVCE init');
         Chart.defaults.global.defaultFontColor = 'white';
         Chart.defaults.global.defaultFontSize = 14;
 
-        viewVCE_voice.init();
         viewVCE_keyprop.init();
         viewVCE_keyeq.init();
         viewVCE_envs.init();
         viewVCE_filters.init();
+        viewVCE_voice.init(); // do this last since the uitest uses existance of VNAME to indicate that the pages are loaded and ready to roll
 
         viewVCE_voice.voicingModeVisuals();
 
         // back to normal:
         viewVCE.supressOnchange = false;
+        console.log('--- finish viewVCE init');
     }
 }
 

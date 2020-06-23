@@ -242,6 +242,7 @@ let index = {
 			});
 	},
 	viewVCE: function (name, path) {
+		console.log("index.viewVCE " + name + " " + path)
 		if (viewVCE_voice.voicingMode) {
 			index.confirmDialog("Loading voice file will overwrite any pending edits - continue?", function () {
 				index.raw_viewVCE(name, path);
@@ -251,6 +252,7 @@ let index = {
 		}
 	},
 	raw_viewVCE: function (name, path) {
+		console.log("index.raw_viewVCE " + name + " " + path)
 		var name = "readVCE";
 		if (viewVCE_voice.voicingMode) {
 			name = "loadVceVoicingMode"

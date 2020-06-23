@@ -199,15 +199,14 @@ let viewVCE_voice = {
 	},
 
 	onchange: function (ele, updater, valueConverter) {
-		if (viewVCE.supressOnchange) { return; }
+		if (viewVCE.supressOnchange) { /*console.log("viewVCE.suppressOnChange");*/ return; }
 		viewVCE_voice.deb_onchange(ele, updater, valueConverter);
 	},
 
 	deb_onchange: null,
 
 	raw_onchange: function (ele, updater, valueConverter) {
-		if (viewVCE.supressOnchange) { return; }
-
+		if (viewVCE.supressOnchange) { /*console.log("raw viewVCE.suppressOnChange");*/ return; }
 		var id = ele.id;
 		console.log("changed: " + id + ", new value: " + ele.value);
 
@@ -435,13 +434,14 @@ let viewVCE_voice = {
 	},
 
 	setNumOscillators: function (newNum) {
-		if (viewVCE.supressOnchange) { return; }
+		if (viewVCE.supressOnchange) { /*console.log("viewVCE.suppressOnChange");*/ return; }
 		viewVCE_voice.deb_setNumOscillators(newNum);
 	},
 
 	deb_setNumOscillators: null,
 
 	raw_setNumOscillators: function (newNum) {
+		if (viewVCE.supressOnchange) { /*console.log("raw viewVCE.suppressOnChange");*/ return; }
 		console.log("setNumOscillators: " + newNum);
 
 		let message = {
@@ -658,6 +658,8 @@ let viewVCE_voice = {
 	},
 
 	init: function () {
+		console.log('--- start viewVCE_voice init');
+
 		if (viewVCE_voice.deb_onchange == null) {
 			viewVCE_voice.deb_onchange = _.debounce(viewVCE_voice.raw_onchange, 250);
 		}
@@ -675,7 +677,6 @@ let viewVCE_voice = {
 			document.getElementById("backToCRT").hidden = false;
 		}
 
-		document.getElementById("VNAME").value = vce.Head.VNAME.replace(/ +$/g,''); // trim trailing spaces for editing
 		document.getElementById("nOsc").value = vce.Head.VOITAB + 1;
 		document.getElementById("keysPlayable").innerHTML = Math.floor(32 / (vce.Head.VOITAB + 1));
 		viewVCE_voice.updateVibType();
@@ -781,5 +782,7 @@ let viewVCE_voice = {
 		document.getElementById("vce_crt_name").innerHTML = crt_name;
 		// do this last to help the uitest to not start testing too soon
 		document.getElementById("vce_name").innerHTML = vce.Head.VNAME;
+		document.getElementById("VNAME").value = vce.Head.VNAME.replace(/ +$/g,''); // trim trailing spaces for editing
+		console.log('--- finish viewVCE_voice init');
 	}
 };

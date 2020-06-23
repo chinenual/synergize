@@ -6,6 +6,8 @@ let viewVCE_envs = {
 	chart: null,
 
 	init: function () {
+		console.log('--- start viewVCE_envs init');
+
 		if (viewVCE_envs.deb_onchange == null) {
 			viewVCE_envs.deb_onchange = _.debounce(viewVCE_envs.raw_onchange, 250);
 		}
@@ -27,6 +29,7 @@ let viewVCE_envs = {
 		}
 
 		viewVCE_envs.envChartUpdate(1, -1, true)
+        console.log('--- finish viewVCE_envs init');
 	},
 
 
@@ -235,8 +238,8 @@ let viewVCE_envs = {
 	supressOnChange: false,
 
 	onchangeLoop: function (ele) {
-		if (viewVCE.supressOnchange) { return; }
-		if (viewVCE_envs.supressOnchange) { return; }
+		if (viewVCE.supressOnchange) { /*console.log("viewVCE.suppressOnChange");*/ return; }
+		if (viewVCE_envs.supressOnchange) { console.log("viewVCE_envs.suppressOnChange");return; }
 
 		var eleIndex;
 		var envOscSelectEle = document.getElementById("envOscSelect");
@@ -405,14 +408,17 @@ let viewVCE_envs = {
 	},
 
 	onchangeEnvAccel: function(ele) {
-		if (viewVCE.supressOnchange) { return; }
-		if (viewVCE_envs.supressOnchange) { return; }
+		if (viewVCE.supressOnchange) { /*console.log("viewVCE.suppressOnChange");*/ return; }
+		if (viewVCE_envs.supressOnchange) { /*console.log("viewVCE_envs.suppressOnChange");*/ return; }
 		viewVCE_envs.deb_onchangeEnvAccel(ele);
-	},
+},
 
 	deb_onchangeEnvAccel: null,
 
 	raw_onchangeEnvAccel: function (ele) {
+		if (viewVCE.supressOnchange) { /*console.log("raw viewVCE.suppressOnChange");*/ return; }
+		if (viewVCE_envs.supressOnchange) { /*console.log("raw viewVCE_envs.suppressOnChange");*/ return; }
+
 		// type1 accelerations are really just the SUSTAIN and LOOP points.  We use the same backend function as the loop change event
 
 
@@ -473,14 +479,17 @@ let viewVCE_envs = {
 	},
 
 	onchange: function(ele) {
-		if (viewVCE.supressOnchange) { return; }
-		if (viewVCE_envs.supressOnchange) { return; }
+		if (viewVCE.supressOnchange) { /*console.log("viewVCE.suppressOnChange");*/ return; }
+		if (viewVCE_envs.supressOnchange) { /*console.log("viewVCE_envs.suppressOnChange");*/return; }
 		viewVCE_envs.deb_onchange(ele);
 	},
 
 	deb_onchange: null, // initialized during init()
 
 	raw_onchange: function (ele) {
+		if (viewVCE.supressOnchange) { /*console.log("raw viewVCE.suppressOnChange");*/ return; }
+		if (viewVCE_envs.supressOnchange) { /*console.log("raw viewVCE_envs.suppressOnChange");*/ return; }
+
 		var eleIndex;
 		var envOscSelectEle = document.getElementById("envOscSelect");
 		var osc = parseInt(envOscSelectEle.value, 10); // one-based osc index

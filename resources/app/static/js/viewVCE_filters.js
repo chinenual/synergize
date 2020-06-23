@@ -2,13 +2,14 @@ let viewVCE_filters = {
 	chart: null,
 
 	onchange: function(ele) {
-		if (viewVCE.supressOnchange) { return; }
+		if (viewVCE.supressOnchange) { /*console.log("viewVCE.suppressOnChange");*/ return; }
 		viewVCE_filters.deb_onchange(ele);
-	},
+},
 
 	deb_onchange: null, // initialized during init()
 
 	raw_onchange: function (ele) {
+		if (viewVCE.supressOnchange) { /*console.log("raw viewVCE.suppressOnChange");*/ return; }
 	
 		var id = ele.id;
 
@@ -102,6 +103,7 @@ let viewVCE_filters = {
 	},
 
 	init: function () {
+		console.log('--- start viewVCE_filters init');
 		if (viewVCE_filters.deb_onchange == null) {
 			viewVCE_filters.deb_onchange = _.debounce(viewVCE_filters.raw_onchange, 250);
 		}
@@ -164,6 +166,7 @@ let viewVCE_filters = {
 			// first filter
 			viewVCE_filters.filtersChartUpdate(filterValues[0], filterNames[0], true);
 		}
+		console.log('--- finish viewVCE_filters init');
 	},
 
 	filtersChartUpdate: function (filterIndex, filterName, animate) {

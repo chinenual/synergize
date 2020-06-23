@@ -12,15 +12,14 @@ let viewVCE_keyeq = {
 	},
 
 	onchange: function(ele) {
-		if (viewVCE.supressOnchange) { return; }
+		if (viewVCE.supressOnchange) { /*console.log("viewVCE.suppressOnChange");*/ return; }
 		viewVCE_keyeq.deb_onchange(ele);
 	},
 
 	deb_onchange: null, // initialized during init()
 
 	raw_onchange: function (ele) {
-		if (viewVCE.supressOnchange) { return; }
-
+		if (viewVCE.supressOnchange) { /*console.log("raw viewVCE.suppressOnChange");*/ return; }
 		var value = index.checkInputElementValue(ele);
 		if (value == undefined) {
 			return;
@@ -57,6 +56,7 @@ let viewVCE_keyeq = {
 	},
 
 	init: function () {
+		console.log('--- start viewVCE_keyeq init');
 		if (viewVCE_keyeq.deb_onchange == null) {
 			viewVCE_keyeq.deb_onchange = _.debounce(viewVCE_keyeq.raw_onchange, 250);
 		}
@@ -151,5 +151,6 @@ let viewVCE_keyeq = {
 				maintainAspectRatio: false
 			}
 		});
+		console.log('--- finish viewVCE_keyeq init');
 	}
 };
