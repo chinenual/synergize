@@ -126,6 +126,12 @@ module.exports = {
   },
 
   screenshotIfFailed(mochaInstance, app) {
+    app.client.getRenderProcessLogs().then(function (logs) {
+      logs.forEach(function (log) {
+        console.log("RENDERER: " + log.level + ": " + log.source + " : " + log.message);
+      });
+    });
+
     if (mochaInstance.currentTest.state !== "passed") {
       const ssDir = path.join(__dirname, 'screenshots', process.platform)
       // check that path exists otherwise create it
@@ -134,7 +140,7 @@ module.exports = {
       }
       var name = "AFTERHOOK-FAILED-" + mochaInstance.currentTest.title;
       // sanitize the name (replace spaces, slashes with underscores)
-      name = name.replace(/[^A-Za-z0-9_-]/g,'_')
+      name = name.replace(/[^A-Za-z0-9_-]/g, '_')
       const ssPath = path.join(ssDir, name + '.failed.png')
       console.log('ERROR:  afterEach write screeshot to ' + ssPath);
       app.client.saveScreenshot(ssPath);
