@@ -187,12 +187,5 @@ describe('Test voice page edits', () => {
         await app.client
             .then(() => { return hooks.screenshotAndCompare(app, `INITVRAM-after-edit-voice`) })
     });
-    it('capture renderer logs', async () => {
-        await app.client.getRenderProcessLogs().then(function (logs) {
-            logs.forEach(function (log) {
-                console.log("RENDERER: " + log.level + ": " + log.source + " : " + log.message);
-            });
-        });
-    });
 
 });

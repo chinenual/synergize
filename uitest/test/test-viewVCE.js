@@ -4,6 +4,13 @@ const LOAD_VCE_TIMEOUT = 20000; // loading in voicing mode can take a while...
 
 let app;
 
+function padName(str) {
+  while (str.length < 8) {
+    str = str + " ";
+  }
+  return str;
+}
+
 module.exports = {
 
   loadVCEViaLeftPanel(name) {
@@ -11,8 +18,10 @@ module.exports = {
       it('click load ' + name, async () => {
         await app.client
           .click('.file=' + name)
-          .waitUntilTextExists("#name", name, LOAD_VCE_TIMEOUT)
-          .getText('#name').should.eventually.equal(name)
+          .waitUntilTextExists("#vce_name", name, LOAD_VCE_TIMEOUT)
+
+        await app.client
+          .getValue('#VNAME').should.eventually.equal(name)
       });
     });
   },
@@ -27,9 +36,10 @@ module.exports = {
           .getText('#confirmText').should.eventually.include('pending edits')
           .click('#confirmOKButton')
           .waitForVisible('#confirmText', 1000, true) // wait to disappear
+          .waitUntilTextExists("#vce_name", name, LOAD_VCE_TIMEOUT)
 
-          .waitUntilTextExists("#name", name, LOAD_VCE_TIMEOUT)
-          .getText('#name').should.eventually.equal(name)
+        await app.client
+          .getValue('#VNAME').should.eventually.equal(name)
       });
     });
   },
@@ -41,9 +51,13 @@ module.exports = {
           .click('.file=INTERNAL')
           .waitUntilTextExists("#crt_path", 'INTERNAL', LOAD_VCE_TIMEOUT)
           .getText('#crt_path').should.eventually.equal('INTERNAL')
-          .click(`//*[text()='${name}']`)
-          .waitUntilTextExists("#name", name, LOAD_VCE_TIMEOUT)
-          .getText('#name').should.eventually.equal(name)
+          .click(`//*[@id='content']//span[text()='${padName(name)}']`)
+          .waitUntilTextExists("#vce_name", name, LOAD_VCE_TIMEOUT)
+
+        await app.client
+          .getValue('#VNAME').should.eventually.equal(name)
+          .getText('#vce_crt_name').should.eventually.equal('INTERNAL')
+          .getText('#vce_name').should.eventually.equal(name)
       });
     });
   },

@@ -177,11 +177,4 @@ describe('Test envs page edits', () => {
         await app.client
             .then(() => { return hooks.screenshotAndCompare(app, `INITVRAM-after-edit-envs`) })
     });
-    it('capture renderer logs', async () => {
-        await app.client.getRenderProcessLogs().then(function (logs) {
-            logs.forEach(function (log) {
-                console.log("RENDERER: " + log.level + ": " + log.source + " : " + log.message);
-            });
-        });
-    });
 });

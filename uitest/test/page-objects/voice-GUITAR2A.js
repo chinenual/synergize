@@ -1,7 +1,7 @@
 module.exports = {
   name: 'GUITAR2A',
   voicetab: {
-    name: 'GUITAR2A',
+    VNAME: 'GUITAR2A',
     nOsc: { value: '4' },
     keysPlayable: '8',
     vibType: 'Sine',

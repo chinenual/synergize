@@ -1,7 +1,7 @@
 module.exports = {
   name: 'INITVRAM',
   voicetab: {
-    name: '',
+    VNAME: '',
     nOsc: { value: '1' },
     keysPlayable: '32',
     vibType: 'Sine',

@@ -61,20 +61,13 @@ describe('Render unit tests', () => {
     await app.webContents
       .executeJavaScript('viewVCE_envs.testConversionFunctions()').should.eventually.be.true
   });
-  it('capture renderer logs', async () => {
-    await app.client.getRenderProcessLogs().then(function (logs) {
-      logs.forEach(function (log) {
-        console.log("RENDERER: " + log.level + ": " + log.source + " : " + log.message);
-      });
-    });
-  });
 });
 
 
 require('./test-about');
 
 require('./test-prefs');
-
+/*
 describe('Test Voicing Mode views', () => {
   afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
 
@@ -90,11 +83,12 @@ describe('Test Voicing Mode views', () => {
 
   require('./test-voicingModeOff');
 });
+*/
 
 describe('Test READ-ONLY views', () => {
   afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
 
-  viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaLeftPanel, "readonlyVCE");
+//  viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaLeftPanel, "readonlyVCE");
   viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaINTERNALCRT, "readonlyCRT");
 });
 

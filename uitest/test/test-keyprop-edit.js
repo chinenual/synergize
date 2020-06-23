@@ -25,8 +25,8 @@ describe('Test keyprop page edits', () => {
             .click('#confirmOKButton')
             .waitForVisible('#confirmText', 1000, true) // wait to disappear
 
-            .waitUntilTextExists("#name", 'G7S', LOAD_VCE_TIMEOUT)
-            .getText('#name').should.eventually.equal('G7S')
+            .waitUntilTextExists("#vce_name", 'G7S', LOAD_VCE_TIMEOUT)
+            .getValue('#VNAME').should.eventually.equal('G7S')
     });
     it('keyprop tab should display', async () => {
         await app.client
@@ -118,13 +118,6 @@ describe('Test keyprop page edits', () => {
     it('screenshot', async () => {
         await app.client
             .then(() => { return hooks.screenshotAndCompare(app, `G7S-after-edit-keypropTab`) })
-    });
-    it('capture renderer logs', async () => {
-        await app.client.getRenderProcessLogs().then(function (logs) {
-            logs.forEach(function (log) {
-                console.log("RENDERER: " + log.level + ": " + log.source + " : " + log.message);
-            });
-        });
     });
 
 });

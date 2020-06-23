@@ -25,8 +25,8 @@ describe('Test keyeq page edits', () => {
             .click('#confirmOKButton')
             .waitForVisible('#confirmText', 1000, true) // wait to disappear
 
-            .waitUntilTextExists("#name", 'G7S', LOAD_VCE_TIMEOUT)
-            .getText('#name').should.eventually.equal('G7S')
+            .waitUntilTextExists("#vce_name", 'G7S', LOAD_VCE_TIMEOUT)
+            .getValue('#VNAME').should.eventually.equal('G7S')
     });
     it('keyeq tab should display', async () => {
         await app.client
@@ -125,13 +125,6 @@ describe('Test keyeq page edits', () => {
     it('screenshot', async () => {
         await app.client
             .then(() => { return hooks.screenshotAndCompare(app, `G7S-after-edit-keyeqTab`) })
-    });
-    it('capture renderer logs', async () => {
-        await app.client.getRenderProcessLogs().then(function (logs) {
-            logs.forEach(function (log) {
-                console.log("RENDERER: " + log.level + ": " + log.source + " : " + log.message);
-            });
-        });
     });
 
 });
