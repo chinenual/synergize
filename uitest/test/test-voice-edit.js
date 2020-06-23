@@ -150,6 +150,16 @@ describe('Test voice page edits', () => {
             // and validate that the unnderlying value used by the spinner is in sync
             .click(cssQuoteId('#OHARM[2]')).keys('ArrowDown')
             .waitForValue(cssQuoteId('#OHARM[2]'), 's4')
+
+            .clearElement(cssQuoteId('#OHARM[3]'))
+            .setValue(cssQuoteId('#OHARM[3]'), 'dc')
+            .click(cssQuoteId('#OHARM[1]')) // click in a different input to force onchange (FIXME! Enter should be enough)
+            .waitForValue(cssQuoteId('#OHARM[3]'), 'dc')
+            .click(cssQuoteId('#OHARM[3]')).keys('ArrowDown')
+            .waitForValue(cssQuoteId('#OHARM[3]'), '31')
+            .click(cssQuoteId('#OHARM[3]')).keys('ArrowUp')
+            .waitForValue(cssQuoteId('#OHARM[3]'), 'dc')
+            
     });
 
 
