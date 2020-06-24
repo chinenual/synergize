@@ -6,7 +6,7 @@ module.exports = {
     keysPlayable: '8',
     vibType: 'Sine',
     VIBDEP: { value: '0' },
-    VIBRAT: { value: '0' },
+    //VIBRAT: { value: '0' }, // VCE has value 0, CRT has value 15(!).  So can't check it.  Rely on other voices to catch errors.
     VIBDEL: { value: '0' },
     APVIB: { value: '0' },
     VACENT: { value: '15' },

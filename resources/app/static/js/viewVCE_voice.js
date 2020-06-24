@@ -174,7 +174,7 @@ let viewVCE_voice = {
 				// CASE D
 				val = ((val / 3) - 32) / 2;
 			}
-			newStr = '' + val;
+			newStr = '' + Math.round(val);
 		}
 		//console.log("   TextToFDETUN(" + str + ") returns " + newStr);
 		return newStr;
@@ -198,6 +198,30 @@ let viewVCE_voice = {
 				console.log("ERROR: FDETUN " + i + " totext: " + str + " reversed to " + reverseStr)
 			}
 		}
+		//if (val >= (-32 * 3) && val <= (32 * 3)) {
+		//	// CASE B
+		//} else if (val > 0) {
+		//	// CASE C
+		//} else {
+		//	// CASE D
+		//}
+		// test that the FDETUN rounding does the right thing: 
+		var v = viewVCE_voice.FDETUNToText(viewVCE_voice.TextToFDETUN('20'));
+		if ('21' != v) {
+			ok = false;
+			console.log("ERROR: FDETUN CASE B " + 20 + " rounded to " + v + " - expected " + 21)
+		}
+		 v = viewVCE_voice.FDETUNToText(viewVCE_voice.TextToFDETUN('247'));
+		 if ('246' != v) {
+			ok = false;
+			console.log("ERROR: FDETUN CASE C " + 247 + " rounded to " + v + " - expected " + 246)
+		}
+		v = viewVCE_voice.FDETUNToText(viewVCE_voice.TextToFDETUN('-205'));
+		if ('-204' != v) {
+			ok = false;
+			console.log("ERROR: FDETUN CASE D " + -205 + " rounded to " + v + " - expected " + -204)
+		}
+
 		console.log("viewVCE_voice.testConversionFunctions: " + (ok ? "PASS" : "FAIL"));
 		return ok;
 	},
@@ -786,7 +810,7 @@ let viewVCE_voice = {
 		document.getElementById("vce_crt_name").innerHTML = crt_name;
 		// do this last to help the uitest to not start testing too soon
 		document.getElementById("vce_name").innerHTML = vce.Head.VNAME;
-		document.getElementById("VNAME").value = vce.Head.VNAME.replace(/ +$/g,''); // trim trailing spaces for editing
+		document.getElementById("VNAME").value = vce.Head.VNAME.replace(/ +$/g, ''); // trim trailing spaces for editing
 		console.log('--- finish viewVCE_voice init');
 	}
 };

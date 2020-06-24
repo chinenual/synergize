@@ -75,7 +75,7 @@ describe('Test Voicing Mode views', () => {
 
   require('./test-voice-edit');
   require('./test-envs-edit');
-//  require('./test-filter-edit');
+  require('./test-filter-edit.js');
   require('./test-keyeq-edit');
   require('./test-keyprop-edit');
 

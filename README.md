@@ -128,8 +128,3 @@ documentation, and well commented firmware and SYNHCS Z80 source code donated to
 
 
 
-## TODO
-
-Currently, Synergize can load VCE and CRT files from a preexisting
-library and upload them to the Synergy. It can load and save SYN files
-to and from the Synergy.  It cannot (yet) edit CRT's or VCE's.
