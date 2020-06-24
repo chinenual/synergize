@@ -23,7 +23,7 @@ Note: Synergize does not itself include the original voice libraries -- download
 ## Download
 
 Download the release:
-[Release Binaries](https://github.com/chinenual/synergize/releases/latest)
+[Release Binaries](https://github.com/chinenual/synergize/releases)
 
 See links below for sites containing the original DK/Mulogix voice library.
 
