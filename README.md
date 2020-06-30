@@ -49,7 +49,7 @@ If you are a user or are thinking of becoming a user, please join our Slack work
 
 Synergize connects to a Synergy II+ via its RS232 serial port.  It is tested with a Synergy running the latest 3.22 firmware - but is probably compatible with earlier versions.
 
-You'll also need a null modem serial cable and possibly a USB serial device depending on your computer's capablities. See [docs/HARDWARE.md] for some details.
+You'll also need a null modem serial cable and possibly a USB serial device depending on your computer's capablities. See [HARDWARE](docs/HARDWARE.md) for some details.
 
 ### Operating Systems
 
@@ -64,7 +64,7 @@ Synergize has been tested on:
 
 ### Serial cables and configurations
 
-See [docs/HARDWARE.md] for details on how to configure the Synergy, your operating system and Synergize to talk with one another.
+See [HARDWARE](docs/HARDWARE.md) for details on how to configure the Synergy, your operating system and Synergize to talk with one another.
 
 ### Connecting to the Synergy
 
