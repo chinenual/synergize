@@ -23,7 +23,7 @@ This is my primary development environment; it's tested natively:
 
 | Environment  		| Device 						| Baud Rate 		| OS Serial Config |
 |:----- |:-----:|:-----|:-----
-| MacOS (Mojave) 	| /dev/tty.usbserial-AL05OC8S 	| 9600				| n/a
+| MacOS (Mojave) 	| `/dev/tty.usbserial-AL05OC8S` 	| `9600`				| n/a
 
 ### Windows 10
 
@@ -32,8 +32,8 @@ This is tested via a virtual machine running in Parallels on the mac. Here there
 
 | Environment  		| Device 						| Synergize Baud Rate 	| OS Serial Config |
 |:----- |:-----:|:-----|:-----
-| Parallels VM		| Serial Device: /dev/cu.usbserial-AL05OC8S 	
-| Windows10			| COM1							| 9600 					| Device Manager: 19200, 8, N , 1 
+| Parallels VM		| Serial Device: `/dev/cu.usbserial-AL05OC8S` 	
+| Windows10			| `COM1`							| 9600 					| Device Manager: `19200, 8, N , 1`
 
 
 ### Linux 64bit
@@ -42,8 +42,8 @@ I test the 64bit Linux version via Parallels. Ensure your user is a member of th
 
 | Environment  		| Device 						| Synergize Baud Rate 	| OS Serial Config |
 |:----- |:-----:|:-----|:-----
-| Parallels VM		| Serial Device: /dev/cu.usbserial-AL05OC8S 	
-| Ubuntu 18.04			| /dev/ttyS1				| 9600 					| n/a
+| Parallels VM		| Serial Device: `/dev/cu.usbserial-AL05OC8S` 	
+| Ubuntu 18.04			| `/dev/ttyS1`				| `9600` 					| n/a
 
 ### Linux 32bit
 
@@ -51,7 +51,7 @@ My 32bit linux environment is raw metal (an old laptop with a real serial port).
 
 | Environment  		| Device 						| Synergize Baud Rate 	| OS Serial Config |
 |:----- |:-----:|:-----|:-----
-| Ubuntu 16.04			| /dev/ttyS1				| 9600 					| n/a
+| Ubuntu 16.04			| `/dev/ttyS1`				| `9600` 					| n/a
 
 ### Serial Cable(s)
 
