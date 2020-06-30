@@ -4,7 +4,7 @@ Synergize relies on a connection to the Synergy through a serial cable - which i
 
 ## Synergy-side configuration
 
-The Synergy's serial port is configured with hardware jumpers on the serial interface daughter board. The settings must match the baud rate setting in Synergize (and in the case of Windows, the flow control settings in Device Manager).
+The Synergy's serial port is configured with a hardware jumper on the serial interface daughter board. The settings must match the baud rate setting in Synergize.
 
 <img title="Serial Jumpers" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/serial-jumpers.png?raw=true" width="85%"/>
 
@@ -27,7 +27,7 @@ This is my primary development environment; it's tested natively:
 
 ### Windows 10
 
-This is tested via a virtual machine running in Parallels on the mac. Here there are three sets of settings - the Parallels virtual machine, and the windows OS and Synergize itself.  Note that I run Synergize at 9600 to match my Synergy, but the virtualized WIndows OS is configured at 19200.  Also note that I'm using the cu variant of the unix serial port rather that the tty variant.
+This is tested via a virtual machine running in Parallels on the Mac. Here there are three sets of settings - the Parallels virtual machine, and the windows OS and Synergize itself.  Note that I run Synergize at 9600 to match my Synergy, but the virtualized Windows OS is configured at 19200.  Also note that I'm using the cu variant of the unix serial port rather that the tty variant.
 
 
 | Environment  		| Device 						| Synergize Baud Rate 	| OS Serial Config |
@@ -61,3 +61,11 @@ I've been asked specifically what cables I use. I've been told that FTDI makes t
 
 * FTDI based USB cable: [Sabrent FTDI USB to Serial](https://www.amazon.com/gp/product/B006AA04K0)
 * Null modem serial cable: [C2G 02019 DB25 to DB9 Null Modem cable](https://www.amazon.com/gp/product/B000083K2R/)
+
+## Troubleshooting
+
+* If you have problems connecting, be sure to match the baud rate on your Synergy. Checking this requires opening up and looking at a jumper on the interface daughter board.  Mine was originally set to 9600 (not sure if this was the "factory default" or if it was tweaked by a previous owner). As long as Synergize is configured with the same rate, all is good. I've tested mine at both 9600 and 19,200 baud and things work fine.
+
+* On Linux, be sure your user is a member of the `dialout` group (permissions on the serial port device usually limit access to members of that group).
+
+* One user reports that he had problems (no serial communication at all), but then swapped his USB serial cable for another cable and has had success since.  The original cable was not obviously bad (it worked with some other software he uses), but there was an as-yet-undiagnosed problem when using it with Synergize.  So swapping out cables might be a last resort if you can't make things work otherwise.
