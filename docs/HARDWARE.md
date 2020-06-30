@@ -13,6 +13,10 @@ The Synergy's serial port is configured with hardware jumpers on the serial inte
 
 My development and testing setup is a mix of direct connections and virtualized environments, so they may not be directly useful to you, but I'm listing them here to give you concrete examples things that work for me.
 
+### Synergy
+
+My Synergy is configured at 9600 baud as shown above.  I've tested successfully with 19200 but my day to day use is at 9600 baud.
+
 ### MacOS (Mojave)
 
 This is my primary development environment; it's tested natively:
