@@ -38,7 +38,7 @@ This is tested via a virtual machine running in Parallels on the mac. Here there
 
 ### Linux 64bit
 
-I test the 64bit Linux version via Parallels. Ensure your user is a member of the ``dialout` group.
+I test the 64bit Linux version via Parallels. Ensure your user is a member of the `dialout` group.
 
 | Environment  		| Device 						| Synergize Baud Rate 	| OS Serial Config |
 |:----- |:-----:|:-----|:-----
@@ -47,7 +47,7 @@ I test the 64bit Linux version via Parallels. Ensure your user is a member of th
 
 ### Linux 32bit
 
-My 32bit linux environment is raw metal (an old laptop with a real serial port). So no USB serial cable involved - just the null modem cable plugged into the serial port.  Ensure your user is a member of the ``dialout` group.
+My 32bit linux environment is raw metal (an old laptop with a real serial port). So no USB serial cable involved - just the null modem cable plugged into the serial port.  Ensure your user is a member of the `dialout` group.
 
 | Environment  		| Device 						| Synergize Baud Rate 	| OS Serial Config |
 |:----- |:-----:|:-----|:-----
