@@ -95,13 +95,11 @@ NOTE: once the Synergy is in this test state, it will remain there until it is p
 
 ## Known Issues
 
-* If you have problems connecting, be sure to match the baud rate on your Synergy. Checking this requires opening up and looking at a jumper on the interface daughter board.  Mine was originally set to 9600 (not sure if this was the "factory default" or if it was tweaked by a previous owner). As long as Synergize is configured with the same rate, all is good. I've tested mine at both 9600 and 19,200 baud and things work fine.
-
-* On Linux, be sure your user is a member of the `dialout` group (permissions on the serial port device usually limit access to members of that group).
+See [HARDWARE](docs/HARDWARE.md) for some serial port related troubleshooting guidelines.
 
 * On MacOS, if you change serial parameters, you will need to restart the application in order to "reconnect" to the synergy with those parameters. On Windows, you can directly re-connect via the Connect->Connect to Synergy menu.
 
-* Due to the mysteries of serial port communication, attempts to save or load files to the Synergy will sometimes fail (often reporting a TIMEOUT).  If this happens, a second try will usually succeed. Fixes introduced in 0.2.0 and 1.0.0 greatly improve, but don't completely fix this.
+* Due to the mysteries of serial port communication, attempts to save or load files to the Synergy will sometimes fail (often reporting a TIMEOUT).  If this happens, a second try will usually succeed. Fixes 
 
 * See the
 [Release Notes](https://github.com/chinenual/synergize/releases)
