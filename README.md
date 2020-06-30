@@ -49,14 +49,7 @@ If you are a user or are thinking of becoming a user, please join our Slack work
 
 Synergize connects to a Synergy II+ via its RS232 serial port.  It is tested with a Synergy running the latest 3.22 firmware - but is probably compatible with earlier versions.
 
-### Serial Cable(s)
-
-The connection from the computer to the Synergy requires a "null modem" cable. I test with a combination of a traditional null modem cable (same one you would use for a direct SYNHCS/Kaypro connection) and an FTDI based USB serial cable.
-
-I've been asked specifically what cables I use. I've been told that FTDI makes the most robust chipset, but I have _NO_ objective reason to prefer one cable over another.  These are not "endorsements" - it's just a note of what "works for me":
-
-* FTDI based USB cable: [Sabrent FTDI USB to Serial](https://www.amazon.com/gp/product/B006AA04K0)
-* Null modem serial cable: [C2G 02019 DB25 to DB9 Null Modem cable](https://www.amazon.com/gp/product/B000083K2R/)
+You'll also need a null modem serial cable and possibly a USB serial device depending on your computer's capablities. See [docs/HARDWARE.md] for some details.
 
 ### Operating Systems
 
@@ -68,6 +61,10 @@ Synergize has been tested on:
 * Ubuntu Linux 16.04
 
 ## How to use
+
+### Serial cables and configurations
+
+See [docs/HARDWARE.md] for details on how to configure the Synergy, your operating system and Synergize to talk with one another.
 
 ### Connecting to the Synergy
 
