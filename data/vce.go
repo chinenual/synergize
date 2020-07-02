@@ -141,7 +141,7 @@ func VceName(vceHead VCEHead) (name string) {
 }
 
 func VceAFilterCount(vce VCE) (count int) {
-	for i := byte(0); i < vce.Head.VOITAB; i++ {
+	for i := byte(0); i <= vce.Head.VOITAB; i++ {
 		v := vce.Head.FILTER[i]
 		if v < 0 {
 			return 1
@@ -152,7 +152,7 @@ func VceAFilterCount(vce VCE) (count int) {
 
 func VceBFilterCount(vce VCE) (count int) {
 	count = 0
-	for i := byte(0); i < vce.Head.VOITAB; i++ {
+	for i := byte(0); i <= vce.Head.VOITAB; i++ {
 		v := vce.Head.FILTER[i]
 		if v > 0 {
 			count = count + 1
@@ -321,6 +321,10 @@ func ReadVce(buf io.ReadSeeker, skipFilters bool) (vce VCE, err error) {
 	if err = binary.Read(buf, binary.LittleEndian, &vce.Head); err != nil {
 		err = errors.Wrapf(err, "Failed to read voice header")
 		return
+	}
+
+	if verboseParsing {
+		log.Printf("voice head: %s\n", vceHeadToJson(vce.Head))
 	}
 
 	vce.Envelopes = make([]Envelope, vce.Head.VOITAB+1)
@@ -502,7 +506,9 @@ func writeVce(buf io.WriteSeeker, vce VCE, name string, skipFilters bool, preser
 	if headOffset, err = buf.Seek(0, io.SeekCurrent); err != nil {
 		return
 	}
-	log.Printf("SEEK - top of voice at %x", headOffset)
+	if verboseWriting {
+		log.Printf("SEEK - top of voice at 0x%04x", headOffset)
+	}
 	vce.Head.VNAME = StringToSpaceEncodedString(name)
 	if !preserveOffsets {
 		for i, _ := range vce.Head.OSCPTR {
@@ -525,7 +531,7 @@ func writeVce(buf io.WriteSeeker, vce VCE, name string, skipFilters bool, preser
 			if _, err = buf.Seek(oscOffset, io.SeekStart); err != nil {
 				return
 			}
-			log.Printf("SEEK - top of osc[%d] at %x", i, headOffset+int64(vce.Head.OSCPTR[i]))
+			log.Printf("SEEK - top of osc[%d] at 0x%04x", i, headOffset+int64(vce.Head.OSCPTR[i]))
 		} else {
 			if oscOffset, err = buf.Seek(0, io.SeekCurrent); err != nil {
 				return
@@ -632,6 +638,13 @@ func vceToString(vce VCE) (result string) {
 
 func VceToJson(vce VCE) (result string) {
 	b, _ := json.Marshal(vce)
+	result = string(b)
+
+	return
+}
+
+func vceHeadToJson(head VCEHead) (result string) {
+	b, _ := json.Marshal(head)
 	result = string(b)
 
 	return

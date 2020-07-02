@@ -49,6 +49,23 @@ func compareVoiceList(t *testing.T, context string, crt CRT, list []string) {
 	}
 }
 
+func TestCreateCrt(t *testing.T) {
+	var err error
+	var list []string
+	var voicelistPath = "testfiles/INTERNAL.CRT.voice-list.txt"
+	list, err = loadVoiceList(voicelistPath)
+	if err != nil {
+		t.Logf("error parsing %s: %v - skipping contents check", voicelistPath, err)
+		return
+	}
+	var vcePaths []string
+	for _, name := range list {
+		vcePaths = append(vcePaths, "testfiles/"+name+".VCE")
+	}
+	WriteCrtFile("testfiles/gen/INTERNAL.CRT", vcePaths)
+	testParseCRT(t, "testfiles/gen/INTERNAL.CRT")
+}
+
 func testParseCRT(t *testing.T, path string) {
 	log.Println("test ", path)
 

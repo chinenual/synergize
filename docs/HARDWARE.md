@@ -27,7 +27,7 @@ This is my primary development environment; it's tested natively:
 
 ### Windows 10
 
-This is tested via a virtual machine running in Parallels on the Mac. Here there are three sets of settings - the Parallels virtual machine, and the windows OS and Synergize itself.  Note that I run Synergize at 9600 to match my Synergy, but the virtualized Windows OS is configured at 19200.  Also note that I'm using the cu variant of the unix serial port rather that the tty variant.
+This is tested via a virtual machine running in Parallels on the Mac. Here there are three sets of settings - the Parallels virtual machine, and the Windows OS and Synergize itself.  Note that I run Synergize at 9600 to match my Synergy, but the virtualized Windows OS is configured at 19200.  Also note that I'm using the cu variant of the unix serial port rather that the tty variant.
 
 
 | Environment  		| Device 						| Synergize Baud Rate 	| OS Serial Config |

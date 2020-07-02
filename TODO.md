@@ -68,13 +68,7 @@ First check is full UI support; second check is lower-level IO and tests
 * NEWKIT uses custom user-defined patch type. 
 * VCART6 doesnt load
 * need a sample voice with an A-Filter
-* download VCE
 * edit CRT
-* refresh
-* "are you sure" confirm when loading new voice into voicing mode
-* check that we cant upload CRT while in voicing mode
-* disabled spinner inputs have arrows (can't reproduce...)
-* spinner arrows - can make them bigger?
-* timbre changes aren't audible - need to re-validate address and EXECUTE settings for _every_ parameter
-* test env page error handling
+* refresh (explicit and perhaps automatically after a timeout?)
+
 
