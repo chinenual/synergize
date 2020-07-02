@@ -49,7 +49,6 @@ func ReadCrtFile(filename string) (crt CRT, err error) {
 	return
 }
 
-
 func ReadCrt(buf io.ReadSeeker) (crt CRT, err error) {
 	// A CRT file is a long header containing filter info, followed by a list of CCE fragments (each voice missing the filter params since they are concatenated elsewhere in the file).
 
@@ -210,8 +209,15 @@ func WriteCrtFile(filename string, vcePaths []string) (err error) {
 		return
 	}
 	defer file.Close()
-
-	if err = WriteCrt(file, vcePaths); err != nil {
+	var vces []VCE
+	for _, path := range vcePaths {
+		var vce VCE
+		if vce, err = ReadVceFile(path); err != nil {
+			return
+		}
+		vces = append(vces, vce)
+	}
+	if err = WriteCrt(file, vces); err != nil {
 		return
 	}
 	return
@@ -225,8 +231,8 @@ type crtCursor struct {
 	VoiceOffset   int64
 }
 
-func WriteCrt(buf io.WriteSeeker, vcePaths []string) (err error) {
-	if len(vcePaths) < 1 || len(vcePaths) > 24 {
+func WriteCrt(buf io.WriteSeeker, vces []VCE) (err error) {
+	if len(vces) < 1 || len(vces) > 24 {
 		err = errors.Errorf("Must have at least 1 and no more than 24 voices")
 		return
 	}
@@ -241,13 +247,7 @@ func WriteCrt(buf io.WriteSeeker, vcePaths []string) (err error) {
 	var aFilterCount = 0
 	var bFilterCount = 0
 
-	var vces []VCE
-	for _, path := range vcePaths {
-		var vce VCE
-		if vce, err = ReadVceFile(path); err != nil {
-			return
-		}
-		vces = append(vces, vce)
+	for _, vce := range vces {
 		aFilterCount = aFilterCount + VceAFilterCount(vce)
 		bFilterCount = bFilterCount + VceBFilterCount(vce)
 	}
