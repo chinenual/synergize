@@ -29,7 +29,7 @@ import (
 const (
 	Off_VRAM_FREE = 0x00 // SYNCHS initializes the first "unused" 51 bytes to 0xff - so we should we
 
-	Off_VRAM_VOITAB   = 0x33 // always zero
+	Off_VRAM_VOITAB   = 0x32 // always zero
 	Off_VRAM_VCHK     = 0x34 // 5 check bytes expected to be 0xaa
 	Off_VRAM_VOIPTR   = 0x40 // start of the VOIPTR array
 	Off_VRAM_BFILTR   = 0x70

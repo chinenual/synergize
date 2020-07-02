@@ -49,11 +49,6 @@ func ReadCrtFile(filename string) (crt CRT, err error) {
 	return
 }
 
-// voice Offsets are from the VOIDTAB field
-const voitabOffset uint16 = 50
-
-// filter Offsets are from the FILTAB field (after the last AFILTER entry)
-const filtabOffset uint16 = 160
 
 func ReadCrt(buf io.ReadSeeker) (crt CRT, err error) {
 	// A CRT file is a long header containing filter info, followed by a list of CCE fragments (each voice missing the filter params since they are concatenated elsewhere in the file).
@@ -70,10 +65,10 @@ func ReadCrt(buf io.ReadSeeker) (crt CRT, err error) {
 	for i, offset := range crt.Head.VOIPTR {
 		if offset != 0 {
 			if verboseParsing {
-				log.Printf("voice %d: seek to 0x%04x -> 0x%04x\n", i+1, offset, voitabOffset+offset)
+				log.Printf("voice %d: seek to 0x%04x -> 0x%04x\n", i+1, offset, Off_VRAM_VOITAB+offset)
 			}
 
-			if _, err = buf.Seek(int64(voitabOffset+offset), io.SeekStart); err != nil {
+			if _, err = buf.Seek(int64(Off_VRAM_VOITAB+offset), io.SeekStart); err != nil {
 				err = errors.Wrapf(err, "failed to seek to voice #%d start", i)
 				return
 			}
@@ -86,9 +81,9 @@ func ReadCrt(buf io.ReadSeeker) (crt CRT, err error) {
 			if VceAFilterCount(vce) > 0 {
 				offset = uint16(crt.Head.AFILTR[i]-1) * 32
 				if verboseParsing {
-					log.Printf("voice %d: A-Filter: seek to 0x%04x -> 0x%04x\n", i+1, offset, filtabOffset+offset)
+					log.Printf("voice %d: A-Filter: seek to 0x%04x -> 0x%04x\n", i+1, offset, Off_VRAM_FILTAB+offset)
 				}
-				if _, err = buf.Seek(int64(filtabOffset+offset), io.SeekStart); err != nil {
+				if _, err = buf.Seek(int64(Off_VRAM_FILTAB+offset), io.SeekStart); err != nil {
 					err = errors.Wrapf(err, "failed to seek to voice #%d filter-b start", i)
 					return
 				}
@@ -99,9 +94,9 @@ func ReadCrt(buf io.ReadSeeker) (crt CRT, err error) {
 			if VceBFilterCount(vce) > 0 {
 				offset = uint16(crt.Head.BFILTR[i]-1) * 32
 				if verboseParsing {
-					log.Printf("voice %d: B-Filters: seek to 0x%04x -> 0x%04x\n", i+1, offset, filtabOffset+offset)
+					log.Printf("voice %d: B-Filters: seek to 0x%04x -> 0x%04x\n", i+1, offset, Off_VRAM_FILTAB+offset)
 				}
-				if _, err = buf.Seek(int64(filtabOffset+offset), io.SeekStart); err != nil {
+				if _, err = buf.Seek(int64(Off_VRAM_FILTAB+offset), io.SeekStart); err != nil {
 					err = errors.Wrapf(err, "failed to seek to voice #%d filter-b start", i)
 					return
 				}
@@ -136,7 +131,7 @@ func addVce(buf io.WriteSeeker, slot /*one-based*/ int, cursor *crtCursor, vce V
 		return
 	}
 	// VOIPTR offsets are relative to the VOITAB field not the start of the file (sigh...):
-	if err = binary.Write(buf, binary.LittleEndian, uint16(cursor.VoiceOffset)-voitabOffset); err != nil {
+	if err = binary.Write(buf, binary.LittleEndian, uint16(cursor.VoiceOffset)-Off_VRAM_VOITAB); err != nil {
 		return
 	}
 	var filterindex = byte(0)
