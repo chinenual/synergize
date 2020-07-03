@@ -43,7 +43,7 @@ This is tested via a virtual machine running in Parallels on the Mac. Here there
 | Environment  		| Device 						| Synergize Baud Rate 	| OS Serial Config |
 |:----- |:-----:|:-----|:-----
 | Parallels VM		| Serial Device: `/dev/cu.usbserial-AL05OC8S` 	
-| Windows10			| `COM1`							| 9600 					| Device Manager: `19200, 8, N , 1`
+| Windows10			| `COM1`							| 9600 					| Device Manager: `19200 baud, 8 bits, No parity , 1 stop bit, hardware flow control`
 
 
 ### Linux 64bit
