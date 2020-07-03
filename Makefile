@@ -13,7 +13,7 @@ EXE_LINUX_ARM=output/linux-arm/Synergize
 # NOTE: must build the exes before we can run the test since some variables 
 # used in main.go are generated as side-effects of the astielectron-bundler
 .PHONY: all
-all: TAGS $(EXES)
+all: $(EXES)
 
 
 $(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX_AMD64) $(EXE_LINUX_386) $(EXE_LINUX_ARM) : $(SRCS)
@@ -126,8 +126,6 @@ uitest-diff:
 version.go : VERSION
 	echo package main > version.go
 	echo const Version = \"$(VERSION)\" >> version.go
-
-TAGS: tags
 
 .PHONY: tags
 tags: $(SRCS) $(DOCS)
