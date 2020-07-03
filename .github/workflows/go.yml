@@ -32,6 +32,12 @@ jobs:
 
     - name: Build
       run: |
+        echo $PWD
+	ls -l $PWD
+	echo FROM HOME
+	find $HOME -name astilectron-bundler
+	echo ROOT
+	find / -name astilectron-bundler
         export PATH=$PATH:$(go env GOPATH)/bin
         ls -l $(go env GOPATH)
         ls -l $(go env GOPATH)/bin
