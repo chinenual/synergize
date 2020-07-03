@@ -31,7 +31,9 @@ jobs:
         fi
 
     - name: Build
-      run: make
+      run: |
+        export PATH=$PATH:$(go env GOPATH)/bin
+        make
 
     - name: Test
       run: make test
