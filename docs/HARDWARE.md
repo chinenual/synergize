@@ -70,3 +70,14 @@ My 32bit linux environment is raw metal (an old laptop with a real serial port).
 * On Linux, be sure your user is a member of the `dialout` group (permissions on the serial port device usually limit access to members of that group).
 
 * One user reports that he had problems (no serial communication at all), but then swapped his USB serial cable for another cable and has had success since.  The original cable was not obviously bad (it worked with some other software he uses), but there was an as-yet-undiagnosed problem when using it with Synergize.  So swapping out cables might be a last resort if you can't make things work otherwise.
+
+* On Linux or Mac, you can enable very verbose logging to help diagnose serial port configuration issues.  (a future release will add support for this sort of diagnosis on Windows too).  Try the following:
+```
+/path/to/Synergize -port /dev/YourSerialPort -baud YourBaud -SERIALVERBOSE -SYNVER
+```
+e.g.,
+```
+/path/to/Synergize -port /dev/ttyS1 -baud 19200 -SERIALVERBOSE -SYNVER
+```
+
+this will print some detailed log statements to the terminal which may shed light on the problem.
