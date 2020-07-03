@@ -137,9 +137,9 @@ installDependencies:
 	go get -u github.com/asticode/go-astilectron-bundler
 	go get -u github.com/asticode/go-astilectron-bootstrap
 	go get -v -t -d ./...
-	GOBIN=`go env GOPATH`/bin go install github.com/asticode/go-astilectron
-	GOBIN=`go env GOPATH`/bin go install github.com/asticode/go-astilectron-bundler
-	GOBIN=`go env GOPATH`/bin go install github.com/asticode/go-astilectron-bootstrap
+	go install github.com/asticode/go-astilectron
+	go install github.com/asticode/go-astilectron-bundler/astilectron-bundler
+	go install github.com/asticode/go-astilectron-bootstrap
 
 .PHONY: clean
 clean:
