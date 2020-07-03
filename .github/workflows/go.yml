@@ -36,10 +36,12 @@ jobs:
         ls -l $PWD
         echo FROM HOME
         find $HOME -name astilectron-bundler
-        echo ROOT
-        find / -name astilectron-bundler
+	echo ls -lR $HOME
+        ls -lR $HOME 
         export PATH=$PATH:$(go env GOPATH)/bin
+	echo ls -l GOPATH
         ls -l $(go env GOPATH)
+	echo ls -l GOPATH/bin
         ls -l $(go env GOPATH)/bin
         make
 
