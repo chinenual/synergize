@@ -127,6 +127,8 @@ version.go : VERSION
 	echo package main > version.go
 	echo const Version = \"$(VERSION)\" >> version.go
 
+TAGS: tags
+
 .PHONY: tags
 tags: $(SRCS) $(DOCS)
 	etags $(SRCS) $(DOCS)
