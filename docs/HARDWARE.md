@@ -79,5 +79,4 @@ e.g.,
 ```
 /path/to/Synergize -port /dev/ttyS1 -baud 19200 -SERIALVERBOSE -SYNVER
 ```
-
 this will print some detailed log statements to the terminal which may shed light on the problem.
