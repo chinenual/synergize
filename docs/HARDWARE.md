@@ -71,7 +71,7 @@ My 32bit linux environment is raw metal (an old laptop with a real serial port).
 
 * One user reports that he had problems (no serial communication at all), but then swapped his USB serial cable for another cable and has had success since.  The original cable was not obviously bad (it worked with some other software he uses), but there was an as-yet-undiagnosed problem when using it with Synergize.  So swapping out cables might be a last resort if you can't make things work otherwise.
 
-* On Linux or Mac, you can enable very verbose logging to help diagnose serial port configuration issues.  (a future release will add support for this sort of diagnosis on Windows too).  Try the following:
+* On Linux or Mac, you can enable very verbose logging to help diagnose serial port configuration issues.  (a future release will add support for this sort of diagnosis on Windows too).  Try the following from a command line:
 ```
 /path/to/Synergize -port /dev/YourSerialPort -baud YourBaud -SERIALVERBOSE -SYNVER
 ```
