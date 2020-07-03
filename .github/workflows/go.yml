@@ -32,8 +32,9 @@ jobs:
 
     - name: Build
       run: |
-        export PATH=$PATH:$(go env GOBIN)
-        ls -l $(go env GOBIN)
+        export PATH=$PATH:$(go env GOPATH)/bin
+        ls -l $(go env GOPATH)
+        ls -l $(go env GOPATH)/bin
         make
 
     - name: Test
