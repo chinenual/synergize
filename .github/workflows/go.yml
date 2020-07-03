@@ -25,6 +25,10 @@ jobs:
     - name: Get dependencies
       run: |
         make installDependencies
+        echo EXPECT TO SEE astilectron-bundler in GOPATH/bin
+        ls -l $(go env GOPATH)/bin
+        echo TRY AGAIN
+        strace go install github.com/asticode/go-astilectron-bundler
         if [ -f Gopkg.toml ]; then
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
