@@ -131,11 +131,12 @@ version.go : VERSION
 tags: $(SRCS) $(DOCS)
 	etags $(SRCS) $(DOCS)
 
-.PHONY: updateAstilectron
-updateAstilectron:
+.PHONY: installDependencies
+installDependencies:
 	go get -u github.com/asticode/go-astilectron
 	go get -u github.com/asticode/go-astilectron-bundler
 	go get -u github.com/asticode/go-astilectron-bootstrap
+        go get -v -t -d ./...
 	go install github.com/asticode/go-astilectron
 	go install github.com/asticode/go-astilectron-bundler
 	go install github.com/asticode/go-astilectron-bootstrap
