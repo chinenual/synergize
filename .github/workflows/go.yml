@@ -25,8 +25,8 @@ jobs:
     - name: Get dependencies
       run: |
       	go get -u github.com/asticode/go-astilectron
-	      go get -u github.com/asticode/go-astilectron-bundler
-	      go get -u github.com/asticode/go-astilectron-bootstrap
+        go get -u github.com/asticode/go-astilectron-bundler
+        go get -u github.com/asticode/go-astilectron-bootstrap
         go get -v -t -d ./...
         if [ -f Gopkg.toml ]; then
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
