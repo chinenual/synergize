@@ -10,7 +10,7 @@ jobs:
 
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: macos-10.14
     steps:
 
     - name: Set up Go 1.x
@@ -25,29 +25,13 @@ jobs:
     - name: Get dependencies
       run: |
         make installDependencies
-        echo EXPECT TO SEE astilectron-bundler in GOPATH/bin
-        ls -l $(go env GOPATH)/bin
-        echo TRY AGAIN
-        strace go install github.com/asticode/go-astilectron-bundler
         if [ -f Gopkg.toml ]; then
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
         fi
 
     - name: Build
-      run: |
-        echo $PWD
-        ls -l $PWD
-        echo FROM HOME
-        find $HOME -name astilectron-bundler
-        echo ls -lR $HOME
-        ls -lR $HOME 
-        export PATH=$PATH:$(go env GOPATH)/bin
-        echo ls -l GOPATH
-        ls -l $(go env GOPATH)
-        echo ls -l GOPATH/bin
-        ls -l $(go env GOPATH)/bin
-        make
+      run: make
 
     - name: Test
       run: make test
