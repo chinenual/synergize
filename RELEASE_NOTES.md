@@ -1,3 +1,12 @@
+# 2.0.0-beta2
+
+* Beta test release.
+* Adds ability to edit the voices in a CRT file.
+* A command-line diagnostics executable is included in the Windows
+  build. (Mac and Linux builds support these command line diagnostics
+  in the main executable).  See the Troubleshooting section in 
+  [HARDWARE](docs/HARDWARE.md) for details.
+  
 # 2.0.0-beta1
 
 * Beta test release.
