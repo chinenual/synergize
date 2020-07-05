@@ -25,9 +25,11 @@ Press RESTORE twice and the LED's in the Channel Assign button display the parit
 | Right On | Even Parity |
 | Neither On | Error detected on serial board |
 
+The Synergy always uses one start and stop bit.
+
 ### Flow Control
 
-The Synergy uses DTR and CTS ("hardware flow control").
+The Synergy uses DTR and CTS ("hardware flow control").  
 
 ## My configuration
 
@@ -35,7 +37,7 @@ My development and testing setup is a mix of direct connections and virtualized 
 
 ### Synergy
 
-My Synergy is configured at 9600 baud as shown above.  I've tested successfully with 19200 but my day to day use is at 9600 baud.
+My Synergy is configured at 9600 baud and no parity as shown above.  I've tested successfully with 19200 but my day to day use is at 9600 baud.
 
 ### Serial Cable(s)
 
