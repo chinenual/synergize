@@ -4,10 +4,30 @@ Synergize relies on a connection to the Synergy through a serial cable - which i
 
 ## Synergy-side configuration
 
-The Synergy's serial port is configured with a hardware jumper on the serial interface daughter board. The settings must match the baud rate setting in Synergize.
+### Baud Rate
+The Synergy's serial port baud rate is configured with a hardware jumper on the serial interface daughter board. The settings must match the baud rate setting in Synergize.
 
 <img title="Serial Jumpers" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/serial-jumpers.png?raw=true" width="85%"/>
 
+### Data bits
+
+The Synergy always communicates with 8 bits.
+
+### Parity
+
+By default, the Synergy is configured for "no parity" and that is how I have tested the serial connections.  However, this is configurable via buttons on the front panel of the Synergy:
+Press RESTORE twice and the LED's in the Channel Assign button display the parity settings:
+
+| Channel Assign | Parity |
+|+----- |  |
+| Both On | No Parity |
+| Left On | Odd Parity |
+| Right On | Even Parity |
+| Neither On | Error detected on serial board |
+
+### Flow Control
+
+The Synergy uses DTR and CTS ("hardware flow control").
 
 ## My configuration
 
