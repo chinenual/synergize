@@ -16,7 +16,7 @@ The Synergy always communicates with 8 bits.
 ### Parity
 
 By default, the Synergy is configured for "no parity" and that is how I have tested the serial connections.  However, this is configurable via buttons on the front panel of the Synergy:
-Press RESTORE twice and the LED's in the Channel Assign button display the parity settings:
+Press RESTORE twice and the LED's in the Channel Assign button display the parity settings.  The Channel Assign button can be used to alter the parity setting while in this mode.
 
 | Channel Assign | Parity |
 |+----- |  |
