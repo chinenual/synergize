@@ -103,3 +103,9 @@ e.g.,
 ```
 this will print some detailed log statements to the terminal which may shed light on the problem.
 *NOTE:* On Windows, a separate executable named `Synergize-cmd.exe` must be used -- the main `Synergize.exe` does not support command line diagnostics.
+* The command line also offers a way to run the Synergy's "LOOP TEST" without crafting a special cable that reverses the transmit and recieve lines (essentially Synergize will emulate the special cable in software).  Using an unaltered set of serial cables (i.e. a null modem cable and a USB serial cable if you use one), run
+```
+/path/to/Synergize -port /dev/YourSerialPort -baud YourBaud -SERIALVERBOSE -LOOPTST
+```
+You will be prompted to put the Synergy into the LOOP TEST mode by pressing "`RESTORE RESTORE Program #1`" on the Synergy's front panel.  If the test is successful, the Synergy will return to its power up state.  If the test fails, the programmer section of the Synergy's panel will flash continuously.
+This test will help validate that the Synergy's serial device, your cable(s) and your parity/baud/device configuration are correct.
