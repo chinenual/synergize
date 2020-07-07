@@ -12,7 +12,7 @@ import (
 var newVersionAvailable bool = false
 var checkedForVersion bool = false
 
-var versionUrl string = "https://api.chinenual.com/api/v1/version?latest&app=Synergize&OS=" + runtime.GOOS + "&ARCH=" + runtime.GOARCH
+var versionUrl string = "https://api.chinenual.com/api/v1/version?latest&app=Synergize&v="+Version+"&OS=" + runtime.GOOS + "&ARCH=" + runtime.GOARCH
 
 type GithubReleaseApiResponse []struct {
 	Redirect string `json:"redirect"`
