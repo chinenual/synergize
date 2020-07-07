@@ -372,7 +372,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		payload = struct {
 			Version             string
 			NewVersionAvailable bool
-		}{AppVersion, CheckForNewVersion()}
+		}{AppVersion, CheckForNewVersion(false,false)}
 
 	case "showAbout":
 		about_w.Show()
