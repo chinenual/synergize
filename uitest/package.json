@@ -8,7 +8,7 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
-    "electron": "^6.0.12",
+    "electron": "^9.1.0",
     "mocha": "^5.2.0",
     "spectron": "^10.0.0",
     "pngjs": "^3.4.0"
