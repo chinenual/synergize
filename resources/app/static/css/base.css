@@ -245,6 +245,11 @@ td.centered span {
     border-style: solid;
     border-radius: 5px;
 }
+.vceEditDisabled { /* inputs that are permanantely disabled, but rendered as inputs for consistency */
+    color: #fff;
+    background-color: #222;
+    border: none !important;
+}
 .vceNum {
     width: 3.5em;
 }

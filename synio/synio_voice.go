@@ -45,7 +45,8 @@ func initMaps() {
 	cmosOffsetMap["VACENT"] = offsetMapEle{Off_CMOS_VACENT, false}
 	cmosOffsetMap["VASENS"] = offsetMapEle{Off_CMOS_VASENS, false}
 
-	oscOffsetMap["OPTCH"] = offsetMapEle{data.Off_EOSC_OPTCH, false} // does require reload, but we do it after a batch
+	oscOffsetMap["OPTCH"] = offsetMapEle{data.Off_EOSC_OPTCH, false}                 // does require reload, but we do it after a batch
+	oscOffsetMap["OPTCH_reloadGenerators"] = offsetMapEle{data.Off_EOSC_OPTCH, true} // when not called in a batch
 	oscOffsetMap["OHARM"] = offsetMapEle{data.Off_EOSC_OHARM, true}
 	oscOffsetMap["FDETUN"] = offsetMapEle{data.Off_EOSC_FDETUN, true}
 

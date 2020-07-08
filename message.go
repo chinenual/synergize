@@ -284,6 +284,24 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		}
 		payload = "ok"
 
+	case "setPatchByte":
+		var args struct {
+			Osc   int
+			Value int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetVoiceOscDataByte(args.Osc, "OPTCH_reloadGenerators", byte(args.Value)); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
 	case "setOscEnvLengths":
 		var args struct {
 			Osc        int
@@ -372,7 +390,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		payload = struct {
 			Version             string
 			NewVersionAvailable bool
-		}{AppVersion, CheckForNewVersion(false,false)}
+		}{AppVersion, CheckForNewVersion(false, false)}
 
 	case "showAbout":
 		about_w.Show()

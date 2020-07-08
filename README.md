@@ -117,7 +117,7 @@ available via the below links.  The set I'm using includes the Internal voices, 
 ## Thank you!
 
 This would not have be possible without access to the excellent
-documentation, and well commented firmware and SYNHCS Z80 source code donated to thecommunity by  Stoney Stockell and Mulogix, Inc.  Those are available in several locations:
+documentation, and well commented firmware and SYNHCS Z80 source code donated to the community by  Stoney Stockell and Mulogix, Inc.  Those are available in several locations:
 
 * [Synergy Facebook Users Group](https://www.facebook.com/groups/synergysynth/)
 * [Synergy groups.io group](https://groups.io/g/synergy-synth)

@@ -180,8 +180,38 @@ let viewVCE_voice = {
 		return newStr;
 	},
 
+	NullablePatchRegisterToText: function (str) {
+		if (str.trim() === '') {
+			return '';
+		}
+		var val = parseInt(str, 10);
+		if (val === 0) {
+			return ''
+		}
+		return '' + val;
+	},
+
+	TextToNullablePatchRegister: function (str) {
+		if (str.trim() === '') {
+			return '0';
+		}
+		var val = parseInt(str, 10);
+		if (val === 0) {
+			return '0'
+		}
+		return '' + val;
+	},
+
 	testConversionFunctions: function () {
 		var ok = true;
+		for (var i = 0; i < 5; i++) {
+			var str = viewVCE_voice.NullablePatchRegisterToText('' + i);
+			var reverseStr = viewVCE_voice.TextToNullablePatchRegister(str);
+			if (('' + i) != reverseStr) {
+				ok = false;
+				console.log("ERROR: PatchReg " + i + " totext: " + str + " reversed to " + reverseStr)
+			}
+		}
 		for (var i = -11; i <= 31; i++) {
 			var str = viewVCE_voice.OHARMToText('' + i);
 			var reverseStr = viewVCE_voice.TextToOHARM(str);
@@ -211,8 +241,8 @@ let viewVCE_voice = {
 			ok = false;
 			console.log("ERROR: FDETUN CASE B " + 20 + " rounded to " + v + " - expected " + 21)
 		}
-		 v = viewVCE_voice.FDETUNToText(viewVCE_voice.TextToFDETUN('247'));
-		 if ('246' != v) {
+		v = viewVCE_voice.FDETUNToText(viewVCE_voice.TextToFDETUN('247'));
+		if ('246' != v) {
 			ok = false;
 			console.log("ERROR: FDETUN CASE C " + 247 + " rounded to " + v + " - expected " + 246)
 		}
@@ -224,6 +254,54 @@ let viewVCE_voice = {
 
 		console.log("viewVCE_voice.testConversionFunctions: " + (ok ? "PASS" : "FAIL"));
 		return ok;
+	},
+
+	onchangeDSR: function (param, osc, value) {
+		console.log("onchangeDSR: " + param + "[" + osc + "] == " + value);
+
+		var patchFOInputDSR = document.getElementById(`patchFOInputDSR[${osc}]`).value;
+		var patchAdderInDSR = document.getElementById(`patchAdderInDSR[${osc}]`).value;
+		var patchOutputDSR = document.getElementById(`patchOutputDSR[${osc}]`).value;
+
+		// XREF: patch byte encode/decode
+		var patchInhibitAddr = patchAdderInDSR == '' ? true : false;
+		var patchInhibitF0 = patchFOInputDSR == '' ? true : false;
+		var patchByte = 0;
+		patchByte |= (patchFOInputDSR & 0x03);
+		patchByte |= ((patchAdderInDSR << 3) & 0x18);
+		patchByte |= ((patchOutputDSR << 6) & 0xc0);
+		if (patchInhibitAddr) {
+			patchByte |= 0x20;
+		}
+		if (patchInhibitF0) {
+			patchByte |= 0x04;
+		}
+
+		console.log(osc + " patch byte: " + patchByte + "\n" +
+			" patchInhibitAddr : " + patchInhibitAddr + "\n" +
+			" patchInhibitF0   : " + patchInhibitF0 + "\n" +
+			" patchOutputDSR   : " + patchOutputDSR + "\n" +
+			" patchAdderInDSR  : " + patchAdderInDSR + "\n" +
+			" patchFOInputDSR  : " + patchFOInputDSR + "\n");
+
+		let message = {
+			"name": "setPatchByte",
+			"payload": {
+				"Osc": parseInt(osc, 10),
+				"Value": patchByte
+			}
+		};
+		astilectron.sendMessage(message, function (message) {
+			console.log("setPatchByte returned: " + JSON.stringify(message));
+			// Check error
+			if (message.name === "error") {
+				// failed - dont change the boolean
+				index.errorNotification(message.payload);
+				return false;
+			}
+		});
+
+
 	},
 
 	onchange: function (ele, updater, valueConverter) {
@@ -246,6 +324,7 @@ let viewVCE_voice = {
 		var param
 		var args
 		var filterPattern = /FILTER\[(\d+)\]/;
+		var dsrPattern = /([0-9A-Za-z]+DSR)\[(\d+)\]/;
 		var waveKeyPattern = /wk([A-Z]+)\[(\d+)\]/;
 		var oscPattern = /([A-Z]+)\[(\d+)\]/;
 		var headPattern = /([A-Z]+)/;
@@ -253,6 +332,11 @@ let viewVCE_voice = {
 			param = "VNAME"
 			funcname = "setVNAME";
 			args = ele.value;
+		} else if (ret = id.match(dsrPattern)) {
+			param = ret[1]
+			osc = ret[2]
+			value = parseInt(valueConverter(ele.value), 10);
+			return viewVCE_voice.onchangeDSR(param, osc, value);
 		} else if (ret = id.match(filterPattern)) {
 			param = "FILTER"
 			funcname = "setOscFILTER";
@@ -337,6 +421,7 @@ let viewVCE_voice = {
 
 			tr.appendChild(td);
 
+			// XREF: patch byte encode/decode
 			// FIXME: assumes envelopes are sorted in oscillator order
 			var patchByte = vce.Envelopes[osc].FreqEnvelope.OPTCH;
 			var patchInhibitAddr = (patchByte & 0x20) != 0;
@@ -354,25 +439,45 @@ let viewVCE_voice = {
 
 			//--- Patch F
 			td = document.createElement("td");
+			var reg = 0;
 			if (!patchInhibitF0) {
-				td.innerHTML = `<span id="patchFOInputDSR[${osc + 1}]">${patchFOInputDSR + 1}</span>`;
+				reg = patchFOInputDSR + 1;
 			} else {
-				td.innerHTML = `<span id="patchFOInputDSR[${osc + 1}]"></span>`;
+				reg = 0;
+			}
+			if (osc == 0) {
+				// the first osc's Freq DSR can't be altered - render as a disabled input control so we can get its value in the onchange
+				// function without any special casing
+				td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceNum vceEditDisabled" id="patchFOInputDSR[${osc + 1}]" 
+				value="${viewVCE_voice.NullablePatchRegisterToText('' + reg)}" 
+				disabled/></div>`;
+			} else {
+				td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinNullablePatchReg" id="patchFOInputDSR[${osc + 1}]" 
+				onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToNullablePatchRegister)" value="${viewVCE_voice.NullablePatchRegisterToText('' + reg)}" 
+				min="0" max="4"
+				disabled/></div>`;
 			}
 			tr.appendChild(td);
 
 			//--- Patch A
 			td = document.createElement("td");
 			if (!patchInhibitAddr) {
-				td.innerHTML = `<span id="patchAdderInDSR[${osc + 1}]">${patchAdderInDSR + 1}</span>`;
+				reg = patchAdderInDSR + 1;
 			} else {
-				td.innerHTML = `<span id="patchAdderInDSR[${osc + 1}]"></span>`;
+				reg = 0;
 			}
+			td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinNullablePatchReg" id="patchAdderInDSR[${osc + 1}]" 
+			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToNullablePatchRegister)" value="${viewVCE_voice.NullablePatchRegisterToText('' + reg)}" 
+			min="0" max="4"
+			disabled/></div>`;
 			tr.appendChild(td);
 
 			//--- Patch O
 			td = document.createElement("td");
-			td.innerHTML = `<span id="patchOutputDSR[${osc + 1}]">${patchOutputDSR + 1}</span>`;
+			td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinPlain" id="patchOutputDSR[${osc + 1}]" 
+			onchange="viewVCE_voice.onchange(this,undefined,undefined)" value="${patchOutputDSR + 1}" 
+			min="1" max="4"
+			disabled/></div>`;
 			tr.appendChild(td);
 
 			//--- Hrm
@@ -572,7 +677,19 @@ let viewVCE_voice = {
 
 		if (mode) {
 			// CSS for styling the buttons when disabled is HARD.  So avoid it.
-			$('.vceNum.spinOHARM').TouchSpin({
+			$('.vceNum.spinNullablePatchReg').TouchSpin({
+				verticalbuttons: true,
+				verticalup: '\u25b4', //'\u25b2',
+				verticaldown: '\u25be', //'\u25bc',
+				buttonup_txt: '\u25b4', //'\u25b2',
+				buttondown_txt: '\u25be', //'\u25bc',
+				callback_before_calculation: function (value) {
+					return viewVCE_voice.TextToNullablePatchRegister(value);
+				},
+				callback_after_calculation: function (value) {
+					return viewVCE_voice.NullablePatchRegisterToText(value);
+				}
+			}); $('.vceNum.spinOHARM').TouchSpin({
 				verticalbuttons: true,
 				verticalup: '\u25b4', //'\u25b2',
 				verticaldown: '\u25be', //'\u25bc',
