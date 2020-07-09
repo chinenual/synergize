@@ -193,7 +193,6 @@ let viewVCE_filters = {
 		var toFilterIndex = filterSelectEle.options[filterSelectEle.selectedIndex].value;
 		toFilterIndex = parseInt(toFilterIndex, 10);
 
-		console.dir(vce)
 		let message = {
 			"name": "setFilterArray",
 			"payload": {

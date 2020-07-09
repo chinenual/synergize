@@ -28,7 +28,7 @@ First check is full UI support; second check is lower-level IO and tests
 
 * Voice page
     * [x] [x] "ensemble"/"group"/"solo" oscillators
-    * [ ] [ ] copy an oscillator (in Synergize, this is on the Envelopes page "copy from")
+    * [x] [x] copy an oscillator (in Synergize, this is on the Envelopes page "copy from")
     * [x] [x] change harmonic
     * [x] [x] detune
     * [x] [x] aperiodic detune

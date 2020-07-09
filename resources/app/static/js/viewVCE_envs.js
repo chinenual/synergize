@@ -14,6 +14,9 @@ let viewVCE_envs = {
 		if (viewVCE_envs.deb_onchangeEnvAccel == null) {
 			viewVCE_envs.deb_ononchangeEnvAccelchange = _.debounce(viewVCE_envs.raw_onchangeEnvAccel, 250);
 		}
+		if (viewVCE_envs.deb_copyFrom == null) {
+			viewVCE_envs.deb_copyFrom = _.debounce(viewVCE_envs.raw_copyFrom, 250);
+		}
 
 		var selectEle = document.getElementById("envOscSelect");
 		// remove old options:
@@ -27,9 +30,10 @@ let viewVCE_envs = {
 			option.innerHTML = "" + (i + 1);
 			selectEle.appendChild(option);
 		}
+		$('#envCopySelectDiv').hide();
 
 		viewVCE_envs.envChartUpdate(1, -1, true)
-        console.log('--- finish viewVCE_envs init');
+		console.log('--- finish viewVCE_envs init');
 	},
 
 
@@ -239,7 +243,7 @@ let viewVCE_envs = {
 
 	onchangeLoop: function (ele) {
 		if (viewVCE.supressOnchange) { /*console.log("viewVCE.suppressOnChange");*/ return; }
-		if (viewVCE_envs.supressOnchange) { console.log("viewVCE_envs.suppressOnChange");return; }
+		if (viewVCE_envs.supressOnchange) { console.log("viewVCE_envs.suppressOnChange"); return; }
 
 		var eleIndex;
 		var envOscSelectEle = document.getElementById("envOscSelect");
@@ -407,11 +411,57 @@ let viewVCE_envs = {
 
 	},
 
-	onchangeEnvAccel: function(ele) {
+	copyFrom: function (fromOsc) {
+		if (viewVCE.supressOnchange) { /*console.log("viewVCE.suppressOnChange");*/ return; }
+		if (viewVCE_envs.supressOnchange) { /*console.log("viewVCE_envs.suppressOnChange");*/ return; }
+		viewVCE_envs.deb_copyFrom(fromOsc);
+	},
+
+	deb_copyFrom: null,
+
+	raw_copyFrom: function (fromOsc) {
+		var oscSelectEle = document.getElementById("envOscSelect");
+		var toOsc = oscSelectEle.options[oscSelectEle.selectedIndex].value;
+		toOsc = parseInt(toOsc, 10);
+
+		// "copy" means copy all the osc-specific stuff related to the envelopes - but not the patch and detuning fields.
+
+		// abuse JSON to do a deep copy:
+		newEnvelopes = JSON.parse(JSON.stringify(vce.Envelopes[fromOsc - 1]))
+		// retain the stuff we don't want copied: 
+		newEnvelopes.FreqEnvelope.OPTCH = vce.Envelopes[toOsc - 1].FreqEnvelope.OPTCH;
+		newEnvelopes.FreqEnvelope.OHARM = vce.Envelopes[toOsc - 1].FreqEnvelope.OHARM;
+		newEnvelopes.FreqEnvelope.FDETUN = vce.Envelopes[toOsc - 1].FreqEnvelope.FDETUN;
+
+		let message = {
+			"name": "setEnvelopes",
+			"payload": {
+				"Osc": toOsc,
+				"Envelopes": newEnvelopes
+			}
+		};
+		index.spinnerOn();
+		astilectron.sendMessage(message, function (message) {
+			index.spinnerOff();
+			console.log("setEnvelopes returned: " + JSON.stringify(message));
+			// Check error
+			if (message.name === "error") {
+				// failed - dont change the value
+				index.errorNotification(message.payload);
+				return false;
+			} else {
+				vce.Envelopes[toOsc -1] = newEnvelopes
+				viewVCE_envs.envChartUpdate(toOsc, -1, true);
+			}
+		});
+		return true;
+	},
+
+	onchangeEnvAccel: function (ele) {
 		if (viewVCE.supressOnchange) { /*console.log("viewVCE.suppressOnChange");*/ return; }
 		if (viewVCE_envs.supressOnchange) { /*console.log("viewVCE_envs.suppressOnChange");*/ return; }
 		viewVCE_envs.deb_onchangeEnvAccel(ele);
-},
+	},
 
 	deb_onchangeEnvAccel: null,
 
@@ -478,7 +528,7 @@ let viewVCE_envs = {
 
 	},
 
-	onchange: function(ele) {
+	onchange: function (ele) {
 		if (viewVCE.supressOnchange) { /*console.log("viewVCE.suppressOnChange");*/ return; }
 		if (viewVCE_envs.supressOnchange) { /*console.log("viewVCE_envs.suppressOnChange");*/return; }
 		viewVCE_envs.deb_onchange(ele);
@@ -574,7 +624,7 @@ let viewVCE_envs = {
 		var eleIndex;
 		var envOscSelectEle = document.getElementById("envOscSelect");
 		var osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
-		var envEnvSelectEle = document.getElementById("envOscSelect");
+		var envEnvSelectEle = document.getElementById("envEnvSelect");
 		var selectedEnv = parseInt(envEnvSelectEle.value, 10);
 		var envs = vce.Envelopes[osc - 1];
 
@@ -651,6 +701,33 @@ let viewVCE_envs = {
 		viewVCE_envs.supressOnchange = true;
 
 		viewVCE_envs.uncompressEnvelopes();
+
+		var envCopySelectEle = document.getElementById("envCopySelect");
+		// remove old options:
+		while (envCopySelectEle.firstChild) {
+			envCopySelectEle.removeChild(envCopySelectEle.firstChild);
+		}
+		// hide the copy selector for All or cases where there are no filters, or when we're not in voicing mode
+		$('#envCopySelectDiv').hide();
+		if (viewVCE_voice.voicingMode) {
+			$('#envCopySelectDiv').show();
+			// populate options in the select with only "other" osc (i.e. "this" osc should be not shown or at least unselectable)
+
+			// first element is empty to avoid confusing the user if they havent selected something:
+			var option = document.createElement("option");
+			option.value = -1;
+			option.innerHTML = "";
+			envCopySelectEle.appendChild(option);
+
+			for (i = 0; i < vce.Head.VOITAB; i++) {
+				if ((i + 1) != oscNum) {
+					var option = document.createElement("option");
+					option.value = i + 1;
+					option.innerHTML = i + 1;
+					envCopySelectEle.appendChild(option);
+				}
+			}
+		}
 
 		var oscIndex = oscNum - 1;
 		var envelopes = vce.Envelopes[oscIndex];

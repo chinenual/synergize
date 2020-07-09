@@ -2,8 +2,12 @@ package synio
 
 import (
 	"bytes"
-	"github.com/chinenual/synergize/data"
+	"io/ioutil"
 	"strconv"
+
+	"github.com/chinenual/synergize/data"
+	"github.com/orcaman/writerseeker"
+	"github.com/pkg/errors"
 )
 
 type offsetMapEle struct {
@@ -184,6 +188,28 @@ func SetFilterArray(uiFilterIndex /*0 for Af, one-based osc# for Bf */ int, valu
 	if err = RecalcFilters(); err != nil {
 		return
 	}
+	return
+}
+
+func SetEnvelopes(osc /* 1-based*/ int, envs data.Envelope) (err error) {
+	addr := VoiceOscAddr(osc, oscOffsetMap["OPTCH"].Offset)
+
+	// serialise the data
+	var writebuf = writerseeker.WriterSeeker{}
+	if err = data.VceWriteOscillator(&writebuf, envs, byte(osc), true); err != nil {
+		err = errors.Wrapf(err, "Failed to serialize envs")
+		return
+	}
+	byteArray, _ := ioutil.ReadAll(writebuf.Reader())
+
+	if err = BlockLoad(addr, byteArray, "set Envelopes["+strconv.Itoa(osc)+"]"); err != nil {
+		return
+	}
+
+	if err = ReloadNoteGenerators(); err != nil {
+		return
+	}
+
 	return
 }
 

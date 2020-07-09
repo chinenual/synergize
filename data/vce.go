@@ -500,6 +500,88 @@ func WriteVcePreserveOffsets(buf io.WriteSeeker, vce VCE, name string, skipFilte
 	return
 }
 
+func VceWriteOscillator(buf io.WriteSeeker, e Envelope, osc /*1-based*/ byte, preserveOffsets bool) (err error) {
+	var oscOffset int64
+	if oscOffset, err = buf.Seek(0, io.SeekCurrent); err != nil {
+		return
+	}
+	if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.OPTCH); err != nil {
+		err = errors.Wrapf(err, "Failed to write voice freq env [%d] OPTCH", osc)
+		return
+	}
+	if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.OHARM); err != nil {
+		err = errors.Wrapf(err, "Failed to write voice freq env [%d] OHARM", osc)
+		return
+	}
+	if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.FDETUN); err != nil {
+		err = errors.Wrapf(err, "Failed to write voice freq env [%d] FDETUN", osc)
+		return
+	}
+
+	if !preserveOffsets {
+		e.FreqEnvelope.FENVL = 4 + 4*e.FreqEnvelope.NPOINTS
+	}
+	if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.FENVL); err != nil {
+		err = errors.Wrapf(err, "Failed to write voice freq env [%d] FENVL", osc)
+		return
+	}
+	if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.ENVTYPE); err != nil {
+		err = errors.Wrapf(err, "Failed to write voice freq env [%d] ENVTYPE", osc)
+		return
+	}
+	if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.NPOINTS); err != nil {
+		err = errors.Wrapf(err, "Failed to write voice freq env [%d] NPOINTS", osc)
+		return
+	}
+	if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.SUSTAINPT); err != nil {
+		err = errors.Wrapf(err, "Failed to write voice freq env [%d] SUSTAINPT", osc)
+		return
+	}
+	if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.LOOPPT); err != nil {
+		err = errors.Wrapf(err, "Failed to write voice freq env [%d] LOOPPT", osc)
+		return
+	}
+	// 4 values per point:
+
+	for k := byte(0); k < e.FreqEnvelope.NPOINTS*4; k++ {
+		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.Table[k]); err != nil {
+			err = errors.Wrapf(err, "Failed to write freq env [%d] table[%d]", osc, k)
+			return
+		}
+	}
+
+	if preserveOffsets {
+		// skip over the unused freq envelope entries
+		if _, err = buf.Seek(oscOffset+72, io.SeekStart); err != nil {
+			return
+		}
+	}
+	if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.ENVTYPE); err != nil {
+		err = errors.Wrapf(err, "Failed to write voice amp env [%d] ENVTYPE", osc)
+		return
+	}
+	if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.NPOINTS); err != nil {
+		err = errors.Wrapf(err, "Failed to write voice amp env [%d] NPOINTS", osc)
+		return
+	}
+	if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.SUSTAINPT); err != nil {
+		err = errors.Wrapf(err, "Failed to write voice amp env [%d] SUSTAINPT", osc)
+		return
+	}
+	if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.LOOPPT); err != nil {
+		err = errors.Wrapf(err, "Failed to write voice amp env [%d] LOOPPT", osc)
+		return
+	}
+	// 4 values per point:
+	for k := byte(0); k < e.AmpEnvelope.NPOINTS*4; k++ {
+		if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.Table[k]); err != nil {
+			err = errors.Wrapf(err, "Failed to write amp freq env [%d] table[%d]", osc, k)
+			return
+		}
+	}
+	return
+}
+
 // sets the VNAME, rewrites the OSCPTR array and compresses the FENVL values
 func writeVce(buf io.WriteSeeker, vce VCE, name string, skipFilters bool, preserveOffsets bool) (err error) {
 	var headOffset int64
@@ -531,7 +613,7 @@ func writeVce(buf io.WriteSeeker, vce VCE, name string, skipFilters bool, preser
 			if _, err = buf.Seek(oscOffset, io.SeekStart); err != nil {
 				return
 			}
-			log.Printf("SEEK - top of osc[%d] at 0x%04x", i, headOffset+int64(vce.Head.OSCPTR[i]))
+			//log.Printf("SEEK - top of osc[%d] at 0x%04x", i, headOffset+int64(vce.Head.OSCPTR[i]))
 		} else {
 			if oscOffset, err = buf.Seek(0, io.SeekCurrent); err != nil {
 				return
@@ -540,80 +622,8 @@ func writeVce(buf io.WriteSeeker, vce VCE, name string, skipFilters bool, preser
 			updateOscPtr(buf, headOffset, i, uint16(oscOffset-headOffset))
 		}
 
-		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.OPTCH); err != nil {
-			err = errors.Wrapf(err, "Failed to write voice freq env [%d] OPTCH", i)
-			return
-		}
-		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.OHARM); err != nil {
-			err = errors.Wrapf(err, "Failed to write voice freq env [%d] OHARM", i)
-			return
-		}
-		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.FDETUN); err != nil {
-			err = errors.Wrapf(err, "Failed to write voice freq env [%d] FDETUN", i)
-			return
-		}
+		VceWriteOscillator(buf, e, i, preserveOffsets)
 
-		if !preserveOffsets {
-			e.FreqEnvelope.FENVL = 4 + 4*e.FreqEnvelope.NPOINTS
-		}
-		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.FENVL); err != nil {
-			err = errors.Wrapf(err, "Failed to write voice freq env [%d] FENVL", i)
-			return
-		}
-		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.ENVTYPE); err != nil {
-			err = errors.Wrapf(err, "Failed to write voice freq env [%d] ENVTYPE", i)
-			return
-		}
-		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.NPOINTS); err != nil {
-			err = errors.Wrapf(err, "Failed to write voice freq env [%d] NPOINTS", i)
-			return
-		}
-		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.SUSTAINPT); err != nil {
-			err = errors.Wrapf(err, "Failed to write voice freq env [%d] SUSTAINPT", i)
-			return
-		}
-		if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.LOOPPT); err != nil {
-			err = errors.Wrapf(err, "Failed to write voice freq env [%d] LOOPPT", i)
-			return
-		}
-		// 4 values per point:
-
-		for k := byte(0); k < e.FreqEnvelope.NPOINTS*4; k++ {
-			if err = binary.Write(buf, binary.LittleEndian, e.FreqEnvelope.Table[k]); err != nil {
-				err = errors.Wrapf(err, "Failed to write freq env [%d] table[%d]", i, k)
-				return
-			}
-		}
-
-		if preserveOffsets {
-			// skip over the unused freq envelope entries
-			if _, err = buf.Seek(oscOffset+72, io.SeekStart); err != nil {
-				return
-			}
-		}
-		if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.ENVTYPE); err != nil {
-			err = errors.Wrapf(err, "Failed to write voice amp env [%d] ENVTYPE", i)
-			return
-		}
-		if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.NPOINTS); err != nil {
-			err = errors.Wrapf(err, "Failed to write voice amp env [%d] NPOINTS", i)
-			return
-		}
-		if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.SUSTAINPT); err != nil {
-			err = errors.Wrapf(err, "Failed to write voice amp env [%d] SUSTAINPT", i)
-			return
-		}
-		if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.LOOPPT); err != nil {
-			err = errors.Wrapf(err, "Failed to write voice amp env [%d] LOOPPT", i)
-			return
-		}
-		// 4 values per point:
-		for k := byte(0); k < e.AmpEnvelope.NPOINTS*4; k++ {
-			if err = binary.Write(buf, binary.LittleEndian, e.AmpEnvelope.Table[k]); err != nil {
-				err = errors.Wrapf(err, "Failed to write amp freq env [%d] table[%d]", i, k)
-				return
-			}
-		}
 	}
 
 	if !skipFilters {

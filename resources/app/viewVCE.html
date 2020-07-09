@@ -253,6 +253,15 @@
 			<option value="3">Amp Up</option>
 		</select>
 
+		<div id="envCopySelectDiv" style="display:inline-block;">
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copy From:&nbsp;
+			<select id="envCopySelect"
+				onchange="viewVCE_envs.copyFrom(this.options[this.selectedIndex].value)">
+				<option>1</option>
+				<option>2</option>
+			</select>
+		</div>
+
 		<canvas id="envChart" height="400" width="600" style="border:solid #666;"></canvas>
 
 		<table id="envTable" class="valTable">

@@ -259,6 +259,24 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		}
 		payload = "ok"
 
+	case "setEnvelopes":
+		var args struct {
+			Osc       int // 1-based
+			Envelopes data.Envelope
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetEnvelopes(args.Osc, args.Envelopes); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
 	case "setVNAME":
 		var args struct {
 			Param string

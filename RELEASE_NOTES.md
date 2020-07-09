@@ -3,6 +3,7 @@
 * Beta test release.
 * Adds support for altering the oscilator patch routing.
 * Adds support for copying filters
+* Adds support for copying envelopes
 * A command-line diagnostics executable is included in the Windows
   build. (Mac and Linux builds support these command line diagnostics
   in the main executable).  See the Troubleshooting section in 
