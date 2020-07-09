@@ -1,7 +1,7 @@
 # 2.0.0-beta2
 
 * Beta test release.
-* Adds support for altering the oscilator patch routing.
+* Adds support for altering the oscillator patch routing.
 * Adds support for copying filters
 * Adds support for copying envelopes
 * A command-line diagnostics executable is included in the Windows
