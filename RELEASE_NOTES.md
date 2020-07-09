@@ -1,7 +1,8 @@
 # 2.0.0-beta2
 
 * Beta test release.
-* Adds ability to edit the voices in a CRT file.
+* Adds support for altering the oscilator patch routing.
+* Adds support for copying filters
 * A command-line diagnostics executable is included in the Windows
   build. (Mac and Linux builds support these command line diagnostics
   in the main executable).  See the Troubleshooting section in 

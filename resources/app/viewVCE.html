@@ -1304,6 +1304,14 @@
 			<option>Bf 1</option>
 			<option>Bf 2</option>
 		</select>
+		<div id="filterCopySelectDiv" style="display:inline-block;">
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copy From:&nbsp;
+			<select id="filterCopySelect"
+				onchange="viewVCE_filters.copyFrom(this.options[this.selectedIndex].value,this.options[this.selectedIndex].innerHTML)">
+				<option>Bf 1</option>
+				<option>Bf 2</option>
+			</select>
+		</div>
 		<canvas id="filtersChart" height="400" width="600" style="border:solid #666;"></canvas>
 
 		<style>

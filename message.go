@@ -241,6 +241,24 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		}
 		payload = "ok"
 
+	case "setFilterArray":
+		var args struct {
+			UiFilterIndex int // 0=Af, 1..16=Bf
+			Values        []int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetFilterArray(args.UiFilterIndex, args.Values); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
 	case "setVNAME":
 		var args struct {
 			Param string

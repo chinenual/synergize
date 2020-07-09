@@ -4,21 +4,21 @@ The following is organized by the SYNCHS screens each function appears on:
 
 First check is full UI support; second check is lower-level IO and tests
 
-* [ ] [ ] Create CRT file from existing VCE files
+* [ ] [x] Create CRT file from existing VCE files
 * [ ] [ ] <s>Create a DOC file</s>
 * [ ] [ ] <s>View a DOC file</s>
 * [x] [x] Load Synergy Machine State
 * [x] [x] Save Synergy Machine State
 * [x] [x] Load VRAM image
 * [ ] [x] Save VRAM image
-* [-] [-] Edit VRAM image
+* [x] [x] Edit VRAM image
 * [x] [x] Disable VRAM
 * [x] [x] Test communications
 * [ ] [ ] <s>"Extended programmer" Performance Program controller (sequence of CRT/SYN files for live performance)</s>
 
 * Voicing System Main screen
     * [x] [x] Load a VCE directly into VRAM
-    * [ ] [ ] Save a VCE from VRAM
+    * [x] [x] Save a VCE from VRAM
     * [x] [x] set # oscillators
     * [x] [x] set default patch
     * [ ] [ ] clear filters
@@ -28,7 +28,7 @@ First check is full UI support; second check is lower-level IO and tests
 
 * Voice page
     * [x] [x] "ensemble"/"group"/"solo" oscillators
-    * [ ] [ ] copy an oscillator
+    * [ ] [ ] copy an oscillator (in Synergize, this is on the Envelopes page "copy from")
     * [x] [x] change harmonic
     * [x] [x] detune
     * [x] [x] aperiodic detune
@@ -53,7 +53,7 @@ First check is full UI support; second check is lower-level IO and tests
 * Filters
     * [x] [x] set each point in the curve
     * [ ] [ ] <s>scale display</s>
-    * [ ] [ ] copy other oscillator's filter
+    * [x] [x] copy other oscillator's filter
 
 * Keyboard Equalization
     * [x] [x] set each point in the curve

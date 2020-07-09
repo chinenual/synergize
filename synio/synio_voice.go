@@ -2,9 +2,8 @@ package synio
 
 import (
 	"bytes"
-	"strconv"
-
 	"github.com/chinenual/synergize/data"
+	"strconv"
 )
 
 type offsetMapEle struct {
@@ -158,7 +157,28 @@ func SetFilterEle(uiFilterIndex /*0 for Af, one-based osc# for Bf */ int, index 
 	// Bfilter value is the one-based osc#
 
 	addr := VramAddr(data.Off_VRAM_FILTAB) + uint16((uiFilterIndex*data.VRAM_FILTR_length)+(index-1))
-	if err = LoadByte(addr, byte(value), "set BFILTER["+strconv.Itoa(index)+"]"); err != nil {
+	if err = LoadByte(addr, byte(value), "set FilterEle["+strconv.Itoa(uiFilterIndex)+"]["+strconv.Itoa(index)+"]"); err != nil {
+		return
+	}
+	if err = RecalcFilters(); err != nil {
+		return
+	}
+	return
+}
+
+func SetFilterArray(uiFilterIndex /*0 for Af, one-based osc# for Bf */ int, values []int) (err error) {
+	// ASSUMES we're only editing voice #1.
+	// AFilter is always at 0 in the FILTAB;
+	// Bfilters start at 2, so osc #1's filter is at zero-based index 1 of the FILTAB
+	// Bfilter value is the one-based osc#
+
+	var byteArray = make([]byte, len(values))
+	for i, v := range values {
+		byteArray[i] = byte(v)
+	}
+
+	addr := VramAddr(data.Off_VRAM_FILTAB) + uint16((uiFilterIndex * data.VRAM_FILTR_length))
+	if err = BlockLoad(addr, byteArray, "set FilterArray["+strconv.Itoa(uiFilterIndex)+"]"); err != nil {
 		return
 	}
 	if err = RecalcFilters(); err != nil {

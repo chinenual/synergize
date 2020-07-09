@@ -547,9 +547,9 @@ let viewVCE_voice = {
 			"name": "setPatchType",
 			"payload": parseInt(newIndex, 10)
 		};
-		//index.spinnerOn();
+		index.spinnerOn();
 		astilectron.sendMessage(message, function (message) {
-			//index.spinnerOff();
+			index.spinnerOff();
 			console.log("setPatchType returned: " + JSON.stringify(message));
 			// Check error
 			if (message.name === "error") {

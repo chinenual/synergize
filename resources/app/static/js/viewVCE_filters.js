@@ -1,16 +1,16 @@
 let viewVCE_filters = {
 	chart: null,
 
-	onchange: function(ele) {
+	onchange: function (ele) {
 		if (viewVCE.supressOnchange) { /*console.log("viewVCE.suppressOnChange");*/ return; }
 		viewVCE_filters.deb_onchange(ele);
-},
+	},
 
 	deb_onchange: null, // initialized during init()
 
 	raw_onchange: function (ele) {
 		if (viewVCE.supressOnchange) { /*console.log("raw viewVCE.suppressOnChange");*/ return; }
-	
+
 		var id = ele.id;
 
 		var value = index.checkInputElementValue(ele);
@@ -102,12 +102,18 @@ let viewVCE_filters = {
 		vce.Extra.uncompressedFilters = newFilters;
 	},
 
+	filterNames: [],
+	filterValues: [],
+
 	init: function () {
 		console.log('--- start viewVCE_filters init');
 		if (viewVCE_filters.deb_onchange == null) {
 			viewVCE_filters.deb_onchange = _.debounce(viewVCE_filters.raw_onchange, 250);
 		}
-		
+		if (viewVCE_filters.deb_copyFrom == null) {
+			viewVCE_filters.deb_copyFrom = _.debounce(viewVCE_filters.raw_copyFrom, 250);
+		}
+
 		var selectEle = document.getElementById("filterSelect");
 		// remove old options:
 		while (selectEle.firstChild) {
@@ -117,14 +123,14 @@ let viewVCE_filters = {
 
 		viewVCE_filters.uncompressFilters();
 
-		var filterNames = [];
-		var filterValues = [];
+		viewVCE_filters.filterNames = [];
+		viewVCE_filters.filterValues = [];
 		// check for a-filter
 		for (i = 0; i <= vce.Head.VOITAB; i++) {
 			if (vce.Head.FILTER[i] < 0) {
 				// zero'th filter is the a-filter
-				filterNames.push('Af');
-				filterValues.push(0);
+				viewVCE_filters.filterNames.push('Af');
+				viewVCE_filters.filterValues.push(0);
 				break;
 			}
 		}
@@ -134,46 +140,123 @@ let viewVCE_filters = {
 				// FIXME: naming/numbering can be confusing.  For example, INTERNAL/CATHERG voice uses
 				// one B-filter - for osc#3.  So we name it "Bf1",but it shows as index "3" in the select. 
 				// Should we name it Bf3 to match the osc?
-				filterNames.push('Bf ' + vce.Head.FILTER[i]);
-				filterValues.push(i + 1);
+				viewVCE_filters.filterNames.push('Bf ' + vce.Head.FILTER[i]);
+				viewVCE_filters.filterValues.push(i + 1);
 			}
 		}
 
 		// Option values are index into the vce.Head.FILTERS array (and one extra with value -1 for "All")
-		if (filterNames.length > 1) {
+		if (viewVCE_filters.filterNames.length > 1) {
 			var option = document.createElement("option");
 			option.value = -1;
 			option.innerHTML = "All";
 			selectEle.appendChild(option);
 		}
 
-		for (i = 0; i < filterNames.length; i++) {
+		for (i = 0; i < viewVCE_filters.filterNames.length; i++) {
 			var option = document.createElement("option");
-			option.value = filterValues[i];
-			option.innerHTML = filterNames[i];
+			option.value = viewVCE_filters.filterValues[i];
+			option.innerHTML = viewVCE_filters.filterNames[i];
 			selectEle.appendChild(option);
 		}
 		document.getElementById("filtersChart").style.display = "block";
 		document.getElementById("filterTable").style.display = "block";
-		if (filterNames.length <= 0) {
+		if (viewVCE_filters.filterNames.length <= 0) {
 			// no filters
 			document.getElementById("filtersChart").style.display = "none";
 			document.getElementById("filterTable").style.display = "none";
-		} else if (filterNames.length > 1) {
+			$('#filterCopySelectDiv').hide();
+		} else if (viewVCE_filters.filterNames.length > 1) {
 			// "All" == -1
 			viewVCE_filters.filtersChartUpdate(-1, 'All', true);
 		} else {
 			// first filter
-			viewVCE_filters.filtersChartUpdate(filterValues[0], filterNames[0], true);
+			viewVCE_filters.filtersChartUpdate(viewVCE_filters.filterValues[0], viewVCE_filters.filterNames[0], true);
 		}
 		console.log('--- finish viewVCE_filters init');
+	},
+
+	copyFrom: function (filterIndex, filterName) {
+		if (viewVCE.supressOnchange) { /*console.log("viewVCE.suppressOnChange");*/ return; }
+		viewVCE_filters.deb_copyFrom(filterIndex, filterName);
+	},
+
+	deb_copyFrom: null, // initialized during init()
+
+	raw_copyFrom: function (fromFilterIndex, fromFilterName) {
+		fromFilterIndex = parseInt(fromFilterIndex, 10);
+
+		if (fromFilterIndex < 0) {
+			return;
+		}
+		var filterSelectEle = document.getElementById("filterSelect");
+		var toFilterIndex = filterSelectEle.options[filterSelectEle.selectedIndex].value;
+		toFilterIndex = parseInt(toFilterIndex, 10);
+
+		console.dir(vce)
+		let message = {
+			"name": "setFilterArray",
+			"payload": {
+				"UiFilterIndex": toFilterIndex,
+				"Values": vce.Extra.uncompressedFilters[fromFilterIndex]
+			}
+		};
+		index.spinnerOn();
+		astilectron.sendMessage(message, function (message) {
+			index.spinnerOff();
+			console.log("setFilterArray returned: " + JSON.stringify(message));
+			// Check error
+			if (message.name === "error") {
+				// failed - dont change the value
+				index.errorNotification(message.payload);
+				return false;
+			} else {
+				for (i = 0; i < 32; i++) {
+					vce.Extra.uncompressedFilters[toFilterIndex][i] = vce.Extra.uncompressedFilters[fromFilterIndex][i]
+				}
+				viewVCE_filters.filtersChartUpdate(filterSelectEle.options[filterSelectEle.selectedIndex].value,
+					filterSelectEle.options[filterSelectEle.selectedIndex].innerHTML, true);
+			}
+		});
+		return true;
+
 	},
 
 	filtersChartUpdate: function (filterIndex, filterName, animate) {
 		filterIndex = parseInt(filterIndex, 10);
 		var datasets = [];
 
+		console.log("Filter update: index:" + filterIndex + " name:" + filterName);
+
+		var filterCopySelectEle = document.getElementById("filterCopySelect");
+		// remove old options:
+		while (filterCopySelectEle.firstChild) {
+			filterCopySelectEle.removeChild(filterCopySelectEle.firstChild);
+		}
+		// hide the copy selector for All or cases where there are no filters, or when we're not in voicing mode
+		$('#filterCopySelectDiv').hide();
+
 		if (filterIndex >= 0) {
+			if (viewVCE_voice.voicingMode) {
+				$('#filterCopySelectDiv').show();
+				// populate options in the select with only "other" filters (i.e. "this" filter should be not shown or at least unselectable)
+
+				// first element is empty to avoid confusing the user if they havent selected something:
+				var option = document.createElement("option");
+				option.value = -1;
+				option.innerHTML = "";
+				filterCopySelectEle.appendChild(option);
+
+				for (i = 0; i < viewVCE_filters.filterNames.length; i++) {
+					if (viewVCE_filters.filterValues[i] >= 0 && viewVCE_filters.filterValues[i] != filterIndex) {
+						var option = document.createElement("option");
+						option.value = viewVCE_filters.filterValues[i];
+						option.innerHTML = viewVCE_filters.filterNames[i];
+						filterCopySelectEle.appendChild(option);
+					}
+				}
+			}
+
 			$('#filterTable').show();
 			$('#filterTable td.val input').each(function (i, obj) {
 				var id = obj.id;
@@ -256,7 +339,7 @@ let viewVCE_filters = {
 
 		}
 
-//		console.dir(datasets);
+		//		console.dir(datasets);
 
 		var ctx = document.getElementById('filtersChart').getContext('2d');
 		if (viewVCE_filters.chart != null) {
