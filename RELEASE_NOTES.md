@@ -1,3 +1,9 @@
+# 2.0.0-beta3
+
+* Beta test release.
+* Adds new serial port diagnostic command line option -LINKTST to send
+  and recieve bytes to the Synergy's `RESTORE Program #4` serial link test.
+
 # 2.0.0-beta2
 
 * Beta test release.

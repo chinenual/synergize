@@ -22,6 +22,7 @@ require (
 	github.com/snksoft/crc v1.1.0
 	gitlab.com/gomidi/midi v1.17.0 // indirect
 	gitlab.com/gomidi/rtmididrv v0.10.1 // indirect
+	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550
 	golang.org/x/sys v0.0.0-20200602225109-6fdc65e7d980 // indirect
 	golang.org/x/tools v0.0.0-20200616154421-b1f3cdd652a8 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0

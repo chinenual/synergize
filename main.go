@@ -34,6 +34,7 @@ var (
 	serialVerboseFlag = flag.Bool("SERIALVERBOSE", false, "Show each byte operation through the serial port")
 	comtst            = flag.Bool("COMTST", false, "run command line diagnostics rather than the GUI")
 	looptst           = flag.Bool("LOOPTST", false, "run command line diagnostics rather than the GUI")
+	linktst           = flag.Bool("LINKTST", false, "run command line diagnostics rather than the GUI")
 	savevce           = flag.String("SAVEVCE", "", "save the Synergy VRAM state to the named VCE file ")
 	loadvce           = flag.String("LOADVCE", "", "load the named VCE file into Synergy")
 	loadcrt           = flag.String("LOADCRT", "", "load the named CRT file into Synergy")
@@ -121,7 +122,7 @@ func connectToSynergy() (err error) {
 			prefsUserPreferences.SerialPort,
 			prefsUserPreferences.SerialBaud)
 		l.Printf(err.Error())
-		CheckForNewVersion(true,false)
+		CheckForNewVersion(true, false)
 		return
 	}
 	var bytes [2]byte
@@ -129,12 +130,12 @@ func connectToSynergy() (err error) {
 	if err != nil {
 		err = errors.Wrap(err, "Cannot get firmware version")
 		l.Printf(err.Error())
-		CheckForNewVersion(true,false)
+		CheckForNewVersion(true, false)
 		return
 	}
 	FirmwareVersion = fmt.Sprintf("%d.%d", bytes[0], bytes[1])
 
-	CheckForNewVersion(true,true)
+	CheckForNewVersion(true, true)
 	l.Printf("Connected to Synergy, firmware version: %s\n", FirmwareVersion)
 	return
 }
@@ -178,6 +179,9 @@ func main() {
 			os.Exit(0)
 		} else if *looptst {
 			diagLOOPTST()
+			os.Exit(0)
+		} else if *linktst {
+			diagLINKTST()
 			os.Exit(0)
 		} else if *savevce != "" {
 			if err = diagSaveVCE(*savevce); err != nil {
