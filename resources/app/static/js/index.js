@@ -191,25 +191,6 @@ let index = {
 			});
 		});
 	},
-	loadCRT: function (name, path) {
-		if (confirm("Load Voice Cartridge file " + path)) {
-			let message = {
-				"name": "loadCRT",
-				"payload": path
-			};
-			index.spinnerOn();
-			astilectron.sendMessage(message, function (message) {
-				index.spinnerOff();
-				// Check error
-				if (message.name === "error") {
-					index.errorNotification(message.payload);
-				} else {
-					index.infoNotification("Successfully loaded " + name + " to Synergy")
-				}
-				index.refreshConnectionStatus();
-			});
-		}
-	},
 	viewCRT: function (name, path) {
 		if (viewVCE_voice.voicingMode) {
 			index.errorNotification("Can't load a CRT file while in Voicing mode");
