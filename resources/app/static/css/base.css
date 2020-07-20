@@ -366,3 +366,8 @@ span.spinNOSPIN-Enabled {
     width: 3.5em;
     display: inline-block;
 }
+
+.crtSlotAddButton,
+.crtSlotClearButton {
+    cursor: pointer;
+}

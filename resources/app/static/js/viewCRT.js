@@ -14,15 +14,55 @@ let viewCRT = {
 		if (viewCRT.editMode) {
 			index.confirmDialog("Disabling edit mode will discard any pending edits. Are you sure?", function () {
 				viewCRT.editMode = false;
-				document.getElementById("editCRTButtonImg").src = `static/images/red-button-off-full.png`;
-				$("#saveCRTButton").hide();
+				viewCRT.reinit();
 			});
 		} else {
 			viewCRT.editMode = true;
-			document.getElementById("editCRTButtonImg").src = `static/images/red-button-on-full.png`;
-			$("#saveCRTButton").show();
+			viewCRT.reinit();
 		}
 	},
+
+	add: function (slot) {
+		path = dialog.showOpenDialogSync({
+			filters: [
+				{ name: 'Voice', extensions: ['vce'] },
+				{ name: 'All Files', extensions: ['*'] }],
+			properties: ['openFile']
+		});
+		console.log("in fileDialog: " + path);
+		if (path != undefined) {
+			let message = {
+				"name": "crtAddVoice",
+				"payload": {
+					"VcePath": path[0],
+					"Slot": slot,
+					"Crt": crt
+				}
+			};
+			console.dir(message.payload);
+			astilectron.sendMessage(message, function (message) {
+				// Check error
+				if (message.name === "error") {
+					index.errorNotification(message.payload);
+					return
+				}
+				console.dir(message.payload);
+				crt = message.payload;
+				viewCRT.reinit();
+				index.refreshConnectionStatus();
+			});
+		}
+	},
+
+	clear: function (slot) {
+		var ele = document.getElementById("crt_voicename_" + slot);
+		ele.innerHTML = "";
+		ele.onclick = function () {
+			// nop
+		};
+		crt.Voices[slot - 1] = null;
+	},
+
 	saveCRT: function (name, path) {
 	},
 	loadCRT: function (name, path) {
@@ -45,11 +85,14 @@ let viewCRT = {
 		}
 		);
 	},
-	init: function () {
-		viewCRT.editMode = false;
-		document.getElementById("editCRTButtonImg").src = `static/images/red-button-off-full.png`;
-		$("#saveCRTButton").hide();
+	viewLoadedCRT: function () {
+		index.load("viewCRT.html", "content",
+			function () {
+				viewCRT.reinit();
+			});
+	},
 
+	reinit: function () {
 		console.log("view CRT " + crt_name)
 		document.getElementById("crt_path").innerHTML = crt_name;
 		// clear everything
@@ -63,8 +106,28 @@ let viewCRT = {
 		// set active voices
 		for (i = 0; i < crt.Voices.length; i++) {
 			var ele = document.getElementById("crt_voicename_" + (i + 1));
-			ele.innerHTML = crt.Voices[i].Head.VNAME;
-			ele.onclick = viewCRT.makeSlotOnclick(i);
+			if (crt.Voices[i] != null) {
+				ele.innerHTML = crt.Voices[i].Head.VNAME;
+				ele.onclick = viewCRT.makeSlotOnclick(i);
+			}
 		}
+
+		if (viewCRT.editMode) {
+			document.getElementById("editCRTButtonImg").src = `static/images/red-button-on-full.png`;
+			$("#saveCRTButton").show();
+			$(".crtSlotAddButton").show();
+			$(".crtSlotClearButton").show();
+		} else {
+			document.getElementById("editCRTButtonImg").src = `static/images/red-button-off-full.png`;
+			$("#saveCRTButton").hide();
+			$(".crtSlotAddButton").hide();
+			$(".crtSlotClearButton").hide();
+		}
+
+	},
+
+	init: function () {
+		viewCRT.editMode = false;
+		viewCRT.reinit();
 	}
 };

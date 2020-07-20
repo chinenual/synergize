@@ -134,7 +134,7 @@ func TestRoundTrip(t *testing.T) {
 		t.Errorf("error parsing dumpedVRAM %v", err)
 		return
 	}
-	dumpedVce = dumpedCrt.Voices[0]
+	dumpedVce = *dumpedCrt.Voices[0]
 	log.Printf("dumped CRT: %s\n", data.CrtToJson(dumpedCrt))
 	log.Printf("dumped VCE: %s\n", data.VceToJson(dumpedVce))
 

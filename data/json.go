@@ -3,10 +3,9 @@ package data
 // JSON workarounds for []byte encoding - default go marshaller encodes as Base64
 
 import (
-	"strings"
 	"fmt"
+	"strings"
 )
-
 
 type ArrayOfByte []byte
 
@@ -22,14 +21,29 @@ func (u ArrayOfByte) MarshalJSON() ([]byte, error) {
 	return []byte(result), nil
 }
 
-func (u SpaceEncodedString) MarshalJSON() ([]byte, error) {
+func (u *SpaceEncodedString) MarshalJSON() ([]byte, error) {
 	var result string
 	result = "\"" + string(u[:]) + "\""
+	//	fmt.Printf("MARSHAL '%s' -> '%s'\n", u, result)
 	return []byte(result), nil
 }
 
+func (u *SpaceEncodedString) UnmarshalJSON(s []byte) error {
+	// Discard the leading and trailing '""
+	s = s[1:(len(s) - 2)]
+	for i, _ := range u {
+		if i < len(s) {
+			u[i] = s[i]
+		} else {
+			u[i] = ' '
+		}
+	}
+	//	fmt.Printf("UNMARSHAL '%s' -> '%s'\n", s, u)
+	return nil
+}
+
 func StringToSpaceEncodedString(s string) (u SpaceEncodedString) {
-	for i,_ := range u {
+	for i, _ := range u {
 		if i < len(s) {
 			u[i] = s[i]
 		} else {

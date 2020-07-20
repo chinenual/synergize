@@ -206,7 +206,7 @@ func diagSaveVCE(path string) (err error) {
 		log.Printf("error parsing dumpedVRAM %v", err)
 		return
 	}
-	dumpedVce = dumpedCrt.Voices[0]
+	dumpedVce = *dumpedCrt.Voices[0]
 	log.Printf("VCE %s -- %d bytes: %s\n", path, len(dumpedBytes), data.VceToJson(dumpedVce))
 
 	err = data.WriteVceFile(path, dumpedVce)

@@ -30,7 +30,7 @@ type CRTHead struct {
 
 type CRT struct {
 	Head   CRTHead
-	Voices []VCE
+	Voices []*VCE
 }
 
 func ReadCrtFile(filename string) (crt CRT, err error) {
@@ -104,7 +104,7 @@ func ReadCrt(buf io.ReadSeeker) (crt CRT, err error) {
 				}
 			}
 
-			crt.Voices = append(crt.Voices, vce)
+			crt.Voices = append(crt.Voices, &vce)
 		}
 	}
 

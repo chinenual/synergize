@@ -216,12 +216,6 @@ let index = {
 			index.refreshConnectionStatus();
 		});
 	},
-	viewLoadedCRT: function () {
-		index.load("viewCRT.html", "content",
-			function () {
-				viewCRT.init();
-			});
-	},
 	viewVCE: function (name, path) {
 		console.log("index.viewVCE " + name + " " + path)
 		if (viewVCE_voice.voicingMode) {

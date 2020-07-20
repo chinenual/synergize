@@ -543,6 +543,29 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = crt
 		}
 
+	case "crtAddVoice":
+		var args struct {
+			Crt     data.CRT
+			VcePath string
+			Slot    int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		var vce data.VCE
+		if vce, err = data.ReadVceFile(args.VcePath); err != nil {
+			payload = err.Error()
+			return
+		} else {
+			log.Printf("Add vce %s to CRT at slot %d\n", args.VcePath, args.Slot);
+			args.Crt.Voices[args.Slot-1] = &vce
+			payload = args.Crt
+		}
+
 	case "loadVceVoicingMode":
 		var vce data.VCE
 		var path string
