@@ -17,12 +17,12 @@ module.exports = {
     nFilter: '0',
     patchType: { value: '0' },
 
-    "patchFOInputDSR[1]": '',
+    "patchFOInputDSR[1]": { value: '' },
     "patchFOInputDSR[2]": { exist: false },
 
-    "patchAdderInDSR[1]": '1',
+    "patchAdderInDSR[1]": { value: '1' },
 
-    "patchOutputDSR[1]": '1',
+    "patchOutputDSR[1]": {value: '1'},
 
     "OHARM[1]": { value: '1' },
     "OHARM[2]": { exist: false },

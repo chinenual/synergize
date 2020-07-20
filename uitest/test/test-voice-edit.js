@@ -76,21 +76,21 @@ describe('Test voice page edits', () => {
 
     it('patch routing matches patchtype 0', async () => {
         await app.client
-            .getText(cssQuoteId('#patchFOInputDSR[1]')).should.eventually.equal('')
-            .getText(cssQuoteId('#patchAdderInDSR[1]')).should.eventually.equal('1')
-            .getText(cssQuoteId('#patchOutputDSR[1]')).should.eventually.equal('1')
+            .getValue(cssQuoteId('#patchFOInputDSR[1]')).should.eventually.equal('')
+            .getValue(cssQuoteId('#patchAdderInDSR[1]')).should.eventually.equal('1')
+            .getValue(cssQuoteId('#patchOutputDSR[1]')).should.eventually.equal('1')
 
-            .getText(cssQuoteId('#patchFOInputDSR[2]')).should.eventually.equal('')
-            .getText(cssQuoteId('#patchAdderInDSR[2]')).should.eventually.equal('1')
-            .getText(cssQuoteId('#patchOutputDSR[2]')).should.eventually.equal('1')
+            .getValue(cssQuoteId('#patchFOInputDSR[2]')).should.eventually.equal('')
+            .getValue(cssQuoteId('#patchAdderInDSR[2]')).should.eventually.equal('1')
+            .getValue(cssQuoteId('#patchOutputDSR[2]')).should.eventually.equal('1')
 
-            .getText(cssQuoteId('#patchFOInputDSR[2]')).should.eventually.equal('')
-            .getText(cssQuoteId('#patchAdderInDSR[2]')).should.eventually.equal('1')
-            .getText(cssQuoteId('#patchOutputDSR[2]')).should.eventually.equal('1')
+            .getValue(cssQuoteId('#patchFOInputDSR[2]')).should.eventually.equal('')
+            .getValue(cssQuoteId('#patchAdderInDSR[2]')).should.eventually.equal('1')
+            .getValue(cssQuoteId('#patchOutputDSR[2]')).should.eventually.equal('1')
 
-            .getText(cssQuoteId('#patchFOInputDSR[2]')).should.eventually.equal('')
-            .getText(cssQuoteId('#patchAdderInDSR[2]')).should.eventually.equal('1')
-            .getText(cssQuoteId('#patchOutputDSR[2]')).should.eventually.equal('1')
+            .getValue(cssQuoteId('#patchFOInputDSR[2]')).should.eventually.equal('')
+            .getValue(cssQuoteId('#patchAdderInDSR[2]')).should.eventually.equal('1')
+            .getValue(cssQuoteId('#patchOutputDSR[2]')).should.eventually.equal('1')
     });
 
     /// change patch type to 1 - routing should change
@@ -105,21 +105,21 @@ describe('Test voice page edits', () => {
     it('patch routing matches patchtype 1', async () => {
         await app.client
             .pause(1000) // hack to allow page to update - nothing to reliably wait for
-            .getText(cssQuoteId('#patchFOInputDSR[1]')).should.eventually.equal('')
-            .getText(cssQuoteId('#patchAdderInDSR[1]')).should.eventually.equal('')
-            .getText(cssQuoteId('#patchOutputDSR[1]')).should.eventually.equal('2')
+            .getValue(cssQuoteId('#patchFOInputDSR[1]')).should.eventually.equal('')
+            .getValue(cssQuoteId('#patchAdderInDSR[1]')).should.eventually.equal('')
+            .getValue(cssQuoteId('#patchOutputDSR[1]')).should.eventually.equal('2')
 
-            .getText(cssQuoteId('#patchFOInputDSR[2]')).should.eventually.equal('2')
-            .getText(cssQuoteId('#patchAdderInDSR[2]')).should.eventually.equal('1')
-            .getText(cssQuoteId('#patchOutputDSR[2]')).should.eventually.equal('1')
+            .getValue(cssQuoteId('#patchFOInputDSR[2]')).should.eventually.equal('2')
+            .getValue(cssQuoteId('#patchAdderInDSR[2]')).should.eventually.equal('1')
+            .getValue(cssQuoteId('#patchOutputDSR[2]')).should.eventually.equal('1')
 
-            .getText(cssQuoteId('#patchFOInputDSR[3]')).should.eventually.equal('')
-            .getText(cssQuoteId('#patchAdderInDSR[3]')).should.eventually.equal('')
-            .getText(cssQuoteId('#patchOutputDSR[3]')).should.eventually.equal('2')
+            .getValue(cssQuoteId('#patchFOInputDSR[3]')).should.eventually.equal('')
+            .getValue(cssQuoteId('#patchAdderInDSR[3]')).should.eventually.equal('')
+            .getValue(cssQuoteId('#patchOutputDSR[3]')).should.eventually.equal('2')
 
-            .getText(cssQuoteId('#patchFOInputDSR[4]')).should.eventually.equal('2')
-            .getText(cssQuoteId('#patchAdderInDSR[4]')).should.eventually.equal('1')
-            .getText(cssQuoteId('#patchOutputDSR[4]')).should.eventually.equal('1')
+            .getValue(cssQuoteId('#patchFOInputDSR[4]')).should.eventually.equal('2')
+            .getValue(cssQuoteId('#patchAdderInDSR[4]')).should.eventually.equal('1')
+            .getValue(cssQuoteId('#patchOutputDSR[4]')).should.eventually.equal('1')
     });
 
     // click MUTE and SOLO - should see class change (.on)
