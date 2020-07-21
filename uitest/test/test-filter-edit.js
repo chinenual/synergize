@@ -31,7 +31,7 @@ describe('Test filter page edits', () => {
 
 
     // test that all the spinner text conversions work at the right ranges
-    it('filter values', async () => {
+    describe('filter values', () => {
         it('type to flt[1] to and past -64', async () => {
             await app.client
                 .pause(TYPING_PAUSE)
