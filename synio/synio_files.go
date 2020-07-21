@@ -1,9 +1,12 @@
 package synio
 
 import (
-	"github.com/chinenual/synergize/data"
-	"github.com/pkg/errors"
+	"io/ioutil"
 	"log"
+
+	"github.com/chinenual/synergize/data"
+	"github.com/orcaman/writerseeker"
+	"github.com/pkg/errors"
 )
 
 func LoadVCE(slotnum byte, vce []byte) (err error) {
@@ -46,7 +49,19 @@ func LoadVCE(slotnum byte, vce []byte) (err error) {
 	return
 }
 
-func LoadCRT(crt []byte) (err error) {
+func LoadCRT(crt data.CRT) (err error) {
+	var writebuf = writerseeker.WriterSeeker{}
+	if err = data.WriteCrt(&writebuf, crt.Voices); err != nil {
+		return
+	}
+	crt_bytes, _ := ioutil.ReadAll(writebuf.Reader())
+	if err = LoadCRTBytes(crt_bytes); err != nil {
+		return
+	}
+	return
+}
+
+func LoadCRTBytes(crt []byte) (err error) {
 	if err = InitVRAM(); err != nil {
 		return
 	}
@@ -59,7 +74,7 @@ func LoadCRT(crt []byte) (err error) {
 
 	var length = uint16(len(crt))
 	if synioVerbose {
-		log.Printf("synio: LoadCRT: length: %d (dec) %x (hex)\n", length, length)
+		log.Printf("synio: LoadCRTBytes: length: %d (dec) %x (hex)\n", length, length)
 	}
 
 	lenHob, lenLob := data.WordToBytes(length)

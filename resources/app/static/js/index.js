@@ -397,7 +397,7 @@ let index = {
 	updateConnectionStatus: function (status) {
 		console.log("update status: " + status);
 		document.getElementById("firmwareVersion").innerHTML = status;
-		if (status.includes("Not")) {
+		if (status === "" || status.includes("Not")) {
 			document.getElementById("connectButtonImg").src = `static/images/grey-button-off-full.png`;
 		} else {
 			document.getElementById("connectButtonImg").src = `static/images/grey-button-on-full.png`;

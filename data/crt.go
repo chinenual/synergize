@@ -152,7 +152,9 @@ func addVce(buf io.WriteSeeker, slot /*one-based*/ int, cursor *crtCursor, vce V
 	if verboseWriting {
 		log.Printf(" write voice #%d: %d a-filters at 0x%04x\n", slot, VceAFilterCount(vce), cursor.AfilterOffset)
 	}
-	VceWriteAFilters(buf, vce)
+	if err = VceWriteAFilters(buf, vce); err != nil {
+		return
+	}
 	// update cursor and index for next voice
 	if cursor.AfilterOffset, err = buf.Seek(0, io.SeekCurrent); err != nil {
 		return
@@ -177,7 +179,9 @@ func addVce(buf io.WriteSeeker, slot /*one-based*/ int, cursor *crtCursor, vce V
 	if verboseWriting {
 		log.Printf(" write voice #%d: %d b-filters at 0x%04x\n", slot, VceBFilterCount(vce), cursor.BfilterOffset)
 	}
-	VceWriteBFilters(buf, vce)
+	if err = VceWriteBFilters(buf, vce); err != nil {
+		return
+	}
 	var oldOffset = cursor.BfilterOffset
 	// update cursor and index for next voice
 	if cursor.BfilterOffset, err = buf.Seek(0, io.SeekCurrent); err != nil {
@@ -195,7 +199,9 @@ func addVce(buf io.WriteSeeker, slot /*one-based*/ int, cursor *crtCursor, vce V
 	if _, err = buf.Seek(cursor.VoiceOffset, io.SeekStart); err != nil {
 		return
 	}
-	WriteVce(buf, vce, VceName(vce.Head), true)
+	if err = WriteVce(buf, vce, VceName(vce.Head), true); err != nil {
+		return
+	}
 	// update cursor for next voice
 	if cursor.VoiceOffset, err = buf.Seek(0, io.SeekCurrent); err != nil {
 		return
@@ -203,20 +209,27 @@ func addVce(buf io.WriteSeeker, slot /*one-based*/ int, cursor *crtCursor, vce V
 	return
 }
 
-func WriteCrtFile(filename string, vcePaths []string) (err error) {
-	var file *os.File
-	if file, err = os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0755); err != nil {
-		return
-	}
-	defer file.Close()
-	var vces []VCE
+func WriteCrtFileFromVCEPaths(filename string, vcePaths []string) (err error) {
+	var vces []*VCE
 	for _, path := range vcePaths {
 		var vce VCE
 		if vce, err = ReadVceFile(path); err != nil {
 			return
 		}
-		vces = append(vces, vce)
+		vces = append(vces, &vce)
 	}
+	if err = WriteCrtFileFromVCEArray(filename, vces); err != nil {
+		return
+	}
+	return
+}
+
+func WriteCrtFileFromVCEArray(filename string, vces []*VCE) (err error) {
+	var file *os.File
+	if file, err = os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0755); err != nil {
+		return
+	}
+	defer file.Close()
 	if err = WriteCrt(file, vces); err != nil {
 		return
 	}
@@ -231,7 +244,7 @@ type crtCursor struct {
 	VoiceOffset   int64
 }
 
-func WriteCrt(buf io.WriteSeeker, vces []VCE) (err error) {
+func WriteCrt(buf io.WriteSeeker, vces []*VCE) (err error) {
 	if len(vces) < 1 || len(vces) > 24 {
 		err = errors.Errorf("Must have at least 1 and no more than 24 voices")
 		return
@@ -248,8 +261,10 @@ func WriteCrt(buf io.WriteSeeker, vces []VCE) (err error) {
 	var bFilterCount = 0
 
 	for _, vce := range vces {
-		aFilterCount = aFilterCount + VceAFilterCount(vce)
-		bFilterCount = bFilterCount + VceBFilterCount(vce)
+		if vce != nil {
+			aFilterCount = aFilterCount + VceAFilterCount(*vce)
+			bFilterCount = bFilterCount + VceBFilterCount(*vce)
+		}
 	}
 	if verboseWriting {
 		log.Printf("a filter count: %d, b filter count: %d\n", aFilterCount, bFilterCount)
@@ -265,8 +280,10 @@ func WriteCrt(buf io.WriteSeeker, vces []VCE) (err error) {
 		log.Printf(" cursors before first voice: a, b voice: 0x%04x 0x%04x 0x%04x\n", cursor.AfilterOffset, cursor.BfilterOffset, cursor.VoiceOffset)
 	}
 	for i, vce := range vces {
-		if err = addVce(buf, i+1, &cursor, vce); err != nil {
-			return
+		if vce != nil {
+			if err = addVce(buf, i+1, &cursor, *vce); err != nil {
+				return
+			}
 		}
 	}
 	if verboseWriting {

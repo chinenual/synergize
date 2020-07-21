@@ -62,7 +62,7 @@ func TestCreateCrt(t *testing.T) {
 	for _, name := range list {
 		vcePaths = append(vcePaths, "testfiles/"+name+".VCE")
 	}
-	WriteCrtFile("testfiles/gen/INTERNAL.CRT", vcePaths)
+	WriteCrtFileFromVCEPaths("testfiles/gen/INTERNAL.CRT", vcePaths)
 	testParseCRT(t, "testfiles/gen/INTERNAL.CRT")
 }
 

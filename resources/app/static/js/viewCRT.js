@@ -32,7 +32,7 @@ let viewCRT = {
 		console.log("in fileDialog: " + path);
 		if (path != undefined) {
 			let message = {
-				"name": "crtAddVoice",
+				"name": "crtEditAddVoice",
 				"payload": {
 					"VcePath": path[0],
 					"Slot": slot,
@@ -63,14 +63,17 @@ let viewCRT = {
 		crt.Voices[slot - 1] = null;
 	},
 
-	saveCRT: function (name, path) {
-	},
-	loadCRT: function (name, path) {
-		index.confirmDialog("Load Voice Cartridge file " + path, function () {
+	loadCRT: function () {
+
+		if (path != undefined) {
+
 			let message = {
-				"name": "loadCRT",
-				"payload": path
+				"name": "crtEditLoadCRT",
+				"payload": {
+					Crt: crt
+				}
 			};
+			// Send message
 			index.spinnerOn();
 			astilectron.sendMessage(message, function (message) {
 				index.spinnerOff();
@@ -78,13 +81,46 @@ let viewCRT = {
 				if (message.name === "error") {
 					index.errorNotification(message.payload);
 				} else {
-					index.infoNotification("Successfully loaded " + name + " to Synergy")
+					index.infoNotification("Successfully loaded CRT to Synergy");
 				}
 				index.refreshConnectionStatus();
 			});
 		}
-		);
 	},
+
+	saveCRT: function (name, path) {
+		path = dialog.showSaveDialogSync({
+			filters: [
+				{ name: 'Cartridge', extensions: ['CRT'] },
+				{ name: 'All Files', extensions: ['*'] }],
+			properties: ['openFile', 'promptToCreate']
+		});
+		console.log("in fileDialog: " + path);
+
+		if (path != undefined) {
+
+			let message = {
+				"name": "crtEditSaveCRT",
+				"payload": {
+					Path: path,
+					Crt: crt
+				}
+			};
+			// Send message
+			index.spinnerOn();
+			astilectron.sendMessage(message, function (message) {
+				index.spinnerOff();
+				// Check error
+				if (message.name === "error") {
+					index.errorNotification(message.payload);
+				} else {
+					index.infoNotification("Successfully saved CRT to " + path);
+				}
+				index.refreshConnectionStatus();
+			});
+		}
+	},
+
 	viewLoadedCRT: function () {
 		index.load("viewCRT.html", "content",
 			function () {

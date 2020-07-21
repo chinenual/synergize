@@ -543,7 +543,46 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = crt
 		}
 
-	case "crtAddVoice":
+	case "crtEditSaveCRT":
+		var args struct {
+			Path string
+			Crt  data.CRT
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = data.WriteCrtFileFromVCEArray(args.Path, args.Crt.Voices); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
+	case "crtEditLoadCRT":
+		var args struct {
+			Crt data.CRT
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = connectToSynergyIfNotConnected(); err != nil {
+			payload = err.Error()
+			return
+		}
+		if err = synio.LoadCRT(args.Crt); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
+	case "crtEditAddVoice":
 		var args struct {
 			Crt     data.CRT
 			VcePath string
@@ -561,7 +600,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = err.Error()
 			return
 		} else {
-			log.Printf("Add vce %s to CRT at slot %d\n", args.VcePath, args.Slot);
+			log.Printf("Add vce %s to CRT at slot %d\n", args.VcePath, args.Slot)
 			args.Crt.Voices[args.Slot-1] = &vce
 			payload = args.Crt
 		}
@@ -585,7 +624,8 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = err.Error()
 			return
 		} else {
-			payload = vce
+			// NOTE: need to pass reference in order to get the custom JSON marshalling to notice the VNAME
+			payload = &vce
 		}
 
 	case "readVCE":
@@ -602,7 +642,8 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = err.Error()
 			return
 		} else {
-			payload = vce
+			// NOTE: need to pass reference in order to get the custom JSON marshalling to notice the VNAME
+			payload = &vce
 		}
 
 	case "getFirmwareVersion":

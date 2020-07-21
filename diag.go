@@ -169,7 +169,7 @@ func diagLoadCRT(path string) (err error) {
 
 	log.Printf("CRT %s -- %d bytes \n", path, len(crt_bytes))
 
-	err = synio.LoadCRT(crt_bytes)
+	err = synio.LoadCRTBytes(crt_bytes)
 	return
 }
 

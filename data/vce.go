@@ -478,7 +478,7 @@ func updateOscPtr(buf io.WriteSeeker, headOffset int64, osc byte, val uint16) (e
 	}
 
 	// restore the position
-	if curr, err = buf.Seek(curr, io.SeekStart); err != nil {
+	if _, err = buf.Seek(curr, io.SeekStart); err != nil {
 		return
 	}
 	return
@@ -582,6 +582,17 @@ func VceWriteOscillator(buf io.WriteSeeker, e Envelope, osc /*1-based*/ byte, pr
 	return
 }
 
+func stringToSpaceEncodedString(s string) (u SpaceEncodedString) {
+	for i, _ := range u {
+		if i < len(s) {
+			u[i] = s[i]
+		} else {
+			u[i] = ' '
+		}
+	}
+	return u
+}
+
 // sets the VNAME, rewrites the OSCPTR array and compresses the FENVL values
 func writeVce(buf io.WriteSeeker, vce VCE, name string, skipFilters bool, preserveOffsets bool) (err error) {
 	var headOffset int64
@@ -591,7 +602,7 @@ func writeVce(buf io.WriteSeeker, vce VCE, name string, skipFilters bool, preser
 	if verboseWriting {
 		log.Printf("SEEK - top of voice at 0x%04x", headOffset)
 	}
-	vce.Head.VNAME = StringToSpaceEncodedString(name)
+	vce.Head.VNAME = stringToSpaceEncodedString(name)
 	if !preserveOffsets {
 		for i, _ := range vce.Head.OSCPTR {
 			vce.Head.OSCPTR[i] = 0

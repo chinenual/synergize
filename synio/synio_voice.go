@@ -77,7 +77,7 @@ func EnableVoicingMode() (vce data.VCE, err error) {
 		return
 	}
 	data.ClearLocalEDATA()
-	if err = LoadCRT(data.VRAM_EDATA[:]); err != nil {
+	if err = LoadCRTBytes(data.VRAM_EDATA[:]); err != nil {
 		return
 	}
 	rdr := bytes.NewReader(data.VRAM_EDATA[data.Off_VRAM_EDATA:])
@@ -254,7 +254,7 @@ func LoadVceVoicingMode(vce data.VCE) (err error) {
 	if err = data.LoadVceIntoEDATA(vce); err != nil {
 		return
 	}
-	if err = LoadCRT(data.VRAM_EDATA[:]); err != nil {
+	if err = LoadCRTBytes(data.VRAM_EDATA[:]); err != nil {
 		return
 	}
 	return

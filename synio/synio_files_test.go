@@ -43,7 +43,7 @@ func TestLoadCRT(t *testing.T) {
 		t.Fatalf("Can't load test data %v", err)
 	}
 
-	if err = LoadCRT(bytes); err != nil {
-		t.Fatalf("LoadCRT failed %v", err)
+	if err = LoadCRTBytes(bytes); err != nil {
+		t.Fatalf("LoadCRTBytes failed %v", err)
 	}
 }
