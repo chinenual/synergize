@@ -61,8 +61,8 @@ describe('Test envs page edits', () => {
             .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
 
         await app.client
-        .pause(TYPING_PAUSE)
-        .click('#delFreqPoint')
+            .pause(TYPING_PAUSE)
+            .click('#delFreqPoint')
             .waitForVisible(cssQuoteId('#envFreqLoop[5]'), 1000, true) // wait to disappear
             .isVisible(cssQuoteId('#envFreqLoop[5]')).should.eventually.equal(false)
             .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
@@ -70,8 +70,8 @@ describe('Test envs page edits', () => {
 
     it('SUSTAIN at 1', async () => {
         await app.client
-        .pause(TYPING_PAUSE)
-        .selectByValue(cssQuoteId('#envFreqLoop[1]'), 'S')
+            .pause(TYPING_PAUSE)
+            .selectByValue(cssQuoteId('#envFreqLoop[1]'), 'S')
             .getValue(cssQuoteId('#envFreqLoop[1]')).should.eventually.equal('S')
             .waitForValue(cssQuoteId('#envFreqLoop[1]'), 'S')
             .isVisible(cssQuoteId('#accelFreqLow')).should.eventually.equal(false)
@@ -81,10 +81,10 @@ describe('Test envs page edits', () => {
 
     it('LOOP and REPEAT at 2 should fail', async () => {
         await app.client
-        .pause(TYPING_PAUSE)
-        .selectByValue(cssQuoteId('#envFreqLoop[2]'), 'L')
+            .pause(TYPING_PAUSE)
+            .selectByValue(cssQuoteId('#envFreqLoop[2]'), 'L')
 
-        .waitForVisible('#alertText')
+            .waitForVisible('#alertText')
             .then(() => { return hooks.screenshotAndCompare(app, 'envs-LoopAfterSustain-alert') })
 
             .getText('#alertText').should.eventually.include('SUSTAIN point must be after')
@@ -108,8 +108,8 @@ describe('Test envs page edits', () => {
 
     it('should be able to move SUSTAIN', async () => {
         await app.client
-        .pause(TYPING_PAUSE)
-        .getValue(cssQuoteId('#envFreqLoop[1]')).should.eventually.equal('S')
+            .pause(TYPING_PAUSE)
+            .getValue(cssQuoteId('#envFreqLoop[1]')).should.eventually.equal('S')
             .selectByValue(cssQuoteId('#envFreqLoop[4]'), 'S')
             .getValue(cssQuoteId('#envFreqLoop[1]')).should.eventually.equal('')
             .getValue(cssQuoteId('#envFreqLoop[4]')).should.eventually.equal('S')
@@ -122,8 +122,8 @@ describe('Test envs page edits', () => {
 
     it('now should be able to add a LOOP or REPEAT', async () => {
         await app.client
-        .pause(TYPING_PAUSE)
-        .selectByValue(cssQuoteId('#envFreqLoop[1]'), 'L')
+            .pause(TYPING_PAUSE)
+            .selectByValue(cssQuoteId('#envFreqLoop[1]'), 'L')
             .getValue(cssQuoteId('#envFreqLoop[1]')).should.eventually.equal('L')
             .isVisible(cssQuoteId('#accelFreqLow')).should.eventually.equal(false)
             .isVisible(cssQuoteId('#accelFreqUp')).should.eventually.equal(false)
@@ -132,8 +132,8 @@ describe('Test envs page edits', () => {
 
     it('now should be able to move the loop', async () => {
         await app.client
-        .pause(TYPING_PAUSE)
-        .getValue(cssQuoteId('#envFreqLoop[1]')).should.eventually.equal('L')
+            .pause(TYPING_PAUSE)
+            .getValue(cssQuoteId('#envFreqLoop[1]')).should.eventually.equal('L')
             .selectByValue(cssQuoteId('#envFreqLoop[2]'), 'R')
             .getValue(cssQuoteId('#envFreqLoop[1]')).should.eventually.equal('')
             .getValue(cssQuoteId('#envFreqLoop[2]')).should.eventually.equal('R')
@@ -144,8 +144,8 @@ describe('Test envs page edits', () => {
 
     it('should disallow removing row if it contains a loop point', async () => {
         await app.client
-        .pause(TYPING_PAUSE)
-        .click('#delFreqPoint')
+            .pause(TYPING_PAUSE)
+            .click('#delFreqPoint')
 
             .waitForVisible('#alertText')
             .then(() => { return hooks.screenshotAndCompare(app, 'envs-deleteLoopPoint-alert') })
@@ -159,8 +159,8 @@ describe('Test envs page edits', () => {
 
     it('cannot delete sustain point if there are loop points', async () => {
         await app.client
-        .pause(TYPING_PAUSE)
-        .selectByValue(cssQuoteId('#envFreqLoop[4]'), '')
+            .pause(TYPING_PAUSE)
+            .selectByValue(cssQuoteId('#envFreqLoop[4]'), '')
 
             .waitForVisible('#alertText')
             .then(() => { return hooks.screenshotAndCompare(app, 'envs-deleteSustainPoint-alert') })
@@ -175,10 +175,10 @@ describe('Test envs page edits', () => {
 
     it('remove loops', async () => {
         await app.client
-        .pause(TYPING_PAUSE)
-        .selectByValue(cssQuoteId('#envFreqLoop[2]'), '')
-        .pause(TYPING_PAUSE)
-        .selectByValue(cssQuoteId('#envFreqLoop[4]'), '')
+            .pause(TYPING_PAUSE)
+            .selectByValue(cssQuoteId('#envFreqLoop[2]'), '')
+            .pause(TYPING_PAUSE)
+            .selectByValue(cssQuoteId('#envFreqLoop[4]'), '')
             .getValue(cssQuoteId('#envFreqLoop[1]')).should.eventually.equal('')
             .getValue(cssQuoteId('#envFreqLoop[2]')).should.eventually.equal('')
             .getValue(cssQuoteId('#envFreqLoop[3]')).should.eventually.equal('')
@@ -192,18 +192,18 @@ describe('Test envs page edits', () => {
 
     it('now can remove a point', async () => {
         await app.client
-        .pause(TYPING_PAUSE)
-        .click('#delFreqPoint')
+            .pause(TYPING_PAUSE)
+            .click('#delFreqPoint')
             .waitForVisible(cssQuoteId('#envFreqLoop[5]'), 1000, true) // wait to disappear
             .isVisible(cssQuoteId('#envFreqLoop[4]')).should.eventually.equal(false)
             .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
     });
 
     // test that all the spinner text conversions work at the right ranges
-    it('freq values', async () => {
+    describe('freq values', () => {
         it('type to envFreqLowVal[1] to and past -61', async () => {
             await app.client
-            .pause(TYPING_PAUSE)
+                .pause(TYPING_PAUSE)
                 .clearElement(cssQuoteId('#envFreqLowVal[1]'))
                 .setValue(cssQuoteId('#envFreqLowVal[1]'), '-60')
                 .pause(TYPING_PAUSE)
@@ -219,7 +219,7 @@ describe('Test envs page edits', () => {
         });
         it('type to envFreqUpVal[1] to and past 63', async () => {
             await app.client
-            .pause(TYPING_PAUSE)
+                .pause(TYPING_PAUSE)
                 .clearElement(cssQuoteId('#envFreqUpVal[1]'))
                 .setValue(cssQuoteId('#envFreqUpVal[1]'), '1')
                 .pause(TYPING_PAUSE)
@@ -235,10 +235,10 @@ describe('Test envs page edits', () => {
 
         });
     });
-    it('freq times', async () => {
+    describe('freq times', () => {
         it('type to envFreqLowTime[2] to and past 0', async () => {
             await app.client
-            .pause(TYPING_PAUSE)
+                .pause(TYPING_PAUSE)
                 .clearElement(cssQuoteId('#envFreqLowTime[2]'))
                 .setValue(cssQuoteId('#envFreqLowTime[2]'), '1')
                 .pause(TYPING_PAUSE)
@@ -254,7 +254,7 @@ describe('Test envs page edits', () => {
         });
         it('type to envAmpUpTime[1] to and past 29535', async () => {
             await app.client
-            .pause(TYPING_PAUSE)
+                .pause(TYPING_PAUSE)
                 .clearElement(cssQuoteId('#envAmpUpTime[2]'))
                 .setValue(cssQuoteId('#envAmpUpTime[2]'), '29534')
                 .pause(TYPING_PAUSE)
@@ -271,10 +271,10 @@ describe('Test envs page edits', () => {
         });
 
     });
-    it('amp values', async () => {
+    describe('amp values', () => {
         it('type to envAmpLowVal[2] to and past 0', async () => {
             await app.client
-            .pause(TYPING_PAUSE)
+                .pause(TYPING_PAUSE)
                 .clearElement(cssQuoteId('#envAmpLowVal[2]'))
                 .setValue(cssQuoteId('#envAmpLowVal[2]'), '1')
                 .click(cssQuoteId('#envAmpUpVal[2]')) // click in a different input to force onchange
@@ -289,7 +289,7 @@ describe('Test envs page edits', () => {
         });
         it('type to envAmpUpVal[2] to and past 72', async () => {
             await app.client
-            .pause(TYPING_PAUSE)
+                .pause(TYPING_PAUSE)
                 .clearElement(cssQuoteId('#envAmpUpVal[2]'))
                 .setValue(cssQuoteId('#envAmpUpVal[2]'), '71')
                 .click(cssQuoteId('#envAmpLowVal[2]')) // click in a different input to force onchange
@@ -304,10 +304,10 @@ describe('Test envs page edits', () => {
 
         });
     });
-    it('amp times', async () => {
+    describe('amp times', () => {
         it('type to envAmpLowTime[1] to and past 0', async () => {
             await app.client
-            .pause(TYPING_PAUSE)
+                .pause(TYPING_PAUSE)
                 .clearElement(cssQuoteId('#envAmpLowTime[1]'))
                 .setValue(cssQuoteId('#envAmpLowTime[1]'), '1')
                 .click(cssQuoteId('#envAmpUpTime[1]')) // click in a different input to force onchange
@@ -322,7 +322,7 @@ describe('Test envs page edits', () => {
         });
         it('type to envAmpUpTime[1] to and past 6576', async () => {
             await app.client
-            .pause(TYPING_PAUSE)
+                .pause(TYPING_PAUSE)
                 .clearElement(cssQuoteId('#envAmpUpTime[1]'))
                 .setValue(cssQuoteId('#envAmpUpTime[1]'), '5860') // expect the conversion to round to the right value
                 .click(cssQuoteId('#envAmpLowTime[1]')) // click in a different input to force onchange
@@ -338,10 +338,10 @@ describe('Test envs page edits', () => {
         });
     });
 
-    it('accelerations', async () => {
+    describe('accelerations', () => {
         it('type to accelAmpLow to and past 0', async () => {
             await app.client
-            .pause(TYPING_PAUSE)
+                .pause(TYPING_PAUSE)
                 .clearElement(cssQuoteId('#accelAmpLow'))
                 .setValue(cssQuoteId('#accelAmpLow'), '1')
                 .click(cssQuoteId('#accelAmpUp')) // click in a different input to force onchange
@@ -356,7 +356,7 @@ describe('Test envs page edits', () => {
         });
         it('type to accelAmpUp to and past 126', async () => {
             await app.client
-            .pause(TYPING_PAUSE)
+                .pause(TYPING_PAUSE)
                 .clearElement(cssQuoteId('#accelAmpUp'))
                 .setValue(cssQuoteId('#accelAmpUp'), '126') // expect the conversion to round to the right value
                 .pause(TYPING_PAUSE)
