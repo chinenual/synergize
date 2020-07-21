@@ -61,8 +61,7 @@ func diagCOMTST() {
 	log.Printf("%s at %d baud\n",
 		prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
 
-	if err := synio.Init(prefsUserPreferences.SerialPort,
-		prefsUserPreferences.SerialBaud, true, *serialVerboseFlag); err != nil {
+	if err := synio.Init(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag, *mockSynio); err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
 	}
@@ -80,7 +79,7 @@ func diagLOOPTST() {
 	log.Printf("%s at %d baud\n",
 		prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
 
-	if err := synio.Init(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag); err != nil {
+	if err := synio.Init(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag, *mockSynio); err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
 	}
@@ -99,7 +98,7 @@ func diagLINKTST() {
 	log.Printf("%s at %d baud\n",
 		prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
 
-	if err := synio.Init(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag); err != nil {
+	if err := synio.Init(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag, *mockSynio); err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
 	}
@@ -120,7 +119,7 @@ func diagInitAndPrintFirmwareID() (err error) {
 	log.Printf("%s at %d baud\n",
 		prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
 
-	if err = synio.Init(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag); err != nil {
+	if err = synio.Init(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag, *mockSynio); err != nil {
 		log.Printf("ERROR: %s\n", err)
 		return
 	}

@@ -32,6 +32,7 @@ var (
 var (
 	uitest            = flag.Int("UITEST", 0, "alter startup to support Selenium testing (specifies listening port)")
 	serialVerboseFlag = flag.Bool("SERIALVERBOSE", false, "Show each byte operation through the serial port")
+	mockSynio         = flag.Bool("MOCKSYNIO", false, "Mock the Synergy I/O for testing")
 	comtst            = flag.Bool("COMTST", false, "run command line diagnostics rather than the GUI")
 	looptst           = flag.Bool("LOOPTST", false, "run command line diagnostics rather than the GUI")
 	linktst           = flag.Bool("LINKTST", false, "run command line diagnostics rather than the GUI")
@@ -117,7 +118,7 @@ func connectToSynergyIfNotConnected() (err error) {
 func connectToSynergy() (err error) {
 	FirmwareVersion = "Not Connected"
 	if err = synio.Init(prefsUserPreferences.SerialPort,
-		prefsUserPreferences.SerialBaud, true, *serialVerboseFlag); err != nil {
+		prefsUserPreferences.SerialBaud, true, *serialVerboseFlag, *mockSynio); err != nil {
 		err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n",
 			prefsUserPreferences.SerialPort,
 			prefsUserPreferences.SerialBaud)

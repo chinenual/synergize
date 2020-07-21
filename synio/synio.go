@@ -43,8 +43,16 @@ var vramInitialized bool = false
 var synioVerbose bool = false
 var crcHash *crc.Hash
 
-func Init(port string, baud uint, synVerbose bool, serialVerbose bool) (err error) {
+var mock bool = false
+
+func Init(port string, baud uint, synVerbose bool, serialVerbose bool, mockflag bool) (err error) {
 	synioVerbose = synVerbose
+	mock = mockflag
+	if mock {
+		log.Printf("MOCKSYNIO - initialized\n")
+		return
+	}
+	
 	if err = serialInit(port, baud, serialVerbose); err != nil {
 		return errors.Wrap(err, "Could not open serial port")
 	}
@@ -64,7 +72,11 @@ func Init(port string, baud uint, synVerbose bool, serialVerbose bool) (err erro
 }
 
 func command(opcode byte, name string) (err error) {
-
+	if mock {
+		err = errors.New("synio.command called in mock mode")
+		return
+	}
+	
 	// check for pending input --
 	//  silently read zero's
 	//  if 1, 2 or 3 - treat it as a key or pot opcode (read 3 bytes incliuding the opcode)
@@ -258,6 +270,9 @@ var synAddrs struct {
 }
 
 func getSynergyAddrs() (err error) {
+	if mock {
+		return
+	}
 	var b []byte
 	if b, err = BlockDump(0x00c5, 14, "getSynergyAddrs"); err != nil {
 		return
@@ -301,6 +316,9 @@ func getSynergyAddrs() (err error) {
 }
 
 func InitVRAM() (err error) {
+	if mock {
+		return
+	}
 	if vramInitialized {
 		return
 	}
@@ -366,6 +384,11 @@ func DumpVRAM() (bytes []byte, err error) {
 }
 
 func GetID() (versionID [2]byte, err error) {
+	if mock {
+		versionID[0] = 3;
+		versionID[1] = 22;
+		return
+	}
 	if err = command(OP_GETID, "GETID"); err != nil {
 		return
 	}
@@ -384,6 +407,9 @@ func GetID() (versionID [2]byte, err error) {
 }
 
 func DisableVRAM() (err error) {
+	if mock {
+		return
+	}
 	if err = command(OP_DISABLEVRAM, "DISABLEVRAM"); err == nil {
 		// errors will implicitly show  up in the log but we need to explicitly log success
 		if synioVerbose {

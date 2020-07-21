@@ -10,6 +10,9 @@ import (
 )
 
 func LoadVCE(slotnum byte, vce []byte) (err error) {
+	if mock {
+		return
+	}
 	if err = InitVRAM(); err != nil {
 		err = errors.Wrap(err, "Failed to initialize Synergy VRAM")
 		return
@@ -62,6 +65,9 @@ func LoadCRT(crt data.CRT) (err error) {
 }
 
 func LoadCRTBytes(crt []byte) (err error) {
+	if mock {
+		return
+	}
 	if err = InitVRAM(); err != nil {
 		return
 	}
@@ -127,6 +133,9 @@ func LoadCRTBytes(crt []byte) (err error) {
 
 // Send Synergy "state" (STLOAD in the Z80 sources)
 func LoadSYN(bytes []byte) (err error) {
+	if mock {
+		return
+	}
 	if err = command(OP_STLOAD, "STLOAD"); err != nil {
 		return
 	}
@@ -154,6 +163,10 @@ func LoadSYN(bytes []byte) (err error) {
 
 // Retrieve Synergy "state" (STDUMP in the Z80 sources)
 func SaveSYN() (bytes []byte, err error) {
+	if mock {
+		err = errors.New("not supported by mock") // FIXME: we dont have a template for a generic dump
+		return
+	}
 	if err = command(OP_STDUMP, "STDUMP"); err != nil {
 		return
 	}
