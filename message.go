@@ -63,7 +63,8 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				payload = err.Error()
 				return
 			}
-			payload = vce
+			// NOTE: need to pass reference in order to get the custom JSON marshalling to notice the VNAME
+			payload = &vce
 
 		} else {
 			if err = synio.DisableVoicingMode(); err != nil {
