@@ -11,6 +11,8 @@ const SCREEN_DIFFS_ARE_FAILURES = false;
 
 const APPNAME = 'Synergize';
 const PORT = 55555; // the port the main process will listen to
+const MOCKSYNIO = "-MOCKSYNIO";
+const SERIALVERBOSE = "-SERIALVERBOSE";
 
 global.before(() => {
   chai.should();
@@ -74,7 +76,7 @@ module.exports = {
   async startMainApp() {
     console.log(`node arch: "${process.arch}"   golang arch: "${archMap[process.arch]}"`)
     console.log(`Starting main exe: ${mainExe()}`);
-    exec(`"${mainExe()}" -UITEST ${PORT} -SERIALVERBOSE`, (error, stdout, stderr) => {
+    exec(`"${mainExe()}" -UITEST ${PORT} ${MOCKSYNIO} ${SERIALVERBOSE}`, (error, stdout, stderr) => {
       if (error) {
         console.log(`error: ${error.message}`);
         return;
