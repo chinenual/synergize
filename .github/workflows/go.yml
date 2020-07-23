@@ -40,7 +40,8 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
          name: binaries
-         path: ./output/**/*
+         path: ./output/darwin-amd64/**/*
+         path: ./output/linux-amd64/**/*
 
   uitest:
     name: UITest
@@ -53,6 +54,9 @@ jobs:
       matrix:
         os: [ubuntu-16.04]
     steps:
+
+    - name: Check out code
+      uses: actions/checkout@v2
 
     - name: Unarchive
       uses: actions/download-artifact@v2
