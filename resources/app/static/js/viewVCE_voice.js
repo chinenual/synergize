@@ -540,6 +540,21 @@ let viewVCE_voice = {
 
 			tbody.appendChild(tr);
 		}
+		// final row is the plus/minus buttons
+		{
+			let temp = document.createElement('template');
+			temp.innerHTML = `<tr class="listplusminus" id="oscPlusMinus" style="display:none;">
+							    <td colspan="9">
+			    					<div style="margin-top: 5px; float: left;">
+				    					<input id="delOsc" type='button' value='-'
+										    onclick='viewVCE_voice.setNumOscillators(vce.Head.VOITAB)' />
+									    <input id="addOsc" type='button' value='+'
+									   	    onclick='viewVCE_voice.setNumOscillators(vce.Head.VOITAB+2)' />
+								    </div>
+								</td>
+							</tr>`;
+			tbody.appendChild(temp.content.firstChild);
+		}
 	},
 
 	changePatchType: function (newIndex) {
@@ -576,6 +591,9 @@ let viewVCE_voice = {
 	raw_setNumOscillators: function (newNum) {
 		if (viewVCE.supressOnchange) { /*console.log("raw viewVCE.suppressOnChange");*/ return; }
 		console.log("setNumOscillators: " + newNum);
+		if (newNum < 1 || newNum > 16) {
+			return;
+		}
 
 		let message = {
 			"name": "setNumOscillators",
@@ -596,6 +614,17 @@ let viewVCE_voice = {
 				/// now the tricky part - update the in memory version of vce to reflect what just happened:
 				vce.Head.VOITAB = newNum - 1
 				var oldLength = vce.Envelopes.length
+
+				if (vce.Head.VOITAB <= 0) {
+					$("#delOsc").addClass('disabled');
+				} else {
+					$("#delOsc").removeClass('disabled');
+				}
+				if (vce.Head.VOITAB >= 15) {
+					$("#addOsc").addClass('disabled');
+				} else {
+					$("#addOsc").removeClass('disabled');
+				}
 				if (newNum <= oldLength) {
 					// nothing to do - just ignored the extra envelopes
 				} else {
@@ -772,10 +801,22 @@ let viewVCE_voice = {
 			$('#disableVRAMMenuItem').addClass('disabled');
 			$('#loadCRTMenuItem').addClass('disabled');
 			$('#saveVCEMenuItem').removeClass('disabled');
+			$('#oscPlusMinus').show();
 		} else {
 			$('#disableVRAMMenuItem').removeClass('disabled');
 			$('#loadCRTMenuItem').removeClass('disabled');
 			$('#saveVCEMenuItem').addClass('disabled');
+			$('#oscPlusMinus').hide();
+		}
+		if (vce.Head.VOITAB <= 0) {
+			$("#delOsc").addClass('disabled');
+		} else {
+			$("#delOsc").removeClass('disabled');
+		}
+		if (vce.Head.VOITAB >= 15) {
+			$("#addOsc").addClass('disabled');
+		} else {
+			$("#addOsc").removeClass('disabled');
 		}
 
 		$('.vceEdit').prop('disabled', !mode);
@@ -822,7 +863,7 @@ let viewVCE_voice = {
 			document.getElementById("backToCRT").hidden = false;
 		}
 
-		document.getElementById("nOsc").value = vce.Head.VOITAB + 1;
+		document.getElementById("nOsc").innerHTML = vce.Head.VOITAB + 1;
 		document.getElementById("keysPlayable").innerHTML = Math.floor(32 / (vce.Head.VOITAB + 1));
 		viewVCE_voice.updateVibType();
 		document.getElementById("VIBRAT").value = vce.Head.VIBRAT;

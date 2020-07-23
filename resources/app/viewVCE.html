@@ -81,6 +81,16 @@
 					<td></td>
 					<td>Bf</td>
 				</tr>
+				<tr class="listplusminus" id="oscPlusMinus" style="display:none;">
+					<td colspan="9">
+						<div style="margin-top: 5px; float: left;">
+							<input id="delOsc" type='button' value='-'
+								onclick=' viewVCE_voice.setNumOscillators(vce.Head.VOITAB)' />
+							<input id="addOsc" type='button' value='+'
+								onclick=viewVCE_voice.setNumOscillators(vce.Head.VOITAB+2)' />
+						</div>
+					</td>
+				</tr>
 			</tbody>
 		</table>
 
@@ -103,11 +113,8 @@
 						</tr>
 						<tr>
 							<td>Oscillators</td>
-							<td>
-								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="nOsc"
-										min="1" max="16" onchange="viewVCE_voice.setNumOscillators(this.value)"
-										disabled /></div>
-							</td>
+							<!-- HACK: add margin to align with TouchSpin styled fields -->
+							<td><span class="spinNOSPIN" id="nOsc" /></td>
 						</tr>
 						<tr>
 							<td>Keys Playable</td>

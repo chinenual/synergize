@@ -2,7 +2,7 @@ module.exports = {
   name: 'G7S',
   voicetab: {
     VNAME: { value: 'G7S'},
-    nOsc: { value: '4' },
+    nOsc: '4',
     keysPlayable: '8',
     vibType: 'Sine',
     VIBDEP: { value: '0' },

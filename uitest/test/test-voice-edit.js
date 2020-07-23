@@ -29,7 +29,7 @@ describe('Test voice page edits', () => {
         await app.client
             .pause(TYPING_PAUSE)
             .getValue('#patchType').should.eventually.equal('0')
-            .getValue('#nOsc').should.eventually.equal('1')
+            .getText('#nOsc').should.eventually.equal('1')
             .isVisible(cssQuoteId('#MUTE[1]')).should.eventually.equal(true)
             .isVisible(cssQuoteId('#MUTE[2]')).should.eventually.equal(false)
     });
@@ -51,17 +51,33 @@ describe('Test voice page edits', () => {
     // test increasing Osc count
     it('up-arrow to osc count 1->4', async () => {
         await app.client
-            .click(cssQuoteId('#nOsc')).keys('ArrowUp')
-            .click(cssQuoteId('#nOsc')).keys('ArrowUp')
-            .click(cssQuoteId('#nOsc')).keys('ArrowUp')
+            .click(cssQuoteId('#addOsc'))
+            .waitForText(cssQuoteId('#nOsc'), '2')
 
-            .waitForValue(cssQuoteId('#nOsc'), '4')
+            .pause(TYPING_PAUSE)
+            .click(cssQuoteId('#addOsc'))
+            .waitForText(cssQuoteId('#nOsc'), '3')
+
+            .pause(TYPING_PAUSE)
+            .click(cssQuoteId('#addOsc'))
+            .waitForText(cssQuoteId('#nOsc'), '4')
+
+            .pause(TYPING_PAUSE)
+            .click(cssQuoteId('#addOsc'))
+            .waitForText(cssQuoteId('#nOsc'), '5')
+            .waitForVisible(cssQuoteId('#MUTE[5]'))
+
+            .pause(TYPING_PAUSE)
+            .click(cssQuoteId('#delOsc'))
+            .pause(TYPING_PAUSE)
+            .waitForText(cssQuoteId('#nOsc'), '4')
             .waitForVisible(cssQuoteId('#MUTE[4]'))
+            .isVisible(cssQuoteId('#MUTE[5]')).should.eventually.equal(false)
     });
 
     it('keys playable changes', async () => {
         await app.client
-            .waitForValue(cssQuoteId('#nOsc'), '4')
+            .waitForText(cssQuoteId('#nOsc'), '4')
             .getText(cssQuoteId('#keysPlayable')).should.eventually.equal('8')
     });
 
