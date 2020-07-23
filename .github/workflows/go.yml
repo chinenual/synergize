@@ -35,3 +35,27 @@ jobs:
 
     - name: Test
       run: make test
+
+    - name: Archive
+      uses: actions/upload-artifact@v2
+      with:
+         name: binaries
+         path: ./output/**/*
+
+  uitest:
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: uitest
+      strategy:
+        os: [ubuntu-16.04]
+      steps:
+      - name: Unarchive
+        uses: actions/download-artifact@v2
+        with:
+           name: binaries
+
+      - name: SetupNode
+        uses: actions/setup-node@v2.1.1
+
+      - run: npm test
