@@ -241,7 +241,29 @@ describe('Test voice page edits', () => {
             .getValue(cssQuoteId('#FILTER[2]')).should.eventually.equal('2')
             .waitForValue(cssQuoteId('#FILTER[2]'), '2')
     });
+    describe('patch edits', () => {
 
+        it('addr', async () => {
+            await app.client
+                .getValue(cssQuoteId('#patchAdderInDSR[1]')).should.eventually.equal('')
+                .click(cssQuoteId('#patchAdderInDSR[1]')).keys('ArrowUp')
+                .getValue(cssQuoteId('#patchAdderInDSR[1]')).should.eventually.equal('1')
+        });
+        it('freq', async () => {
+            await app.client
+                .getValue(cssQuoteId('#patchFOInputDSR[3]')).should.eventually.equal('')
+                .click(cssQuoteId('#patchFOInputDSR[3]')).keys('ArrowUp')
+                .getValue(cssQuoteId('#patchFOInputDSR[3]')).should.eventually.equal('1')
+                .click(cssQuoteId('#patchFOInputDSR[3]')).keys('ArrowUp')
+                .getValue(cssQuoteId('#patchFOInputDSR[3]')).should.eventually.equal('2')
+        });
+        it('out', async () => {
+            await app.client
+                .getValue(cssQuoteId('#patchOutputDSR[4]')).should.eventually.equal('1')
+                .click(cssQuoteId('#patchOutputDSR[4]')).keys('ArrowUp')
+                .getValue(cssQuoteId('#patchOutputDSR[4]')).should.eventually.equal('2')
+        });
+    });
     it('screenshot', async () => {
         await app.client
             .then(() => { return hooks.screenshotAndCompare(app, `INITVRAM-after-edit-voice`) })
