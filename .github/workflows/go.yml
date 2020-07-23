@@ -70,7 +70,7 @@ jobs:
         find ../output -type f -ls
 
     - name: pre-provision the exe
-      run ../output/darwin-amd64/Synergize.app/Contents/MacOS/Synergize -PROVISION
+      run: ../output/darwin-amd64/Synergize.app/Contents/MacOS/Synergize -PROVISION
 
     - name: SetupNode
       uses: actions/setup-node@v2.1.1
