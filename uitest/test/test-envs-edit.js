@@ -221,7 +221,7 @@ describe('Test envs page edits', () => {
             await app.client
                 .pause(TYPING_PAUSE)
                 .clearElement(cssQuoteId('#envFreqUpVal[1]'))
-                .setValue(cssQuoteId('#envFreqUpVal[1]'), '1')
+                .setValue(cssQuoteId('#envFreqUpVal[1]'), '62')
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqLowVal[1]')) // click in a different input to force onchange
                 .getValue(cssQuoteId('#envFreqUpVal[1]')).should.eventually.equal('62')
@@ -236,71 +236,89 @@ describe('Test envs page edits', () => {
         });
     });
     describe('freq times', () => {
-        it('type to envFreqLowTime[2] to and past 0', async () => {
-            await app.client
-                .pause(TYPING_PAUSE)
-                .clearElement(cssQuoteId('#envFreqLowTime[2]'))
-                .setValue(cssQuoteId('#envFreqLowTime[2]'), '1')
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envAmpUpTime[1]')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#envFreqLowTime[2]')).should.eventually.equal('1')
-                // should not be able to go below min
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envFreqLowTime[2]')).keys('ArrowDown')
-                .getValue(cssQuoteId('#envFreqLowTime[2]')).should.eventually.equal('0')
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envFreqLowTime[2]')).keys('ArrowDown')
-                .getValue(cssQuoteId('#envFreqLowTime[2]')).should.eventually.equal('0')
+        describe('type to envFreqLowTime[2] to and past 0', () => {
+            it('set envFreqLowTime[2] to 1', async () => {
+                await app.client
+                    .pause(TYPING_PAUSE)
+                    .clearElement(cssQuoteId('#envFreqLowTime[2]'))
+                    .setValue(cssQuoteId('#envFreqLowTime[2]'), '1')
+                    .pause(TYPING_PAUSE)
+                    .click(cssQuoteId('#envAmpUpTime[1]')) // click in a different input to force onchange
+                    .getValue(cssQuoteId('#envFreqLowTime[2]')).should.eventually.equal('1')
+            });
+            // should not be able to go below min
+            it('set envFreqLowTime[2] down to 0', async () => {
+                await app.client
+                    .pause(TYPING_PAUSE)
+                    .click(cssQuoteId('#envFreqLowTime[2]')).keys('ArrowDown')
+                    .getValue(cssQuoteId('#envFreqLowTime[2]')).should.eventually.equal('0')
+            });
+            it('set envFreqLowTime[2] down doesnt go past 0', async () => {
+                await app.client
+                    .pause(TYPING_PAUSE)
+                    .click(cssQuoteId('#envFreqLowTime[2]')).keys('ArrowDown')
+                    .pause(TYPING_PAUSE)
+                    .getValue(cssQuoteId('#envFreqLowTime[2]')).should.eventually.equal('0')
+            });
         });
-        it('type to envAmpUpTime[1] to and past 29535', async () => {
+        it('type to envAmpUpTime[2] to and past 6576', async () => {
             await app.client
                 .pause(TYPING_PAUSE)
                 .clearElement(cssQuoteId('#envAmpUpTime[2]'))
-                .setValue(cssQuoteId('#envAmpUpTime[2]'), '29534')
+                .setValue(cssQuoteId('#envAmpUpTime[2]'), '5858')
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqLowTime[2]')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#envAmpUpTime[2]')).should.eventually.equal('29534')
+                .getValue(cssQuoteId('#envAmpUpTime[2]')).should.eventually.equal('5859')
                 // should not be able to go above max
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envAmpUpTime[2]')).keys('ArrowUp')
-                .getValue(cssQuoteId('#envAmpUpTime[2]')).should.eventually.equal('29535')
+                .getValue(cssQuoteId('#envAmpUpTime[2]')).should.eventually.equal('6576')
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envAmpUpTime[2]')).keys('ArrowUp')
-                .getValue(cssQuoteId('#envAmpUpTime[2]')).should.eventually.equal('29535')
+                .getValue(cssQuoteId('#envAmpUpTime[2]')).should.eventually.equal('6576')
 
         });
 
     });
     describe('amp values', () => {
-        it('type to envAmpLowVal[2] to and past 0', async () => {
+        it('type to envAmpLowVal[1] to and past 0', async () => {
             await app.client
+                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-1`) })
                 .pause(TYPING_PAUSE)
-                .clearElement(cssQuoteId('#envAmpLowVal[2]'))
-                .setValue(cssQuoteId('#envAmpLowVal[2]'), '1')
-                .click(cssQuoteId('#envAmpUpVal[2]')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#envAmpLowVal[2]')).should.eventually.equal('1')
+                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-2`) })
+                .clearElement(cssQuoteId('#envAmpLowVal[1]'))
+                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-3`) })
+                .setValue(cssQuoteId('#envAmpLowVal[1]'), '1')
+                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-4`) })
+                .click(cssQuoteId('#envAmpUpVal[1]')) // click in a different input to force onchange
+                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-5`) })
+                .getValue(cssQuoteId('#envAmpLowVal[1]')).should.eventually.equal('1')
+                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-6`) })
                 // should not be able to go below min
                 .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envAmpLowVal[2]')).keys('ArrowDown')
-                .getValue(cssQuoteId('#envAmpLowVal[2]')).should.eventually.equal('0')
+                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-7`) })
+                .click(cssQuoteId('#envAmpLowVal[1]')).keys('ArrowDown')
+                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-8`) })
+                .getValue(cssQuoteId('#envAmpLowVal[1]')).should.eventually.equal('0')
                 .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envAmpLowVal[2]')).keys('ArrowDown')
-                .getValue(cssQuoteId('#envAmpLowVal[2]')).should.eventually.equal('0')
+                .click(cssQuoteId('#envAmpLowVal[1]')).keys('ArrowDown')
+                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-9`) })
+                .getValue(cssQuoteId('#envAmpLowVal[1]')).should.eventually.equal('0')
         });
-        it('type to envAmpUpVal[2] to and past 72', async () => {
+        it('type to envAmpUpVal[1] to and past 72', async () => {
             await app.client
                 .pause(TYPING_PAUSE)
-                .clearElement(cssQuoteId('#envAmpUpVal[2]'))
-                .setValue(cssQuoteId('#envAmpUpVal[2]'), '71')
-                .click(cssQuoteId('#envAmpLowVal[2]')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#envAmpUpVal[2]')).should.eventually.equal('71')
+                .clearElement(cssQuoteId('#envAmpUpVal[1]'))
+                .setValue(cssQuoteId('#envAmpUpVal[1]'), '71')
+                .click(cssQuoteId('#envAmpLowVal[1]')) // click in a different input to force onchange
+                .getValue(cssQuoteId('#envAmpUpVal[1]')).should.eventually.equal('71')
                 // should not be able to go above max
                 .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envAmpUpVal[2]')).keys('ArrowUp')
-                .getValue(cssQuoteId('#envAmpUpVal[2]')).should.eventually.equal('72')
+                .click(cssQuoteId('#envAmpUpVal[1]')).keys('ArrowUp')
+                .getValue(cssQuoteId('#envAmpUpVal[1]')).should.eventually.equal('72')
                 .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envAmpUpVal[2]')).keys('ArrowUp')
-                .getValue(cssQuoteId('#envAmpUpVal[2]')).should.eventually.equal('72')
+                .click(cssQuoteId('#envAmpUpVal[1]')).keys('ArrowUp')
+                .getValue(cssQuoteId('#envAmpUpVal[1]')).should.eventually.equal('72')
 
         });
     });
@@ -324,7 +342,7 @@ describe('Test envs page edits', () => {
             await app.client
                 .pause(TYPING_PAUSE)
                 .clearElement(cssQuoteId('#envAmpUpTime[1]'))
-                .setValue(cssQuoteId('#envAmpUpTime[1]'), '5860') // expect the conversion to round to the right value
+                .setValue(cssQuoteId('#envAmpUpTime[1]'), '5858') // expect the conversion to round to the right value
                 .click(cssQuoteId('#envAmpLowTime[1]')) // click in a different input to force onchange
                 .getValue(cssQuoteId('#envAmpUpTime[1]')).should.eventually.equal('5859')
                 // should not be able to go above max
@@ -370,6 +388,34 @@ describe('Test envs page edits', () => {
                 .click(cssQuoteId('#accelAmpUp')).keys('ArrowUp')
                 .getValue(cssQuoteId('#accelAmpUp')).should.eventually.equal('127')
 
+        });
+
+    });
+
+    describe('copy env', () => {
+        it('check osc 1 initial conditions', async () => {
+
+            await app.client
+                .getValue('#envOscSelect').should.eventually.equal('1')
+                .getValue(cssQuoteId('#envAmpUpTime[1]')).should.eventually.equal('6576')
+                .getValue(cssQuoteId('#accelAmpUp')).should.eventually.equal('127')
+        });
+
+        it('switch to osc 2', async () => {
+            await app.client
+                .selectByVisibleText('#envOscSelect', '2')
+                .pause(TYPING_PAUSE)
+                .getValue('#tabTelltaleContent').should.eventually.equal(`osc:2`)
+                .getValue(cssQuoteId('#envAmpUpTime[1]')).should.eventually.equal('0')
+                .getValue(cssQuoteId('#accelAmpUp')).should.eventually.equal('30')
+        });
+
+        it('copy from 1', async () => {
+            await app.client
+                .selectByVisibleText('#envCopySelect', '1')
+                .pause(TYPING_PAUSE)
+                .getValue(cssQuoteId('#envAmpUpTime[1]')).should.eventually.equal('6576')
+                .getValue(cssQuoteId('#accelAmpUp')).should.eventually.equal('127')
         });
 
     });
