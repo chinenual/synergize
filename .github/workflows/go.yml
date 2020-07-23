@@ -42,7 +42,6 @@ jobs:
          name: binaries
          path: |
            ./output/darwin-amd64/**/*
-           ./output/linux-amd64/**/*
 
   uitest:
     name: UITest
@@ -53,7 +52,7 @@ jobs:
         working-directory: uitest
     strategy:
       matrix:
-        os: [ubuntu-16.04]
+        os: [macos-latest]
     steps:
 
     - name: Check out code

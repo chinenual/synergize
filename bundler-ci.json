@@ -6,8 +6,6 @@
     "icon_path_windows": "resources/icon.ico",
     "ldflags":{"linkmode":["internal"]},
     "environments": [
-	{"arch" : "amd64",
-	 "os"   : "linux"},
 	{"arch" : "amd64", 
 	 "os"   : "darwin",
 	 "env"  : {
