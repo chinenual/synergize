@@ -63,6 +63,11 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: binaries
+        path: ../output
+
+    - name: display working dir
+      run: |
+         ls -R ..
 
     - name: SetupNode
       uses: actions/setup-node@v2.1.1
