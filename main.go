@@ -31,6 +31,7 @@ var (
 // Application Vars
 var (
 	uitest            = flag.Int("UITEST", 0, "alter startup to support Selenium testing (specifies listening port)")
+	provisionOnly     = flag.Bool("PROVISION", false, "run the provisioner and then exit")
 	serialVerboseFlag = flag.Bool("SERIALVERBOSE", false, "Show each byte operation through the serial port")
 	mockSynio         = flag.Bool("MOCKSYNIO", false, "Mock the Synergy I/O for testing")
 	comtst            = flag.Bool("COMTST", false, "run command line diagnostics rather than the GUI")
@@ -417,6 +418,10 @@ func main() {
 		Logger:      l,
 		MenuOptions: menuOptions,
 		OnWait: func(as *astilectron.Astilectron, ws []*astilectron.Window, _ *astilectron.Menu, _ *astilectron.Tray, _ *astilectron.Menu) error {
+			if *provisionOnly {
+				log.Printf("Provisioning completed. Exiting.\n");
+				os.Exit(0);
+			}
 			a = as
 			w = ws[0]
 			about_w = ws[1]
