@@ -41,7 +41,7 @@ jobs:
       with:
          name: binaries
          path: |
-           ./output/darwin-amd64/**/*
+           ./output/**/*
 
   uitest:
     name: UITest
@@ -65,7 +65,9 @@ jobs:
         path: ./output
 
     - name: chmod the binaries
-      run: find ../output -type f -exec chmod a+x {} \;
+      run: |
+        find ../output -type f -exec chmod a+x {} \;
+        find ../output -type f -ls
 
     - name: SetupNode
       uses: actions/setup-node@v2.1.1
