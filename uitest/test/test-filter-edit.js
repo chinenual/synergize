@@ -67,6 +67,35 @@ describe('Test filter page edits', () => {
         });
     });
 
+    describe('copy filter', () => {
+        it('check Af initial conditions', async () => {
+
+            await app.client
+//                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-1`) })
+                .selectByVisibleText(cssQuoteId('#filterSelect'), 'Af')
+                .waitForVisible('#filterTable')
+                .getValue(cssQuoteId('#flt[1]')).should.eventually.equal('-64')
+                .getValue(cssQuoteId('#flt[2]')).should.eventually.equal('63')
+        });
+
+        it('switch to Bf 2', async () => {
+            await app.client
+            .selectByVisibleText(cssQuoteId('#filterSelect'), 'Bf 2')
+            .waitForVisible('#filterTable')
+            .getValue(cssQuoteId('#flt[1]')).should.eventually.equal('0')
+            .getValue(cssQuoteId('#flt[2]')).should.eventually.equal('0')
+    });
+
+        it('copy from 1', async () => {
+            await app.client
+                .selectByVisibleText('#filterCopySelect', 'Af')
+                .pause(TYPING_PAUSE)
+                .getValue(cssQuoteId('#flt[1]')).should.eventually.equal('-64')
+                .getValue(cssQuoteId('#flt[2]')).should.eventually.equal('63')
+        });
+
+    });
+
     it('screenshot', async () => {
         await app.client
             .then(() => { return hooks.screenshotAndCompare(app, `INITVRAM-after-edit-filters`) })
