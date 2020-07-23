@@ -65,9 +65,8 @@ jobs:
         name: binaries
         path: ./output
 
-    - name: display working dir
-      run: |
-         ls -R ..
+    - name: chmod the binaries
+      run: find ../output -type f -exec chmod a+x {} \;
 
     - name: SetupNode
       uses: actions/setup-node@v2.1.1
