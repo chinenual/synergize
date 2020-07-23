@@ -106,6 +106,7 @@ itest:
 
 .PHONY: uitest
 uitest:
+	/bin/rm -f uitest/test/screenshots/$(SCREENSHOT_ARCH)/DEBUG*.png
 	/bin/rm -f uitest/test/screenshots/$(SCREENSHOT_ARCH)/*failed.png
 	-cd uitest && npm test | tee uitest-$(SCREENSHOT_ARCH).log
 	ls uitest/test/screenshots/$(SCREENSHOT_ARCH)/*failed.png
