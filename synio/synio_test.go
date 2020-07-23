@@ -16,6 +16,7 @@ var (
 	port              = flag.String("port", "", "the serial device")
 	baud              = flag.Uint("baud", 9600, "the serial baud rate")
 	verbose           = flag.Bool("verbose", false, "synio verbose")
+        mocksynio         = flag.Bool("MOCKSYNIO", false, "MOCK synio")
 	serialVerboseFlag = flag.Bool("SERIALVERBOSE", false, "serial verbose")
 )
 
@@ -40,7 +41,7 @@ func dumpAddressSpace(path string) {
 }
 
 func connectToSynergy() (err error) {
-	return Init(*port, *baud, *verbose, *serialVerboseFlag)
+	return Init(*port, *baud, *verbose, *serialVerboseFlag, *mocksynio)
 }
 
 func TestGetFirmwareId(t *testing.T) {
