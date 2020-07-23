@@ -52,7 +52,7 @@ describe('Test filter page edits', () => {
             await app.client
                 .pause(TYPING_PAUSE)
                 .clearElement(cssQuoteId('#flt[2]'))
-                .setValue(cssQuoteId('#flt[2]'), '1')
+                .setValue(cssQuoteId('#flt[2]'), '62')
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#flt[1]')) // click in a different input to force onchange
                 .getValue(cssQuoteId('#flt[2]')).should.eventually.equal('62')
