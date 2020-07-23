@@ -283,26 +283,17 @@ describe('Test envs page edits', () => {
     describe('amp values', () => {
         it('type to envAmpLowVal[1] to and past 0', async () => {
             await app.client
-                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-1`) })
                 .pause(TYPING_PAUSE)
-                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-2`) })
                 .clearElement(cssQuoteId('#envAmpLowVal[1]'))
-                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-3`) })
                 .setValue(cssQuoteId('#envAmpLowVal[1]'), '1')
-                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-4`) })
                 .click(cssQuoteId('#envAmpUpVal[1]')) // click in a different input to force onchange
-                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-5`) })
                 .getValue(cssQuoteId('#envAmpLowVal[1]')).should.eventually.equal('1')
-                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-6`) })
                 // should not be able to go below min
                 .pause(TYPING_PAUSE)
-                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-7`) })
                 .click(cssQuoteId('#envAmpLowVal[1]')).keys('ArrowDown')
-                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-8`) })
                 .getValue(cssQuoteId('#envAmpLowVal[1]')).should.eventually.equal('0')
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envAmpLowVal[1]')).keys('ArrowDown')
-                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-9`) })
                 .getValue(cssQuoteId('#envAmpLowVal[1]')).should.eventually.equal('0')
         });
         it('type to envAmpUpVal[1] to and past 72', async () => {
