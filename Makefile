@@ -29,6 +29,10 @@ $(EXE_WINDOWS_TEST): $(SRCS)
 mac: version.go
 	astilectron-bundler -c bundler-mac-only.json
 
+.PHONY: cibuild
+cibuild: version.go
+	astilectron-bundler -c bundler-ci.json
+
 .PHONY: package
 package: test packageMac packageWindows packageLinux
 
