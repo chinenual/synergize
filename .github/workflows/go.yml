@@ -63,7 +63,7 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: binaries
-        path: ../output
+        path: ./output
 
     - name: display working dir
       run: |
