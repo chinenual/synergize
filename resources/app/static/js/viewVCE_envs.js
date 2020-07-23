@@ -13,7 +13,7 @@ let viewVCE_envs = {
 			viewVCE_envs.deb_onchange = _.debounce(viewVCE_envs.raw_onchange, 250);
 		}
 		if (viewVCE_envs.deb_onchangeEnvAccel == null) {
-			viewVCE_envs.deb_onchangeEnvAccelchange = _.debounce(viewVCE_envs.raw_onchangeEnvAccel, 250);
+			viewVCE_envs.deb_onchangeEnvAccel = _.debounce(viewVCE_envs.raw_onchangeEnvAccel, 250);
 		}
 		if (viewVCE_envs.deb_copyFrom == null) {
 			viewVCE_envs.deb_copyFrom = _.debounce(viewVCE_envs.raw_copyFrom, 250);
