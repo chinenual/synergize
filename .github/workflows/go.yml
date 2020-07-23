@@ -43,21 +43,22 @@ jobs:
          path: ./output/**/*
 
   uitest:
+    name: UITest
     runs-on: ${{ matrix.os }}
     defaults:
       run:
         working-directory: uitest
-      strategy:
-        os: [ubuntu-16.04]
-      steps:
+    strategy:
+      os: [ubuntu-16.04]
+    steps:
 
-      - name: Unarchive
-        uses: actions/download-artifact@v2
-        with:
-          name: binaries
+    - name: Unarchive
+      uses: actions/download-artifact@v2
+      with:
+        name: binaries
 
-      - name: SetupNode
-        uses: actions/setup-node@v2.1.1
+    - name: SetupNode
+      uses: actions/setup-node@v2.1.1
 
-      - name: Run the test
-        run: npm test
+    - name: Run the test
+      run: npm test
