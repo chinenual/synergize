@@ -132,7 +132,7 @@
 
         _initSettings();
         _setInitval();
-        _checkValue();
+        _checkValue("init()");
         _buildHtml();
         _initElements();
         _hideEmptyPrefixPostfix();
@@ -148,7 +148,7 @@
 
       function changeSettings(newsettings) {
         _updateSettings(newsettings);
-        _checkValue();
+        _checkValue("changeSettings()");
 
         var value = elements.input.val();
 
@@ -364,7 +364,7 @@
         });
 
         originalinput.on('blur.touchspin', function() {
-          _checkValue();
+          _checkValue("blur");
 	  // initval may not be parsable as a number (callback_after_calculation() may decorate it so it cant be parsed).  Use the callbacks if provided.
 	  var value = settings.callback_before_calculation(originalinput.val());
           originalinput.val(settings.callback_after_calculation(value));
@@ -566,7 +566,7 @@
         }
       }
 
-      function _checkValue() {
+      function _checkValue(context) {
         var val, parsedval, returnval;
 
         val = settings.callback_before_calculation(originalinput.val());
@@ -574,6 +574,7 @@
         if (val === '') {
           if (settings.replacementval !== '') {
             originalinput.val(settings.replacementval);
+	    //console.log(context+" onchange from _checkValue 1");
             originalinput.trigger('change');
           }
           return;
@@ -597,21 +598,25 @@
         returnval = parsedval;
 
         if (parsedval.toString() !== val) {
+	    //console.log(context+" set because tostring mismatch from _checkValue '" + parsedval.toString()+"' '"+parsedval + "' '" +val+"'");
           returnval = parsedval;
         }
 
         if ((settings.min !== null) && (parsedval < settings.min)) {
+	  //console.log(context+" set min from _checkValue " + parsedval + " " +settings.min);
           returnval = settings.min;
         }
 
         if ((settings.max !== null) && (parsedval > settings.max)) {
+	  //console.log(context+" set max from _checkValue " + parsedval + " " +settings.max);
           returnval = settings.max;
         }
 
         returnval = _forcestepdivisibility(returnval);
 
         if (Number(val).toString() !== returnval.toString()) {
-          originalinput.val(returnval);
+          originalinput.val(settings.callback_after_calculation(returnval));
+	  //console.log(context+" onchange from _checkValue 2");
           originalinput.trigger('change');
         }
       }
@@ -643,7 +648,7 @@
       }
 
       function upOnce() {
-        _checkValue();
+        _checkValue("uponce");
 
         value = parseFloat(settings.callback_before_calculation(elements.input.val()));
 
@@ -666,12 +671,13 @@
         elements.input.val(settings.callback_after_calculation(Number(value).toFixed(settings.decimals)));
 
         if (initvalue !== value) {
+	    //console.log("onchange from upOnce");
           originalinput.trigger('change');
         }
       }
 
       function downOnce() {
-        _checkValue();
+        _checkValue("downonce");
 
         value = parseFloat(settings.callback_before_calculation(elements.input.val()));
 
@@ -694,6 +700,7 @@
         elements.input.val(settings.callback_after_calculation(Number(value).toFixed(settings.decimals)));
 
         if (initvalue !== value) {
+	    //console.log("onchange from downOnce");
           originalinput.trigger('change');
         }
       }

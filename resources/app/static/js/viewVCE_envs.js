@@ -1,5 +1,6 @@
 const { lookupService } = require("dns");
 const { env } = require("process");
+const { DH_CHECK_P_NOT_PRIME } = require("constants");
 
 let viewVCE_envs = {
 
@@ -12,7 +13,7 @@ let viewVCE_envs = {
 			viewVCE_envs.deb_onchange = _.debounce(viewVCE_envs.raw_onchange, 250);
 		}
 		if (viewVCE_envs.deb_onchangeEnvAccel == null) {
-			viewVCE_envs.deb_ononchangeEnvAccelchange = _.debounce(viewVCE_envs.raw_onchangeEnvAccel, 250);
+			viewVCE_envs.deb_onchangeEnvAccelchange = _.debounce(viewVCE_envs.raw_onchangeEnvAccel, 250);
 		}
 		if (viewVCE_envs.deb_copyFrom == null) {
 			viewVCE_envs.deb_copyFrom = _.debounce(viewVCE_envs.raw_copyFrom, 250);
@@ -66,10 +67,17 @@ let viewVCE_envs = {
 		return v + 55;
 	},
 	AmpEnvValueToText(v) {
+		console.log("AmpEnvValueToText '" + v + "' --> "+viewVCE_envs.scaleAmpEnvValue(v));
 		return '' + viewVCE_envs.scaleAmpEnvValue(v);
 	},
 	TextToAmpEnvValue(v) {
-		return '' + viewVCE_envs.unscaleAmpEnvValue(parseInt(v, 10));
+		if (v == null || v === '') {
+			console.log("TextToAmpEnvValue '" + v + "' --> 55");
+			return 55;
+		}
+		var val = parseInt(v, 10);
+		console.log("TextToAmpEnvValue '" + v + "' -> "+viewVCE_envs.unscaleAmpEnvValue(val));
+		return '' + viewVCE_envs.unscaleAmpEnvValue(val);
 	},
 
 	// NOTE: the ftab based scaling functions as done in SYNHCS are not reversable (for the freq case, 
@@ -118,6 +126,11 @@ let viewVCE_envs = {
 		// See OSCDSP.Z80 DISVAL for the original ftab-baased scaling which is roughly:
 		//	if (v <= 15) return v;
 		//  return viewVCE_envs.scaleViaRtab((2 * v) - 14);
+		if (v < 0) { 
+			return 0;
+		} else if (v >= viewVCE_envs.freqTimeScale.length) {
+			return viewVCE_envs.freqTimeScale[viewVCE_envs.freqTimeScale.length - 1];
+		}
 		return viewVCE_envs.freqTimeScale[v];
 	},
 	unscaleFreqTimeValue: function (v) {
@@ -134,7 +147,11 @@ let viewVCE_envs = {
 		return '' + viewVCE_envs.scaleFreqTimeValue(v);
 	},
 	TextToFreqTimeValue(v) {
-		return '' + viewVCE_envs.unscaleFreqTimeValue(parseInt(v, 10));
+		if (v == null || v === '') {
+			return 0;
+		}
+		var val = parseInt(v, 10);
+		return '' + viewVCE_envs.unscaleFreqTimeValue(val);
 	},
 
 
@@ -145,6 +162,12 @@ let viewVCE_envs = {
 		// See OSCDSP.Z80 DISVAL: DVAL20: which is:
 		// if (v < 39) return v;
 		// return viewVCE_envs.scaleViaRtab((v * 2) - 54);
+		//console.log("scale amp time value: " + v + ", -> " + viewVCE_envs.ampTimeScale[v])
+		if (v < 0) { 
+			return 0;
+		} else if (v >= viewVCE_envs.ampTimeScale.length) {
+			return viewVCE_envs.ampTimeScale[viewVCE_envs.ampTimeScale.length - 1];
+		}
 		return viewVCE_envs.ampTimeScale[v];
 
 	},
@@ -152,17 +175,23 @@ let viewVCE_envs = {
 		// fixme: linear search is brute force - but the list is short - performance is "ok" as is...
 		for (var i = 0; i < viewVCE_envs.ampTimeScale.length; i++) {
 			if (viewVCE_envs.ampTimeScale[i] >= v) {
+				//console.log("unscale amp time value: " + v + ", -> " + i + " (" + viewVCE_envs.ampTimeScale[i])
 				return i;
 			}
 		}
 		// shouldnt happen!
+		//console.log("unscale amp time value fall through " + v + " " + typeof (v))
 		return viewVCE_envs.ampTimeScale.length - 1;
 	},
 	AmpTimeValueToText(v) {
 		return '' + viewVCE_envs.scaleAmpTimeValue(v);
 	},
 	TextToAmpTimeValue(v) {
-		return '' + viewVCE_envs.unscaleAmpTimeValue(parseInt(v, 10));
+		if (v == null || v === '') {
+			return 0;
+		}
+		var val = parseInt(v, 10);
+		return '' + viewVCE_envs.unscaleAmpTimeValue(val);
 	},
 
 	testConversionFunctions: function () {
@@ -203,12 +232,12 @@ let viewVCE_envs = {
 		// for the upper range of freq time which we delibrartely change to make the function reversable)
 		var expects = [
 			{
-				arr: [[0, 0], [10, 10], [15, 15], [16, 25], [54, 2071], [75, 23436], [76, 26306], [77, 29528]],
+				arr: [[0, 0], [10, 10], [15, 15], [16, 25], [54, 2071], [75, 23436], [76, 26306], [77, 29528] ,[84, 29535], [85, 29535]],
 				name: "freqTimeValue",
 				func: viewVCE_envs.scaleFreqTimeValue,
 			},
 			{
-				arr: [[0, 0], [20, 20], [40, 40], [41, 45], [54, 205], [75, 2325], [76, 2609], [83, 5859], [84, 6576]],
+				arr: [[0, 0], [20, 20], [40, 40], [41, 45], [54, 205], [75, 2325], [76, 2609], [83, 5859], [84, 6576], [85, 6576]],
 				name: "ampTimeValue",
 				func: viewVCE_envs.scaleAmpTimeValue,
 			},
@@ -221,6 +250,21 @@ let viewVCE_envs = {
 				arr: [[55, 0], [56, 1], [126, 71], [127, 72]],
 				name: "ampValue",
 				func: viewVCE_envs.scaleAmpEnvValue,
+			},
+			{
+				arr: [['', 55]],
+				name: 'empty string amp val',
+				func: viewVCE_envs.TextToAmpEnvValue,
+			},
+			{
+				arr: [['', 0]],
+				name: 'empty string amp time',
+				func: viewVCE_envs.TextToAmpTimeValue,
+			},
+			{
+				arr: [['', 0]],
+				name: 'empty string freq time',
+				func: viewVCE_envs.TextToFreqTimeValue,
 			}
 		];
 
@@ -450,7 +494,7 @@ let viewVCE_envs = {
 				index.errorNotification(message.payload);
 				return false;
 			} else {
-				vce.Envelopes[toOsc -1] = newEnvelopes
+				vce.Envelopes[toOsc - 1] = newEnvelopes
 				viewVCE_envs.envChartUpdate(toOsc, -1, true);
 			}
 		});
@@ -546,12 +590,14 @@ let viewVCE_envs = {
 		var envEnvSelectEle = document.getElementById("envEnvSelect");
 		var selectedEnv = parseInt(envEnvSelectEle.value, 10);
 
-		var value = index.checkInputElementValue(ele);
+		// Don't call checkInoutElementValue() - it assumes that there is no scaling 
+		// and would apply the "byte" min/max to the "text" scaled value
+        //	  var value = index.checkInputElementValue(ele);
+		var value = parseInt(ele.value, 10);;
 		if (value == undefined) {
 			return;
 		}
-
-		console.log("env ele change " + ele.id + " val: " + ele.value);
+console.log("in onchange - value: " + value + " " + typeof(value))
 		var pattern = /([A-Za-z]+)\[(\d+)\]/;
 		var funcName;
 		var eleIndex;
@@ -596,6 +642,8 @@ let viewVCE_envs = {
 					break;
 			}
 		}
+		console.log("env ele change " + ele.id + " rawval: " + ele.value + " -> "+value+" -> " + bytevalue);
+		console.log("in onchange - bytevalue: " + bytevalue + " " + typeof(bytevalue))
 
 		let message = {
 			"name": funcName,
