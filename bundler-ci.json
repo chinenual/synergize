@@ -1,4 +1,4 @@
->{
+{
     "app_name": "Synergize",
     "version_electron" : "8.2.5",
     "icon_path_darwin": "resources/icon.icns",
