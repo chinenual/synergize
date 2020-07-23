@@ -50,12 +50,14 @@ jobs:
       strategy:
         os: [ubuntu-16.04]
       steps:
+
       - name: Unarchive
         uses: actions/download-artifact@v2
         with:
-           name: binaries
+          name: binaries
 
       - name: SetupNode
         uses: actions/setup-node@v2.1.1
 
-      - run: npm test
+      - name: Run the test
+        run: npm test
