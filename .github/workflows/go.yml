@@ -31,7 +31,7 @@ jobs:
         fi
 
     - name: Build
-      run: make
+      run: make cibuild
 
     - name: Test
       run: make test
@@ -67,5 +67,6 @@ jobs:
     - name: SetupNode
       uses: actions/setup-node@v2.1.1
 
-    - name: Run the test
-      run: npm test
+    - run: npm install
+
+    - run: npm test
