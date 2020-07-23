@@ -378,13 +378,13 @@ let viewVCE_voice = {
 			};
 			astilectron.sendMessage(message, function (message) {
 				console.log(funcname + " returned: " + JSON.stringify(message));
-				console.log("updater: " + updater);
 				// Check error
 				if (message.name === "error") {
 					// failed - dont change the boolean
 					index.errorNotification(message.payload);
 					return false;
 				} else if (updater != undefined) {
+					console.log("updater: " + updater);
 					updater(ele);
 				}
 			});
