@@ -67,16 +67,16 @@ let viewVCE_envs = {
 		return v + 55;
 	},
 	AmpEnvValueToText(v) {
-		console.log("AmpEnvValueToText '" + v + "' --> "+viewVCE_envs.scaleAmpEnvValue(v));
+		//console.log("AmpEnvValueToText '" + v + "' --> "+viewVCE_envs.scaleAmpEnvValue(v));
 		return '' + viewVCE_envs.scaleAmpEnvValue(v);
 	},
 	TextToAmpEnvValue(v) {
 		if (v == null || v === '') {
-			console.log("TextToAmpEnvValue '" + v + "' --> 55");
+			//console.log("TextToAmpEnvValue '" + v + "' --> 55");
 			return 55;
 		}
 		var val = parseInt(v, 10);
-		console.log("TextToAmpEnvValue '" + v + "' -> "+viewVCE_envs.unscaleAmpEnvValue(val));
+		//console.log("TextToAmpEnvValue '" + v + "' -> "+viewVCE_envs.unscaleAmpEnvValue(val));
 		return '' + viewVCE_envs.unscaleAmpEnvValue(val);
 	},
 
@@ -315,7 +315,6 @@ let viewVCE_envs = {
 		var accelUp = 30; // defaults
 
 		if (env.ENVTYPE == 1) {
-			console.log('p');
 			accelLow = env.SUSTAINPT;
 			accelUp = env.LOOPPT;
 
@@ -525,7 +524,7 @@ let viewVCE_envs = {
 			return;
 		}
 
-		console.log("changed: " + ele.id + " val: " + ele.value);
+		//console.log("changed: " + ele.id + " val: " + ele.value);
 
 		var env;
 		var envid;
@@ -597,7 +596,8 @@ let viewVCE_envs = {
 		if (value == undefined) {
 			return;
 		}
-console.log("in onchange - value: " + value + " " + typeof(value))
+		//console.log("in onchange - value: " + value + " " + typeof(value))
+		
 		var pattern = /([A-Za-z]+)\[(\d+)\]/;
 		var funcName;
 		var eleIndex;
@@ -643,7 +643,7 @@ console.log("in onchange - value: " + value + " " + typeof(value))
 			}
 		}
 		console.log("env ele change " + ele.id + " rawval: " + ele.value + " -> "+value+" -> " + bytevalue);
-		console.log("in onchange - bytevalue: " + bytevalue + " " + typeof(bytevalue))
+		//console.log("in onchange - bytevalue: " + bytevalue + " " + typeof(bytevalue))
 
 		let message = {
 			"name": funcName,
