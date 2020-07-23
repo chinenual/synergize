@@ -12,6 +12,7 @@ const SCREEN_DIFFS_ARE_FAILURES = false;
 const APPNAME = 'Synergize';
 const PORT = 55555; // the port the main process will listen to
 const MOCKSYNIO = "-MOCKSYNIO";
+//const MOCKSYNIO = "";
 const SERIALVERBOSE = "-SERIALVERBOSE";
 
 global.before(() => {
@@ -75,7 +76,7 @@ function astilectronJS() {
 module.exports = {
   async startMainApp() {
     console.log(`node arch: "${process.arch}"   golang arch: "${archMap[process.arch]}"`)
-    console.log(`Starting main exe: ${mainExe()}`);
+    console.log(`Starting main exe: ${mainExe()} -UITEST ${PORT} ${MOCKSYNIO} ${SERIALVERBOSE}`);
     exec(`"${mainExe()}" -UITEST ${PORT} ${MOCKSYNIO} ${SERIALVERBOSE}`, (error, stdout, stderr) => {
       if (error) {
         console.log(`error: ${error.message}`);
@@ -127,12 +128,21 @@ module.exports = {
     }
   },
 
-  screenshotIfFailed(mochaInstance, app) {
+  trimLogMsgFilePrefix(s) {
+    s = s.replace(/^file:.*\//g, '')
+    return s;
+  },
+
+  flushRenderLogs(app) {
     app.client.getRenderProcessLogs().then(function (logs) {
       logs.forEach(function (log) {
-        console.log("RENDERER: " + log.level + ": " + log.source + " : " + log.message);
+        console.log("\t\tRENDERER: " + log.level + ": " + log.source + " : " + module.exports.trimLogMsgFilePrefix(log.message));
       });
     });
+  },
+
+  screenshotIfFailed(mochaInstance, app) {
+    module.exports.flushRenderLogs(app);
 
     if (mochaInstance.currentTest.state !== "passed") {
       const ssDir = path.join(__dirname, 'screenshots', process.platform)
@@ -150,6 +160,7 @@ module.exports = {
   },
 
   screenshotAndCompare(app, name) {
+    module.exports.flushRenderLogs(app);
     // adapted from https://github.com/webtorrent/webtorrent-desktop/blob/master/test/setup.js
 
     const ssDir = path.join(__dirname, 'screenshots', process.platform)
