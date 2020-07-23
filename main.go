@@ -420,6 +420,7 @@ func main() {
 		OnWait: func(as *astilectron.Astilectron, ws []*astilectron.Window, _ *astilectron.Menu, _ *astilectron.Tray, _ *astilectron.Menu) error {
 			if *provisionOnly {
 				log.Printf("Provisioning completed. Exiting.\n");
+				a.Quit();
 				os.Exit(0);
 			}
 			a = as
