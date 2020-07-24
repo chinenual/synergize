@@ -36,45 +36,45 @@ jobs:
     - name: Test
       run: make test
 
-    - name: Archive
-      uses: actions/upload-artifact@v2
-      with:
-         name: binaries
-         path: |
-           ./output/**/*
-
-  uitest:
-    name: UITest
-    needs: build
-    runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        working-directory: uitest
-    strategy:
-      matrix:
-        os: [macos-latest]
-    steps:
-
-    - name: Check out code
-      uses: actions/checkout@v2
-
-    - name: Unarchive
-      uses: actions/download-artifact@v2
-      with:
-        name: binaries
-        path: ./output
-
-    - name: chmod the binaries
-      run: |
-        find ../output -type f -exec chmod a+x {} \;
-        find ../output -type f -ls
-
-    - name: pre-provision the exe
-      run: ../output/darwin-amd64/Synergize.app/Contents/MacOS/Synergize -PROVISION
-
-    - name: SetupNode
-      uses: actions/setup-node@v2.1.1
-
-    - run: npm install
-
-    - run: npm test
+#    - name: Archive
+#      uses: actions/upload-artifact@v2
+#      with:
+#         name: binaries
+#         path: |
+#           ./output/**/*
+#
+#  uitest:
+#    name: UITest
+#    needs: build
+#    runs-on: ${{ matrix.os }}
+#    defaults:
+#      run:
+#        working-directory: uitest
+#    strategy:
+#      matrix:
+#        os: [macos-latest]
+#    steps:
+#
+#    - name: Check out code
+#      uses: actions/checkout@v2
+#
+#    - name: Unarchive
+#      uses: actions/download-artifact@v2
+#      with:
+#        name: binaries
+#        path: ./output
+#
+#    - name: chmod the binaries
+#      run: |
+#        find ../output -type f -exec chmod a+x {} \;
+#        find ../output -type f -ls
+#
+#    - name: pre-provision the exe
+#      run: ../output/darwin-amd64/Synergize.app/Contents/MacOS/Synergize -PROVISION
+#
+#    - name: SetupNode
+#      uses: actions/setup-node@v2.1.1
+#
+#    - run: npm install
+#
+#    - run: npm test
