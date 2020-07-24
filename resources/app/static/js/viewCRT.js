@@ -150,12 +150,12 @@ let viewCRT = {
 
 		if (viewCRT.editMode) {
 			document.getElementById("editCRTButtonImg").src = `static/images/red-button-on-full.png`;
-			$("#saveCRTButton").show();
+			$("#saveCRTButtonDiv").show();
 			$(".crtSlotAddButton").show();
 			$(".crtSlotClearButton").show();
 		} else {
 			document.getElementById("editCRTButtonImg").src = `static/images/red-button-off-full.png`;
-			$("#saveCRTButton").hide();
+			$("#saveCRTButtonDiv").hide();
 			$(".crtSlotAddButton").hide();
 			$(".crtSlotClearButton").hide();
 		}

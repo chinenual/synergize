@@ -68,6 +68,8 @@ require('./test-about');
 
 require('./test-prefs');
 
+require('./test-edit-crt');
+
 describe('Test Voicing Mode views', () => {
   afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
 
