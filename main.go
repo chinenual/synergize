@@ -420,7 +420,9 @@ func main() {
 		OnWait: func(as *astilectron.Astilectron, ws []*astilectron.Window, _ *astilectron.Menu, _ *astilectron.Tray, _ *astilectron.Menu) error {
 			if *provisionOnly {
 				log.Printf("Provisioning completed. Exiting.\n");
-				a.Quit();
+				// Quit causes a segv.  Exiting without it sometimes leaves a dialog open
+				// the later is more compatible with github CI
+				//a.Quit();
 				os.Exit(0);
 			}
 			a = as
