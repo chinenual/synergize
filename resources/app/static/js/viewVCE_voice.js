@@ -277,7 +277,7 @@ let viewVCE_voice = {
 			patchByte |= 0x04;
 		}
 
-		console.log(osc + " patch byte: " + patchByte + "\n" +
+		console.log(osc + " new patch byte: " + patchByte + "\n" +
 			" patchInhibitAddr : " + patchInhibitAddr + "\n" +
 			" patchInhibitF0   : " + patchInhibitF0 + "\n" +
 			" patchOutputDSR   : " + patchOutputDSR + "\n" +
@@ -299,6 +299,9 @@ let viewVCE_voice = {
 				index.errorNotification(message.payload);
 				return false;
 			}
+  		        vce.Envelopes[osc-1].FreqEnvelope.OPTCH = patchByte;
+                        viewVCE_voice.patchTable(); // in case the patch diagram changes due to the edit
+                        viewVCE_voice.voicingModeVisuals();
 		});
 
 
@@ -402,6 +405,9 @@ let viewVCE_voice = {
 			tbody.removeChild(tbody.firstChild);
 		}
 
+                var outRegisters = [[],[],[],[]];
+                var freqDAG = "";
+            
 		// populate new ones:
 		for (osc = 0; osc <= vce.Head.VOITAB; osc++) {
 			var tr = document.createElement("tr");
@@ -437,6 +443,21 @@ let viewVCE_voice = {
 			//				" patchAdderInDSR  : " + patchAdderInDSR + "\n" +
 			//				" patchFOInputDSR  : " + patchFOInputDSR + "\n");
 
+                        // compute the DAG based on current register usage:
+	                if (!patchInhibitF0) {
+                            var modulatingOscs = outRegisters[patchFOInputDSR];
+                            for (var i = 0; i < modulatingOscs.length; i++) {
+                                freqDAG += `[${modulatingOscs[i]+1}]-[${osc+1}]\n`;
+                            }
+                        } else {
+                            freqDAG += `[${osc+1}]\n`;
+                        }
+	                if (patchInhibitAddr) {
+                            // no longer summing, this output starts a new set of addrs:
+                            outRegisters[patchOutputDSR] = [];
+                        }
+                        outRegisters[patchOutputDSR].push(osc);
+                    
 			//--- Patch F
 			td = document.createElement("td");
 			var reg = 0;
@@ -555,6 +576,26 @@ let viewVCE_voice = {
 							</tr>`;
 			tbody.appendChild(temp.content.firstChild);
 		}
+
+            console.log("freqDAG: " + freqDAG);
+            // Generate the patch diagram:
+            var patchDiagramCanvas = document.getElementById('patchDiagram');
+            // nomnoml is confused by leading spaces on directives lines, so...:
+            var patchDiagramSource =
+               `
+#ranker: longest-path
+#spacing: 12
+#padding: 3
+#fontSize: 10
+#fill: #333
+#lineWidth:1
+#stroke: #fff
+#background: #252525
+#bendSize: 1
+${freqDAG}
+`;
+            console.log("nomnoml src: " + patchDiagramSource);
+            nomnoml.draw(patchDiagramCanvas, patchDiagramSource);
 	},
 
 	changePatchType: function (newIndex) {

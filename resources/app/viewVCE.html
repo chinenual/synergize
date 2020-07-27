@@ -21,9 +21,11 @@
 	<div id="vceVoiceTab" class="tab-pane fade show active">
 
 		<!-- Old School - table layout -->
-
-		Patch Type:&nbsp;
-		<select class="vceEdit" id="patchType" onchange="viewVCE_voice.changePatchType(this.value)" disabled>
+                <table>
+                  <tr>
+                    <td>
+		      Patch Type:&nbsp;
+		      <select class="vceEdit" id="patchType" onchange="viewVCE_voice.changePatchType(this.value)" disabled >
 			<option value="0">1 + 2 + 3 + 4 + 5 + 6 + 7 + 8</option>
 			<option value="1">(1~2) + (3~4) + (5~6) + (7~8)</option>
 			<option value="2">((1+2+3)~4) + ((5+6+7)~8)</option>
@@ -34,7 +36,14 @@
 			<option value="7">(1~2~3) + (1~2~4) + (1~2~5) + (1~2~6) + (1~2~7) + (1~2~8)</option>
 			<option value="8">(1~2~3~4) + (1~2~3~5) + (1~2~3~6) + (1~2~3~7) + (1~2~3~8)</option>
 			<option value="9">((1~2+3)~4) + ((1~2+3)~5) + ((1~2+3)~6) + ((1~2+3)~7) + ((1~2+3)~8)</option>
-		</select>
+		      </select>
+                    </td><td>
+                      <canvas id="patchDiagram"
+                              style="padding:10px; border:1px solid #666; border-radius: 5px 5px 5px 5px;">
+                      </canvas>
+                    </td>
+                  </tr>
+                </table>
 		<table id="voiceOscTable" style="width:100%">
 			<thead>
 				<tr>
