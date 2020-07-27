@@ -454,7 +454,7 @@ let viewVCE_voice = {
 			} else {
 				td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinNullablePatchReg" id="patchFOInputDSR[${osc + 1}]" 
 				onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToNullablePatchRegister)" value="${viewVCE_voice.NullablePatchRegisterToText('' + reg)}" 
-				min="0" max="2"
+				min="0" max="4"
 				disabled/></div>`;
 			}
 			tr.appendChild(td);
@@ -468,7 +468,7 @@ let viewVCE_voice = {
 			}
 			td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinNullablePatchReg" id="patchAdderInDSR[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToNullablePatchRegister)" value="${viewVCE_voice.NullablePatchRegisterToText('' + reg)}" 
-			min="0" max="2"
+			min="0" max="4"
 			disabled/></div>`;
 			tr.appendChild(td);
 
@@ -476,7 +476,7 @@ let viewVCE_voice = {
 			td = document.createElement("td");
 			td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinPlain" id="patchOutputDSR[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,undefined)" value="${patchOutputDSR + 1}" 
-			min="1" max="2"
+			min="1" max="4"
 			disabled/></div>`;
 			tr.appendChild(td);
 
