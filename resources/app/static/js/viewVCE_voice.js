@@ -256,9 +256,12 @@ let viewVCE_voice = {
 		return ok;
 	},
 
-	onchangeDSR: function (param, osc, value) {
-		console.log("onchangeDSR: " + param + "[" + osc + "] == " + value);
+        onchangeDSR: function (param, osc /*1-based*/, value) {
+            	osc = parseInt(osc, 10);
 
+                console.log("onchangeDSR: " + param + "[" + osc + "] == " + value);
+
+                // displayed values are 1-based, bit values in the patch byte are 0-based
 		var patchFOInputDSR = document.getElementById(`patchFOInputDSR[${osc}]`).value;
 		var patchAdderInDSR = document.getElementById(`patchAdderInDSR[${osc}]`).value;
 		var patchOutputDSR = document.getElementById(`patchOutputDSR[${osc}]`).value;
@@ -267,9 +270,9 @@ let viewVCE_voice = {
 		var patchInhibitAddr = patchAdderInDSR == '' ? true : false;
 		var patchInhibitF0 = patchFOInputDSR == '' ? true : false;
 		var patchByte = 0;
-		patchByte |= (patchFOInputDSR & 0x03);
-		patchByte |= ((patchAdderInDSR << 3) & 0x18);
-		patchByte |= ((patchOutputDSR << 6) & 0xc0);
+	        patchByte |= ((parseInt(patchFOInputDSR,10)-1) & 0x03);
+	        patchByte |= (((parseInt(patchAdderInDSR,10)-1) << 3) & 0x18);
+	        patchByte |= (((parseInt(patchOutputDSR,10)-1) << 6) & 0xc0);
 		if (patchInhibitAddr) {
 			patchByte |= 0x20;
 		}
@@ -277,7 +280,8 @@ let viewVCE_voice = {
 			patchByte |= 0x04;
 		}
 
-		console.log(osc + " new patch byte: " + patchByte + "\n" +
+		console.log(osc + " old patch byte: " + vce.Envelopes[osc-1].FreqEnvelope.OPTCH + "\n" +
+			" new patch byte: " + patchByte + "\n" +
 			" patchInhibitAddr : " + patchInhibitAddr + "\n" +
 			" patchInhibitF0   : " + patchInhibitF0 + "\n" +
 			" patchOutputDSR   : " + patchOutputDSR + "\n" +
@@ -287,7 +291,7 @@ let viewVCE_voice = {
 		let message = {
 			"name": "setPatchByte",
 			"payload": {
-				"Osc": parseInt(osc, 10),
+			        "Osc": osc,
 				"Value": patchByte
 			}
 		};
