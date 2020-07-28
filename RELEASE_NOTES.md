@@ -1,3 +1,14 @@
+---
+layout: default
+title: Release Notes
+nav_order: 90
+description: "Release Notes"
+permalink: /docs/release-notes
+
+---
+
+# Release Notes
+
 # 2.0.0-beta3
 
 * A new [User Manual](https://chinenual.github.io/synergize/doc)
