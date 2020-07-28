@@ -21,9 +21,17 @@ Synergize is a free and open source application, which uses a number of other op
 * [Electron](electronjs.org)
 * [JQuery](https://jquery.com/)
 
-## Original Z80 Firmware and SYNHCS source code
+## Original Z80 Firmware, SYNHCS source code and Voice Libraries
 
-Synergize would not be possible without access to the excellent documentation, and well commented firmware and SYNHCS Z80 source code donated to the community by Stoney Stockell and Mulogix, Inc.
+Synergize would not be possible without access to the excellent
+documentation, and well commented firmware and SYNHCS Z80 source code
+donated to the community by Stoney Stockell and Mulogix, Inc. You can
+find them at a number of locations:
+
+* [Synergy Facebook Users Group](https://www.facebook.com/groups/synergysynth/)
+* [Synergy groups.io group](https://groups.io/g/synergy-synth)
+* Aaron Lanterman's [Synergy Preservation Page](https://lanterman.ece.gatech.edu/synergy/)
+* [Synergy Voice Library at groups.io](https://groups.io/g/synergy-synth/files/SynergyVoiceLibrary.zip)
 
 ## Documentation
 

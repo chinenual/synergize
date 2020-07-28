@@ -66,7 +66,7 @@ Oscillator 2.  Oscillator 3 is summed with that and the sum modulates
 oscillator 4.  Similarly for oscillators 5 through 8.  The output of
 oscillators 4 and 8 are "heard":<br><img style="zoom:50%;" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/patch-type-4.png?raw=true" />
 
-SYNHCHS used a textual representation of this modulation routing.  A
+SYNHCS used a textual representation of this modulation routing.  A
 `~` indicates "modulation", a `+` indicates "additive" (summation):
 
 ```
