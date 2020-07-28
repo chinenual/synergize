@@ -1,0 +1,49 @@
+// Override colors from default theme
+// Colors copied from the Midnight theme:
+
+$body-background-color: #252525;
+$sidebar-color: #252525; // #353535;
+$border-color: $grey-dk-200;
+
+$body-text-color: #f0e7d5;
+$body-heading-color: #e8e8e8;
+$search-result-preview-color: $grey-dk-000;
+
+$link-color: #ffcc00;
+$nav-child-link-color: darken($link-color, 10%);
+$btn-primary-color: $blue-200;
+$base-button-color: $grey-dk-250;
+
+$code-background-color: $grey-dk-250;
+$search-background-color: $grey-dk-250;
+$table-background-color: #353535;
+
+$feedback-color: lighten($sidebar-color, 10%);
+
+.site-header {
+    // logo assumes it is rendered on body background
+    background-color: $body-background-color;
+}
+
+p.callout {
+    background-color:#444;
+    margin: 0 4em 0 4em;
+    padding: 0 1em 0 1em;
+
+    border-radius: 8px 8px 8px 8px;
+    -moz-border-radius: 8px 8px 8px 8px;
+    -webkit-border-radius: 8px 8px 8px 8px;
+    border: 0px solid #000000;
+
+    -webkit-box-shadow: 5px 5px 5px 0px rgba(221,221,221,0.4);
+    -moz-box-shadow: 5px 5px 5px 0px rgba(221,221,221,0.4);
+    box-shadow: 5Px 5px 5px 0px rgba(221,221,221,0.4);
+
+
+}
+
+h1,
+.text-alpha {
+  @include fs-7;
+  font-weight: 300;
+}
