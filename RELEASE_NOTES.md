@@ -1,8 +1,18 @@
 # 2.0.0-beta3
 
-* Beta test release.
+* A new [User Manual](https://chinenual.github.io/synergize/doc)
+  documenting how to use Synergize, and including some of the theory
+  behind the Synergy/GDS voicing architecture and advice on how to get
+  the most out of your patches (adapted from the original SYNHCS manual).
+* Adds support for editing a CRT (clear voices, add voices and save a new .CRT file).
+* Patch routing diagrams generated from the patch table to help
+  visualize the patch routing.
+* Fixes a bug in the envelope copying functionality.
+* Fixes a bug in some numeric input edge cases on the envelopes tab.
+* Fixes a bug in the patch register editing
 * Adds new serial port diagnostic command line option -LINKTST to send
   and recieve bytes to the Synergy's `RESTORE Program #4` serial link test.
+
 
 # 2.0.0-beta2
 

@@ -1,1 +1,21 @@
-theme: jekyll-theme-midnight
+title: "Synergize"
+description: "Synergy Librarian and Editor"
+remote_theme: pmarsceill/just-the-docs
+color_scheme: "midnight"
+
+exclude: ["README.md"]
+
+logo: "https://github.com/chinenual/synergize/raw/master/docs/screenshots/logo-for-github.png?raw=true"
+
+aux_links:
+  "Home":
+  - /synergize
+  "User Manual":
+  - /synergize/docs
+  "Github Project":
+  - https://github.com/chinenual/synergize
+
+aux_links_new_tab: false
+
+baseurl: "/synergize" 
+url: "https://chinenual.github.io" 
