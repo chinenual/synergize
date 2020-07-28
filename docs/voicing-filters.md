@@ -9,10 +9,13 @@ permalink: /docs/voicing-mode/filters
 
 # Filter Tab
 
-<img title="Voice Filters view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_filters.png?raw=true" width="100%"/>
+![screenshot](/synergize/docs/screenshots/viewVCE_filters_annotated.png)
 
 1. Click the `Filters` tab to select this Filters editor
-2. `Filter` Selector - use this to select which filter to view or edit.
+2. `Filter` Selector - use this to select which filter to view or
+   edit.  If there are more than one filters, the default display will
+   be "All" (and the table below the graph will be hidden). You must
+   select one of the filters in order to be able to edit it.
 3. `Copy From` Selector - use this to copy the filter values from
 another filter into this one. See [below](#copying-filters).
 4. The chart shows a graphical view of the filter.  X axis is the frequency, Y axis
@@ -31,12 +34,28 @@ and the value is a + / - amplitude adjustment to the oscilator result.
 
 The Synergy supports two sets of filters.   Each voice can have an "A
 filter".  That A filter is shared by any oscillator that is configured
-to use the A filter.
+to use the A filter.The Af is used mostly for modulators. In
+certain frequency ranges along the keyboard, the modulation
+may be excessive in one range and not enough in another. This
+filter is used to increase or decrease that effect by manipulating
+the degree of modulation according to key number.
 
 An oscillator can instead use a dedicated "B filter".  In this case,
 the filter is used only by that oscillator.  If another oscilator
 declares a B filter, an separate, independently configured filter is
 used.
+
+According to key number, these values let you add or subtract from the
+amplitude values of a particular oscillator in a particular range of
+the keyboard.  This is especially important for instruments whose
+timbral characteristics change up and down the frequency range.
+
+Filters can be used to make exaggerations of amplitude or modulation
+up or down the frequency range, such as in the case where every
+few keys produce a different instrumental timbre or a different
+sound effect. This is how voice #24 of the internals, which has
+different percussion sounds in different ranges of the keyboard,
+is accomplished.
 
 ## Copying Filters
 
@@ -48,3 +67,4 @@ selected filter to the one currently being displayed.
 
 To add or remove a filter, adjust the oscillator's `Filter` selector 
 on the [Voice Tab](voicing-voice.md#adjust-filters).
+

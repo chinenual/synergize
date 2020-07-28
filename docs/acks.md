@@ -35,4 +35,10 @@ find them at a number of locations:
 
 ## Documentation
 
-Thanks also to Tom Piggott for allowing me to reuse portions of his SYNHCS documentation for this manual. Any errors introduced in the adaptation are entirely mine.
+Thanks also to Tom Piggott for allowing me to reuse portions of his
+SYNHCS documentation for this manual. Any errors introduced in the
+adaptation are entirely mine.
+
+The section describing the Patch registers (the Output, Addr and Freq
+DSR's) is adapted from the firmware documentation. 
+ 
