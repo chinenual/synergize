@@ -8,7 +8,7 @@ permalink: /docs/library-mode
 
 # Library Mode
 
-By default, Synergy is in "Library Mode".  This allows you to view voice VCE's and cartridge CRT's, but does not allow you to edit voice parameters.
+By default, Synergy is in "Library Mode".  This allows you to view voice VCE's and cartridge CRT's and load voices into your Synergy, but does not allow you to edit voice parameters.
 
 ## Voices
 
