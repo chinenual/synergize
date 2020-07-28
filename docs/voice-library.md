@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Voice Library
-nav_order: 99
+nav_order: 70
 description: Voice Library
 permalink: /docs/voice-library
 ---

@@ -9,5 +9,4 @@ permalink: /docs/voicing-mode/keyprop
 
 # Keyboard Proportionality Tab
 
-
-
+<img title="Voice Key Prop view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_keyprop.png?raw=true" width="100%"/>

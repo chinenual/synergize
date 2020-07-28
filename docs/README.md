@@ -35,7 +35,7 @@ Note: Synergize does not itself include the original voice libraries -- download
 Download the release:
 [Release Binaries](https://github.com/chinenual/synergize/releases)
 
-See links below for sites containing the original DK/Mulogix voice library.
+See the [User Manual](voice-library.md) sites where you can download the original DK/Mulogix voice library.
 
 ## Issues / Bugs / Feature Requests
 
@@ -53,28 +53,10 @@ If you are a user or are thinking of becoming a user, please join our Slack work
 <img title="Voice Key Equalization view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_keyeq.png?raw=true" width="45%"/>
 <img title="Voice Key Proportion view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_keyprop.png?raw=true" width="45%"/>
 
-## Requirements
+## Requirements and How to use
 
-### Synergy II+
-
-Synergize connects to a Synergy II+ via its RS232 serial port.  It is tested with a Synergy running the latest 3.22 firmware - but is probably compatible with earlier versions.
-
-You'll also need a null modem serial cable and possibly a USB serial device depending on your computer's capablities. See [HARDWARE](hardware.md) for some details.
-
-### Operating Systems
-
-Synergize has been tested on:
-
-* MacOS 10.14.6 (Mojave)
-* Windows 10
-* Ubuntu Linux 18.04
-* Ubuntu Linux 16.04
-
-## How to use
-
-### Serial cables and configurations
-
-See [HARDWARE](hardware.md) for details on how to configure the Synergy, your operating system and Synergize to talk with one another.
+See the [User Manual](intro.md) for full details on hardware, OS
+requirements and application usage.
 
 ### Connecting to the Synergy
 
@@ -114,22 +96,5 @@ See [HARDWARE](hardware.md) for some serial port related troubleshooting guideli
 * See the
 [Release Notes](https://github.com/chinenual/synergize/releases)
 for some caveats regarding the Linux builds.
-
-## Voice Library
-
-Full sets of the DK and Mulogix library CRT and VCE files are also
-available via the below links.  The set I'm using includes the Internal voices, the 6 standard Carts and additional "Library" voices -- it is available at:
-
-* [Synergy Voice Library at groups.io](https://groups.io/g/synergy-synth/files/SynergyVoiceLibrary.zip)
-
-## Thank you!
-
-This would not have be possible without access to the excellent
-documentation, and well commented firmware and SYNHCS Z80 source code donated to the community by  Stoney Stockell and Mulogix, Inc.  Those are available in several locations:
-
-* [Synergy Facebook Users Group](https://www.facebook.com/groups/synergysynth/)
-* [Synergy groups.io group](https://groups.io/g/synergy-synth)
-* Aaron Lanterman's [Synergy Preservation Page](https://lanterman.ece.gatech.edu/synergy/)
-
 
 

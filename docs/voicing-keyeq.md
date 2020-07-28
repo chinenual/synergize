@@ -10,4 +10,4 @@ permalink: /docs/voicing-mode/keyeq
 # Key Equalization Tab
 
 
-
+<img title="Voice Key Eq view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_keyeq.png?raw=true" width="100%"/>

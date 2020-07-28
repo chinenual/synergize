@@ -9,11 +9,28 @@ permalink: /docs/hardware/troubleshooting
 
 ## Troubleshooting
 
-* If you have problems connecting, be sure to match the baud rate on your Synergy. Checking this requires opening up and looking at a jumper on the interface daughter board.  Mine was originally set to 9600 (I'm not sure if this was the "factory default" or if it was tweaked by a previous owner). As long as Synergize is configured with the same rate, all is good. I've tested mine at both 9600 and 19,200 baud and things work fine.
+* If you have problems connecting, be sure to match the [baud rate](hardware.md#baud-rate) 
+  on your Synergy. Checking this requires opening up
+  and looking at a jumper on the interface daughter board.  Mine was
+  originally set to 9600 (I'm not sure if this was the "factory
+  default" or if it was tweaked by a previous owner). As long as
+  Synergize is configured with the same rate, all is good. I've tested
+  mine at both 9600 and 19,200 baud and things work fine.
 
-* On Linux, be sure your user is a member of the `dialout` group (permissions on the serial port device usually limit access to members of that group).
+* The [parity](hardware.md#parity)
+  settings on your Synergy must be set to No Parity.
 
-* One user reports that he had problems (no serial communication at all), but then swapped his USB serial cable for another cable and has had success since.  The original cable was not obviously bad (it worked with some other software he uses), but there was an as-yet-undiagnosed problem when using it with Synergize.  So swapping out cables might be a last resort if you can't make things work otherwise.
+* On Linux, be sure your user is a member of the `dialout` group
+  (permissions on the serial port device usually limit access to
+  members of that group). 
+
+* One user reports that he had problems (no serial communication at
+  all), but then swapped his USB serial cable for another cable and
+  has had success since.  The original cable was not obviously bad (it
+  worked with some other software he uses), but there was an
+  as-yet-undiagnosed problem when using it with Synergize.  So
+  swapping out cables might be a last resort if you can't make things
+  work otherwise. 
 
 ### Verbose Logging
 

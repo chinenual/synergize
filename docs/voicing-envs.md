@@ -9,5 +9,6 @@ permalink: /docs/voicing-mode/envelopes
 
 # Envelopes Tab
 
+<img title="Voice Envelopes view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_envs.png?raw=true" width="100%"/>
 
 

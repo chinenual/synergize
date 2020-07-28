@@ -37,7 +37,7 @@ the effect can be heard in real time.
 ## Default Voice
 
 When Voicing Mode is initiated, Synergize loads an empty "default
-voice" so the Synergy.  You can either start creating your new voice
+voice" to the Synergy.  You can either start creating your new voice
 from this default, or can load an existing VCE file and start from
 there.
 

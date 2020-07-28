@@ -9,6 +9,24 @@ permalink: /docs/getting-started
 
 # Getting Started
 
+## Requirements
+
+### Synergy II+
+
+Synergize connects to a Synergy II+ via its RS232 serial port.  It is tested with a Synergy running the latest 3.22 firmware - but is probably compatible with earlier versions.
+
+You'll also need a null modem serial cable and possibly a USB serial device depending on your computer's capablities. See [HARDWARE](hardware.md) for some details.
+
+### Operating Systems
+
+Synergize has been tested on:
+
+* MacOS 10.14.6 (Mojave)
+* Windows 10
+* Ubuntu Linux 18.04
+* Ubuntu Linux 16.04
+
+
 ## Install Synergize
 
 ### Mac
@@ -42,3 +60,11 @@ Set the baud rate of your Synergy here. See [Serial Port Configuration](hardware
 ### Voice Library Location
 
 This tells Synergize where to find your voice library (Synergize defaults your Home directory).  This will be the default location displayed in the left-pane file browser when you start Synergize.
+
+## Test your connection to the Synergy
+
+You can test the connection by selecting the `Connect->Connect to Synergy` menu.  If successful, Synergize will report the firmware version of the connected Synergy (and display it in the upper left pane of the display).
+
+It is not necessary to explicitly connect in this way -- Synergize will connect the first time you invoke  a command that needs to communicate with the Synergy.
+
+See [Troubleshooting](hardware-troubleshooting.md) for things to check if this does not "just work".
