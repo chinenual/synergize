@@ -9,9 +9,9 @@ permalink: /docs/release-notes
 
 # Release Notes
 
-# 2.0.0-beta3
+## 2.0.0-beta3
 
-* A new [User Manual](https://chinenual.github.io/synergize/doc)
+* A new [User Manual](https://chinenual.github.io/synergize/docs)
   documenting how to use Synergize, and including some of the theory
   behind the Synergy/GDS voicing architecture and advice on how to get
   the most out of your patches (adapted from the original SYNHCS manual).
@@ -22,10 +22,13 @@ permalink: /docs/release-notes
 * Fixes a bug in some numeric input edge cases on the envelopes tab.
 * Fixes a bug in the patch register editing
 * Adds new serial port diagnostic command line option -LINKTST to send
-  and recieve bytes to the Synergy's `RESTORE Program #4` serial link test.
+  and recieve bytes to the Synergy's `RESTORE Program #4` serial link
+  test. See the
+  [Troubleshooting](https://chinenual.github.io/synergize/docs/hardware/troubleshooting#serial-diagnostics-linktst)
+  section of the manual for details.
 
 
-# 2.0.0-beta2
+## 2.0.0-beta2
 
 * Beta test release.
 * Adds support for altering the oscillator patch routing.
@@ -36,7 +39,7 @@ permalink: /docs/release-notes
   in the main executable).  See the Troubleshooting section in 
   [HARDWARE](docs/HARDWARE.md) for details.
   
-# 2.0.0-beta1
+## 2.0.0-beta1
 
 * Beta test release.
 * This release introduces voice editing functionality.  The editor is
@@ -98,7 +101,7 @@ permalink: /docs/release-notes
     * Fixed display of Wave Type and Key Prop toggle on the Oscillator table.
     * Fixed display of Sustain and Loop points.
 
-# 1.0.0
+## 1.0.0
 
 * Voice settings (envelopes, filters, key equalization, key
   proportionality) are displayed in tabular and graphical formats
@@ -124,7 +127,7 @@ permalink: /docs/release-notes
        remains; as noted before, it is annoying but harmless.
 	* On Linux, file dialogs often open _behind_ the main window.
 
-# 0.2.0
+## 0.2.0
 
 * Beta test release.
 * Fixed serial I/O bugs; communications are much more reliable.
@@ -142,7 +145,7 @@ permalink: /docs/release-notes
 	  releasing this with these caveats for anyone willing to help out
 	  testing on Linux.
 
-# 0.1.0
+## 0.1.0
 
 * Beta test release.
 * Supports both Windows and MacOS.

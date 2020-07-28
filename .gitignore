@@ -3,6 +3,7 @@ Gemfile
 Gemfile.lock
 Dockerfile
 docker-compose.yml
+_site
 
 TAGS
 VOICES
