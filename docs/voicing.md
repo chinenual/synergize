@@ -41,7 +41,7 @@ voice" to the Synergy.  You can either start creating your new voice
 from this default, or can load an existing VCE file and start from
 there.
 
-# Saving your edits
+## Saving your edits
 
 To save your new voice, select `Save/Load -> Save Voice (VCE)`.  If
 you exit Voicing Mode without first saving your voice, your edits will

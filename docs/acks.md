@@ -10,7 +10,7 @@ permalink: /docs/acknowledgements
 
 ## Technical Dependencies
 
-Synergize is a free and open source application, which uses a number of other open source technologies. They include:
+Synergize is free and open source software, which uses a number of other open source technologies. They include:
 
 * Quentin Renard's excellent Go library [Astilectron](https://github.com/asticode/go-astilectron) and its related bundler and bootstrap modules.
 * Aaron Jacob's Go [serial port library](https://github.com/jacobsa/go-serial).
