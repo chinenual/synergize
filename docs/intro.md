@@ -53,6 +53,9 @@ replicates everything you can do in SYNHCS.
 
 ## Features
 
+### Cross Platform
+* Runs on Mac, Windows, Linux
+
 ### Librarian (VCE and CRT files)
 * View voice settings
 * Load "carts" and play them (the original DK voice libraries are
