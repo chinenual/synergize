@@ -7,8 +7,11 @@ permalink: /docs
 has_children: true
 has_toc: false
 ---
+# Synergize User Manual
 
-# The Synergy
+## The Synergy
+
+![The Synergy](/synergize/docs/screenshots/synergy.jpg)
 
 The Synergy was first released in 1981.  It features 32 digital
 oscillators and a unique architecture that supports very musical and
@@ -29,7 +32,7 @@ carts (24 voices each), including 3 programmed by Wendy Carlos
 herself.  For many users, these have been the only sounds their
 instruments can produce. 
 
-# SYNHCS
+## SYNHCS
 
 In 1984, DK (and later Mulogix) released SYNHCS - a CP/M application
 that ran on the Kaypro and talked to the Synergy over a serial
@@ -37,7 +40,7 @@ cable. It opened up the full programability of the GDS on the Synergy.
 In fact, the SYNHCS documentation refers to the SynergyII+ and SYNHCS
 combo as "a better GDS".
 
-# Synergize
+## Synergize
 
 That was almost 40 years ago. I don't know how many Synergy's are
 still out there in various studios, but I do know that many of them
