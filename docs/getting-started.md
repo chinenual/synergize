@@ -13,7 +13,7 @@ permalink: /docs/getting-started
 
 ### Synergy II+
 
-Synergize connects to a Synergy II+ via its RS232 serial port.  It is tested with a Synergy running the latest 3.22 firmware - but is probably compatible with earlier versions.
+Synergize connects to a Synergy II+ via its RS232 serial port.  It is tested with a Synergy running the latest 3.22 firmware but is probably compatible with earlier versions.
 
 You'll also need a null modem serial cable and possibly a USB serial device depending on your computer's capablities. See [HARDWARE](hardware.md) for some details.
 
@@ -63,8 +63,8 @@ This tells Synergize where to find your voice library (Synergize defaults your H
 
 ## Test your connection to the Synergy
 
-You can test the connection by selecting the `Connect->Connect to Synergy` menu.  If successful, Synergize will report the firmware version of the connected Synergy (and display it in the upper left pane of the display).
+You can test the connection by selecting the `Connect->Connect to Synergy` menu.  If successful, Synergize will report the firmware version of the connected Synergy in the upper left pane of the display.
 
-It is not necessary to explicitly connect in this way -- Synergize will connect the first time you invoke  a command that needs to communicate with the Synergy.
+It is not necessary to explicitly connect in this way. Synergize will connect the first time you invoke  a command that needs to communicate with the Synergy.
 
 See [Troubleshooting](hardware-troubleshooting.md) for things to check if this does not "just work".

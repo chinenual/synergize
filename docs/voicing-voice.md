@@ -54,10 +54,10 @@ Type`, `Filters Used`) are computed based on other parameter values.
 ## Oscillators
 
 There are 32 oscillators in this system, however each voice always
-uses them in pairs (one "oscillator" on the voice tab uses two
+uses them in pairs. One "oscillator" on the voice tab uses two
 hardware oscillators -- one controlled by the "low" envelope setting,
 the other controlled by the "up" envelope setting. The sound created
-by the oscilator is interpolated between the two settings based on the
+by the oscillator is interpolated between the two settings based on the
 keyboard velocity.
 
 Oscillators consist of either
@@ -146,7 +146,7 @@ process very unique and full of possibilities:
 
 These patches are changable from the Synergize `Voice Tab`
 via the `Patch Type` selector, or by directly editing any of the
-oscilator patch registers.  By selecting register combinations that
+oscillator patch registers.  By selecting register combinations that
 don't match the factory defaults, you can create unique and custom modulation schemes.
 
 The conclusion and concept is that the GDS has the accuracy: of
@@ -263,5 +263,5 @@ Synergy, the value is not transmitted to Synergize in real time.
 
 When you save the voice, Synergize retrieves the actual state of the
 settings from the Synergy.  If parameters were edited via the Synergy
-front panel, those the the values stored in the VCE file.
+front panel, those are the values stored in the VCE file.
 

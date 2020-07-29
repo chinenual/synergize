@@ -26,9 +26,9 @@ another filter into this one. See [below](#copying-filters).
 
 ## Filter Basics
 
-A Synergy filter affects the amplitude of the oscilator it is paired
+A Synergy filter affects the amplitude of the oscillator it is paired
 with. It is a table where each value affects a given frequency range,
-and the value is a + / - amplitude adjustment to the oscilator result.
+and the value is a + / - amplitude adjustment to the oscillator result.
 
 ### A Filters and B Filters
 
@@ -41,7 +41,7 @@ filter is used to increase or decrease that effect by manipulating
 the degree of modulation according to key number.
 
 An oscillator can instead use a dedicated "B filter".  In this case,
-the filter is used only by that oscillator.  If another oscilator
+the filter is used only by that oscillator.  If another oscillator
 declares a B filter, an separate, independently configured filter is
 used.
 

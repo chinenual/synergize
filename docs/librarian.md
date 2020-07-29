@@ -8,17 +8,17 @@ permalink: /docs/library-mode
 
 # Library Mode
 
-By default, Synergy is in "Library Mode".  This allows you to view voice VCE's and cartridge CRT's and load voices into your Synergy, but does not allow you to edit voice parameters.
+By default, Synergy is in "Library Mode".  This allows you to view voice VCE's and cartridge CRT's and load voices into your Synergy but does not allow you to edit voice parameters.
 
 ## Voices
 
-You can load a VCE from the `Load / Save` menu button, or use the library navigator on the left of the screen to load a voice.
+You can load a VCE from the `Load / Save` menu button or use the library navigator on the left of the screen to load a voice.
 
-The right panel will show the contents of the voice.  The tabs are the same as in Voicing Mode, except parameters are not editable. See the [Voicing Mode](voicing.md) chapter for details on how each parameter is displayed and what they mean.
+The right panel will show the contents of the voice.  The tabs are the same as in Voicing Mode except parameters are not editable. See the [Voicing Mode](voicing.md) chapter for details on how each parameter is displayed and what it means.
 
 ## Cartridges
 
-You can load a CRT from the `Load / Save` menu button, or use the library navigator on the left of the screen to load a cart.
+You can load a CRT from the `Load / Save` menu button or use the library navigator on the left of the screen to load a cart.
 
 The right panel will show the 24 cartridge slots with the names of each voice.  Click on any voice to drill down and view the voice's parameters.  When loaded from a cart, the voice tabs show both the Cart and Voice names (CartName / VoiceName) above the tabs.  Click the CartName to return to the Cart overview.
 

@@ -28,7 +28,7 @@ another oscillator into this one. See [below](#copying-envelopes).
   in each of the low and up envelopes.
   * 6c - Amplitude Time (low and up).  The time when this point occurs.
   * 6d - Frequency envelope controls.  Similar to the Amplitude controls,
-     but controls the modulation of the frequency of the oscilator
+     but controls the modulation of the frequency of the oscillator
      instead of altering the amplitude.
 7. For TYPE1 envelopes, two acceleration values are used to control
    the envelope after the key is released (see
