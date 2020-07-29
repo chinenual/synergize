@@ -136,3 +136,10 @@ entry, speed of loops, modulation degree, speed of repeats, speed of
 musical tremelos, sustain lengths, a combination of these and more.
 As a guide to voicing, decide what you want the velocity to accomplish
 in a certain voice, then try to attain it.
+
+## Copying Envelopes
+
+You can copy a different oscillator's envelopes by
+using the `Copy From` selector.  This copies the values from the
+selected envelopes (frequency, amplitude both lower and upper bounds)
+to the one currently being displayed. 
