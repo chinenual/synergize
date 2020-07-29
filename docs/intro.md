@@ -33,9 +33,9 @@ instruments can produce.
 
 In 1984, DK (and later Mulogix) released SYNHCS - a CP/M application
 that ran on the Kaypro and talked to the Synergy over a serial
-cable. It opened up the full programability of the GDS on the Synergy
-(in fact, the SYNHCS documentation refers to the SynergyII+ and SYNHCS
-combo as "a better GDS").
+cable. It opened up the full programability of the GDS on the Synergy.
+In fact, the SYNHCS documentation refers to the SynergyII+ and SYNHCS
+combo as "a better GDS".
 
 # Synergize
 
@@ -46,9 +46,9 @@ original library carts.  Even those that have a Kaypro are dealing
 with 30+ year old hardware that's not easy to integrate into a modern
 network.
 
-Synergize is a drop-in replacement for SYNHCS/Kaypro, but runs on
+Synergize is a drop-in replacement for SYNHCS/Kaypro, but it runs on
 modern hardware and operating systems (Mac, Windows, Linux).  No need
-for a 30+ year old Kaypro. Except for a couple of features, Synergize
+for a 30+ year old Kaypro. Except for a couple of minor features, Synergize
 replicates everything you can do in SYNHCS.
 
 ## Features
@@ -58,9 +58,9 @@ replicates everything you can do in SYNHCS.
 
 ### Librarian (VCE and CRT files)
 * View voice settings
-* Load "carts" and play them (the original DK voice libraries are
-  available online - see [Voice Library](voice-library.html) for
-  links).
+* Load "carts" and play them. The original DK voice libraries are
+  available online. See [Voice Library](voice-library.html) for
+  links.
 
 ### Performance Parameter archive (SYN files)
 * Persist Performance Parameters (sequencer, portamento, amplitude and timbre settings)
