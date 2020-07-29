@@ -61,6 +61,7 @@ replicates everything you can do in SYNHCS.
 * Load "carts" and play them. The original DK voice libraries are
   available online. See [Voice Library](voice-library.html) for
   links.
+* Create your own "carts" of 24 voices
 
 ### Performance Parameter archive (SYN files)
 * Persist Performance Parameters (sequencer, portamento, amplitude and timbre settings)
@@ -75,4 +76,3 @@ replicates everything you can do in SYNHCS.
   * Filter control
   * Keyboard equalization
   * Keyboard proportionality
-* Create your own "carts" of 24 voices
