@@ -35,7 +35,7 @@ Note: Synergize does not itself include the original voice libraries -- download
 Download the release:
 [Release Binaries](https://github.com/chinenual/synergize/releases)
 
-See the [User Manual](voice-library.md) sites where you can download the original DK/Mulogix voice library.
+See the [User Manual](voice-library.md) for sites where you can download the original DK/Mulogix voice library.
 
 ## Issues / Bugs / Feature Requests
 
@@ -58,32 +58,6 @@ If you are a user or are thinking of becoming a user, please join our Slack work
 See the [User Manual](intro.md) for full details on hardware, OS
 requirements and application usage.
 
-### Connecting to the Synergy
-
-Set your Serial Port device name and baud rate via the Help->Preferences menu (via the cheesy Help button at the top of the page).  You can then test the connection by selecting the Connect->Connect to Synergy menu.  If successful, Synergize will report the firmware version of the connected Synergy (and display it in the upper left pane of the display).
-
-It is not necessary to explicitly connect in this way -- the first time you invoke a command that needs to communicate with the Synergy, Synergize will initialize the connection implicitly.
-
-### The Library Browser
-
-The left hand pane of the UI is a file browser, allowing you to navigate your Synergy voice library and select SYN, CRT or VCE files to load.  The default location of the library is set via Help->Preferences.
-
-### CRT Viewer
-
-When you load a Cartridge (CRT) file, basic information is displayed (the voice assignments).  You can click on any voice to drill down and see voice documentation.  Or you can click the red  Load CRT button to upload the CRT to the Synergy.
-
-### VCE Viewer
-
-When you load a Voice (VCE) file or drill down to a voice from the CRT viewer, various information about the voice is displayed.  This includes the basic info included in the original "DOC" files, plus screens that replicate various screens from the original SYHNCS software - including frequency and amplitude envelopes, filters, keyboard equalization and proportion curves.
-
-### Returning the Synergy to normal state
-
-Once a CRT is loaded, the Synergy is using its "VRAM" data (its Cartridge button is flashing).   To use the internal voices or a physical cartridge, select Connect->Disable VRAM.
-
-### Diagnostics
-
-Synergize can test the connection to the Synergy in cooperation with the COMTST onboard test mode of the Synergy.  To run that, select Connect->Serial Diagnostics and follow the instructions on the screen.
-NOTE: once the Synergy is in this test state, it will remain there until it is power cycled.
 
 ## Known Issues
 
