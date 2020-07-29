@@ -23,7 +23,7 @@ The Synergy was a favorite of Wendy Carlos and featured on her Digital
 Moonscapes and Beauty and the Beast albums (she'd previously used a
 GDS for the Tron soundtrack). 
 
-However, without computer based software, the Synergy can't be
+However, without computer based software, the Synergy couldn't be
 programmed.  It had 24 built in voices. DK produced a library of 9
 carts (24 voices each), including 3 programmed by Wendy Carlos
 herself.  For many users, these have been the only sounds their
