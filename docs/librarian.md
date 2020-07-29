@@ -14,7 +14,7 @@ By default, Synergy is in "Library Mode".  This allows you to view voice VCE's a
 
 You can load a VCE from the `Load / Save` menu button or use the library navigator on the left of the screen to load a voice.
 
-The right panel will show the contents of the voice.  The tabs are the same as in Voicing Mode except parameters are not editable. See the [Voicing Mode](voicing.md) chapter for details on how each parameter is displayed and what it means.
+The right panel will show the contents of the voice.  The tabs are the same as in Voicing Mode except parameters are not editable. See the [Voicing Mode](voicing.md) chapter for details on how parameters are displayed and what they mean.
 
 ## Cartridges
 

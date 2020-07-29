@@ -11,7 +11,7 @@ permalink: /docs/voicing-mode/voice
 
 ![screenshot](/synergize/docs/screenshots/viewVCE_voice_annotated.png)
 
-1. Click the `Voice` tab to select this Voice editor. This is the
+1. Click the `Voice` tab to select the Voice editor. This is the
 default view when a new voice is loaded.
 2. The `Patch Type` selector allows you to quickly change between the
 various factory patch types (see [below](#standard-patch-routing)).
@@ -34,8 +34,8 @@ fine-grained frequency detuning. See [below](#harmonics-and-detune).
 is altered by the Key Proportionality curve.
 10. `Filters` selects which filter, if any, is used for this
 oscillator.
-11. `Voice Name` allows you to change the "name" of the voice as it
-will display in the Cartridge editor.  Unlike in SYNHCS, the name does
+11. `Voice Name` allows you to change the "name" of the voice.  Unlike
+in SYNHCS, the name does 
 not have to match the VCE filename you save it to.
 12. `Vibrato Type`, `Depth` and `Delay` and `Aperiotic Vibrato`, `Amp`
 and `Timbre` `Center`, `Sensitivity` and `Transpose`
@@ -43,7 +43,7 @@ control the default values for the corresponding parameters. These
 will be overridable at performance time via the controls on the front
 panel of the Synergy.  See
 [note about performance params](#note-about-performance-parameters) below.
-13. the Amplitude/Timbre graph recreates the center/sensitivty curves
+13. The Amplitude/Timbre graph recreates the center/sensitivty curves
     as displayed in SYNHCS and the original voice library .DOC files.
 
 
@@ -77,8 +77,8 @@ is being used in a particular voice patch.
 ## Patch Type
 
 The "patch type" is selectable on the `Voice Tab`.
-It contains various ways in which patching of oscillators is
-accomplished. Synergize displays the factory patch types with both the
+It contains various ways to patch of oscillators.
+Synergize displays the factory patch types with both the
 textual format used in SYNHCS and a graphical format similar to a
 Yamaha's DX7 "algorithm" graphic.
 
@@ -86,24 +86,26 @@ Yamaha's DX7 "algorithm" graphic.
 
 The display shows each oscillator in the voice.  A line between them
 means the oscillator(s) above it frequency modulate the one below.
-Oscillators on the very bottom row are "heard"; oscillators on rows
+Oscillators on the very bottom row are audible. Oscillators on rows
 above are modulators for other oscillators. When more than one
-oscillator modulates a
+oscillator modulates another oscillator, the modulating oscillator's
+outputs are summed, then the resulting signal is used to modulate the
+target oscillator.
 
-For example the standard patch 4:  Oscillator 1 modulates
+For example in the standard patch 4:  Oscillator 1 modulates
 Oscillator 2.  Oscillator 3 is summed with that and the sum modulates
 oscillator 4.  Similarly for oscillators 5 through 8.  The output of
-oscillators 4 and 8 are "heard":<br><img style="zoom:50%;" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/patch-type-4.png?raw=true" />
+oscillators 4 and 8 are audible:<br><img style="zoom:50%;" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/patch-type-4.png?raw=true" />
 
 SYNHCS used a textual representation of this modulation routing.  A
-`~` indicates "modulation", a `+` indicates "additive" (summation):
+`~` indicates "modulation", a `+` indicates summation ("additive"):
 
 ```
 (1~2+3)~4) + ((5~6+7)~8)
 ```
 
 The actual routing is controlled by a set of three values on each
-oscillator (the Freq, Adder and Output registers) -- described below.
+oscillator: the Freq, Adder and Output registers. These are described below.
 
 ### Standard Patch Routing
 
