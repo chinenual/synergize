@@ -12,16 +12,15 @@ has_toc: false
 
 The design of each tab is closely modeled on screens from the original
 SYNHCS software.
+Those of you who know SYNHCS should have no trouble
+using Synergize. 
+
 
 * [Voice](voicing-voice.md)
 * [Envelopes](voicing-envs.md)
 * [Filter](voicing-filters.md)
 * [Key Equalization](voicing-keyeq.md)
 * [Key Proportion](voicing-keyprop.md)
-
-Synergize is closely modeled on SYNHCS.
-Those of you who know SYNHCS should have no trouble
-using Synergize. 
 
 A main difference is that SYNHCS relied on using buttons and knobs on
 the Synergy front panel to adjust each value while in Synergize all
