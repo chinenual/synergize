@@ -19,6 +19,7 @@ SYNHCS software.
 * [Key Equalization](voicing-keyeq.md)
 * [Key Proportion](voicing-keyprop.md)
 
+Synergize is closely modeled on SYNHCS.
 Those of you who know SYNHCS should have no trouble
 using Synergize. 
 
