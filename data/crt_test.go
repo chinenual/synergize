@@ -2,11 +2,16 @@ package data
 
 import (
 	"bufio"
+	"bytes"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/orcaman/writerseeker"
 )
 
 func loadVoiceList(path string) (list []string, err error) {
@@ -49,7 +54,41 @@ func compareVoiceList(t *testing.T, context string, crt CRT, list []string) {
 	}
 }
 
-func TestCreateCrt(t *testing.T) {
+func testWriteCRT(t *testing.T, crt CRT) {
+	// test creating a new CRT and then deep comparing it to the original.
+	var writebuf = writerseeker.WriterSeeker{}
+
+	var err error
+	if err = WriteCrt(&writebuf, crt.Voices); err != nil {
+		t.Errorf("error writing CRT: %v", err)
+		return
+	}
+
+	write_bytes, _ := ioutil.ReadAll(writebuf.Reader())
+	dumpTestBytes("/tmp/testbytes.crt", write_bytes)
+
+	var readbuf = bytes.NewReader(write_bytes)
+	var crt2 CRT
+
+	if crt2, err = ReadCrt(readbuf); err != nil {
+		t.Errorf("error parsing generated stream: %v", err)
+		return
+	}
+	if len(crt.Voices) != len(crt2.Voices) {
+		t.Errorf("diff number of voices %d and %d", len(crt.Voices), len(crt2.Voices))
+	}
+	for i := range crt.Voices {
+		if !diffVCE(*crt.Voices[i], *crt2.Voices[i]) {
+			t.Errorf("read/write data doesnt match for voice %d", i+1)
+			fmt.Printf("read: %s\n", VceToJson(*crt.Voices[i]))
+			fmt.Printf("wrote: %s\n", VceToJson(*crt2.Voices[i]))
+			return
+		}
+	}
+
+}
+
+func TestCreateCRT(t *testing.T) {
 	var err error
 	var list []string
 	var voicelistPath = "testfiles/INTERNAL.CRT.voice-list.txt"
@@ -66,10 +105,10 @@ func TestCreateCrt(t *testing.T) {
 	testParseCRT(t, "testfiles/gen/INTERNAL.CRT")
 }
 
-func testParseCRT(t *testing.T, path string) {
+func testParseCRT(t *testing.T, path string) (crt CRT, err error) {
 	log.Println("test ", path)
 
-	crt, err := ReadCrtFile(path)
+	crt, err = ReadCrtFile(path)
 	if err != nil {
 		t.Errorf("error parsing %s: %v", path, err)
 		return
@@ -79,11 +118,14 @@ func testParseCRT(t *testing.T, path string) {
 	var list []string
 	list, err = loadVoiceList(voicelistPath)
 	if err != nil {
-		t.Logf("error parsing %s: %v - skipping contents check", voicelistPath, err)
+		//t.Logf("error parsing %s: %v - skipping contents check", voicelistPath, err)
+		// don't report the error back to the caller - need to continue with the Write Test
+		err = nil
 		return
 	}
 
 	compareVoiceList(t, path, crt, list)
+	return
 }
 
 func TestAllCRT(t *testing.T) {
@@ -96,7 +138,13 @@ func TestAllCRT(t *testing.T) {
 			return nil
 		})
 	for _, path := range fileList {
-		testParseCRT(t, path)
+		crt, err := testParseCRT(t, path)
+
+		if err != nil {
+			t.Errorf("cannot test write CRT since parser failed - %s %s\n", path, err)
+		} else {
+			testWriteCRT(t, crt)
+		}
 	}
 	return
 }

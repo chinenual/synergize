@@ -222,8 +222,8 @@ func WriteVceFile(filename string, vce VCE) (err error) {
 func VceReadAFilters(buf io.Reader, vce *VCE) (err error) {
 	// a voice has at most 1 A filter. These are at the head of the filter array
 	// so we can unconditionally put it in slot 0 if there is one
-	for _, f := range vce.Head.FILTER {
-		if f < 0 {
+	for i := byte(0); i <= vce.Head.VOITAB; i++ {
+		if vce.Head.FILTER[i] < 0 {
 			for j := 0; j < 32; j++ {
 				if err = binary.Read(buf, binary.LittleEndian, &vce.Filters[0][j]); err != nil {
 					err = errors.Wrapf(err, "Failed to read A filter[%d]", j)
@@ -237,8 +237,11 @@ func VceReadAFilters(buf io.Reader, vce *VCE) (err error) {
 }
 
 func VceWriteAFilters(buf io.Writer, vce VCE) (err error) {
-	for _, f := range vce.Head.FILTER {
-		if f < 0 {
+	for i := byte(0); i <= vce.Head.VOITAB; i++ {
+		if vce.Head.FILTER[i] < 0 {
+			if verboseWriting {
+				log.Printf("WRITE A filter %d %v\n", i, vce.Filters[0])
+			}
 			for j := 0; j < 32; j++ {
 				if err = binary.Write(buf, binary.LittleEndian, vce.Filters[0][j]); err != nil {
 					err = errors.Wrapf(err, "Failed to write A filter[%d]", j)
@@ -254,7 +257,8 @@ func VceWriteAFilters(buf io.Writer, vce VCE) (err error) {
 func VceReadBFilters(buf io.Reader, vce *VCE) (err error) {
 	var filterCount = 0
 	var hasAFilter = false
-	for _, f := range vce.Head.FILTER {
+	for i := byte(0); i <= vce.Head.VOITAB; i++ {
+		f := vce.Head.FILTER[i]
 		if f != 0 {
 			filterCount = filterCount + 1
 		}
@@ -267,7 +271,8 @@ func VceReadBFilters(buf io.Reader, vce *VCE) (err error) {
 	if hasAFilter {
 		offset = 1
 	}
-	for _, f := range vce.Head.FILTER {
+	for i := byte(0); i <= vce.Head.VOITAB; i++ {
+		f := vce.Head.FILTER[i]
 		if f > 0 {
 			// filters are one-based
 			var index = int(f) - 1 + offset
@@ -284,7 +289,8 @@ func VceReadBFilters(buf io.Reader, vce *VCE) (err error) {
 func VceWriteBFilters(buf io.Writer, vce VCE) (err error) {
 	var filterCount = 0
 	var hasAFilter = false
-	for _, f := range vce.Head.FILTER {
+	for i := byte(0); i <= vce.Head.VOITAB; i++ {
+		f := vce.Head.FILTER[i]
 		if f != 0 {
 			filterCount = filterCount + 1
 		}
@@ -297,10 +303,14 @@ func VceWriteBFilters(buf io.Writer, vce VCE) (err error) {
 	if hasAFilter {
 		offset = 1
 	}
-	for _, f := range vce.Head.FILTER {
+	for i := byte(0); i <= vce.Head.VOITAB; i++ {
+		f := vce.Head.FILTER[i]
 		if f > 0 {
 			// filters are one-based
 			var index = int(f) - 1 + offset
+			if verboseWriting {
+				log.Printf("WRITE B filter %d (index: %d)\n", f, index)
+			}
 			for j := 0; j < 32; j++ {
 				if err = binary.Write(buf, binary.LittleEndian, vce.Filters[index][j]); err != nil {
 					err = errors.Wrapf(err, "Failed to write B filter[%d][%d]", index, j)
