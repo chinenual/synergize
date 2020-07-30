@@ -1,4 +1,5 @@
 ![Go](https://github.com/chinenual/synergize/workflows/Go/badge.svg)
+[![GoReportCard](http://goreportcard.com/badge/github.com/chinenual/synergize)](http://goreportcard.com/report/github.com/chinenual/synergize)
 
 <!--# synergize-->
 
