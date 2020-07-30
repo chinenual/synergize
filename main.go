@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/chinenual/synergize/data"
 	"github.com/chinenual/synergize/synio"
 
 	"github.com/asticode/go-astikit"
@@ -65,6 +66,7 @@ func setVersion() {
 	// now:   "20200407"
 	AppVersion = Version + " (" + timestamp + ")"
 	// now:   " 0.1.0 (20200407)"
+	data.SetAppVersion(AppVersion)
 }
 
 // platform specific config to ensure logs and preferences go to reasonable locations
@@ -419,11 +421,11 @@ func main() {
 		MenuOptions: menuOptions,
 		OnWait: func(as *astilectron.Astilectron, ws []*astilectron.Window, _ *astilectron.Menu, _ *astilectron.Tray, _ *astilectron.Menu) error {
 			if *provisionOnly {
-				log.Printf("Provisioning completed. Exiting.\n");
+				log.Printf("Provisioning completed. Exiting.\n")
 				// Quit causes a segv.  Exiting without it sometimes leaves a dialog open
 				// the later is more compatible with github CI
 				//a.Quit();
-				os.Exit(0);
+				os.Exit(0)
 			}
 			a = as
 			w = ws[0]
