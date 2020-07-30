@@ -84,7 +84,7 @@ func diagLOOPTST() {
 		return
 	}
 
-	fmt.Printf("\nEntering LOOPBACK mode - any byte recieved from the Synergy is echo'd back\n")
+	fmt.Printf("\nEntering LOOPBACK mode - any byte received from the Synergy is echo'd back\n")
 	fmt.Printf("Start the test by pressing RESTORE + RESTORE + PROGRAM 1 on the Synergy\n")
 
 	if err := synio.DiagLOOPTST(); err != nil {
@@ -104,7 +104,7 @@ func diagLINKTST() {
 	}
 
 	fmt.Printf("\nEntering LINK TEST mode - any byte you type is sent to the Synergy and is \n")
-	fmt.Printf("echo'd back.  LED's on the Synergy show the bytes recieved and various status\n")
+	fmt.Printf("echo'd back.  LED's on the Synergy show the bytes received and various status\n")
 	fmt.Printf("registers of the Synergy's serial connection.\n")
 	fmt.Printf("\nStart the test by pressing RESTORE + PROGRAM 4 on the Synergy\n")
 

@@ -52,7 +52,7 @@ func Init(port string, baud uint, synVerbose bool, serialVerbose bool, mockflag 
 		log.Printf("MOCKSYNIO - initialized\n")
 		return
 	}
-	
+
 	if err = serialInit(port, baud, serialVerbose); err != nil {
 		return errors.Wrap(err, "Could not open serial port")
 	}
@@ -76,7 +76,7 @@ func command(opcode byte, name string) (err error) {
 		err = errors.New("synio.command called in mock mode")
 		return
 	}
-	
+
 	// check for pending input --
 	//  silently read zero's
 	//  if 1, 2 or 3 - treat it as a key or pot opcode (read 3 bytes incliuding the opcode)
@@ -385,8 +385,8 @@ func DumpVRAM() (bytes []byte, err error) {
 
 func GetID() (versionID [2]byte, err error) {
 	if mock {
-		versionID[0] = 3;
-		versionID[1] = 22;
+		versionID[0] = 3
+		versionID[1] = 22
 		return
 	}
 	if err = command(OP_GETID, "GETID"); err != nil {

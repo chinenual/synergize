@@ -88,7 +88,7 @@ func DiagLINKTST() (err error) {
 			log.Fatalln(err, "failed to read byte %02x", b)
 			break
 		}
-		fmt.Printf(" sent '%q' (0x%02x) ... recieved 0x%02x (control-C to quit)\n\r", r, r, b)
+		fmt.Printf(" sent '%q' (0x%02x) ... received 0x%02x (control-C to quit)\n\r", r, r, b)
 	}
 	return
 }

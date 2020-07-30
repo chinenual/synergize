@@ -21,7 +21,7 @@ permalink: /docs/release-notes
 * Fixes a bug in some numeric input edge cases on the envelopes tab.
 * Fixes a bug in the patch register editing
 * Adds new serial port diagnostic command line option -LINKTST to send
-  and recieve bytes to the Synergy's `RESTORE Program #4` serial link
+  and receive bytes to the Synergy's `RESTORE Program #4` serial link
   test. See the
   [Troubleshooting](https://chinenual.github.io/synergize/docs/hardware/troubleshooting#serial-diagnostics-linktst)
   section of the manual for details.

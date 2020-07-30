@@ -74,7 +74,7 @@ This test will help validate that the Synergy's serial device, your cable(s) and
 
 ### Serial Diagnostics (LINKTST)
 
-Finally, Synergize can act as a terminal client for the Synergy's LINKTST. This allows you to type to the terminal and send and recieve bytes to the Synergy's `RESTORE Program #4` serial link test.  The state of the Synergy's serial interface is displayed via voice LED's on the Synergy:
+Finally, Synergize can act as a terminal client for the Synergy's LINKTST. This allows you to type to the terminal and send and receive bytes to the Synergy's `RESTORE Program #4` serial link test.  The state of the Synergy's serial interface is displayed via voice LED's on the Synergy:
 ```
 /path/to/Synergize -port /dev/YourSerialPort -baud YourBaud -SERIALVERBOSE -LINKTST
 ```

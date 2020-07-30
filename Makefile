@@ -130,6 +130,7 @@ uitest-diff:
 
 version.go : VERSION
 	echo package main > version.go
+	echo >> version.go
 	echo const Version = \"$(VERSION)\" >> version.go
 
 .PHONY: tags

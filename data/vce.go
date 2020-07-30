@@ -75,7 +75,7 @@ type VCEExtra struct {
 	// extra stuff we can compute from the raw voice data and want to have
 	// available in the UI, but which is not serialized to/from the byte stream
 
-	PatchType int // infered based on each oscilators OPTCH byte
+	PatchType int // inferred based on each oscilators OPTCH byte
 }
 
 type FreqEnvelopeTable struct {

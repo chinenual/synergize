@@ -4,7 +4,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-
 func SelectVoiceMapping(v1, v2, v3, v4 byte) (err error) {
 	if err = command(OP_SELECT, "OP_SELECT"); err != nil {
 		return errors.Wrapf(err, "failed to OP_SELECT")

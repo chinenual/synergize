@@ -2,37 +2,37 @@ package main
 
 import (
 	"encoding/json"
-	"os"
 	"fmt"
 	"log"
+	"os"
 	"path"
 	"strings"
-	
+
 	"github.com/chinenual/synergize/data"
 )
 
-func jsonize (filename string) {
+func jsonize(filename string) {
 	ext := strings.ToLower(path.Ext(filename))
 	switch ext {
 	case ".vce":
-		vce,err := data.ReadVceFile(filename)
+		vce, err := data.ReadVceFile(filename)
 		if err != nil {
-			log.Panic(err);
+			log.Panic(err)
 		}
-		
-		b,_ := json.MarshalIndent(vce, "", " ")
+
+		b, _ := json.MarshalIndent(vce, "", " ")
 		result := string(b)
-		
+
 		fmt.Println(result)
 	case ".crt":
-		crt,err := data.ReadCrtFile(filename)
+		crt, err := data.ReadCrtFile(filename)
 		if err != nil {
-			log.Panic(err);
+			log.Panic(err)
 		}
-		
-		b,_ := json.MarshalIndent(crt, "", " ")
+
+		b, _ := json.MarshalIndent(crt, "", " ")
 		result := string(b)
-		
+
 		fmt.Println(result)
 	default:
 		log.Panicf("ERROR: don't know what to do with %s\n", filename)

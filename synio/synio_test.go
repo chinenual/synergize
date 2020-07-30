@@ -16,7 +16,7 @@ var (
 	port              = flag.String("port", "", "the serial device")
 	baud              = flag.Uint("baud", 9600, "the serial baud rate")
 	verbose           = flag.Bool("verbose", false, "synio verbose")
-        mocksynio         = flag.Bool("MOCKSYNIO", false, "MOCK synio")
+	mocksynio         = flag.Bool("MOCKSYNIO", false, "MOCK synio")
 	serialVerboseFlag = flag.Bool("SERIALVERBOSE", false, "serial verbose")
 )
 

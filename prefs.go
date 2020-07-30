@@ -2,15 +2,15 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"io/ioutil"
+	"log"
 )
-	
+
 type Preferences struct {
-	SerialPort string
-	SerialBaud uint
+	SerialPort  string
+	SerialBaud  uint
 	LibraryPath string
-	HTTPDebug bool
+	HTTPDebug   bool
 }
 
 var preferencesPathname string = getWorkingDirectory() + "/preferences.json"
@@ -19,7 +19,7 @@ var prefsUserPreferences Preferences
 
 func prefsLoadPreferences() (err error) {
 	var b []byte
-	if b,err = ioutil.ReadFile(preferencesPathname); err != nil {
+	if b, err = ioutil.ReadFile(preferencesPathname); err != nil {
 		log.Println("Error loading preferences", err)
 		return
 	}
@@ -33,7 +33,7 @@ func prefsLoadPreferences() (err error) {
 
 func prefsSavePreferences() (err error) {
 	var b []byte
-	if	b,err = json.MarshalIndent(prefsUserPreferences, "", " "); err != nil {
+	if b, err = json.MarshalIndent(prefsUserPreferences, "", " "); err != nil {
 		log.Println("Error saving preferences", err)
 	}
 	log.Printf("Save preferences %#v to file %s\n", prefsUserPreferences, preferencesPathname)
@@ -42,4 +42,3 @@ func prefsSavePreferences() (err error) {
 	}
 	return
 }
-

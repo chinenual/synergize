@@ -389,7 +389,7 @@ func main() {
 		acceptTimeout = time.Minute * 3
 
 		adapter = func(a *astilectron.Astilectron) {
-			l.Printf("======= In UI Test adapter - supressing executor\n")
+			l.Printf("======= In UI Test adapter - suppressing executor\n")
 			a.SetExecuter(executer)
 		}
 	}
