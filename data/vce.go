@@ -593,7 +593,7 @@ func VceWriteOscillator(buf io.WriteSeeker, e Envelope, osc /*1-based*/ byte, pr
 }
 
 func stringToSpaceEncodedString(s string) (u SpaceEncodedString) {
-	for i, _ := range u {
+	for i := range u {
 		if i < len(s) {
 			u[i] = s[i]
 		} else {
@@ -614,7 +614,7 @@ func writeVce(buf io.WriteSeeker, vce VCE, name string, skipFilters bool, preser
 	}
 	vce.Head.VNAME = stringToSpaceEncodedString(name)
 	if !preserveOffsets {
-		for i, _ := range vce.Head.OSCPTR {
+		for i := range vce.Head.OSCPTR {
 			vce.Head.OSCPTR[i] = 0
 		}
 	}
@@ -640,11 +640,14 @@ func writeVce(buf io.WriteSeeker, vce VCE, name string, skipFilters bool, preser
 				return
 			}
 			// fixup the oscptr based on where we are in the bytestream
-			updateOscPtr(buf, headOffset, i, uint16(oscOffset-headOffset))
+			if err = updateOscPtr(buf, headOffset, i, uint16(oscOffset-headOffset)); err != nil {
+				return
+			}
 		}
 
-		VceWriteOscillator(buf, e, i, preserveOffsets)
-
+		if err = VceWriteOscillator(buf, e, i, preserveOffsets); err != nil {
+			return
+		}
 	}
 
 	if !skipFilters {
@@ -660,12 +663,13 @@ func writeVce(buf io.WriteSeeker, vce VCE, name string, skipFilters bool, preser
 	return
 }
 
+/*
 func vceToString(vce VCE) (result string) {
 	b, _ := json.MarshalIndent(vce, "", " ")
 	result = string(b)
 
 	return
-}
+}*/
 
 func VceToJson(vce VCE) (result string) {
 	b, _ := json.Marshal(vce)

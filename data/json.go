@@ -21,22 +21,21 @@ func (u ArrayOfByte) MarshalJSON() ([]byte, error) {
 type SpaceEncodedString [8]byte
 
 func (u *SpaceEncodedString) MarshalJSON() ([]byte, error) {
-	var result string
-	result = "\"" + string(u[:]) + "\""
-	fmt.Printf("MARSHAL '%s' -> '%s'\n", u, result)
+	result := "\"" + string(u[:]) + "\""
+	//fmt.Printf("MARSHAL '%s' -> '%s'\n", u, result)
 	return []byte(result), nil
 }
 
 func (u *SpaceEncodedString) UnmarshalJSON(s []byte) error {
 	// Discard the leading and trailing '""
 	s = s[1:(len(s) - 2)]
-	for i, _ := range u {
+	for i := range u {
 		if i < len(s) {
 			u[i] = s[i]
 		} else {
 			u[i] = ' '
 		}
 	}
-	fmt.Printf("UNMARSHAL '%s' -> '%s'\n", s, u)
+	//fmt.Printf("UNMARSHAL '%s' -> '%s'\n", s, u)
 	return nil
 }

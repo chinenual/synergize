@@ -95,7 +95,7 @@ func testVCEName(t *testing.T, path string, vce VCE) {
 func TestAllVCE(t *testing.T) {
 	fileList := []string{}
 
-	filepath.Walk(*testfilepath,
+	_ = filepath.Walk(*testfilepath,
 		func(path string, f os.FileInfo, err error) error {
 			if filepath.Ext(path) == ".VCE" {
 				fileList = append(fileList, path)
@@ -105,11 +105,9 @@ func TestAllVCE(t *testing.T) {
 	for _, path := range fileList {
 		testReadWriteVCE(t, path)
 	}
-	return
 }
 
 func TestMain(m *testing.M) {
 	flag.Parse()
 	os.Exit(m.Run())
-	return
 }

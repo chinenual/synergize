@@ -65,7 +65,7 @@ func testWriteCRT(t *testing.T, crt CRT) {
 	}
 
 	write_bytes, _ := ioutil.ReadAll(writebuf.Reader())
-	dumpTestBytes("/tmp/testbytes.crt", write_bytes)
+	_ = dumpTestBytes("/tmp/testbytes.crt", write_bytes)
 
 	var readbuf = bytes.NewReader(write_bytes)
 	var crt2 CRT
@@ -101,8 +101,8 @@ func TestCreateCRT(t *testing.T) {
 	for _, name := range list {
 		vcePaths = append(vcePaths, "testfiles/"+name+".VCE")
 	}
-	WriteCrtFileFromVCEPaths("testfiles/gen/INTERNAL.CRT", vcePaths)
-	testParseCRT(t, "testfiles/gen/INTERNAL.CRT")
+	_ = WriteCrtFileFromVCEPaths("testfiles/gen/INTERNAL.CRT", vcePaths)
+	_, _ = testParseCRT(t, "testfiles/gen/INTERNAL.CRT")
 }
 
 func testParseCRT(t *testing.T, path string) (crt CRT, err error) {
@@ -130,7 +130,7 @@ func testParseCRT(t *testing.T, path string) (crt CRT, err error) {
 
 func TestAllCRT(t *testing.T) {
 	fileList := []string{}
-	filepath.Walk(*testfilepath,
+	_ = filepath.Walk(*testfilepath,
 		func(path string, f os.FileInfo, err error) error {
 			if filepath.Ext(path) == ".CRT" {
 				fileList = append(fileList, path)
@@ -146,5 +146,4 @@ func TestAllCRT(t *testing.T) {
 			testWriteCRT(t, crt)
 		}
 	}
-	return
 }
