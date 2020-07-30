@@ -17,15 +17,6 @@ func (u ArrayOfByte) MarshalJSON() ([]byte, error) {
 	}
 	return []byte(result), nil
 }
-func (u *ArrayOfByte) UnmarshalJSON(b []byte) error {
-	if u == nil {
-		*u = nil
-	} else {
-		s := strings.Join(strings.Fields(fmt.Sprintf("%d", b)), ",")
-		*u = []byte(s)
-	}
-	return nil
-}
 
 type SpaceEncodedString [8]byte
 
