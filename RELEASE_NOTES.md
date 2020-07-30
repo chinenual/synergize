@@ -16,8 +16,7 @@ permalink: /docs/release-notes
   behind the Synergy/GDS voicing architecture and advice on how to get
   the most out of your patches (adapted from the original SYNHCS manual).
 * Adds support for editing a CRT (clear voices, add voices and save a new .CRT file).
-* Patch routing diagrams generated from the patch table to help
-  visualize the patch routing.
+* Patch routing diagrams generated from the patch table to help visualize the patch routing.
 * Fixes a bug in the envelope copying functionality.
 * Fixes a bug in some numeric input edge cases on the envelopes tab.
 * Fixes a bug in the patch register editing
@@ -37,7 +36,7 @@ permalink: /docs/release-notes
 * A command-line diagnostics executable is included in the Windows
   build. (Mac and Linux builds support these command line diagnostics
   in the main executable).  See the Troubleshooting section in 
-  [HARDWARE](docs/HARDWARE.md) for details.
+  [HARDWARE](https://chinenual.github.io/synergize/docs/hardware) for details.
   
 ## 2.0.0-beta1
 

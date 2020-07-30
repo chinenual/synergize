@@ -1,48 +1,6 @@
 {
 	"folders": [
 		{
-			"path": "resources/app/static/js"
-		},
-		{
-			"path": "resources/app/static/lib"
-		},
-		{
-			"path": "resources/app/static/images"
-		},
-		{
-			"path": "resources/app/static/css"
-		},
-		{
-			"path": "resources/app"
-		},
-		{
-			"path": "synio"
-		},
-		{
-			"path": "data"
-		},
-		{
-			"path": "uitest"
-		},
-		{
-			"path": "packages"
-		},
-		{
-			"path": "docs"
-		},
-		{
-			"path": "testbin"
-		},
-		{
-			"path": "cmd"
-		},
-		{
-			"path": "debug-logs"
-		},
-		{
-			"path": "resources"
-		},
-		{
 			"path": "."
 		}
 	]
