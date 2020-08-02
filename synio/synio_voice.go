@@ -85,6 +85,11 @@ func EnableVoicingMode() (vce data.VCE, err error) {
 		return
 	}
 
+	// though not documented, some features of the voicing mode are conditional on the 0x80 bit being set in IMODE
+	if err = setIMODE(0x80); err != nil {
+		return
+	}
+
 	if err = rawSetOscSolo([16]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}); err != nil {
 		return
 	}
@@ -92,7 +97,20 @@ func EnableVoicingMode() (vce data.VCE, err error) {
 }
 
 func DisableVoicingMode() (err error) {
+	if err = setIMODE(0x00); err != nil {
+		return
+	}
 	if err = rawSetOscSolo([16]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}); err != nil {
+		return
+	}
+	return
+}
+
+func setIMODE(val byte) (err error) {
+	if err = command(OP_IMODE, "IMODE"); err != nil {
+		return
+	}
+	if err = serialWriteByte(TIMEOUT_MS, val, "IMODE"); err != nil {
 		return
 	}
 	return

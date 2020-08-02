@@ -3067,10 +3067,24 @@ load a voice G7S
 < 0x29 ())
 < 0x28 (()
 > 	0x06 ([ACK])
-< 0x76 (v)
+< 0x76 (v)			IMODE opcode
 > 	0x06 ([ACK])
-< 0x8a (?)
-< 0x76 (v)
+< 0x8a (?)			IMODE val: 10001010: enable#66, block pots/sw to synergy, block keys to synergy
+< 0x76 (v)			IMODE opcode
 > 	0x06 ([ACK])
-< 0x8c (?)
+< 0x8c (?)			IMODE val: 10001100: : enable#66, block pots/sw to synergy, pass sw to host
+
+
+---------------------------------
+| 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 | = value bits
+---------------------------------
+  +   +   +   +   +   +   +   +
+  +   +   +   +   +   +   +   +- 1 = pass keys to host
+  +   +   +   +   +   +   +----- 1 = block keys to Synergy
+  +   +   +   +   +   +--------- 1 = pass pots/switches to host
+  +   +   +   +   +------------- 1 = block pots/switches to Synergy
+  +   +   +   +----------------- 1 = master mode enable
+  +   +   +--------------------- 1 = joystick re-direct
+  +   +------------------------- 0 (reserved)
+  +----------------------------- 1 = enable pot# 66
 
