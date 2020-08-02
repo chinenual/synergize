@@ -4,13 +4,13 @@ The following is organized by the SYNCHS screens each function appears on:
 
 First check is full UI support; second check is lower-level IO and tests
 
-* [ ] [x] Create CRT file from existing VCE files
+* [x] [x] Create CRT file from existing VCE files
 * [ ] [ ] <s>Create a DOC file</s>
 * [ ] [ ] <s>View a DOC file</s>
 * [x] [x] Load Synergy Machine State
 * [x] [x] Save Synergy Machine State
 * [x] [x] Load VRAM image
-* [ ] [x] Save VRAM image
+* [x] [x] Save VRAM image
 * [x] [x] Edit VRAM image
 * [x] [x] Disable VRAM
 * [x] [x] Test communications
@@ -65,10 +65,7 @@ First check is full UI support; second check is lower-level IO and tests
 
 # Adhoc list of tasks or known bugs:
 
-* NEWKIT uses custom user-defined patch type. 
 * VCART6 doesnt load
-* need a sample voice with an A-Filter
-* edit CRT
 * refresh (explicit and perhaps automatically after a timeout?)
 
 
