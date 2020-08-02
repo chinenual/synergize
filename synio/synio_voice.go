@@ -85,11 +85,13 @@ func EnableVoicingMode() (vce data.VCE, err error) {
 		return
 	}
 
-	// though not documented, some features of the voicing mode are conditional on the 0x80 bit being set in IMODE
+	// though not documented, some features (e.g., OSCSOLO) of the voicing mode are conditional
+	// on the 0x80 bit being set in IMODE
 	if err = setIMODE(0x80); err != nil {
 		return
 	}
 
+	// all oscillators audible:
 	if err = rawSetOscSolo([16]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}); err != nil {
 		return
 	}
@@ -97,9 +99,11 @@ func EnableVoicingMode() (vce data.VCE, err error) {
 }
 
 func DisableVoicingMode() (err error) {
+	// reset IMODE to normal "play" mode
 	if err = setIMODE(0x00); err != nil {
 		return
 	}
+	// all oscillators audible:
 	if err = rawSetOscSolo([16]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}); err != nil {
 		return
 	}
@@ -107,6 +111,9 @@ func DisableVoicingMode() (err error) {
 }
 
 func setIMODE(val byte) (err error) {
+	if mock {
+		return
+	}
 	if err = command(OP_IMODE, "IMODE"); err != nil {
 		return
 	}
