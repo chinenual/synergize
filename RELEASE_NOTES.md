@@ -9,7 +9,7 @@ permalink: /docs/release-notes
 
 # Release Notes
 
-## 2.0.0-beta3
+## 2.0.0
 
 * A new [User Manual](https://chinenual.github.io/synergize/docs)
   documenting how to use Synergize, and including some of the theory
