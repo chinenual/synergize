@@ -1,6 +1,7 @@
 package data
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 )
@@ -16,6 +17,20 @@ func (u ArrayOfByte) MarshalJSON() ([]byte, error) {
 		result = strings.Join(strings.Fields(fmt.Sprintf("%d", u)), ",")
 	}
 	return []byte(result), nil
+}
+
+func (u *ArrayOfByte) UnmarshalJSON(b []byte) (err error) {
+	var tmp []int
+	// Javascript might write signed bytes to JSON - decode them as int, then convert to byte
+	if err = json.Unmarshal(b, &tmp); err != nil {
+		return
+	}
+	var result []byte
+	for i := range tmp {
+		result = append(result, byte(tmp[i]))
+	}
+	*u = result
+	return nil
 }
 
 type SpaceEncodedString [8]byte
