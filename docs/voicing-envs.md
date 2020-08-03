@@ -23,11 +23,11 @@ another oscillator into this one. See [below](#copying-envelopes).
 6. The table at the bottom are numeric values of each data point. Adjust these up or
    down to change the behavior of the envelopes.  Changes are transmitted in real time to
    the Synergy, so you can hear the affect of the change immediately.
-  * 6a - Loop point - use this to set/clear Loop/Sustain/Repeat points (see [below](#envelope-types)).
-  * 6b - Amplitude Value (low and up). The Amplitide value for this point
+   1. Loop point - use this to set/clear Loop/Sustain/Repeat points (see [below](#envelope-types)).
+   1. Amplitude Value (low and up). The Amplitide value for this point
   in each of the low and up envelopes.
-  * 6c - Amplitude Time (low and up).  The time when this point occurs.
-  * 6d - Frequency envelope controls.  Similar to the Amplitude controls,
+   1. Amplitude Time (low and up).  The time when this point occurs.
+   1. Frequency envelope controls.  Similar to the Amplitude controls,
      but controls the modulation of the frequency of the oscillator
      instead of altering the amplitude.
 7. For TYPE1 envelopes, two acceleration values are used to control
