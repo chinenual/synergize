@@ -9,6 +9,15 @@ permalink: /docs/release-notes
 
 # Release Notes
 
+## 2.0.1
+
+* Fixes issue #9: the name of "standard patch 6".  SYNHCS called this
+  patch `((1~2)~3) + ((1~2)~4) + ((5~6)~7) + ((5~6)~8)`,
+  but in fact based on the register assigments it actually uses when a
+  new patch is created using that patch type, it should have been
+  called `((1+2)~3) + ((1+2)~4) + ((5+6)~7) + ((5+6)~8)`
+  (a simple typo of ~ vs. +).  Synergize now uses the corrected text name.
+
 ## 2.0.0
 
 * A new [User Manual](https://chinenual.github.io/synergize/docs)
