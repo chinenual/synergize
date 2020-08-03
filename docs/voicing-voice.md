@@ -136,7 +136,7 @@ process very unique and full of possibilities:
 
   * `(1~2) + 3 + 4 + (5~6) + 7 + 8`<br><img style="zoom:50%" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/patch-type-5.png?raw=true" />
 
-  * `((1~2)~3) + ((1~2)~4) + ((5~6)~7) + ((5~6)~8)`<br><img style="zoom:50%" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/patch-type-6.png?raw=true" />
+  * `((1+2)~3) + ((1+2)~4) + ((5+6)~7) + ((5+6)~8)`<br><img style="zoom:50%" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/patch-type-6.png?raw=true" />
 
   * `(1~2) + (1~3) + (1~4) + (1~5) + (1~6) + (1~7) + (1~8)`<br><img style="zoom:50%" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/patch-type-7.png?raw=true" />
 
