@@ -13,12 +13,22 @@ permalink: /docs/release-notes
 
 * Fixes issue #9: the name of "standard patch 6".  SYNHCS called this
   patch `((1~2)~3) + ((1~2)~4) + ((5~6)~7) + ((5~6)~8)`,
-  but in fact based on the register assigments it actually uses when a
-  new patch is created using that patch type, it should have been
+  but in fact based on the register assigments it actually uses 
+  it should have been
   called `((1+2)~3) + ((1+2)~4) + ((5+6)~7) + ((5+6)~8)`
   (a simple typo of ~ vs. +).  Synergize now uses the corrected text name.
 
 ## 2.0.0
+
+Synergize now offers parity in functionality vs. SYNHCS (except for
+some minor convenience features as documented in the
+[TODO](TODO.md)).
+
+For those using 1.0.0, this is a major upgrade: Synergize is now an
+Editor as well as a Librarian.  For those testing the 2.0.0-beta, it
+adds a CRT editor and fixes a number of bugs in the beta
+functionality. See the release notes for 2.0.0-beta1 and 2.0.0-beta2
+for other news.
 
 * A new [User Manual](https://chinenual.github.io/synergize/docs)
   documenting how to use Synergize, and including some of the theory
