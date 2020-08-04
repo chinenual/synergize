@@ -678,7 +678,6 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = "ok"
 		}
 
-
 	case "explore":
 		// Unmarshal payload
 		var path string
