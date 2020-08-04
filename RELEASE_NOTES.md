@@ -23,7 +23,7 @@ permalink: /docs/release-notes
 
 Synergize now offers parity in functionality vs. SYNHCS (except for
 some minor convenience features as documented in the
-[TODO](TODO.md)).
+[TODO](https://github.com/chinenual/synergize/blob/master/TODO.md)).
 
 For those using 1.0.0, this is a major upgrade: Synergize is now an
 Editor as well as a Librarian.  For those testing the 2.0.0-beta, it
