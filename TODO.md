@@ -2,7 +2,8 @@
 
 The following is organized by the SYNCHS screens each function appears on:
 
-First check is full UI support; second check is lower-level IO and tests
+First check is full UI support; second check is lower-level IO and
+tests.  <s>strikeout</s> text means no plans to support that feature.
 
 * [x] [x] Create CRT file from existing VCE files
 * [ ] [ ] <s>Create a DOC file</s>
