@@ -22,8 +22,8 @@ import (
 func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload interface{}, err error) {
 	log.Printf("Handle message: %s %s\n", m.Name, string(m.Payload))
 	switch m.Name {
-	case "isHTTPDebug":
-		payload = prefsUserPreferences.HTTPDebug
+	case "cancelPreferences":
+		prefs_w.Hide()
 
 	case "connectToSynergy":
 		if err = connectToSynergy(); err != nil {
@@ -31,6 +31,68 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		} else {
 			payload = FirmwareVersion
 		}
+
+	case "crtEditAddVoice":
+		var args struct {
+			Crt     data.CRT
+			VcePath string
+			Slot    int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		var vce data.VCE
+		if vce, err = data.ReadVceFile(args.VcePath); err != nil {
+			payload = err.Error()
+			return
+		} else {
+			log.Printf("Add vce %s to CRT at slot %d\n", args.VcePath, args.Slot)
+			args.Crt.Voices[args.Slot-1] = &vce
+			payload = args.Crt
+		}
+
+	case "crtEditLoadCRT":
+		var args struct {
+			Crt data.CRT
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = connectToSynergyIfNotConnected(); err != nil {
+			payload = err.Error()
+			return
+		}
+		if err = synio.LoadCRT(args.Crt); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
+	case "crtEditSaveCRT":
+		var args struct {
+			Path string
+			Crt  data.CRT
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = data.WriteCrtFileFromVCEArray(args.Path, args.Crt.Voices); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
 
 	case "disableVRAM":
 		if err = connectToSynergyIfNotConnected(); err != nil {
@@ -44,340 +106,185 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = "ok"
 		}
 
-	case "toggleVoicingMode":
-		if err = connectToSynergyIfNotConnected(); err != nil {
-			payload = err.Error()
-			return
-		}
-		var mode bool
+	case "getCWD":
+		payload, _ = os.Getwd()
+		log.Printf("CWD: %s\n", payload)
+
+	case "getFirmwareVersion":
+		payload = FirmwareVersion
+
+	case "getPreferences":
+		payload = struct {
+			Os          string
+			Preferences Preferences
+		}{runtime.GOOS, prefsUserPreferences}
+
+	case "isHTTPDebug":
+		payload = prefsUserPreferences.HTTPDebug
+
+	case "loadCRT":
+		var path string
 		if len(m.Payload) > 0 {
 			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &mode); err != nil {
+			if err = json.Unmarshal(m.Payload, &path); err != nil {
 				payload = err.Error()
 				return
 			}
 		}
-		if mode {
-			var vce data.VCE
-			if vce, err = synio.EnableVoicingMode(); err != nil {
-				payload = err.Error()
-				return
-			}
-			// NOTE: need to pass reference in order to get the custom JSON marshalling to notice the VNAME
-			payload = &vce
-
+		if diagLoadCRT(path); err != nil {
+			payload = err.Error()
+			return
 		} else {
-			if err = synio.DisableVoicingMode(); err != nil {
-				payload = err.Error()
-				return
-			}
 			payload = "ok"
 		}
 
-	case "setOscSolo":
-		var args struct {
-			Mute []bool
-			Solo []bool
-		}
+	case "loadSYN":
+		var path string
 		if len(m.Payload) > 0 {
 			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &args); err != nil {
+			if err = json.Unmarshal(m.Payload, &path); err != nil {
 				payload = err.Error()
 				return
 			}
 		}
-		if payload, err = synio.SetOscSolo(args.Mute, args.Solo); err != nil {
+		if err = diagLoadSYN(path); err != nil {
 			payload = err.Error()
 			return
-		}
-
-	case "setPatchType":
-		var index int
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &index); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		if payload, err = synio.SetPatchType(index); err != nil {
-			payload = err.Error()
-			return
-		}
-
-	case "setNumOscillators":
-		var args struct {
-			NumOsc    int
-			PatchType int
-		}
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &args); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		var resultPayload struct {
-			EnvelopeTemplate data.Envelope
-			PatchBytes       [16]byte
-		}
-		if resultPayload.PatchBytes, err = synio.SetNumOscillators(args.NumOsc, args.PatchType); err != nil {
-			payload = err.Error()
-			return
-		}
-		resultPayload.EnvelopeTemplate = data.DefaultEnvelope
-		payload = resultPayload
-
-	case "setOscWAVE":
-		var args struct {
-			Args []int
-		}
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &args); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		var val = false
-		if args.Args[1] == 1 {
-			val = true
-		}
-		if err = synio.SetOscWAVE(args.Args[0], val); err != nil {
-			payload = err.Error()
-			return
-		}
-		payload = "ok"
-
-	case "setOscKEYPROP":
-		var args struct {
-			Args []int
-		}
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &args); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		var val = false
-		if args.Args[1] == 1 {
-			val = true
-		}
-		if err = synio.SetOscKEYPROP(args.Args[0], val); err != nil {
-			payload = err.Error()
-			return
-		}
-		payload = "ok"
-
-	case "setOscFILTER":
-		var args struct {
-			Args []int
-		}
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &args); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		if err = synio.SetOscFILTER(args.Args[0], args.Args[1]); err != nil {
-			payload = err.Error()
-			return
-		}
-		payload = "ok"
-
-	case "setVoiceVEQEle":
-		var args struct {
-			Index int
-			Value int
-		}
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &args); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		if err = synio.SetVoiceVEQEle(args.Index, args.Value); err != nil {
-			payload = err.Error()
-			return
-		}
-		payload = "ok"
-
-	case "setVoiceKPROPEle":
-		var args struct {
-			Index int
-			Value int
-		}
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &args); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		if err = synio.SetVoiceKPROPEle(args.Index, args.Value); err != nil {
-			payload = err.Error()
-			return
-		}
-		payload = "ok"
-
-	case "setFilterEle":
-		var args struct {
-			UiFilterIndex int // 0=Af, 1..16=Bf
-			Index         int
-			Value         int
-		}
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &args); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		if err = synio.SetFilterEle(args.UiFilterIndex, args.Index, args.Value); err != nil {
-			payload = err.Error()
-			return
-		}
-		payload = "ok"
-
-	case "setFilterArray":
-		var args struct {
-			UiFilterIndex int // 0=Af, 1..16=Bf
-			Values        []int
-		}
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &args); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		if err = synio.SetFilterArray(args.UiFilterIndex, args.Values); err != nil {
-			payload = err.Error()
-			return
-		}
-		payload = "ok"
-
-	case "setEnvelopes":
-		var args struct {
-			Osc       int // 1-based
-			Envelopes data.Envelope
-		}
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &args); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		if err = synio.SetEnvelopes(args.Osc, args.Envelopes); err != nil {
-			payload = err.Error()
-			return
-		}
-		payload = "ok"
-
-	case "setVNAME":
-		var args struct {
-			Param string
-			Args  string // HACK: just a string - the JS code shares some logic with the other voice bytes that use setVoiceByte
-		}
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &args); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		if err = synio.SetVNAME(args.Args); err != nil {
-			payload = err.Error()
-			return
-		}
-		payload = "ok"
-
-	case "setVoiceByte":
-		var args struct {
-			Param string
-			Args  []int
-		}
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &args); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		if len(args.Args) == 2 {
-			if err = synio.SetVoiceOscDataByte(args.Args[0], args.Param, byte(args.Args[1])); err != nil {
-				payload = err.Error()
-				return
-			}
 		} else {
-			if err = synio.SetVoiceHeadDataByte(args.Param, byte(args.Args[0])); err != nil {
-				payload = err.Error()
-				return
-			}
+			payload = "ok"
 		}
-		payload = "ok"
 
-	case "setPatchByte":
-		var args struct {
-			Osc   int
-			Value int
-		}
+	case "loadVceVoicingMode":
+		var vce data.VCE
+		var path string
 		if len(m.Payload) > 0 {
 			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &args); err != nil {
+			if err = json.Unmarshal(m.Payload, &path); err != nil {
 				payload = err.Error()
 				return
 			}
 		}
-		if err = synio.SetVoiceOscDataByte(args.Osc, "OPTCH_reloadGenerators", byte(args.Value)); err != nil {
+		if vce, err = data.ReadVceFile(path); err != nil {
 			payload = err.Error()
 			return
 		}
-		payload = "ok"
 
-	case "setOscEnvLengths":
-		var args struct {
-			Osc        int
-			FreqLength int
-			AmpLength  int
+		if err = synio.LoadVceVoicingMode(vce); err != nil {
+			payload = err.Error()
+			return
+		} else {
+			// NOTE: need to pass reference in order to get the custom JSON marshalling to notice the VNAME
+			payload = &vce
 		}
+
+	case "readCRT":
+		var crt data.CRT
+		var path string
 		if len(m.Payload) > 0 {
 			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &args); err != nil {
+			if err = json.Unmarshal(m.Payload, &path); err != nil {
 				payload = err.Error()
 				return
 			}
 		}
-		if err = synio.SetOscEnvLengths(args.Osc, args.FreqLength, args.AmpLength); err != nil {
+		if crt, err = data.ReadCrtFile(path); err != nil {
 			payload = err.Error()
 			return
+		} else {
+			payload = crt
 		}
-		payload = "ok"
 
-	case "setLoopPoint":
-		var args struct {
-			Osc       int
-			Env       string
-			EnvType   int
-			SustainPt int
-			LoopPt    int
-		}
+	case "readVCE":
+		var vce data.VCE
+		var path string
 		if len(m.Payload) > 0 {
 			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &args); err != nil {
+			if err = json.Unmarshal(m.Payload, &path); err != nil {
 				payload = err.Error()
 				return
 			}
 		}
-		if err = synio.SetEnvLoopPoint(args.Osc, args.Env, args.EnvType, args.SustainPt, args.LoopPt); err != nil {
+		if vce, err = data.ReadVceFile(path); err != nil {
+			payload = err.Error()
+			return
+		} else {
+			// NOTE: need to pass reference in order to get the custom JSON marshalling to notice the VNAME
+			payload = &vce
+		}
+
+	case "runCOMTST":
+		// nothing interesting in the payload - just start the test and return results
+		if FirmwareVersion == "" {
+			// not yet connected to the Synergy.
+			// A conundrum: if user has already put the synergy into
+			// test mode, we can't query the firmware.  If we just
+			// initialize the serial connection and dont update
+			// firmware version, the UI will continue to show
+			// "not connected".
+			//
+			// Run the serial init without querying the firmware version
+			if err = synio.Init(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag, *mockSynio); err != nil {
+				err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
+				payload = err.Error()
+				return
+			}
+			FirmwareVersion = "Connected"
+		}
+		if err = synio.DiagCOMTST(); err != nil {
+			payload = err.Error()
+			return
+		} else {
+			payload = "Success!"
+		}
+	case "savePreferences":
+		oldPath := prefsUserPreferences.LibraryPath
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &prefsUserPreferences); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = prefsSavePreferences(); err != nil {
 			payload = err.Error()
 			return
 		}
-		payload = "ok"
+		if oldPath != prefsUserPreferences.LibraryPath {
+			refreshNavPane(prefsUserPreferences.LibraryPath)
+		}
+		prefs_w.Hide()
+
+	case "saveSYN":
+		var path string
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &path); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = diagSaveSYN(path); err != nil {
+			payload = err.Error()
+			return
+		} else {
+			payload = "ok"
+		}
+
+	case "saveVCE":
+		var path string
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &path); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = diagSaveVCE(path); err != nil {
+			payload = err.Error()
+			return
+		} else {
+			payload = "ok"
+		}
 
 	case "setEnvFreqLowVal",
 		"setEnvFreqUpVal",
@@ -429,6 +336,311 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			NewVersionAvailable bool
 		}{AppVersion, CheckForNewVersion(false, false)}
 
+	case "setEnvelopes":
+		var args struct {
+			Osc       int // 1-based
+			Envelopes data.Envelope
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetEnvelopes(args.Osc, args.Envelopes); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
+	case "setFilterArray":
+		var args struct {
+			UiFilterIndex int // 0=Af, 1..16=Bf
+			Values        []int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetFilterArray(args.UiFilterIndex, args.Values); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
+	case "setFilterEle":
+		var args struct {
+			UiFilterIndex int // 0=Af, 1..16=Bf
+			Index         int
+			Value         int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetFilterEle(args.UiFilterIndex, args.Index, args.Value); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
+	case "setLoopPoint":
+		var args struct {
+			Osc       int
+			Env       string
+			EnvType   int
+			SustainPt int
+			LoopPt    int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetEnvLoopPoint(args.Osc, args.Env, args.EnvType, args.SustainPt, args.LoopPt); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
+	case "setNumOscillators":
+		var args struct {
+			NumOsc    int
+			PatchType int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		var resultPayload struct {
+			EnvelopeTemplate data.Envelope
+			PatchBytes       [16]byte
+		}
+		if resultPayload.PatchBytes, err = synio.SetNumOscillators(args.NumOsc, args.PatchType); err != nil {
+			payload = err.Error()
+			return
+		}
+		resultPayload.EnvelopeTemplate = data.DefaultEnvelope
+		payload = resultPayload
+
+	case "setOscEnvLengths":
+		var args struct {
+			Osc        int
+			FreqLength int
+			AmpLength  int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetOscEnvLengths(args.Osc, args.FreqLength, args.AmpLength); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
+	case "setOscFILTER":
+		var args struct {
+			Args []int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetOscFILTER(args.Args[0], args.Args[1]); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
+	case "setOscKEYPROP":
+		var args struct {
+			Args []int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		var val = false
+		if args.Args[1] == 1 {
+			val = true
+		}
+		if err = synio.SetOscKEYPROP(args.Args[0], val); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
+	case "setOscSolo":
+		var args struct {
+			Mute []bool
+			Solo []bool
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if payload, err = synio.SetOscSolo(args.Mute, args.Solo); err != nil {
+			payload = err.Error()
+			return
+		}
+
+	case "setOscWAVE":
+		var args struct {
+			Args []int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		var val = false
+		if args.Args[1] == 1 {
+			val = true
+		}
+		if err = synio.SetOscWAVE(args.Args[0], val); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
+	case "setPatchByte":
+		var args struct {
+			Osc   int
+			Value int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetVoiceOscDataByte(args.Osc, "OPTCH_reloadGenerators", byte(args.Value)); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
+	case "setPatchType":
+		var index int
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &index); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if payload, err = synio.SetPatchType(index); err != nil {
+			payload = err.Error()
+			return
+		}
+
+	case "setVNAME":
+		var args struct {
+			Param string
+			Args  string // HACK: just a string - the JS code shares some logic with the other voice bytes that use setVoiceByte
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetVNAME(args.Args); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
+	case "setVoiceByte":
+		var args struct {
+			Param string
+			Args  []int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if len(args.Args) == 2 {
+			if err = synio.SetVoiceOscDataByte(args.Args[0], args.Param, byte(args.Args[1])); err != nil {
+				payload = err.Error()
+				return
+			}
+		} else {
+			if err = synio.SetVoiceHeadDataByte(args.Param, byte(args.Args[0])); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		payload = "ok"
+
+	case "setVoiceKPROPEle":
+		var args struct {
+			Index int
+			Value int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetVoiceKPROPEle(args.Index, args.Value); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
+	case "setVoiceVEQEle":
+		var args struct {
+			Index int
+			Value int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = synio.SetVoiceVEQEle(args.Index, args.Value); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = "ok"
+
 	case "showAbout":
 		about_w.Show()
 
@@ -436,248 +648,36 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		log.Printf("Show Preferences (from messages)\n")
 		prefs_w.Show()
 
-	case "getPreferences":
-		payload = struct {
-			Os          string
-			Preferences Preferences
-		}{runtime.GOOS, prefsUserPreferences}
-
-	case "savePreferences":
-		oldPath := prefsUserPreferences.LibraryPath
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &prefsUserPreferences); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		if err = prefsSavePreferences(); err != nil {
-			payload = err.Error()
-			return
-		}
-		if oldPath != prefsUserPreferences.LibraryPath {
-			refreshNavPane(prefsUserPreferences.LibraryPath)
-		}
-		prefs_w.Hide()
-
-	case "cancelPreferences":
-		prefs_w.Hide()
-
-	case "loadSYN":
-		var path string
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &path); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		if err = diagLoadSYN(path); err != nil {
-			payload = err.Error()
-			return
-		} else {
-			payload = "ok"
-		}
-
-	case "saveSYN":
-		var path string
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &path); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		if err = diagSaveSYN(path); err != nil {
-			payload = err.Error()
-			return
-		} else {
-			payload = "ok"
-		}
-
-	case "saveVCE":
-		var path string
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &path); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		if err = diagSaveVCE(path); err != nil {
-			payload = err.Error()
-			return
-		} else {
-			payload = "ok"
-		}
-
-	case "loadCRT":
-		var path string
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &path); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		if diagLoadCRT(path); err != nil {
-			payload = err.Error()
-			return
-		} else {
-			payload = "ok"
-		}
-
-	case "readCRT":
-		var crt data.CRT
-		var path string
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &path); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		if crt, err = data.ReadCrtFile(path); err != nil {
-			payload = err.Error()
-			return
-		} else {
-			payload = crt
-		}
-
-	case "crtEditSaveCRT":
-		var args struct {
-			Path string
-			Crt  data.CRT
-		}
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &args); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
-		if err = data.WriteCrtFileFromVCEArray(args.Path, args.Crt.Voices); err != nil {
-			payload = err.Error()
-			return
-		}
-		payload = "ok"
-
-	case "crtEditLoadCRT":
-		var args struct {
-			Crt data.CRT
-		}
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &args); err != nil {
-				payload = err.Error()
-				return
-			}
-		}
+	case "toggleVoicingMode":
 		if err = connectToSynergyIfNotConnected(); err != nil {
 			payload = err.Error()
 			return
 		}
-		if err = synio.LoadCRT(args.Crt); err != nil {
-			payload = err.Error()
-			return
-		}
-		payload = "ok"
-
-	case "crtEditAddVoice":
-		var args struct {
-			Crt     data.CRT
-			VcePath string
-			Slot    int
-		}
+		var mode bool
 		if len(m.Payload) > 0 {
 			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &args); err != nil {
+			if err = json.Unmarshal(m.Payload, &mode); err != nil {
 				payload = err.Error()
 				return
 			}
 		}
-		var vce data.VCE
-		if vce, err = data.ReadVceFile(args.VcePath); err != nil {
-			payload = err.Error()
-			return
-		} else {
-			log.Printf("Add vce %s to CRT at slot %d\n", args.VcePath, args.Slot)
-			args.Crt.Voices[args.Slot-1] = &vce
-			payload = args.Crt
-		}
-
-	case "loadVceVoicingMode":
-		var vce data.VCE
-		var path string
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &path); err != nil {
+		if mode {
+			var vce data.VCE
+			if vce, err = synio.EnableVoicingMode(); err != nil {
 				payload = err.Error()
 				return
 			}
-		}
-		if vce, err = data.ReadVceFile(path); err != nil {
-			payload = err.Error()
-			return
-		}
-
-		if err = synio.LoadVceVoicingMode(vce); err != nil {
-			payload = err.Error()
-			return
-		} else {
 			// NOTE: need to pass reference in order to get the custom JSON marshalling to notice the VNAME
 			payload = &vce
-		}
 
-	case "readVCE":
-		var vce data.VCE
-		var path string
-		if len(m.Payload) > 0 {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &path); err != nil {
+		} else {
+			if err = synio.DisableVoicingMode(); err != nil {
 				payload = err.Error()
 				return
 			}
-		}
-		if vce, err = data.ReadVceFile(path); err != nil {
-			payload = err.Error()
-			return
-		} else {
-			// NOTE: need to pass reference in order to get the custom JSON marshalling to notice the VNAME
-			payload = &vce
+			payload = "ok"
 		}
 
-	case "getFirmwareVersion":
-		payload = FirmwareVersion
-
-	case "getCWD":
-		payload, _ = os.Getwd()
-		log.Printf("CWD: %s\n", payload)
-
-	case "runCOMTST":
-		// nothing interesting in the payload - just start the test and return results
-		if FirmwareVersion == "" {
-			// not yet connected to the Synergy.
-			// A conundrum: if user has already put the synergy into
-			// test mode, we can't query the firmware.  If we just
-			// initialize the serial connection and dont update
-			// firmware version, the UI will continue to show
-			// "not connected".
-			//
-			// Run the serial init without querying the firmware version
-			if err = synio.Init(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag, *mockSynio); err != nil {
-				err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
-				payload = err.Error()
-				return
-			}
-			FirmwareVersion = "Connected"
-		}
-		if err = synio.DiagCOMTST(); err != nil {
-			payload = err.Error()
-			return
-		} else {
-			payload = "Success!"
-		}
 
 	case "explore":
 		// Unmarshal payload
