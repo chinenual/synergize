@@ -119,6 +119,12 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			Preferences Preferences
 		}{runtime.GOOS, prefsUserPreferences}
 
+	case "getVersion":
+		payload = struct {
+			Version             string
+			NewVersionAvailable bool
+		}{AppVersion, CheckForNewVersion(false, false)}
+
 	case "isHTTPDebug":
 		payload = prefsUserPreferences.HTTPDebug
 
@@ -329,12 +335,6 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			return
 		}
 		payload = "ok"
-
-	case "getVersion":
-		payload = struct {
-			Version             string
-			NewVersionAvailable bool
-		}{AppVersion, CheckForNewVersion(false, false)}
 
 	case "setEnvelopes":
 		var args struct {
