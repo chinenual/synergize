@@ -11,7 +11,8 @@ permalink: /docs/release-notes
 
 ## 2.0.1
 
-* Fixes issue #9: the name of "standard patch 6".  SYNHCS called this
+* Fixes [issue #9](https://github.com/chinenual/synergize/issues/9):
+  the name of "standard patch 6".  SYNHCS called this
   patch `((1~2)~3) + ((1~2)~4) + ((5~6)~7) + ((5~6)~8)`,
   but in fact based on the register assigments it actually uses 
   it should have been
