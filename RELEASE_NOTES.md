@@ -11,6 +11,8 @@ permalink: /docs/release-notes
 
 ## 2.0.1
 
+* Fixes [issue #8](https://github.com/chinenual/synergize/issues/8):
+  tab moves down columns on the Filter, Key Equalization and Key Proportion tables.
 * Fixes [issue #9](https://github.com/chinenual/synergize/issues/9):
   the name of "standard patch 6".  SYNHCS called this
   patch `((1~2)~3) + ((1~2)~4) + ((5~6)~7) + ((5~6)~8)`,
@@ -18,6 +20,7 @@ permalink: /docs/release-notes
   it should have been
   called `((1+2)~3) + ((1+2)~4) + ((5+6)~7) + ((5+6)~8)`
   (a simple typo of ~ vs. +).  Synergize now uses the corrected text name.
+
 
 ## 2.0.0
 
