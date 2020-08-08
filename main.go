@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/chinenual/synergize/data"
+	"github.com/chinenual/synergize/midi"
 	"github.com/chinenual/synergize/synio"
 
 	"github.com/asticode/go-astikit"
@@ -46,6 +47,7 @@ var (
 	synver            = flag.Bool("SYNVER", false, "Print the firmware version of the connected Synergy")
 	rawlog            = flag.Bool("RAWLOG", false, "Turn off timestamps to make logs easier to compare")
 	//midiproxy = flag.Bool("MIDIPROXY", false, "present a MIDI interface and use serial IO to control the Synergy")
+	miditest = flag.Bool("MIDITEST", false, "run midi.InitMidi()")
 
 	w               *astilectron.Window
 	about_w         *astilectron.Window
@@ -174,6 +176,12 @@ func main() {
 		// run the command line tests instead of the Electron app:
 		if *synver {
 			if err = diagInitAndPrintFirmwareID(); err != nil {
+				code = 1
+				log.Println(err)
+			}
+			os.Exit(code)
+		} else if *miditest {
+			if err = midi.InitMidi(); err != nil {
 				code = 1
 				log.Println(err)
 			}
