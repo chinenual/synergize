@@ -12,7 +12,10 @@ func initBridge(w *astilectron.Window) {
 }
 
 // pass an incoming UI msg to MIDI (msg is JSON format)
-func SendToMIDI(bytes []byte) (err error) {
+func SendToMIDI(field string, index int, value int) (err error) {
+	if field == "OHARM" {
+		sendCC(uint8(1+index-1), uint8(value)+11)
+	}
 	return
 }
 

@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/chinenual/synergize/data"
+	"github.com/chinenual/synergize/midi"
 	"github.com/chinenual/synergize/synio"
 
 	"github.com/asticode/go-astilectron"
@@ -597,11 +598,13 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				payload = err.Error()
 				return
 			}
+			midi.SendToMIDI(args.Param, args.Args[0], args.Args[1])
 		} else {
 			if err = synio.SetVoiceHeadDataByte(args.Param, byte(args.Args[0])); err != nil {
 				payload = err.Error()
 				return
 			}
+			midi.SendToMIDI(args.Param, 0, int(args.Args[0]))
 		}
 		payload = "ok"
 

@@ -15,6 +15,7 @@ var midiChannelQuit = make(chan bool)
 var drv midi.Driver
 var in midi.In
 var out midi.Out
+var wr *writer.Writer
 
 func QuitMidi() (err error) {
 	in.Close()
@@ -57,7 +58,7 @@ func InitMidi(w *astilectron.Window) (err error) {
 	}
 
 	// the writer we are writing to
-	wr := writer.New(out)
+	wr = writer.New(out)
 
 	// to disable logging, pass mid.NoLogger() as option
 	rd := reader.New(
@@ -168,4 +169,9 @@ func handleNoteOn(p *reader.Position, channel, key, vel uint8) {
 }
 func handleNoteOff(p *reader.Position, channel, key, vel uint8) {
 	fmt.Printf("Handle NoteOff: %d %d %d\n", channel, key, vel)
+}
+
+func sendCC(cc uint8, val uint8) {
+	fmt.Printf("  send MIDI CC %d %d\n", cc, val)
+	writer.ControlChange(wr, cc, val)
 }
