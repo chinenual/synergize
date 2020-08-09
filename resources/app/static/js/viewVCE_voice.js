@@ -256,12 +256,12 @@ let viewVCE_voice = {
 		return ok;
 	},
 
-        onchangeDSR: function (param, osc /*1-based*/, value) {
-            	osc = parseInt(osc, 10);
+	onchangeDSR: function (param, osc /*1-based*/, value) {
+		osc = parseInt(osc, 10);
 
-                console.log("onchangeDSR: " + param + "[" + osc + "] == " + value);
+		console.log("onchangeDSR: " + param + "[" + osc + "] == " + value);
 
-                // displayed values are 1-based, bit values in the patch byte are 0-based
+		// displayed values are 1-based, bit values in the patch byte are 0-based
 		var patchFOInputDSR = document.getElementById(`patchFOInputDSR[${osc}]`).value;
 		var patchAdderInDSR = document.getElementById(`patchAdderInDSR[${osc}]`).value;
 		var patchOutputDSR = document.getElementById(`patchOutputDSR[${osc}]`).value;
@@ -270,9 +270,9 @@ let viewVCE_voice = {
 		var patchInhibitAddr = patchAdderInDSR == '' ? true : false;
 		var patchInhibitF0 = patchFOInputDSR == '' ? true : false;
 		var patchByte = 0;
-	        patchByte |= ((parseInt(patchFOInputDSR,10)-1) & 0x03);
-	        patchByte |= (((parseInt(patchAdderInDSR,10)-1) << 3) & 0x18);
-	        patchByte |= (((parseInt(patchOutputDSR,10)-1) << 6) & 0xc0);
+		patchByte |= ((parseInt(patchFOInputDSR, 10) - 1) & 0x03);
+		patchByte |= (((parseInt(patchAdderInDSR, 10) - 1) << 3) & 0x18);
+		patchByte |= (((parseInt(patchOutputDSR, 10) - 1) << 6) & 0xc0);
 		if (patchInhibitAddr) {
 			patchByte |= 0x20;
 		}
@@ -280,7 +280,7 @@ let viewVCE_voice = {
 			patchByte |= 0x04;
 		}
 
-		console.log(osc + " old patch byte: " + vce.Envelopes[osc-1].FreqEnvelope.OPTCH + "\n" +
+		console.log(osc + " old patch byte: " + vce.Envelopes[osc - 1].FreqEnvelope.OPTCH + "\n" +
 			" new patch byte: " + patchByte + "\n" +
 			" patchInhibitAddr : " + patchInhibitAddr + "\n" +
 			" patchInhibitF0   : " + patchInhibitF0 + "\n" +
@@ -291,7 +291,7 @@ let viewVCE_voice = {
 		let message = {
 			"name": "setPatchByte",
 			"payload": {
-			        "Osc": osc,
+				"Osc": osc,
 				"Value": patchByte
 			}
 		};
@@ -303,9 +303,9 @@ let viewVCE_voice = {
 				index.errorNotification(message.payload);
 				return false;
 			}
-  		        vce.Envelopes[osc-1].FreqEnvelope.OPTCH = patchByte;
-                        viewVCE_voice.patchTable(); // in case the patch diagram changes due to the edit
-                        viewVCE_voice.voicingModeVisuals();
+			vce.Envelopes[osc - 1].FreqEnvelope.OPTCH = patchByte;
+			viewVCE_voice.patchTable(); // in case the patch diagram changes due to the edit
+			viewVCE_voice.voicingModeVisuals();
 		});
 
 
@@ -409,9 +409,9 @@ let viewVCE_voice = {
 			tbody.removeChild(tbody.firstChild);
 		}
 
-                var outRegisters = [[],[],[],[]];
-                var freqDAG = "";
-            
+		var outRegisters = [[], [], [], []];
+		var freqDAG = "";
+
 		// populate new ones:
 		for (osc = 0; osc <= vce.Head.VOITAB; osc++) {
 			var tr = document.createElement("tr");
@@ -447,21 +447,21 @@ let viewVCE_voice = {
 			//				" patchAdderInDSR  : " + patchAdderInDSR + "\n" +
 			//				" patchFOInputDSR  : " + patchFOInputDSR + "\n");
 
-                        // compute the DAG based on current register usage:
-	                if (!patchInhibitF0) {
-                            var modulatingOscs = outRegisters[patchFOInputDSR];
-                            for (var i = 0; i < modulatingOscs.length; i++) {
-                                freqDAG += `[${modulatingOscs[i]+1}]-[${osc+1}]\n`;
-                            }
-                        } else {
-                            freqDAG += `[${osc+1}]\n`;
-                        }
-	                if (patchInhibitAddr) {
-                            // no longer summing, this output starts a new set of addrs:
-                            outRegisters[patchOutputDSR] = [];
-                        }
-                        outRegisters[patchOutputDSR].push(osc);
-                    
+			// compute the DAG based on current register usage:
+			if (!patchInhibitF0) {
+				var modulatingOscs = outRegisters[patchFOInputDSR];
+				for (var i = 0; i < modulatingOscs.length; i++) {
+					freqDAG += `[${modulatingOscs[i] + 1}]-[${osc + 1}]\n`;
+				}
+			} else {
+				freqDAG += `[${osc + 1}]\n`;
+			}
+			if (patchInhibitAddr) {
+				// no longer summing, this output starts a new set of addrs:
+				outRegisters[patchOutputDSR] = [];
+			}
+			outRegisters[patchOutputDSR].push(osc);
+
 			//--- Patch F
 			td = document.createElement("td");
 			var reg = 0;
@@ -581,12 +581,12 @@ let viewVCE_voice = {
 			tbody.appendChild(temp.content.firstChild);
 		}
 
-            console.log("freqDAG: " + freqDAG);
-            // Generate the patch diagram:
-            var patchDiagramCanvas = document.getElementById('patchDiagram');
-            // nomnoml is confused by leading spaces on directives lines, so...:
-            var patchDiagramSource =
-               `
+		console.log("freqDAG: " + freqDAG);
+		// Generate the patch diagram:
+		var patchDiagramCanvas = document.getElementById('patchDiagram');
+		// nomnoml is confused by leading spaces on directives lines, so...:
+		var patchDiagramSource =
+			`
 #ranker: longest-path
 #spacing: 12
 #padding: 3
@@ -598,8 +598,8 @@ let viewVCE_voice = {
 #bendSize: 1
 ${freqDAG}
 `;
-            console.log("nomnoml src: " + patchDiagramSource);
-            nomnoml.draw(patchDiagramCanvas, patchDiagramSource);
+		console.log("nomnoml src: " + patchDiagramSource);
+		nomnoml.draw(patchDiagramCanvas, patchDiagramSource);
 	},
 
 	changePatchType: function (newIndex) {
@@ -1015,5 +1015,12 @@ ${freqDAG}
 		document.getElementById("vce_name").innerHTML = vce.Head.VNAME;
 		document.getElementById("VNAME").value = vce.Head.VNAME.replace(/ +$/g, ''); // trim trailing spaces for editing
 		console.log('--- finish viewVCE_voice init');
+	},
+
+	updateFromMIDI: function (payload) {
+		var ele = document.getElementById(payload.Field)
+		console.log("  updateFromMIDI " + payload.Field + "was " + ele.value);
+		ele.value = "" + payload.Value; // convert to string
+		console.log("  updateFromMIDI " + payload.Field + "NOW " + ele.value);
 	}
 };

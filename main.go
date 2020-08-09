@@ -181,9 +181,11 @@ func main() {
 			}
 			os.Exit(code)
 		} else if *miditest {
-			if err = midi.InitMidi(); err != nil {
+			if err = midi.InitMidi(nil); err != nil {
 				code = 1
 				log.Println(err)
+			} else {
+				midi.WaitMidi()
 			}
 			os.Exit(code)
 		} else if *comtst {
@@ -440,9 +442,15 @@ func main() {
 			about_w = ws[1]
 			prefs_w = ws[2]
 
+			if err = midi.InitMidi(w); err != nil {
+				log.Println(err)
+			}
 			// Need to explicitly intercept Closed event on the main
 			// window since the about window is never closed - only hidden.
 			w.On(astilectron.EventNameWindowEventClosed, func(e astilectron.Event) (deleteListener bool) {
+				if err = midi.QuitMidi(); err != nil {
+					log.Println(err)
+				}
 				a.Quit()
 				return true
 			})
