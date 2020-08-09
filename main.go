@@ -442,15 +442,20 @@ func main() {
 			about_w = ws[1]
 			prefs_w = ws[2]
 
-			if err = midi.InitMidi(w); err != nil {
-				log.Println(err)
-			}
-			// Need to explicitly intercept Closed event on the main
-			// window since the about window is never closed - only hidden.
-			w.On(astilectron.EventNameWindowEventClosed, func(e astilectron.Event) (deleteListener bool) {
+			//			if err = midi.InitMidi(w); err != nil {
+			//				log.Println(err)
+			//			}
+
+			w.On(astilectron.EventNameAppClose, func(e astilectron.Event) (deleteListenter bool) {
+				log.Printf("Close Event.\n")
 				if err = midi.QuitMidi(); err != nil {
 					log.Println(err)
 				}
+				return false
+			})
+			// Need to explicitly intercept Closed event on the main
+			// window since the about window is never closed - only hidden.
+			w.On(astilectron.EventNameWindowEventClosed, func(e astilectron.Event) (deleteListener bool) {
 				a.Quit()
 				return true
 			})

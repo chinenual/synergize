@@ -18,6 +18,8 @@ var out midi.Out
 var wr *writer.Writer
 
 func QuitMidi() (err error) {
+	fmt.Printf("Closing midi streams...\n")
+	in.StopListening()
 	in.Close()
 	out.Close()
 	drv.Close()
