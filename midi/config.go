@@ -49,6 +49,7 @@ func loadConfig() (err error) {
 							v := uint8(val.(int64))
 							midiMap.ccMap[v] = inboundField{name: fieldname, scale: scale}
 							outboundMidiMap[fieldname] = outboundField{eventtype: Cc, index: v, scale: scale}
+							outboundChannelMap[fieldname] = channel
 						} else {
 							arr := val.([]interface{})
 							for i, ele := range arr {
@@ -56,6 +57,7 @@ func loadConfig() (err error) {
 								name := fieldname + "[" + strconv.Itoa(i+1) + "]"
 								midiMap.ccMap[v] = inboundField{name: name, scale: scale}
 								outboundMidiMap[name] = outboundField{eventtype: Cc, index: v, scale: scale}
+								outboundChannelMap[fieldname] = channel
 							}
 						}
 					} else if fielddef.Has("note") {
@@ -64,6 +66,7 @@ func loadConfig() (err error) {
 							v := uint8(val.(int64))
 							midiMap.noteMap[v] = inboundField{name: fieldname, scale: scale}
 							outboundMidiMap[fieldname] = outboundField{eventtype: Note, index: v, scale: scale}
+							outboundChannelMap[fieldname] = channel
 						} else {
 							arr := val.([]interface{})
 							for i, ele := range arr {
@@ -71,6 +74,7 @@ func loadConfig() (err error) {
 								name := fieldname + "[" + strconv.Itoa(i+1) + "]"
 								midiMap.noteMap[v] = inboundField{name: name, scale: scale}
 								outboundMidiMap[name] = outboundField{eventtype: Note, index: v, scale: scale}
+								outboundChannelMap[fieldname] = channel
 							}
 						}
 					} else if fielddef.Has("poly") {
@@ -79,6 +83,7 @@ func loadConfig() (err error) {
 							v := uint8(val.(int64))
 							midiMap.polyMap[v] = inboundField{name: fieldname, scale: scale}
 							outboundMidiMap[fieldname] = outboundField{eventtype: Poly, index: v, scale: scale}
+							outboundChannelMap[fieldname] = channel
 						} else {
 							arr := val.([]interface{})
 							for i, ele := range arr {
@@ -86,6 +91,7 @@ func loadConfig() (err error) {
 								name := fieldname + "[" + strconv.Itoa(i+1) + "]"
 								midiMap.polyMap[v] = inboundField{name: name, scale: scale}
 								outboundMidiMap[name] = outboundField{eventtype: Poly, index: v, scale: scale}
+								outboundChannelMap[fieldname] = channel
 							}
 						}
 					}
