@@ -1069,6 +1069,7 @@ ${freqDAG}
 		console.log("  updateFromMIDI " + payload.Field + "was " + ele.value);
 		ele.value = valueString
 		console.log("  updateFromMIDI " + payload.Field + "NOW " + ele.value);
+		ele.onchange();
 	},
 
 	sendToMIDI: function (ele, field, value) {
