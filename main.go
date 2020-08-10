@@ -181,7 +181,7 @@ func main() {
 			}
 			os.Exit(code)
 		} else if *miditest {
-			if err = midi.InitMidi(nil); err != nil {
+			if err = midi.InitMidi(); err != nil {
 				code = 1
 				log.Println(err)
 			} else {
@@ -404,6 +404,18 @@ func main() {
 		}
 	}
 
+	defer func() {
+		fmt.Printf("Close Event.\n")
+		if err = midi.QuitMidi(); err != nil {
+			log.Println(err)
+		}
+	}()
+	go func() {
+		if err = midi.InitMidi(); err != nil {
+			log.Println(err)
+		}
+	}()
+
 	if err := bootstrap.Run(bootstrap.Options{
 		Asset:    Asset,
 		AssetDir: AssetDir,
@@ -442,17 +454,10 @@ func main() {
 			about_w = ws[1]
 			prefs_w = ws[2]
 
-			//			if err = midi.InitMidi(w); err != nil {
-			//				log.Println(err)
-			//			}
+			if err = midi.RegisterBridge(w); err != nil {
+				log.Println(err)
+			}
 
-			w.On(astilectron.EventNameAppClose, func(e astilectron.Event) (deleteListenter bool) {
-				log.Printf("Close Event.\n")
-				if err = midi.QuitMidi(); err != nil {
-					log.Println(err)
-				}
-				return false
-			})
 			// Need to explicitly intercept Closed event on the main
 			// window since the about window is never closed - only hidden.
 			w.On(astilectron.EventNameWindowEventClosed, func(e astilectron.Event) (deleteListener bool) {

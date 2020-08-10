@@ -337,6 +337,21 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		}
 		payload = "ok"
 
+	case "sendToMIDI":
+		var args struct {
+			Field string
+			Value int
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		midi.SendToMIDI(args.Field, args.Value)
+		payload = "ok"
+
 	case "setEnvelopes":
 		var args struct {
 			Osc       int // 1-based
@@ -598,13 +613,11 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				payload = err.Error()
 				return
 			}
-			midi.SendToMIDI(args.Param, args.Args[0], args.Args[1])
 		} else {
 			if err = synio.SetVoiceHeadDataByte(args.Param, byte(args.Args[0])); err != nil {
 				payload = err.Error()
 				return
 			}
-			midi.SendToMIDI(args.Param, 0, int(args.Args[0]))
 		}
 		payload = "ok"
 

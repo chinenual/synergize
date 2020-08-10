@@ -390,9 +390,12 @@ let viewVCE_voice = {
 					// failed - dont change the boolean
 					index.errorNotification(message.payload);
 					return false;
-				} else if (updater != undefined) {
-					console.log("updater: " + updater);
-					updater(ele);
+				} else {
+					viewVCE_voice.sendToMIDI(ele, ele.id, valueConverter(ele.value))
+					if (updater != undefined) {
+						console.log("updater: " + updater);
+						updater(ele);
+					}
 				}
 			});
 
@@ -749,6 +752,7 @@ ${freqDAG}
 		var mode = viewVCE_voice.voicingMode;
 		//mode = true; // For debugging and CSS tweaking: force edit controls to be visible
 
+		// XREF: converter mappings : these are duplicated in updateFromMIDI
 		if (mode) {
 			// CSS for styling the buttons when disabled is HARD.  So avoid it.
 			$('.vceNum.spinNullablePatchReg').TouchSpin({
@@ -1018,9 +1022,76 @@ ${freqDAG}
 	},
 
 	updateFromMIDI: function (payload) {
+		if (!viewVCE_voice.voicingMode) {
+			// ignore unless we're voicing
+		}
+
+		// value comes in unscaled (it's a 0-based MIDI value).  
+		// Use the min value on the input control to correct for an offset and then use the text 
+		// conversion function attached the the touchspin (if any) to turn that into a string)
+
 		var ele = document.getElementById(payload.Field)
+		if (ele === undefined || ele === null) {
+			console.log("updateFromMIDI " + payload.Field + " element not found");
+			return
+		}
+		var value = payload.Value
+
+		if (ele.hasAttribute("min")) {
+			var min = parseInt(ele.getAttribute("min"), 10);
+			value = value + min;
+		}
+
+		// XREF: converter mappings: it would be nicer to directly query the input element to determine what 
+		// sort of touchspin callbacks are associate, if any.  But its not obvous how to do that, so
+		// I duplicate some logic here
+		var converter = function (value) {
+			return value;
+		};
+		if (ele.classList.contains("spinFreqTime")) {
+			converter = viewVCE_envs.FreqTimeValueToText;
+		} else if (ele.classList.contains('spinNullablePatchReg')) {
+			converter = viewVCE_voice.NullablePatchRegisterToText(value);
+		} else if (ele.classList.contains('spinOHARM')) {
+			converter = viewVCE_voice.OHARMToText;
+		} else if (ele.classList.contains('spinFDETUN')) {
+			converter = viewVCE_voice.FDETUNToText;
+		} else if (ele.classList.contains('spinAmpEnv')) {
+			converter = viewVCE_envs.AmpEnvValueToText;
+		} else if (ele.classList.contains('spinAmpTime')) {
+			converter = viewVCE_envs.AmpTimeValueToText;
+		} else if (ele.classList.contains('spinFreqTime')) {
+			converter = viewVCE_envs.FreqTimeValueToText;
+		}
+
+		var valueString = converter("" + value)
+
 		console.log("  updateFromMIDI " + payload.Field + "was " + ele.value);
-		ele.value = "" + payload.Value; // convert to string
+		ele.value = valueString
 		console.log("  updateFromMIDI " + payload.Field + "NOW " + ele.value);
+	},
+
+	sendToMIDI: function (ele, field, value) {
+		// value comes in scaled to "synergy byte" value - but MIDI values are always 0 based.  
+		// Use the min value on the input control to correct for an offset 
+		if (ele.hasAttribute("min")) {
+			var min = parseInt(ele.getAttribute("min"), 10);
+			value = value - min;
+		}
+
+		let message = {
+			"name": "sendToMIDI",
+			"payload": {
+				Field: field,
+				Value: parseInt(value, 10)
+			}
+		};
+		astilectron.sendMessage(message, function (message) {
+			console.log("sendToMIDI returned: " + JSON.stringify(message));
+			// Check error
+			if (message.name === "error") {
+				index.errorNotification(message.payload);
+			}
+		});
 	}
 };
