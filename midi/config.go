@@ -57,7 +57,7 @@ func loadConfig() (err error) {
 								name := fieldname + "[" + strconv.Itoa(i+1) + "]"
 								midiMap.ccMap[v] = inboundField{name: name, scale: scale}
 								outboundMidiMap[name] = outboundField{eventtype: Cc, index: v, scale: scale}
-								outboundChannelMap[fieldname] = channel
+								outboundChannelMap[name] = channel
 							}
 						}
 					} else if fielddef.Has("note") {
@@ -74,7 +74,7 @@ func loadConfig() (err error) {
 								name := fieldname + "[" + strconv.Itoa(i+1) + "]"
 								midiMap.noteMap[v] = inboundField{name: name, scale: scale}
 								outboundMidiMap[name] = outboundField{eventtype: Note, index: v, scale: scale}
-								outboundChannelMap[fieldname] = channel
+								outboundChannelMap[name] = channel
 							}
 						}
 					} else if fielddef.Has("poly") {
@@ -91,7 +91,7 @@ func loadConfig() (err error) {
 								name := fieldname + "[" + strconv.Itoa(i+1) + "]"
 								midiMap.polyMap[v] = inboundField{name: name, scale: scale}
 								outboundMidiMap[name] = outboundField{eventtype: Poly, index: v, scale: scale}
-								outboundChannelMap[fieldname] = channel
+								outboundChannelMap[name] = channel
 							}
 						}
 					}
@@ -101,6 +101,7 @@ func loadConfig() (err error) {
 	}
 
 	log.Printf("in map: %v\n", inboundChannelMap)
+	log.Printf("out map: %v\n", outboundChannelMap)
 	log.Printf("out map: %v\n", outboundMidiMap)
 
 	return
