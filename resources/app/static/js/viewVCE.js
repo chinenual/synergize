@@ -22,8 +22,8 @@ let chartColors = [
 
 let viewVCE = {
     // flag to prevent programatic voice changes from triggering onchange updates to the Synergy
-    supressOnchange: false, 
-    
+    supressOnchange: false,
+
     init: function () {
         // no onchange events while we update input and text for the new voice
         viewVCE.supressOnchange = true;
@@ -31,11 +31,11 @@ let viewVCE = {
         Chart.defaults.global.defaultFontColor = 'white';
         Chart.defaults.global.defaultFontSize = 14;
 
-        viewVCE_keyprop.init();
-        viewVCE_keyeq.init();
-        viewVCE_envs.init();
-        viewVCE_filters.init();
-        viewVCE_voice.init(); // do this last since the uitest uses existance of VNAME to indicate that the pages are loaded and ready to roll
+        viewVCE_keyprop.init(false);
+        viewVCE_keyeq.init(false);
+        viewVCE_envs.init(false);
+        viewVCE_filters.init(false);
+        viewVCE_voice.init(false); // do this last since the uitest uses existance of VNAME to indicate that the pages are loaded and ready to roll
 
         viewVCE_voice.voicingModeVisuals();
 

@@ -6,7 +6,7 @@ let viewVCE_envs = {
 
 	chart: null,
 
-	init: function () {
+	init: function (incrementalUpdate) {
 		console.log('--- start viewVCE_envs init');
 
 		if (viewVCE_envs.deb_onchange == null) {
@@ -717,7 +717,7 @@ let viewVCE_envs = {
 					index.errorNotification(message.payload);
 					return false;
 				} else {
-					viewVCE_envs.envChartUpdate(osc, selectedEnv);
+					viewVCE_envs.envChartUpdate(osc, selectedEnv, true);
 				}
 			});
 		}
@@ -903,7 +903,12 @@ let viewVCE_envs = {
 			$(`#envFreqUpVal\\[${i + 1}\\]`).hide();
 			$(`#envFreqLowTime\\[${i + 1}\\]`).hide();
 			$(`#envFreqUpTime\\[${i + 1}\\]`).hide();
-
+			if (animate) {
+				viewVCE_voice.sendToMIDI(null, `envFreqLowVal[${i + 1}]`, 0);
+				viewVCE_voice.sendToMIDI(null, `envFreqUpVal[${i + 1}]`, 0);
+				viewVCE_voice.sendToMIDI(null, `envFreqLowTime[${i + 1}]`, 0);
+				viewVCE_voice.sendToMIDI(null, `envFreqUpTime[${i + 1}]`, 0);
+			}
 		}
 		for (i = 0; i < envelopes.FreqEnvelope.NPOINTS; i++) {
 			var tr = $('#envTable tbody tr:eq(' + i + ')');
@@ -919,6 +924,13 @@ let viewVCE_envs = {
 			var freqUp = viewVCE_envs.scaleFreqEnvValue(envelopes.FreqEnvelope.Table[i * 4 + 1]);
 			var timeLow = viewVCE_envs.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i * 4 + 2], i == 0);
 			var timeUp = viewVCE_envs.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i * 4 + 3], i == 0);
+
+			if (animate) {
+				viewVCE_voice.sendToMIDI(null, `envFreqLowVal[${i + 1}]`, envelopes.FreqEnvelope.Table[i * 4 + 0]);
+				viewVCE_voice.sendToMIDI(null, `envFreqUpVal[${i + 1}]`, envelopes.FreqEnvelope.Table[i * 4 + 1]);
+				viewVCE_voice.sendToMIDI(null, `envFreqLowTime[${i + 1}]`, envelopes.FreqEnvelope.Table[i * 4 + 2]);
+				viewVCE_voice.sendToMIDI(null, `envFreqUpTime[${i + 1}]`, envelopes.FreqEnvelope.Table[i * 4 + 3]);
+			}
 
 			if (i == 0) {
 				// first row's time values are fixed at zero (the entries in the table are used for wave/kprop markers)
@@ -965,6 +977,12 @@ let viewVCE_envs = {
 			$(`#envAmpLowTime\\[${i + 1}\\]`).hide();
 			$(`#envAmpUpTime\\[${i + 1}\\]`).hide();
 
+			if (animate) {
+				viewVCE_voice.sendToMIDI(null, `envAmpLowVal[${i + 1}]`, 0);
+				viewVCE_voice.sendToMIDI(null, `envAmpUpVal[${i + 1}]`, 0);
+				viewVCE_voice.sendToMIDI(null, `envAmpLowTime[${i + 1}]`, 0);
+				viewVCE_voice.sendToMIDI(null, `envAmpUpTime[${i + 1}]`, 0);
+			}
 		}
 		for (i = 0; i < envelopes.AmpEnvelope.NPOINTS; i++) {
 			var tr = $('#envTable tbody tr:eq(' + i + ')');
@@ -987,6 +1005,14 @@ let viewVCE_envs = {
 			var ampUp = viewVCE_envs.scaleAmpEnvValue(envelopes.AmpEnvelope.Table[i * 4 + 1]);
 			var timeLow = viewVCE_envs.scaleAmpTimeValue(envelopes.AmpEnvelope.Table[i * 4 + 2]);
 			var timeUp = viewVCE_envs.scaleAmpTimeValue(envelopes.AmpEnvelope.Table[i * 4 + 3]);
+
+			if (animate) {
+				viewVCE_voice.sendToMIDI(null, `envAmpLowVal[${i + 1}]`, envelopes.AmpEnvelope.Table[i * 4 + 0]);
+				viewVCE_voice.sendToMIDI(null, `envAmpUpVal[${i + 1}]`, envelopes.AmpEnvelope.Table[i * 4 + 1]);
+				viewVCE_voice.sendToMIDI(null, `envAmpLowTime[${i + 1}]`, envelopes.AmpEnvelope.Table[i * 4 + 2]);
+				viewVCE_voice.sendToMIDI(null, `envAmpUpTime[${i + 1}]`, envelopes.AmpEnvelope.Table[i * 4 + 3]);
+			}
+
 			lastAmpLow = ampLow;
 			lastAmpUp = ampUp;
 			totalTimeLow += timeLow;

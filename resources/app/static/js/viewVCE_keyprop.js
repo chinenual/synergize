@@ -50,14 +50,14 @@ let viewVCE_keyprop = {
 				return false;
 			} else {
 				vce.Head.KPROP[eleIndex - 1] = value;
-				viewVCE_keyprop.init();
+				viewVCE_keyprop.init(true);
 			}
 		});
 		return true;
 	},
 
-	init: function () {
-		console.log('--- start viewVCE_keyprop init');
+	init: function (incrementalUpdate) {
+		console.log('--- start viewVCE_keyprop init ' + incrementalUpdate);
 		if (viewVCE_keyprop.deb_onchange == null) {
 			//viewVCE_keyprop.deb_onchange = index.debounceFirstArg(viewVCE_keyprop.raw_onchange, 50);
 			viewVCE_keyprop.deb_onchange = viewVCE_keyprop.raw_onchange;
@@ -74,7 +74,9 @@ let viewVCE_keyprop = {
 
 			obj.value = '' + propData[idx];
 
-			viewVCE_voice.sendToMIDI(obj, id, propData[idx]);
+			if (!incrementalUpdate) {
+				viewVCE_voice.sendToMIDI(obj, id, propData[idx]);
+			}
 		});
 		if (viewVCE_keyprop.chart != null) {
 			viewVCE_keyprop.chart.destroy();

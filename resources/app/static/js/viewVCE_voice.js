@@ -91,7 +91,7 @@ let viewVCE_voice = {
 			filterValue = parseInt(ele.value, 10);
 		}
 		vce.Head.FILTER[osc - 1] = filterValue;
-		viewVCE_filters.init();
+		viewVCE_filters.init(true);
 	},
 
 	OHARMToText: function (str) {
@@ -904,7 +904,7 @@ ${freqDAG}
 		document.getElementById("vibType").innerHTML = (vce.Head.VIBDEP >= 0) ? "Sine" : "Random";
 	},
 
-	init: function () {
+	init: function (incrementalUpdate) {
 		console.log('--- start viewVCE_voice init');
 
 		if (viewVCE_voice.deb_onchange == null) {
@@ -926,7 +926,7 @@ ${freqDAG}
 		$('#vceTabs a[href="#vceKeyEqTab"]').on('shown.bs.tab', function (e) {
 			viewVCE_voice.sendToMIDI(null, "keyeq-tab", 1);
 		});
-		$('#vceTabs a[href="#vceKeyProTab"]').on('shown.bs.tab', function (e) {
+		$('#vceTabs a[href="#vceKeyPropTab"]').on('shown.bs.tab', function (e) {
 			viewVCE_voice.sendToMIDI(null, "keyprop-tab", 1);
 		});
 

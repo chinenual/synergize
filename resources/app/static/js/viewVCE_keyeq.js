@@ -49,14 +49,14 @@ let viewVCE_keyeq = {
 				return false;
 			} else {
 				vce.Head.VEQ[eleIndex - 1] = value;
-				viewVCE_keyeq.init();
+				viewVCE_keyeq.init(true);
 			}
 		});
 		return true;
 	},
 
-	init: function () {
-		console.log('--- start viewVCE_keyeq init');
+	init: function (incrementalUpdate) {
+		console.log('--- start viewVCE_keyeq init ' + incrementalUpdate);
 		if (viewVCE_keyeq.deb_onchange == null) {
 			//			viewVCE_keyeq.deb_onchange = _.debounce(viewVCE_keyeq.raw_onchange, 50);
 			viewVCE_keyeq.deb_onchange = viewVCE_keyeq.raw_onchange;
@@ -72,8 +72,9 @@ let viewVCE_keyeq = {
 
 			obj.value = propData[idx];
 
-			viewVCE_voice.sendToMIDI(obj, id, propData[idx]);
-
+			if (!incrementalUpdate) {
+				viewVCE_voice.sendToMIDI(obj, id, propData[idx]);
+			}
 		});
 		if (viewVCE_keyeq.chart != null) {
 			viewVCE_keyeq.chart.destroy();

@@ -9,14 +9,14 @@
       <midi var ="x15" type="1" channel="16" data1="67" data2f="0" data2t="127" sysex="" />
       <midi var ="x9" type="1" channel="16" data1="73" data2f="0" data2t="127" sysex="" />
       <midi var ="x14" type="1" channel="16" data1="68" data2f="0" data2t="127" sysex="" />
-      <midi var ="x8" type="1" channel="16" data1="74" data2f="0" data2t="127" sysex="" />
       <midi var ="x13" type="1" channel="16" data1="69" data2f="0" data2t="127" sysex="" />
-      <midi var ="x7" type="1" channel="16" data1="75" data2f="0" data2t="127" sysex="" />
+      <midi var ="x8" type="1" channel="16" data1="74" data2f="0" data2t="127" sysex="" />
       <midi var ="x12" type="1" channel="16" data1="70" data2f="0" data2t="127" sysex="" />
-      <midi var ="x6" type="1" channel="16" data1="76" data2f="0" data2t="127" sysex="" />
+      <midi var ="x7" type="1" channel="16" data1="75" data2f="0" data2t="127" sysex="" />
       <midi var ="x11" type="1" channel="16" data1="71" data2f="0" data2t="127" sysex="" />
-      <midi var ="x5" type="1" channel="16" data1="77" data2f="0" data2t="127" sysex="" />
+      <midi var ="x6" type="1" channel="16" data1="76" data2f="0" data2t="127" sysex="" />
       <midi var ="x10" type="1" channel="16" data1="72" data2f="0" data2t="127" sysex="" />
+      <midi var ="x5" type="1" channel="16" data1="77" data2f="0" data2t="127" sysex="" />
       <midi var ="x4" type="1" channel="16" data1="78" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="cm90YXJ5NA==" x="36" y="369" w="56" h="56" color="red" scalef="0.0" scalet="1.0" type="rotaryh" response="absolute" inverted="false" centered="false" norollover="true" >
@@ -63,10 +63,10 @@
       <midi var ="c5" type="1" channel="16" data1="92" data2f="0" data2t="127" sysex="" />
       <midi var ="c4" type="1" channel="16" data1="93" data2f="0" data2t="127" sysex="" />
       <midi var ="c3" type="1" channel="16" data1="94" data2f="0" data2t="127" sysex="" />
-      <midi var ="c2" type="1" channel="16" data1="95" data2f="0" data2t="127" sysex="" />
       <midi var ="x9" type="1" channel="16" data1="88" data2f="0" data2t="127" sysex="" />
-      <midi var ="c1" type="1" channel="16" data1="96" data2f="0" data2t="127" sysex="" />
+      <midi var ="c2" type="1" channel="16" data1="95" data2f="0" data2t="127" sysex="" />
       <midi var ="x8" type="1" channel="16" data1="89" data2f="0" data2t="127" sysex="" />
+      <midi var ="c1" type="1" channel="16" data1="96" data2f="0" data2t="127" sysex="" />
       <midi var ="x7" type="1" channel="16" data1="90" data2f="0" data2t="127" sysex="" />
       <midi var ="x6" type="1" channel="16" data1="91" data2f="0" data2t="127" sysex="" />
       <midi var ="x5" type="1" channel="16" data1="92" data2f="0" data2t="127" sysex="" />
@@ -88,14 +88,14 @@
       <midi var ="x15" type="1" channel="1" data1="50" data2f="0" data2t="127" sysex="" />
       <midi var ="x9" type="1" channel="1" data1="56" data2f="0" data2t="127" sysex="" />
       <midi var ="x14" type="1" channel="1" data1="51" data2f="0" data2t="127" sysex="" />
-      <midi var ="x8" type="1" channel="1" data1="57" data2f="0" data2t="127" sysex="" />
       <midi var ="x13" type="1" channel="1" data1="52" data2f="0" data2t="127" sysex="" />
-      <midi var ="x7" type="1" channel="1" data1="58" data2f="0" data2t="127" sysex="" />
+      <midi var ="x8" type="1" channel="1" data1="57" data2f="0" data2t="127" sysex="" />
       <midi var ="x12" type="1" channel="1" data1="53" data2f="0" data2t="127" sysex="" />
-      <midi var ="x6" type="1" channel="1" data1="59" data2f="0" data2t="127" sysex="" />
+      <midi var ="x7" type="1" channel="1" data1="58" data2f="0" data2t="127" sysex="" />
       <midi var ="x11" type="1" channel="1" data1="54" data2f="0" data2t="127" sysex="" />
-      <midi var ="x5" type="1" channel="1" data1="60" data2f="0" data2t="127" sysex="" />
+      <midi var ="x6" type="1" channel="1" data1="59" data2f="0" data2t="127" sysex="" />
       <midi var ="x10" type="1" channel="1" data1="55" data2f="0" data2t="127" sysex="" />
+      <midi var ="x5" type="1" channel="1" data1="60" data2f="0" data2t="127" sysex="" />
       <midi var ="x4" type="1" channel="1" data1="61" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="bXVsdGlmYWRlcjEw" x="109" y="142" w="585" h="346" color="blue" scalef="0.0" scalet="1.0" type="multifaderv" inverted="false" centered="false" number="16" >
@@ -106,14 +106,14 @@
       <midi var ="x15" type="0" channel="16" data1="2" data2f="0" data2t="42" sysex="" />
       <midi var ="x9" type="0" channel="16" data1="8" data2f="0" data2t="42" sysex="" />
       <midi var ="x14" type="0" channel="16" data1="3" data2f="0" data2t="42" sysex="" />
-      <midi var ="x8" type="0" channel="16" data1="9" data2f="0" data2t="42" sysex="" />
       <midi var ="x13" type="0" channel="16" data1="4" data2f="0" data2t="42" sysex="" />
-      <midi var ="x7" type="0" channel="16" data1="10" data2f="0" data2t="42" sysex="" />
+      <midi var ="x8" type="0" channel="16" data1="9" data2f="0" data2t="42" sysex="" />
       <midi var ="x12" type="0" channel="16" data1="5" data2f="0" data2t="42" sysex="" />
-      <midi var ="x6" type="0" channel="16" data1="11" data2f="0" data2t="42" sysex="" />
+      <midi var ="x7" type="0" channel="16" data1="10" data2f="0" data2t="42" sysex="" />
       <midi var ="x11" type="0" channel="16" data1="6" data2f="0" data2t="42" sysex="" />
-      <midi var ="x5" type="0" channel="16" data1="12" data2f="0" data2t="42" sysex="" />
+      <midi var ="x6" type="0" channel="16" data1="11" data2f="0" data2t="42" sysex="" />
       <midi var ="x10" type="0" channel="16" data1="7" data2f="0" data2t="42" sysex="" />
+      <midi var ="x5" type="0" channel="16" data1="12" data2f="0" data2t="42" sysex="" />
       <midi var ="x4" type="0" channel="16" data1="13" data2f="0" data2t="42" sysex="" />
     </control>
     <control name="bGFiZWwxNw==" x="694" y="257" w="25" h="80" color="blue" type="labelv" text="SGFybW9uaWM=" size="14" background="false" outline="false" >
@@ -126,14 +126,14 @@
       <midi var ="x15" type="0" channel="16" data1="18" data2f="0" data2t="127" sysex="" />
       <midi var ="x9" type="0" channel="16" data1="24" data2f="0" data2t="127" sysex="" />
       <midi var ="x14" type="0" channel="16" data1="19" data2f="0" data2t="127" sysex="" />
-      <midi var ="x13" type="0" channel="16" data1="20" data2f="0" data2t="127" sysex="" />
       <midi var ="x8" type="0" channel="16" data1="25" data2f="0" data2t="127" sysex="" />
-      <midi var ="x12" type="0" channel="16" data1="21" data2f="0" data2t="127" sysex="" />
+      <midi var ="x13" type="0" channel="16" data1="20" data2f="0" data2t="127" sysex="" />
       <midi var ="x7" type="0" channel="16" data1="26" data2f="0" data2t="127" sysex="" />
-      <midi var ="x11" type="0" channel="16" data1="22" data2f="0" data2t="127" sysex="" />
+      <midi var ="x12" type="0" channel="16" data1="21" data2f="0" data2t="127" sysex="" />
       <midi var ="x6" type="0" channel="16" data1="27" data2f="0" data2t="127" sysex="" />
-      <midi var ="x10" type="0" channel="16" data1="23" data2f="0" data2t="127" sysex="" />
+      <midi var ="x11" type="0" channel="16" data1="22" data2f="0" data2t="127" sysex="" />
       <midi var ="x5" type="0" channel="16" data1="28" data2f="0" data2t="127" sysex="" />
+      <midi var ="x10" type="0" channel="16" data1="23" data2f="0" data2t="127" sysex="" />
       <midi var ="x4" type="0" channel="16" data1="29" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="bGFiZWwxOA==" x="692" y="627" w="25" h="80" color="purple" type="labelv" text="RGV0dW5l" size="14" background="false" outline="false" >
@@ -147,12 +147,12 @@
       <midi var ="x14" type="1" channel="16" data1="3" data2f="0" data2t="127" sysex="" />
       <midi var ="x8" type="1" channel="16" data1="9" data2f="0" data2t="127" sysex="" />
       <midi var ="x13" type="1" channel="16" data1="4" data2f="0" data2t="127" sysex="" />
-      <midi var ="x7" type="1" channel="16" data1="10" data2f="0" data2t="127" sysex="" />
       <midi var ="x12" type="1" channel="16" data1="5" data2f="0" data2t="127" sysex="" />
-      <midi var ="x6" type="1" channel="16" data1="11" data2f="0" data2t="127" sysex="" />
+      <midi var ="x7" type="1" channel="16" data1="10" data2f="0" data2t="127" sysex="" />
       <midi var ="x11" type="1" channel="16" data1="6" data2f="0" data2t="127" sysex="" />
-      <midi var ="x5" type="1" channel="16" data1="12" data2f="0" data2t="127" sysex="" />
+      <midi var ="x6" type="1" channel="16" data1="11" data2f="0" data2t="127" sysex="" />
       <midi var ="x10" type="1" channel="16" data1="7" data2f="0" data2t="127" sysex="" />
+      <midi var ="x5" type="1" channel="16" data1="12" data2f="0" data2t="127" sysex="" />
       <midi var ="x4" type="1" channel="16" data1="13" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="bXVsdGl0b2dnbGU0" x="109" y="62" w="585" h="50" color="green" scalef="0.0" scalet="1.0" type="multitoggle" number_x="16" number_y="1" ex_mode="false" local_off="false" >
@@ -164,12 +164,12 @@
       <midi var ="x14" type="1" channel="16" data1="19" data2f="0" data2t="127" sysex="" />
       <midi var ="x8" type="1" channel="16" data1="25" data2f="0" data2t="127" sysex="" />
       <midi var ="x13" type="1" channel="16" data1="20" data2f="0" data2t="127" sysex="" />
-      <midi var ="x7" type="1" channel="16" data1="26" data2f="0" data2t="127" sysex="" />
       <midi var ="x12" type="1" channel="16" data1="21" data2f="0" data2t="127" sysex="" />
-      <midi var ="x6" type="1" channel="16" data1="27" data2f="0" data2t="127" sysex="" />
+      <midi var ="x7" type="1" channel="16" data1="26" data2f="0" data2t="127" sysex="" />
       <midi var ="x11" type="1" channel="16" data1="22" data2f="0" data2t="127" sysex="" />
-      <midi var ="x5" type="1" channel="16" data1="28" data2f="0" data2t="127" sysex="" />
+      <midi var ="x6" type="1" channel="16" data1="27" data2f="0" data2t="127" sysex="" />
       <midi var ="x10" type="1" channel="16" data1="23" data2f="0" data2t="127" sysex="" />
+      <midi var ="x5" type="1" channel="16" data1="28" data2f="0" data2t="127" sysex="" />
       <midi var ="x4" type="1" channel="16" data1="29" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="bGFiZWwxOQ==" x="694" y="-14" w="25" h="80" color="red" type="labelv" text="TXV0ZQ==" size="14" background="false" outline="false" >
@@ -216,38 +216,51 @@
       <midi var ="x" type="1" channel="16" data1="33" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="bGVkMw==" x="595" y="119" w="20" h="20" color="yellow" scalef="0.0" scalet="1.0" type="led" >
-      <midi var ="x" type="1" channel="1" data1="35" data2f="0" data2t="127" sysex="" />
+      <midi var ="x" type="1" channel="16" data1="35" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="bGVkNA==" x="520" y="119" w="20" h="20" color="yellow" scalef="0.0" scalet="1.0" type="led" >
+      <midi var ="x" type="1" channel="16" data1="37" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="bGVkNQ==" x="630" y="119" w="20" h="20" color="yellow" scalef="0.0" scalet="1.0" type="led" >
-      <midi var ="x" type="1" channel="1" data1="34" data2f="0" data2t="127" sysex="" />
+      <midi var ="x" type="1" channel="16" data1="34" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="bGVkNg==" x="556" y="119" w="20" h="20" color="yellow" scalef="0.0" scalet="1.0" type="led" >
+      <midi var ="x" type="1" channel="16" data1="36" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="bGVkNw==" x="484" y="119" w="20" h="20" color="yellow" scalef="0.0" scalet="1.0" type="led" >
+      <midi var ="x" type="1" channel="16" data1="38" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="bGVkOA==" x="449" y="119" w="20" h="20" color="yellow" scalef="0.0" scalet="1.0" type="led" >
+      <midi var ="x" type="1" channel="16" data1="39" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="bGVkOQ==" x="411" y="119" w="20" h="20" color="yellow" scalef="0.0" scalet="1.0" type="led" >
+      <midi var ="x" type="1" channel="16" data1="40" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="bGVkMTA=" x="376" y="119" w="20" h="20" color="yellow" scalef="0.0" scalet="1.0" type="led" >
+      <midi var ="x" type="1" channel="16" data1="41" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="bGVkMTE=" x="337" y="119" w="20" h="20" color="yellow" scalef="0.0" scalet="1.0" type="led" >
+      <midi var ="x" type="1" channel="16" data1="42" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="bGVkMTI=" x="304" y="119" w="20" h="20" color="yellow" scalef="0.0" scalet="1.0" type="led" >
+      <midi var ="x" type="1" channel="16" data1="43" data2f="0" data2t="127" sysex="" />
     </control>
-    <control name="bGVkMTM=" x="268" y="119" w="20" h="20" color="yellow" scalef="0.0" scalet="1.0" type="led" >
+    <control name="bGVkMTM=" x="268" y="120" w="18" h="18" color="yellow" scalef="0.0" scalet="1.0" type="led" >
+      <midi var ="x" type="1" channel="16" data1="44" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="bGVkMTQ=" x="233" y="119" w="20" h="20" color="yellow" scalef="0.0" scalet="1.0" type="led" >
+      <midi var ="x" type="1" channel="16" data1="45" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="bGVkMTU=" x="198" y="119" w="20" h="20" color="yellow" scalef="0.0" scalet="1.0" type="led" >
+      <midi var ="x" type="1" channel="16" data1="46" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="bGVkMTY=" x="158" y="119" w="20" h="20" color="yellow" scalef="0.0" scalet="1.0" type="led" >
+      <midi var ="x" type="1" channel="16" data1="47" data2f="0" data2t="127" sysex="" />
     </control>
     <control name="bGVkMTc=" x="121" y="119" w="20" h="20" color="yellow" scalef="0.0" scalet="1.0" type="led" >
     </control>
-    <control name="bGVkMTg=" x="121" y="119" w="20" h="20" color="yellow" scalef="0.0" scalet="1.0" type="led" >
+    <control name="bGVkMTg=" x="121" y="121" w="15" h="15" color="yellow" scalef="0.0" scalet="1.0" type="led" >
+      <midi var ="x" type="1" channel="16" data1="48" data2f="0" data2t="127" sysex="" />
     </control>
   </tabpage>
   <tabpage name="RnJlcSBFbnZlbG9wZQ==" scalef="0.0" scalet="1.0" midi_type="0" midi_channel="16" midi_data1="123" midi_data2f="1" midi_data2t="1" midi_sysex="" li_t="RnJlcSBFbnZlbG9wZXM=" li_c="green" li_s="14" li_o="false" li_b="false" la_t="RnJlcSBFbnZlbG9wZXM=" la_c="green" la_s="14" la_o="false" la_b="false" >
@@ -267,56 +280,58 @@
       <midi var ="x6" type="6" channel="16" data1="10" data2f="0" data2t="124" sysex="" />
       <midi var ="x7" type="6" channel="16" data1="9" data2f="0" data2t="124" sysex="" />
       <midi var ="x8" type="6" channel="16" data1="8" data2f="0" data2t="124" sysex="" />
+      <midi var ="x9" type="6" channel="16" data1="7" data2f="0" data2t="124" sysex="" />
     </control>
     <control name="bXVsdGlmYWRlcjE5" x="9" y="775" w="632" h="238" color="purple" scalef="0.0" scalet="1.0" type="multifaderv" inverted="false" centered="false" number="16" >
       <midi var ="x3" type="6" channel="16" data1="60" data2f="0" data2t="84" sysex="" />
       <midi var ="x2" type="6" channel="16" data1="61" data2f="0" data2t="84" sysex="" />
       <midi var ="x1" type="6" channel="16" data1="62" data2f="0" data2t="84" sysex="" />
-
       <midi var ="x15" type="6" channel="16" data1="48" data2f="0" data2t="84" sysex="" />
       <midi var ="x14" type="6" channel="16" data1="49" data2f="0" data2t="84" sysex="" />
       <midi var ="x8" type="6" channel="16" data1="55" data2f="0" data2t="84" sysex="" />
+      <midi var ="x9" type="6" channel="16" data1="54" data2f="0" data2t="84" sysex="" />
       <midi var ="x13" type="6" channel="16" data1="40" data2f="0" data2t="84" sysex="" />
-      <midi var ="x7" type="6" channel="16" data1="56" data2f="0" data2t="84" sysex="" />
       <midi var ="x12" type="6" channel="16" data1="51" data2f="0" data2t="84" sysex="" />
-      <midi var ="x6" type="6" channel="16" data1="57" data2f="0" data2t="84" sysex="" />
+      <midi var ="x7" type="6" channel="16" data1="56" data2f="0" data2t="84" sysex="" />
       <midi var ="x11" type="6" channel="16" data1="52" data2f="0" data2t="84" sysex="" />
-      <midi var ="x5" type="6" channel="16" data1="58" data2f="0" data2t="84" sysex="" />
+      <midi var ="x6" type="6" channel="16" data1="57" data2f="0" data2t="84" sysex="" />
       <midi var ="x10" type="6" channel="16" data1="53" data2f="0" data2t="84" sysex="" />
+      <midi var ="x5" type="6" channel="16" data1="58" data2f="0" data2t="84" sysex="" />
       <midi var ="x4" type="6" channel="16" data1="59" data2f="0" data2t="84" sysex="" />
     </control>
     <control name="bXVsdGlmYWRlcjIw" x="10" y="520" w="630" h="238" color="red" scalef="0.0" scalet="1.0" type="multifaderv" inverted="false" centered="false" number="16" >
-      <midi var ="x3" type="6" channel="16" data1="44" data2f="0" data2t="84" sysex="" />
-      <midi var ="x2" type="6" channel="16" data1="45" data2f="0" data2t="84" sysex="" />
       <midi var ="x1" type="6" channel="16" data1="46" data2f="0" data2t="84" sysex="" />
-
-      <midi var ="x15" type="6" channel="16" data1="32" data2f="0" data2t="84" sysex="" />
-      <midi var ="x14" type="6" channel="16" data1="33" data2f="0" data2t="84" sysex="" />
-      <midi var ="x8" type="6" channel="16" data1="39" data2f="0" data2t="84" sysex="" />
-      <midi var ="x13" type="6" channel="16" data1="34" data2f="0" data2t="84" sysex="" />
-      <midi var ="x7" type="6" channel="16" data1="40" data2f="0" data2t="84" sysex="" />
-      <midi var ="x12" type="6" channel="16" data1="35" data2f="0" data2t="84" sysex="" />
-      <midi var ="x6" type="6" channel="16" data1="41" data2f="0" data2t="84" sysex="" />
-      <midi var ="x11" type="6" channel="16" data1="36" data2f="0" data2t="84" sysex="" />
-      <midi var ="x5" type="6" channel="16" data1="42" data2f="0" data2t="84" sysex="" />
       <midi var ="x10" type="6" channel="16" data1="37" data2f="0" data2t="84" sysex="" />
+      <midi var ="x11" type="6" channel="16" data1="36" data2f="0" data2t="84" sysex="" />
+      <midi var ="x12" type="6" channel="16" data1="35" data2f="0" data2t="84" sysex="" />
+      <midi var ="x13" type="6" channel="16" data1="34" data2f="0" data2t="84" sysex="" />
+      <midi var ="x14" type="6" channel="16" data1="33" data2f="0" data2t="84" sysex="" />
+      <midi var ="x15" type="6" channel="16" data1="32" data2f="0" data2t="84" sysex="" />
+      <midi var ="x2" type="6" channel="16" data1="45" data2f="0" data2t="84" sysex="" />
+      <midi var ="x3" type="6" channel="16" data1="44" data2f="0" data2t="84" sysex="" />
       <midi var ="x4" type="6" channel="16" data1="43" data2f="0" data2t="84" sysex="" />
+      <midi var ="x5" type="6" channel="16" data1="42" data2f="0" data2t="84" sysex="" />
+      <midi var ="x6" type="6" channel="16" data1="41" data2f="0" data2t="84" sysex="" />
+      <midi var ="x7" type="6" channel="16" data1="40" data2f="0" data2t="84" sysex="" />
+      <midi var ="x8" type="6" channel="16" data1="39" data2f="0" data2t="84" sysex="" />
+            <midi var ="x9" type="6" channel="16" data1="38" data2f="0" data2t="84" sysex="" />
     </control>
     <control name="bXVsdGlmYWRlcjIx" x="11" y="264" w="630" h="238" color="blue" scalef="0.0" scalet="1.0" type="multifaderv" inverted="false" centered="false" number="16" >
       <midi var ="x3" type="6" channel="16" data1="28" data2f="0" data2t="124" sysex="" />
       <midi var ="x2" type="6" channel="16" data1="29" data2f="0" data2t="124" sysex="" />
       <midi var ="x1" type="6" channel="16" data1="30" data2f="0" data2t="124" sysex="" />
-      <midi var ="x15" type="6" channel="16" data1="16" data2f="0" data2t="124" sysex="" />
       <midi var ="x16" type="6" channel="16" data1="47" data2f="0" data2t="124" sysex="" />
+      <midi var ="x15" type="6" channel="16" data1="16" data2f="0" data2t="124" sysex="" />
       <midi var ="x14" type="6" channel="16" data1="17" data2f="0" data2t="124" sysex="" />
       <midi var ="x8" type="6" channel="16" data1="23" data2f="0" data2t="124" sysex="" />
+      <midi var ="x9" type="6" channel="16" data1="22" data2f="0" data2t="124" sysex="" />
       <midi var ="x13" type="6" channel="16" data1="18" data2f="0" data2t="124" sysex="" />
-      <midi var ="x7" type="6" channel="16" data1="24" data2f="0" data2t="124" sysex="" />
       <midi var ="x12" type="6" channel="16" data1="19" data2f="0" data2t="124" sysex="" />
-      <midi var ="x6" type="6" channel="16" data1="25" data2f="0" data2t="124" sysex="" />
+      <midi var ="x7" type="6" channel="16" data1="24" data2f="0" data2t="124" sysex="" />
       <midi var ="x11" type="6" channel="16" data1="20" data2f="0" data2t="124" sysex="" />
-      <midi var ="x5" type="6" channel="16" data1="26" data2f="0" data2t="124" sysex="" />
+      <midi var ="x6" type="6" channel="16" data1="25" data2f="0" data2t="124" sysex="" />
       <midi var ="x10" type="6" channel="16" data1="21" data2f="0" data2t="124" sysex="" />
+      <midi var ="x5" type="6" channel="16" data1="26" data2f="0" data2t="124" sysex="" />
       <midi var ="x4" type="6" channel="16" data1="27" data2f="0" data2t="124" sysex="" />
     </control>
     <control name="bGFiZWwzNg==" x="649" y="88" w="25" h="80" color="green" type="labelv" text="VmFsdWUgTG93ZXI=" size="14" background="true" outline="false" >
@@ -330,37 +345,39 @@
   </tabpage>
   <tabpage name="Ng==" scalef="0.0" scalet="1.0" midi_type="0" midi_channel="16" midi_data1="124" midi_data2f="1" midi_data2t="1" midi_sysex="" li_t="QW1wIEVudmVsb3Bl" li_c="gray" li_s="14" li_o="false" li_b="false" la_t="QW1wIEVudmVsb3Bl" la_c="gray" la_s="14" la_o="false" la_b="false" >
     <control name="bXVsdGlmYWRlcjIy" x="9" y="9" w="630" h="238" color="green" scalef="0.0" scalet="1.0" type="multifaderv" inverted="false" centered="false" number="16" >
-      <midi var ="x3" type="6" channel="16" data1="76" data2f="0" data2t="72" sysex="" />
-      <midi var ="x2" type="6" channel="16" data1="77" data2f="0" data2t="72" sysex="" />
-      <midi var ="x16" type="6" channel="16" data1="63" data2f="0" data2t="72" sysex="" />
-      <midi var ="x15" type="6" channel="16" data1="64" data2f="0" data2t="72" sysex="" />
-      <midi var ="x14" type="6" channel="16" data1="65" data2f="0" data2t="72" sysex="" />
-      <midi var ="x8" type="6" channel="16" data1="71" data2f="0" data2t="72" sysex="" />
-      <midi var ="x13" type="6" channel="16" data1="66" data2f="0" data2t="72" sysex="" />
-      <midi var ="x7" type="6" channel="16" data1="72" data2f="0" data2t="72" sysex="" />
-      <midi var ="x12" type="6" channel="16" data1="67" data2f="0" data2t="72" sysex="" />
-      <midi var ="x6" type="6" channel="16" data1="73" data2f="0" data2t="72" sysex="" />
-      <midi var ="x11" type="6" channel="16" data1="68" data2f="0" data2t="72" sysex="" />
-      <midi var ="x5" type="6" channel="16" data1="74" data2f="0" data2t="72" sysex="" />
       <midi var ="x10" type="6" channel="16" data1="69" data2f="0" data2t="72" sysex="" />
+      <midi var ="x11" type="6" channel="16" data1="68" data2f="0" data2t="72" sysex="" />
+      <midi var ="x12" type="6" channel="16" data1="67" data2f="0" data2t="72" sysex="" />
+      <midi var ="x13" type="6" channel="16" data1="66" data2f="0" data2t="72" sysex="" />
+      <midi var ="x14" type="6" channel="16" data1="65" data2f="0" data2t="72" sysex="" />
+      <midi var ="x15" type="6" channel="16" data1="64" data2f="0" data2t="72" sysex="" />
+      <midi var ="x16" type="6" channel="16" data1="63" data2f="0" data2t="72" sysex="" />
+      <midi var ="x2" type="6" channel="16" data1="77" data2f="0" data2t="72" sysex="" />
+      <midi var ="x3" type="6" channel="16" data1="76" data2f="0" data2t="72" sysex="" />
       <midi var ="x4" type="6" channel="16" data1="75" data2f="0" data2t="72" sysex="" />
+      <midi var ="x5" type="6" channel="16" data1="74" data2f="0" data2t="72" sysex="" />
+      <midi var ="x6" type="6" channel="16" data1="73" data2f="0" data2t="72" sysex="" />
+      <midi var ="x7" type="6" channel="16" data1="72" data2f="0" data2t="72" sysex="" />
+      <midi var ="x8" type="6" channel="16" data1="71" data2f="0" data2t="72" sysex="" />
+      <midi var ="x9" type="6" channel="16" data1="70" data2f="0" data2t="72" sysex="" />
     </control>
     <control name="bXVsdGlmYWRlcjIz" x="9" y="775" w="632" h="238" color="purple" scalef="0.0" scalet="1.0" type="multifaderv" inverted="false" centered="false" number="16" >
-      <midi var ="x3" type="6" channel="16" data1="124" data2f="0" data2t="84" sysex="" />
-      <midi var ="x2" type="6" channel="16" data1="125" data2f="0" data2t="84" sysex="" />
       <midi var ="x1" type="6" channel="16" data1="126" data2f="0" data2t="84" sysex="" />
-      <midi var ="x16" type="6" channel="16" data1="111" data2f="0" data2t="84" sysex="" />
-      <midi var ="x15" type="6" channel="16" data1="112" data2f="0" data2t="84" sysex="" />
-      <midi var ="x14" type="6" channel="16" data1="113" data2f="0" data2t="84" sysex="" />
-      <midi var ="x8" type="6" channel="16" data1="119" data2f="0" data2t="84" sysex="" />
-      <midi var ="x13" type="6" channel="16" data1="114" data2f="0" data2t="84" sysex="" />
-      <midi var ="x7" type="6" channel="16" data1="120" data2f="0" data2t="84" sysex="" />
-      <midi var ="x12" type="6" channel="16" data1="115" data2f="0" data2t="84" sysex="" />
-      <midi var ="x6" type="6" channel="16" data1="121" data2f="0" data2t="84" sysex="" />
-      <midi var ="x11" type="6" channel="16" data1="116" data2f="0" data2t="84" sysex="" />
-      <midi var ="x5" type="6" channel="16" data1="122" data2f="0" data2t="84" sysex="" />
       <midi var ="x10" type="6" channel="16" data1="117" data2f="0" data2t="84" sysex="" />
+      <midi var ="x11" type="6" channel="16" data1="116" data2f="0" data2t="84" sysex="" />
+      <midi var ="x12" type="6" channel="16" data1="115" data2f="0" data2t="84" sysex="" />
+      <midi var ="x13" type="6" channel="16" data1="114" data2f="0" data2t="84" sysex="" />
+      <midi var ="x14" type="6" channel="16" data1="113" data2f="0" data2t="84" sysex="" />
+      <midi var ="x15" type="6" channel="16" data1="112" data2f="0" data2t="84" sysex="" />
+      <midi var ="x16" type="6" channel="16" data1="111" data2f="0" data2t="84" sysex="" />
+      <midi var ="x2" type="6" channel="16" data1="125" data2f="0" data2t="84" sysex="" />
+      <midi var ="x3" type="6" channel="16" data1="124" data2f="0" data2t="84" sysex="" />
       <midi var ="x4" type="6" channel="16" data1="123" data2f="0" data2t="84" sysex="" />
+      <midi var ="x5" type="6" channel="16" data1="122" data2f="0" data2t="84" sysex="" />
+      <midi var ="x6" type="6" channel="16" data1="121" data2f="0" data2t="84" sysex="" />
+      <midi var ="x7" type="6" channel="16" data1="120" data2f="0" data2t="84" sysex="" />
+      <midi var ="x8" type="6" channel="16" data1="119" data2f="0" data2t="84" sysex="" />
+      <midi var ="x9" type="6" channel="16" data1="118" data2f="0" data2t="84" sysex="" />
     </control>
     <control name="bXVsdGlmYWRlcjI0" x="10" y="520" w="630" h="238" color="red" scalef="0.0" scalet="1.0" type="multifaderv" inverted="false" centered="false" number="16" >
       <midi var ="x3" type="6" channel="16" data1="108" data2f="0" data2t="84" sysex="" />
@@ -370,13 +387,14 @@
       <midi var ="x15" type="6" channel="16" data1="96" data2f="0" data2t="84" sysex="" />
       <midi var ="x14" type="6" channel="16" data1="97" data2f="0" data2t="84" sysex="" />
       <midi var ="x8" type="6" channel="16" data1="103" data2f="0" data2t="84" sysex="" />
+      <midi var ="x9" type="6" channel="16" data1="102" data2f="0" data2t="84" sysex="" />
       <midi var ="x13" type="6" channel="16" data1="98" data2f="0" data2t="84" sysex="" />
-      <midi var ="x7" type="6" channel="16" data1="104" data2f="0" data2t="84" sysex="" />
       <midi var ="x12" type="6" channel="16" data1="99" data2f="0" data2t="84" sysex="" />
-      <midi var ="x6" type="6" channel="16" data1="105" data2f="0" data2t="84" sysex="" />
+      <midi var ="x7" type="6" channel="16" data1="104" data2f="0" data2t="84" sysex="" />
       <midi var ="x11" type="6" channel="16" data1="100" data2f="0" data2t="84" sysex="" />
-      <midi var ="x5" type="6" channel="16" data1="106" data2f="0" data2t="84" sysex="" />
+      <midi var ="x6" type="6" channel="16" data1="105" data2f="0" data2t="84" sysex="" />
       <midi var ="x10" type="6" channel="16" data1="101" data2f="0" data2t="84" sysex="" />
+      <midi var ="x5" type="6" channel="16" data1="106" data2f="0" data2t="84" sysex="" />
       <midi var ="x4" type="6" channel="16" data1="107" data2f="0" data2t="84" sysex="" />
     </control>
     <control name="bXVsdGlmYWRlcjI1" x="11" y="264" w="630" h="238" color="blue" scalef="0.0" scalet="1.0" type="multifaderv" inverted="false" centered="false" number="16" >
@@ -386,13 +404,14 @@
       <midi var ="x15" type="6" channel="16" data1="80" data2f="0" data2t="72" sysex="" />
       <midi var ="x14" type="6" channel="16" data1="81" data2f="0" data2t="72" sysex="" />
       <midi var ="x8" type="6" channel="16" data1="87" data2f="0" data2t="72" sysex="" />
+      <midi var ="x9" type="6" channel="16" data1="86" data2f="0" data2t="72" sysex="" />
       <midi var ="x13" type="6" channel="16" data1="82" data2f="0" data2t="72" sysex="" />
-      <midi var ="x7" type="6" channel="16" data1="88" data2f="0" data2t="72" sysex="" />
       <midi var ="x12" type="6" channel="16" data1="83" data2f="0" data2t="72" sysex="" />
-      <midi var ="x6" type="6" channel="16" data1="89" data2f="0" data2t="72" sysex="" />
+      <midi var ="x7" type="6" channel="16" data1="88" data2f="0" data2t="72" sysex="" />
       <midi var ="x11" type="6" channel="16" data1="84" data2f="0" data2t="72" sysex="" />
-      <midi var ="x5" type="6" channel="16" data1="90" data2f="0" data2t="72" sysex="" />
+      <midi var ="x6" type="6" channel="16" data1="89" data2f="0" data2t="72" sysex="" />
       <midi var ="x10" type="6" channel="16" data1="85" data2f="0" data2t="72" sysex="" />
+      <midi var ="x5" type="6" channel="16" data1="90" data2f="0" data2t="72" sysex="" />
       <midi var ="x4" type="6" channel="16" data1="91" data2f="0" data2t="72" sysex="" />
     </control>
     <control name="bGFiZWw0Mg==" x="649" y="88" w="25" h="80" color="green" type="labelv" text="VmFsdWUgTG93ZXI=" size="14" background="true" outline="false" >
@@ -406,9 +425,8 @@
   </tabpage>
   <tabpage name="MQ==" scalef="0.0" scalet="1.0" midi_type="0" midi_channel="16" midi_data1="125" midi_data2f="1" midi_data2t="1" midi_sysex="" li_t="RmlsdGVycw==" li_c="yellow" li_s="14" li_o="false" li_b="false" la_t="RmlsdGVycw==" la_c="yellow" la_s="14" la_o="false" la_b="false" >
     <control name="bXVsdGlmYWRlcjI=" x="112" y="48" w="504" h="945" color="yellow" scalef="0.0" scalet="1.0" type="multifaderh" inverted="false" centered="false" number="32" >
-      <midi var ="x32" type="0" channel="16" data1="73" data2f="0" data2t="127" sysex="" />
-      <midi var ="x31" type="0" channel="16" data1="72" data2f="0" data2t="127" sysex="" />
-      <midi var ="x30" type="0" channel="16" data1="71" data2f="0" data2t="127" sysex="" />
+      <midi var ="x11" type="0" channel="16" data1="52" data2f="0" data2t="127" sysex="" />
+      <midi var ="x10" type="0" channel="16" data1="51" data2f="0" data2t="127" sysex="" />
       <midi var ="x29" type="0" channel="16" data1="70" data2f="0" data2t="127" sysex="" />
       <midi var ="x28" type="0" channel="16" data1="69" data2f="0" data2t="127" sysex="" />
       <midi var ="x27" type="0" channel="16" data1="68" data2f="0" data2t="127" sysex="" />
@@ -419,6 +437,18 @@
       <midi var ="x22" type="0" channel="16" data1="63" data2f="0" data2t="127" sysex="" />
       <midi var ="x21" type="0" channel="16" data1="62" data2f="0" data2t="127" sysex="" />
       <midi var ="x20" type="0" channel="16" data1="61" data2f="0" data2t="127" sysex="" />
+      <midi var ="x9" type="0" channel="16" data1="50" data2f="0" data2t="127" sysex="" />
+      <midi var ="x8" type="0" channel="16" data1="49" data2f="0" data2t="127" sysex="" />
+      <midi var ="x7" type="0" channel="16" data1="48" data2f="0" data2t="127" sysex="" />
+      <midi var ="x32" type="0" channel="16" data1="73" data2f="0" data2t="127" sysex="" />
+      <midi var ="x6" type="0" channel="16" data1="47" data2f="0" data2t="127" sysex="" />
+      <midi var ="x31" type="0" channel="16" data1="72" data2f="0" data2t="127" sysex="" />
+      <midi var ="x5" type="0" channel="16" data1="46" data2f="0" data2t="127" sysex="" />
+      <midi var ="x30" type="0" channel="16" data1="71" data2f="0" data2t="127" sysex="" />
+      <midi var ="x4" type="0" channel="16" data1="45" data2f="0" data2t="127" sysex="" />
+      <midi var ="x3" type="0" channel="16" data1="44" data2f="0" data2t="127" sysex="" />
+      <midi var ="x2" type="0" channel="16" data1="43" data2f="0" data2t="127" sysex="" />
+      <midi var ="x1" type="0" channel="16" data1="42" data2f="0" data2t="127" sysex="" />
       <midi var ="x19" type="0" channel="16" data1="60" data2f="0" data2t="127" sysex="" />
       <midi var ="x18" type="0" channel="16" data1="59" data2f="0" data2t="127" sysex="" />
       <midi var ="x17" type="0" channel="16" data1="58" data2f="0" data2t="127" sysex="" />
@@ -427,38 +457,17 @@
       <midi var ="x14" type="0" channel="16" data1="55" data2f="0" data2t="127" sysex="" />
       <midi var ="x13" type="0" channel="16" data1="54" data2f="0" data2t="127" sysex="" />
       <midi var ="x12" type="0" channel="16" data1="53" data2f="0" data2t="127" sysex="" />
-      <midi var ="x11" type="0" channel="16" data1="52" data2f="0" data2t="127" sysex="" />
-      <midi var ="x10" type="0" channel="16" data1="51" data2f="0" data2t="127" sysex="" />
-      <midi var ="x9" type="0" channel="16" data1="50" data2f="0" data2t="127" sysex="" />
-      <midi var ="x8" type="0" channel="16" data1="49" data2f="0" data2t="127" sysex="" />
-      <midi var ="x7" type="0" channel="16" data1="48" data2f="0" data2t="127" sysex="" />
-      <midi var ="x6" type="0" channel="16" data1="47" data2f="0" data2t="127" sysex="" />
-      <midi var ="x5" type="0" channel="16" data1="46" data2f="0" data2t="127" sysex="" />
-      <midi var ="x4" type="0" channel="16" data1="45" data2f="0" data2t="127" sysex="" />
-      <midi var ="x3" type="0" channel="16" data1="44" data2f="0" data2t="127" sysex="" />
-      <midi var ="x2" type="0" channel="16" data1="43" data2f="0" data2t="127" sysex="" />
-      <midi var ="x1" type="0" channel="16" data1="42" data2f="0" data2t="127" sysex="" />
     </control>
   </tabpage>
   <tabpage name="S2V5IEVx" scalef="0.0" scalet="1.0" midi_type="0" midi_channel="16" midi_data1="126" midi_data2f="1" midi_data2t="1" midi_sysex="" li_t="S2V5IEVx" li_c="red" li_s="14" li_o="false" li_b="false" la_t="S2V5IEVx" la_c="red" la_s="14" la_o="false" la_b="false" >
     <control name="bXVsdGlmYWRlcjQ=" x="134" y="130" w="460" h="765" color="red" scalef="0.0" scalet="1.0" type="multifaderh" inverted="false" centered="false" number="24" >
+      <midi var ="x11" type="0" channel="16" data1="84" data2f="0" data2t="31" sysex="" />
+      <midi var ="x10" type="0" channel="16" data1="83" data2f="0" data2t="31" sysex="" />
       <midi var ="x24" type="0" channel="16" data1="97" data2f="0" data2t="31" sysex="" />
       <midi var ="x23" type="0" channel="16" data1="96" data2f="0" data2t="31" sysex="" />
       <midi var ="x22" type="0" channel="16" data1="95" data2f="0" data2t="31" sysex="" />
       <midi var ="x21" type="0" channel="16" data1="94" data2f="0" data2t="31" sysex="" />
       <midi var ="x20" type="0" channel="16" data1="93" data2f="0" data2t="31" sysex="" />
-      <midi var ="x19" type="0" channel="16" data1="92" data2f="0" data2t="31" sysex="" />
-      <midi var ="x18" type="0" channel="16" data1="91" data2f="0" data2t="31" sysex="" />
-      <midi var ="x17" type="0" channel="16" data1="90" data2f="0" data2t="31" sysex="" />
-      <midi var ="x16" type="0" channel="16" data1="89" data2f="0" data2t="31" sysex="" />
-      <midi var ="x15" type="0" channel="16" data1="88" data2f="0" data2t="31" sysex="" />
-      <midi var ="x14" type="0" channel="16" data1="87" data2f="0" data2t="31" sysex="" />
-      <midi var ="x13" type="0" channel="16" data1="86" data2f="0" data2t="31" sysex="" />
-
-      <midi var ="x12" type="0" channel="16" data1="85" data2f="0" data2t="31" sysex="" />
-      
-      <midi var ="x11" type="0" channel="16" data1="84" data2f="0" data2t="31" sysex="" />
-      <midi var ="x10" type="0" channel="16" data1="83" data2f="0" data2t="31" sysex="" />
       <midi var ="x9" type="0" channel="16" data1="82" data2f="0" data2t="31" sysex="" />
       <midi var ="x8" type="0" channel="16" data1="81" data2f="0" data2t="31" sysex="" />
       <midi var ="x7" type="0" channel="16" data1="80" data2f="0" data2t="31" sysex="" />
@@ -468,29 +477,27 @@
       <midi var ="x3" type="0" channel="16" data1="76" data2f="0" data2t="31" sysex="" />
       <midi var ="x2" type="0" channel="16" data1="75" data2f="0" data2t="31" sysex="" />
       <midi var ="x1" type="0" channel="16" data1="74" data2f="0" data2t="31" sysex="" />
+      <midi var ="x19" type="0" channel="16" data1="92" data2f="0" data2t="31" sysex="" />
+      <midi var ="x18" type="0" channel="16" data1="91" data2f="0" data2t="31" sysex="" />
+      <midi var ="x17" type="0" channel="16" data1="90" data2f="0" data2t="31" sysex="" />
+      <midi var ="x16" type="0" channel="16" data1="89" data2f="0" data2t="31" sysex="" />
+      <midi var ="x15" type="0" channel="16" data1="88" data2f="0" data2t="31" sysex="" />
+      <midi var ="x14" type="0" channel="16" data1="87" data2f="0" data2t="31" sysex="" />
+      <midi var ="x13" type="0" channel="16" data1="86" data2f="0" data2t="31" sysex="" />
+      <midi var ="x12" type="0" channel="16" data1="85" data2f="0" data2t="31" sysex="" />
     </control>
   </tabpage>
   <tabpage name="S2V5IFByb3A=" scalef="0.0" scalet="1.0" midi_type="0" midi_channel="16" midi_data1="127" midi_data2f="1" midi_data2t="1" midi_sysex="" li_t="S2V5IFByb3A=" li_c="orange" li_s="14" li_o="false" li_b="false" la_t="S2V5IFByb3A=" la_c="orange" la_s="14" la_o="false" la_b="false" >
     <control name="bXVsdGlmYWRlcjY=" x="134" y="135" w="460" h="755" color="orange" scalef="0.0" scalet="1.0" type="multifaderh" inverted="false" centered="false" number="24" >
+      <midi var ="x11" type="0" channel="16" data1="108" data2f="0" data2t="32" sysex="" />
+      <midi var ="x10" type="0" channel="16" data1="107" data2f="0" data2t="32" sysex="" />
       <midi var ="x24" type="0" channel="16" data1="121" data2f="0" data2t="32" sysex="" />
       <midi var ="x23" type="0" channel="16" data1="120" data2f="0" data2t="32" sysex="" />
       <midi var ="x22" type="0" channel="16" data1="119" data2f="0" data2t="32" sysex="" />
       <midi var ="x21" type="0" channel="16" data1="118" data2f="0" data2t="32" sysex="" />
       <midi var ="x20" type="0" channel="16" data1="117" data2f="0" data2t="32" sysex="" />
-      <midi var ="x19" type="0" channel="16" data1="116" data2f="0" data2t="32" sysex="" />
-      <midi var ="x18" type="0" channel="16" data1="115" data2f="0" data2t="32" sysex="" />
-      <midi var ="x17" type="0" channel="16" data1="114" data2f="0" data2t="32" sysex="" />
-      <midi var ="x16" type="0" channel="16" data1="113" data2f="0" data2t="32" sysex="" />
-      <midi var ="x15" type="0" channel="16" data1="112" data2f="0" data2t="32" sysex="" />
-      <midi var ="x14" type="0" channel="16" data1="111" data2f="0" data2t="32" sysex="" />
-
-      <midi var ="x13" type="0" channel="16" data1="110" data2f="0" data2t="32" sysex="" />
-      <midi var ="x12" type="0" channel="16" data1="109" data2f="0" data2t="32" sysex="" />
-      <midi var ="x11" type="0" channel="16" data1="108" data2f="0" data2t="32" sysex="" />
-      <midi var ="x10" type="0" channel="16" data1="107" data2f="0" data2t="32" sysex="" />
       <midi var ="x9" type="0" channel="16" data1="106" data2f="0" data2t="32" sysex="" />
       <midi var ="x8" type="0" channel="16" data1="105" data2f="0" data2t="32" sysex="" />
-
       <midi var ="x7" type="0" channel="16" data1="104" data2f="0" data2t="32" sysex="" />
       <midi var ="x6" type="0" channel="16" data1="103" data2f="0" data2t="32" sysex="" />
       <midi var ="x5" type="0" channel="16" data1="102" data2f="0" data2t="32" sysex="" />
@@ -498,6 +505,14 @@
       <midi var ="x3" type="0" channel="16" data1="100" data2f="0" data2t="32" sysex="" />
       <midi var ="x2" type="0" channel="16" data1="99" data2f="0" data2t="32" sysex="" />
       <midi var ="x1" type="0" channel="16" data1="98" data2f="0" data2t="32" sysex="" />
+      <midi var ="x19" type="0" channel="16" data1="116" data2f="0" data2t="32" sysex="" />
+      <midi var ="x18" type="0" channel="16" data1="115" data2f="0" data2t="32" sysex="" />
+      <midi var ="x17" type="0" channel="16" data1="114" data2f="0" data2t="32" sysex="" />
+<midi var ="x16" type="0" channel="16" data1="113" data2f="0" data2t="32" sysex="" />
+<midi var ="x15" type="0" channel="16" data1="112" data2f="0" data2t="32" sysex="" />
+<midi var ="x14" type="0" channel="16" data1="111" data2f="0" data2t="32" sysex="" />
+<midi var ="x13" type="0" channel="16" data1="110" data2f="0" data2t="32" sysex="" />
+<midi var ="x12" type="0" channel="16" data1="109" data2f="0" data2t="32" sysex="" />
 </control>
 </tabpage>
 </layout>

@@ -2,6 +2,7 @@ package midi
 
 import (
 	"log"
+	"strings"
 )
 
 type inboundField struct {
@@ -57,7 +58,12 @@ func csSendEvent(field string, val uint8) (err error) {
 		return
 	}
 	if fieldinfo.eventtype == Cc {
-		if err = sendCC(channel, fieldinfo.index, uint8(int(val)/fieldinfo.scale)); err != nil {
+		v := uint8(int(val) / fieldinfo.scale)
+		// special case for the tab indicators (maybe should change these to notes so might not have to special case?)
+		if strings.HasSuffix(field, "-tab") {
+			v = uint8(fieldinfo.scale)
+		}
+		if err = sendCC(channel, fieldinfo.index, v); err != nil {
 			return
 		}
 	} else if fieldinfo.eventtype == Poly {
