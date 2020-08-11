@@ -896,7 +896,7 @@ ${freqDAG}
 		console.log('--- start viewVCE_voice init');
 
 		if (viewVCE_voice.deb_onchange == null) {
-			viewVCE_voice.deb_onchange = _.debounce(viewVCE_voice.raw_onchange, 250);
+			viewVCE_voice.deb_onchange = index.debounceFirstArg(viewVCE_voice.raw_onchange, 50);
 		}
 		if (viewVCE_voice.deb_setNumOscillators == null) {
 			viewVCE_voice.deb_setNumOscillators = _.debounce(viewVCE_voice.raw_setNumOscillators, 250);
@@ -974,6 +974,9 @@ ${freqDAG}
 
 			// Configuration options go here
 			options: {
+				animation: {
+					duration: 0
+				},
 				scales: {
 					xAxes: [{
 						gridlines: {

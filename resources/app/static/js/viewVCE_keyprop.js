@@ -11,7 +11,7 @@ let viewVCE_keyprop = {
 		return result;
 	},
 
-	onchange: function(ele) {
+	onchange: function (ele) {
 		if (viewVCE.supressOnchange) { /*console.log("viewVCE.suppressOnChange");*/ return; }
 		viewVCE_keyprop.deb_onchange(ele);
 	},
@@ -59,7 +59,8 @@ let viewVCE_keyprop = {
 	init: function () {
 		console.log('--- start viewVCE_keyprop init');
 		if (viewVCE_keyprop.deb_onchange == null) {
-			viewVCE_keyprop.deb_onchange = _.debounce(viewVCE_keyprop.raw_onchange, 250);
+			//viewVCE_keyprop.deb_onchange = index.debounceFirstArg(viewVCE_keyprop.raw_onchange, 50);
+			viewVCE_keyprop.deb_onchange = viewVCE_keyprop.raw_onchange;
 		}
 
 		var propData = viewVCE_keyprop.keyPropCurve(vce.Head.KPROP);
@@ -71,7 +72,7 @@ let viewVCE_keyprop = {
 			var idxString = id.substring(8);
 			var idx = parseInt(idxString, 10) - 1;
 
-			obj.value = ''+propData[idx];
+			obj.value = '' + propData[idx];
 		});
 		if (viewVCE_keyprop.chart != null) {
 			viewVCE_keyprop.chart.destroy();
@@ -85,18 +86,18 @@ let viewVCE_keyprop = {
 
 				labels: ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
 				datasets: [{
-//					mouseover: function (e) {
-//						console.log("mouseover: " + JSON.stringify(e));
-//					},
-//					mousemove: function (e) {
-//						console.log("mousemove: " + JSON.stringify(e));
-//					},
-//					mouseout: function (e) {
-//						console.log("mouseout: " + JSON.stringify(e));
-//					},
-//					click: function (e) {
-//						console.log("click: " + JSON.stringify(e));
-//					},
+					//					mouseover: function (e) {
+					//						console.log("mouseover: " + JSON.stringify(e));
+					//					},
+					//					mousemove: function (e) {
+					//						console.log("mousemove: " + JSON.stringify(e));
+					//					},
+					//					mouseout: function (e) {
+					//						console.log("mouseout: " + JSON.stringify(e));
+					//					},
+					//					click: function (e) {
+					//						console.log("click: " + JSON.stringify(e));
+					//					},
 
 					fill: false,
 					lineTension: 0,

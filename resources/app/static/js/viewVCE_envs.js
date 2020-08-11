@@ -10,13 +10,13 @@ let viewVCE_envs = {
 		console.log('--- start viewVCE_envs init');
 
 		if (viewVCE_envs.deb_onchange == null) {
-			viewVCE_envs.deb_onchange = _.debounce(viewVCE_envs.raw_onchange, 250);
+			viewVCE_envs.deb_onchange = index.debounceFirstArg(viewVCE_envs.raw_onchange, 50);
 		}
 		if (viewVCE_envs.deb_onchangeEnvAccel == null) {
-			viewVCE_envs.deb_onchangeEnvAccel = _.debounce(viewVCE_envs.raw_onchangeEnvAccel, 250);
+			viewVCE_envs.deb_onchangeEnvAccel = _.debounce(viewVCE_envs.raw_onchangeEnvAccel, 50);
 		}
 		if (viewVCE_envs.deb_copyFrom == null) {
-			viewVCE_envs.deb_copyFrom = _.debounce(viewVCE_envs.raw_copyFrom, 250);
+			viewVCE_envs.deb_copyFrom = _.debounce(viewVCE_envs.raw_copyFrom, 50);
 		}
 
 		var selectEle = document.getElementById("envOscSelect");
@@ -126,7 +126,7 @@ let viewVCE_envs = {
 		// See OSCDSP.Z80 DISVAL for the original ftab-baased scaling which is roughly:
 		//	if (v <= 15) return v;
 		//  return viewVCE_envs.scaleViaRtab((2 * v) - 14);
-		if (v < 0) { 
+		if (v < 0) {
 			return 0;
 		} else if (v >= viewVCE_envs.freqTimeScale.length) {
 			return viewVCE_envs.freqTimeScale[viewVCE_envs.freqTimeScale.length - 1];
@@ -163,7 +163,7 @@ let viewVCE_envs = {
 		// if (v < 39) return v;
 		// return viewVCE_envs.scaleViaRtab((v * 2) - 54);
 		//console.log("scale amp time value: " + v + ", -> " + viewVCE_envs.ampTimeScale[v])
-		if (v < 0) { 
+		if (v < 0) {
 			return 0;
 		} else if (v >= viewVCE_envs.ampTimeScale.length) {
 			return viewVCE_envs.ampTimeScale[viewVCE_envs.ampTimeScale.length - 1];
@@ -232,7 +232,7 @@ let viewVCE_envs = {
 		// for the upper range of freq time which we delibrartely change to make the function reversable)
 		var expects = [
 			{
-				arr: [[0, 0], [10, 10], [15, 15], [16, 25], [54, 2071], [75, 23436], [76, 26306], [77, 29528] ,[84, 29535], [85, 29535]],
+				arr: [[0, 0], [10, 10], [15, 15], [16, 25], [54, 2071], [75, 23436], [76, 26306], [77, 29528], [84, 29535], [85, 29535]],
 				name: "freqTimeValue",
 				func: viewVCE_envs.scaleFreqTimeValue,
 			},
@@ -591,13 +591,13 @@ let viewVCE_envs = {
 
 		// Don't call checkInoutElementValue() - it assumes that there is no scaling 
 		// and would apply the "byte" min/max to the "text" scaled value
-        //	  var value = index.checkInputElementValue(ele);
+		//	  var value = index.checkInputElementValue(ele);
 		var value = parseInt(ele.value, 10);;
 		if (value == undefined) {
 			return;
 		}
 		//console.log("in onchange - value: " + value + " " + typeof(value))
-		
+
 		var pattern = /([A-Za-z]+)\[(\d+)\]/;
 		var funcName;
 		var eleIndex;
@@ -642,7 +642,7 @@ let viewVCE_envs = {
 					break;
 			}
 		}
-		console.log("env ele change " + ele.id + " rawval: " + ele.value + " -> "+value+" -> " + bytevalue);
+		console.log("env ele change " + ele.id + " rawval: " + ele.value + " -> " + value + " -> " + bytevalue);
 		//console.log("in onchange - bytevalue: " + bytevalue + " " + typeof(bytevalue))
 
 		let message = {

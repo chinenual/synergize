@@ -11,7 +11,7 @@ let viewVCE_keyeq = {
 		return result;
 	},
 
-	onchange: function(ele) {
+	onchange: function (ele) {
 		if (viewVCE.supressOnchange) { /*console.log("viewVCE.suppressOnChange");*/ return; }
 		viewVCE_keyeq.deb_onchange(ele);
 	},
@@ -58,7 +58,8 @@ let viewVCE_keyeq = {
 	init: function () {
 		console.log('--- start viewVCE_keyeq init');
 		if (viewVCE_keyeq.deb_onchange == null) {
-			viewVCE_keyeq.deb_onchange = _.debounce(viewVCE_keyeq.raw_onchange, 250);
+			//			viewVCE_keyeq.deb_onchange = _.debounce(viewVCE_keyeq.raw_onchange, 50);
+			viewVCE_keyeq.deb_onchange = viewVCE_keyeq.raw_onchange;
 		}
 
 		var propData = viewVCE_keyeq.keyEqCurve(vce.Head.VEQ);

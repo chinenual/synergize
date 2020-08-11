@@ -484,6 +484,18 @@ let index = {
 			// nop
 		});
 	},
+
+	// debounce a function separately for each "first" argument - we use this
+	// with first argument being the input ele being debounced - this allows
+	// each input to be independently debounced even if all using the same onchange function
+	// Adapted from: https://github.com/lodash/lodash/issues/2403 and https://stackoverflow.com/a/28795512
+	debounceFirstArg: function (func, wait = 0, options = {}) {
+		var mem = _.memoize(function () {
+			return _.debounce(func, wait, options)
+		});
+		return function () { mem.apply(this, arguments).apply(this, arguments) }
+	},
+
 	listen: function () {
 		console.log("index listening...")
 		astilectron.onMessage(function (message) {

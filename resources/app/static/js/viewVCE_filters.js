@@ -108,7 +108,8 @@ let viewVCE_filters = {
 	init: function () {
 		console.log('--- start viewVCE_filters init');
 		if (viewVCE_filters.deb_onchange == null) {
-			viewVCE_filters.deb_onchange = _.debounce(viewVCE_filters.raw_onchange, 250);
+			//viewVCE_filters.deb_onchange = _.debounce(viewVCE_filters.raw_onchange, 250);
+			viewVCE_filters.deb_onchange = viewVCE_filters.raw_onchange;
 		}
 		if (viewVCE_filters.deb_copyFrom == null) {
 			viewVCE_filters.deb_copyFrom = _.debounce(viewVCE_filters.raw_copyFrom, 250);
