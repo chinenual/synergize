@@ -415,8 +415,17 @@ let viewVCE_voice = {
 		var outRegisters = [[], [], [], []];
 		var freqDAG = "";
 
+		for (osc = vce.Head.VOITAB + 1; osc < 16; osc++) {
+			// midi initialation for unused osc's
+			viewVCE_voice.sendToMIDI(null, `OHARM[${osc + 1}]`, 0);
+			viewVCE_voice.sendToMIDI(null, `FDETUN[${osc + 1}]`, 0);
+			viewVCE_voice.sendToMIDI(null, `osc-enabled[${osc + 1}]`, 0);
+		}
+
 		// populate new ones:
 		for (osc = 0; osc <= vce.Head.VOITAB; osc++) {
+			viewVCE_voice.sendToMIDI(null, `osc-enabled[${osc + 1}]`, 1);
+
 			var tr = document.createElement("tr");
 			var td = document.createElement("td");
 
@@ -426,7 +435,6 @@ let viewVCE_voice = {
 			span = document.createElement("span");
 			span.innerHTML = `&nbsp;&nbsp;<span onclick="viewVCE_voice.toggleOsc(this)" class="vceEditToggleText" id="MUTE[${osc + 1}]">M</span>`;
 			td.append(span);
-
 			// Solo
 			span = document.createElement("span");
 			span.innerHTML = `&nbsp;<span onclick="viewVCE_voice.toggleOsc(this)" class="vceEditToggleText" id="SOLO[${osc + 1}]">S</span>`;
@@ -517,6 +525,7 @@ let viewVCE_voice = {
 			min="-11" max="31"
 			disabled/></div>`;
 			tr.appendChild(td);
+			viewVCE_voice.sendToMIDI(null, `OHARM[${osc + 1}]`, vce.Envelopes[osc].FreqEnvelope.OHARM + 11)
 
 			//--- Detn
 			td = document.createElement("td");
@@ -525,6 +534,7 @@ let viewVCE_voice = {
 			min="-63" max="63"
 			disabled/></div>`;
 			tr.appendChild(td);
+			viewVCE_voice.sendToMIDI(null, `FDETUN[${osc + 1}]`, vce.Envelopes[osc].FreqEnvelope.FDETUN + 63)
 
 			var waveByte = vce.Envelopes[osc].FreqEnvelope.Table[3];
 			var wave = ((waveByte & 0x1) == 0) ? 'Sin' : 'Tri';
@@ -603,6 +613,8 @@ ${freqDAG}
 `;
 		console.log("nomnoml src: " + patchDiagramSource);
 		nomnoml.draw(patchDiagramCanvas, patchDiagramSource);
+
+
 	},
 
 	changePatchType: function (newIndex) {
@@ -916,15 +928,25 @@ ${freqDAG}
 		document.getElementById("keysPlayable").innerHTML = Math.floor(32 / (vce.Head.VOITAB + 1));
 		viewVCE_voice.updateVibType();
 		document.getElementById("VIBRAT").value = vce.Head.VIBRAT;
+		viewVCE_voice.sendToMIDI(document.getElementById("VIBRAT"), "VIBRAT", vce.Head.VIBRAT)
 		document.getElementById("VIBDEL").value = vce.Head.VIBDEL;
+		viewVCE_voice.sendToMIDI(document.getElementById("VIBDEL"), "VIBDEL", vce.Head.VIBDEL)
 		document.getElementById("VIBDEP").value = vce.Head.VIBDEP;
+		viewVCE_voice.sendToMIDI(document.getElementById("VIBDEP"), "VIBDEP", vce.Head.VIBDEP)
 		document.getElementById("APVIB").value = vce.Head.APVIB;
+		viewVCE_voice.sendToMIDI(document.getElementById("APVIB"), "APVIB", vce.Head.APVIB)
 
 		document.getElementById("VTRANS").value = vce.Head.VTRANS;
+		viewVCE_voice.sendToMIDI(document.getElementById("VTRANS"), "VTRANS", vce.Head.VTRANS)
 		document.getElementById("VACENT").value = vce.Head.VACENT;
+		viewVCE_voice.sendToMIDI(document.getElementById("VACENT"), "VACENT", vce.Head.VACENT)
 		document.getElementById("VASENS").value = vce.Head.VASENS;
+		viewVCE_voice.sendToMIDI(document.getElementById("VASENS"), "VASENS", vce.Head.VASENS)
 		document.getElementById("VTCENT").value = vce.Head.VTCENT;
+		viewVCE_voice.sendToMIDI(document.getElementById("VTCENT"), "VTCENT", vce.Head.VTCENT)
 		document.getElementById("VTSENS").value = vce.Head.VTSENS;
+		viewVCE_voice.sendToMIDI(document.getElementById("VTSENS"), "VTSENS", vce.Head.VTSENS)
+
 		var i;
 		var count = 0;
 		for (i = 0; i < vce.Head.FILTER.length; i++) {
@@ -1076,9 +1098,11 @@ ${freqDAG}
 	},
 
 	sendToMIDI: function (ele, field, value) {
+		// pass ele==null to force the value to just be sent without scaling
+
 		// value comes in scaled to "synergy byte" value - but MIDI values are always 0 based.  
 		// Use the min value on the input control to correct for an offset 
-		if (ele.hasAttribute("min")) {
+		if (ele != null && ele.hasAttribute("min")) {
 			var min = parseInt(ele.getAttribute("min"), 10);
 			value = value - min;
 		}

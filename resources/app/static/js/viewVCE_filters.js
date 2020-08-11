@@ -264,6 +264,8 @@ let viewVCE_filters = {
 				var idxString = id.substring(4);
 				var idx = parseInt(idxString, 10) - 1;
 				obj.value = vce.Extra.uncompressedFilters[filterIndex][idx];
+
+				viewVCE_voice.sendToMIDI(obj, id, vce.Extra.uncompressedFilters[filterIndex][idx]);
 			});
 			// match the color rotation below.  We don't allocate a color for an "unused" Bf. So this is
 			// senselessly complicated. Go look at the FILTERS array and figure out which "compressed" index 
@@ -292,6 +294,14 @@ let viewVCE_filters = {
 			}];
 		} else {
 			// "all"
+
+			// set MIDI control surface to all zeros:
+			for (i = 1; i <= 32; i++) {
+				var id = "flt[" + i + "]";
+				var ele = document.getElementById(id);
+				viewVCE_voice.sendToMIDI(ele, id, 0);
+			}
+
 			$('#filterTable').hide();
 			// only include the ones actually in use (see vce.Head.FILTER entry)
 			for (i = 0; i <= vce.Head.VOITAB; i++) {

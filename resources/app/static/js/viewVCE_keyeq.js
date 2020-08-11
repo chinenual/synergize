@@ -71,6 +71,9 @@ let viewVCE_keyeq = {
 			var idx = parseInt(idxString, 10) - 1;
 
 			obj.value = propData[idx];
+
+			viewVCE_voice.sendToMIDI(obj, id, propData[idx]);
+
 		});
 		if (viewVCE_keyeq.chart != null) {
 			viewVCE_keyeq.chart.destroy();
