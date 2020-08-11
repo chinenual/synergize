@@ -914,6 +914,22 @@ ${freqDAG}
 			viewVCE_voice.deb_setNumOscillators = _.debounce(viewVCE_voice.raw_setNumOscillators, 250);
 		}
 
+		$('#vceTabs a[href="#vceVoiceTab"]').on('shown.bs.tab', function (e) {
+			viewVCE_voice.sendToMIDI(null, "voice-tab", 1);
+		});
+		$('#vceTabs a[href="#vceEnvsTab"]').on('shown.bs.tab', function (e) {
+			viewVCE_voice.sendToMIDI(null, "freq-envelopes-tab", 1);
+		});
+		$('#vceTabs a[href="#vceFiltersTab"]').on('shown.bs.tab', function (e) {
+			viewVCE_voice.sendToMIDI(null, "filters-tab", 1);
+		});
+		$('#vceTabs a[href="#vceKeyEqTab"]').on('shown.bs.tab', function (e) {
+			viewVCE_voice.sendToMIDI(null, "keyeq-tab", 1);
+		});
+		$('#vceTabs a[href="#vceKeyProTab"]').on('shown.bs.tab', function (e) {
+			viewVCE_voice.sendToMIDI(null, "keyprop-tab", 1);
+		});
+
 		viewVCE_voice.patchTable();
 
 		console.log("view VCE, CRT:" + crt_name + ", VCE: " + vce.Head.VNAME)
@@ -1051,6 +1067,23 @@ ${freqDAG}
 			// ignore unless we're voicing
 		}
 
+		// special handling for switching tabs -- fieldnames end with "-tab":
+		if (payload.Field.search("-tab") >= 0) {
+			if (payload.Field === "voice-tab") {
+				$('#vceTabs a[href="#vceVoiceTab"]').tab('show');
+			} else if (payload.Field === "freq-envelopes-tab") {
+				$('#vceTabs a[href="#vceEnvsTab"]').tab('show');
+			} else if (payload.Field === "amp-envelopes-tab") {
+				$('#vceTabs a[href="#vceEnvsTab"]').tab('show');
+			} else if (payload.Field === "filters-tab") {
+				$('#vceTabs a[href="#vceFiltersTab"]').tab('show');
+			} else if (payload.Field === "keyeq-tab") {
+				$('#vceTabs a[href="#vceKeyEqTab"]').tab('show');
+			} else if (payload.Field === "keyprop-tab") {
+				$('#vceTabs a[href="#vceKeyPropTab"]').tab('show');
+			}
+			return;
+		}
 		// value comes in unscaled (it's a 0-based MIDI value).  
 		// Use the min value on the input control to correct for an offset and then use the text 
 		// conversion function attached the the touchspin (if any) to turn that into a string)

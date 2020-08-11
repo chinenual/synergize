@@ -32,12 +32,18 @@ func loadConfig() (err error) {
 			// a page/tab:
 			page := tree.Get(k).(*toml.Tree)
 			for _, fieldname := range page.Keys() {
+				fielddef := page.Get(fieldname).(*toml.Tree)
 				if fieldname == "page-init" {
-					// ignore for now...
+					cc := uint8(fielddef.Get("cc").(int64))
+					val := int(fielddef.Get("value").(int64))
+
+					midiMap.ccMap[cc] = inboundField{name: k, scale: val}
+					outboundMidiMap[k] = outboundField{eventtype: Cc, index: cc, scale: val}
+					outboundChannelMap[k] = channel
+
 				} else {
 					// field definitions
 					//log.Printf("  field " + fieldname)
-					fielddef := page.Get(fieldname).(*toml.Tree)
 					//log.Printf("     fielddef: %v\n", fielddef)
 					scale := 1
 					if fielddef.Has("scale") {
