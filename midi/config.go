@@ -9,7 +9,7 @@ import (
 
 func loadConfig() (err error) {
 	var tree *toml.Tree
-	if tree, err = toml.LoadFile("midi/midi.cfg"); err != nil {
+	if tree, err = toml.LoadFile("midi/synergize-touchosc.cfg"); err != nil {
 		log.Printf("Failed to read config: %v\n", err)
 		return
 	}
