@@ -679,6 +679,18 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		}
 		if mode {
 			var vce data.VCE
+			if prefsUserPreferences.UseMidi {
+				if err = midi.InitMidi(prefsUserPreferences.MidiInterface, prefsUserPreferences.MidiDeviceConfig); err != nil {
+					log.Println(err)
+					payload = err.Error()
+				} else {
+					go func() {
+						if err = midi.ListenMidi(); err != nil {
+							log.Println(err)
+						}
+					}()
+				}
+			}
 			if vce, err = synio.EnableVoicingMode(); err != nil {
 				payload = err.Error()
 				return
@@ -687,6 +699,9 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = &vce
 
 		} else {
+			if err = midi.QuitMidi(); err != nil {
+				payload = err.Error()
+			}
 			if err = synio.DisableVoicingMode(); err != nil {
 				payload = err.Error()
 				return

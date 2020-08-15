@@ -181,7 +181,7 @@ func main() {
 			}
 			os.Exit(code)
 		} else if *miditest {
-			if err = midi.InitMidi(); err != nil {
+			if err = midi.InitMidi(prefsUserPreferences.MidiInterface, prefsUserPreferences.MidiDeviceConfig); err != nil {
 				code = 1
 				log.Println(err)
 			} else {
@@ -407,11 +407,6 @@ func main() {
 	defer func() {
 		fmt.Printf("Close Event.\n")
 		if err = midi.QuitMidi(); err != nil {
-			log.Println(err)
-		}
-	}()
-	go func() {
-		if err = midi.InitMidi(); err != nil {
 			log.Println(err)
 		}
 	}()

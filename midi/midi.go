@@ -3,6 +3,8 @@ package midi
 import (
 	"log"
 
+	"github.com/pkg/errors"
+
 	"gitlab.com/gomidi/midi"
 	"gitlab.com/gomidi/midi/reader"
 	"gitlab.com/gomidi/midi/writer"
@@ -14,27 +16,34 @@ var drv midi.Driver
 var in midi.In
 var out midi.Out
 var wr *writer.Writer
+var rd *reader.Reader
+var open = false
 
 func QuitMidi() (err error) {
-	log.Printf("Closing midi streams...\n")
-	_ = in.StopListening()
-	in.Close()
-	out.Close()
-	drv.Close()
+	if open {
+		log.Printf("Closing midi streams...\n")
+		_ = in.StopListening()
+		in.Close()
+		out.Close()
+		drv.Close()
+	}
 	return
 }
 
-func InitMidi() (err error) {
-	// you would take a real driver here e.g. rtmididrv.New()
+func InitMidi(midiInterface string, midiDeviceConfig string) (err error) {
+	loadConfig(midiDeviceConfig)
 
-	loadConfig()
+	defer func(err *error) {
+		if *err != nil {
+			if quiterr := QuitMidi(); quiterr != nil {
+				log.Printf("Errors from QuitMidi after init midi failed %v\n", quiterr)
+			}
+		}
+	}(&err)
 
 	if drv, err = driver.New(); err != nil {
 		return
 	}
-
-	// make sure to close all open ports at the end
-	//	defer drv.Close()
 
 	ins, err := drv.Ins()
 	if err != nil {
@@ -46,10 +55,35 @@ func InitMidi() (err error) {
 		return
 	}
 
+	open = true
+
 	printInPorts(ins)
 	printOutPorts(outs)
 
-	in, out = ins[1], outs[1] // FIXME: hardcoded
+	var found = false
+	for _, port := range ins {
+		if port.String() == midiInterface {
+			in = port
+			found = true
+			break
+		}
+	}
+	if !found {
+		err = errors.Errorf("MIDI Interface %s not found as in inbound interface", midiInterface)
+		return
+	}
+	found = false
+	for _, port := range outs {
+		if port.String() == midiInterface {
+			out = port
+			found = true
+			break
+		}
+	}
+	if !found {
+		err = errors.Errorf("MIDI Interface %s not found as in outbound interface", midiInterface)
+		return
+	}
 
 	log.Printf("IN PORT:  [%v] %s\n", in.Number(), in.String())
 	log.Printf("OUT PORT: [%v] %s\n", out.Number(), out.String())
@@ -61,11 +95,9 @@ func InitMidi() (err error) {
 		return
 	}
 
-	// the writer we are writing to
 	wr = writer.New(out)
 
-	// to disable logging, pass mid.NoLogger() as option
-	rd := reader.New(
+	rd = reader.New(
 		//reader.NoLogger(),
 		reader.ControlChange(handleCC),
 		reader.NoteOff(handleNoteOff),
@@ -74,17 +106,18 @@ func InitMidi() (err error) {
 	)
 
 	wr.SetChannel(15)
+	return
+}
 
-	log.Printf("listen to %s...\n", in)
+func ListenMidi() (err error) {
+
+	log.Printf("MIDI listen to %s...\n", in)
 	// listen for MIDI
 	if err = rd.ListenTo(in); err != nil {
 		log.Printf("ListenTo failed: %s\n", err)
 		midiChannelQuit <- true
 		return
 	}
-
-	// Output: got channel.NoteOn channel 0 key 60 velocity 100
-	// got channel.NoteOff channel 0 key 60
 	return
 }
 
