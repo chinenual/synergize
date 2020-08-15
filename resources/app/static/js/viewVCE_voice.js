@@ -328,6 +328,7 @@ let viewVCE_voice = {
 			valueConverter = function (v) { return v };
 		}
 
+		var value
 		var param
 		var args
 		var filterPattern = /FILTER\[(\d+)\]/;
@@ -348,21 +349,25 @@ let viewVCE_voice = {
 			param = "FILTER"
 			funcname = "setOscFILTER";
 			osc = parseInt(ret[1])
-			args = [osc, parseInt(valueConverter(ele.value), 10)];
+			value = parseInt(valueConverter(ele.value), 10);
+			args = [osc, value];
 		} else if (ret = id.match(waveKeyPattern)) {
 			param = ret[1]
 			osc = parseInt(ret[2], 10)
 			if (param == "WAVE") {
 				funcname = "setOscWAVE"
-				args = [osc, ele.value == "Sin" ? 0 : 1];
+				value = ele.value == "Sin" ? 0 : 1;
+				args = [osc, value];
 			} else {
 				funcname = "setOscKEYPROP"
-				args = [osc, ele.checked ? 1 : 0];
+				value = ele.checked ? 1 : 0;
+				args = [osc, value];
 			}
 		} else if (ret = id.match(oscPattern)) {
 			param = ret[1];
 			osc = parseInt(ret[2], 10)
-			args = [osc, parseInt(valueConverter(ele.value), 10)]
+			value = parseInt(valueConverter(ele.value), 10)
+			args = [osc, value]
 
 			console.log("changed: " + id + " param: " + param + " osc: " + osc);
 			vce.Envelopes[osc - 1][param] = valueConverter(ele.value);
@@ -370,7 +375,8 @@ let viewVCE_voice = {
 
 		} else if (ret = id.match(headPattern)) {
 			param = id;
-			args = [parseInt(valueConverter(ele.value), 10)]
+			value = parseInt(valueConverter(ele.value), 10)
+			args = [value]
 			vce.Head[param] = valueConverter(ele.value);
 			funcname = "setVoiceByte"
 		}
@@ -391,7 +397,7 @@ let viewVCE_voice = {
 					index.errorNotification(message.payload);
 					return false;
 				} else {
-					viewVCE_voice.sendToMIDI(ele, ele.id, valueConverter(ele.value))
+					viewVCE_voice.sendToMIDI(ele, ele.id, value);
 					if (updater != undefined) {
 						console.log("updater: " + updater);
 						updater(ele);
@@ -419,6 +425,11 @@ let viewVCE_voice = {
 			// midi initialation for unused osc's
 			viewVCE_voice.sendToMIDI(null, `OHARM[${osc + 1}]`, 0);
 			viewVCE_voice.sendToMIDI(null, `FDETUN[${osc + 1}]`, 0);
+			viewVCE_voice.sendToMIDI(null, `MUTE[${osc + 1}]`, 0);
+			viewVCE_voice.sendToMIDI(null, `SOLO[${osc + 1}]`, 0);
+			viewVCE_voice.sendToMIDI(null, `wkWAVE[${osc + 1}]`, 0);
+			viewVCE_voice.sendToMIDI(null, `wkKEYPROP[${osc + 1}]`, 0);
+			viewVCE_voice.sendToMIDI(null, `FILTER[${osc + 1}]`, 0);
 			viewVCE_voice.sendToMIDI(null, `osc-enabled[${osc + 1}]`, 0);
 		}
 
@@ -550,6 +561,7 @@ let viewVCE_voice = {
 			</select>
 			`;
 			tr.appendChild(td);
+			viewVCE_voice.sendToMIDI(null, `wkWAVE[${osc + 1}]`, wave == 'Sin' ? 0 : 1);
 
 			//--- Key
 			td = document.createElement("td");
@@ -558,6 +570,7 @@ let viewVCE_voice = {
 			${keyprop ? " checked " : ""} 
 			onchange="viewVCE_voice.voicingMode ? viewVCE_voice.onchange(this) : (this.checked=!this.checked)"/>`;
 			tr.appendChild(td);
+			viewVCE_voice.sendToMIDI(null, `wkKEYPROP[${osc + 1}]`, keyprop ? 1 : 0);
 
 			//--- Flt
 			td = document.createElement("td");
@@ -575,6 +588,7 @@ let viewVCE_voice = {
 					</select>
 					`;
 			tr.appendChild(td);
+			viewVCE_voice.sendToMIDI(null, `FILTER[${osc + 1}]`, filter == 0 ? 0 : filter < 0 ? 1 : 2);
 
 			tbody.appendChild(tr);
 		}
@@ -1125,7 +1139,17 @@ ${freqDAG}
 		var valueString = converter("" + value)
 
 		console.log("  updateFromMIDI " + payload.Field + "was " + ele.value);
-		ele.value = valueString
+		if (ele.nodeName == "SELECT") {
+			ele.value = valueString;
+		} else if (ele.nodeName == "SPAN") {
+			// SOLO/MUTE buttons
+			ele.onclick();
+			return; // don't trigger non-existent onchange()
+		} else if (ele.type == "checkbox") {
+			ele.checked = value == 0 ? "" : "checked";
+		} else if (ele.type == "text") {
+			ele.value = valueString;
+		}
 		console.log("  updateFromMIDI " + payload.Field + "NOW " + ele.value);
 		ele.onchange();
 	},
