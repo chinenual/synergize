@@ -31,7 +31,9 @@ func QuitMidi() (err error) {
 }
 
 func InitMidi(midiInterface string, midiDeviceConfig string) (err error) {
-	loadConfig(midiDeviceConfig)
+	if err = loadConfig(midiDeviceConfig); err != nil {
+		return
+	}
 
 	defer func(err *error) {
 		if *err != nil {

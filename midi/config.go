@@ -10,7 +10,7 @@ import (
 func loadConfig(configPath string) (err error) {
 	var tree *toml.Tree
 	if tree, err = toml.LoadFile(configPath); err != nil {
-		log.Printf("Failed to read config: %v\n", err)
+		log.Printf("Failed to read MIDI control surface config: %v\n", err)
 		return
 	}
 
