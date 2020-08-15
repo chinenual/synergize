@@ -24,6 +24,11 @@ let prefs = {
 				document.getElementById("serialPort").value = preferences.SerialPort;
 				document.getElementById("serialBaud").value = preferences.SerialBaud;
 				document.getElementById("libraryPath").value = preferences.LibraryPath;
+				document.getElementById("useMidi").checked = preferences.UseMidi ? "checked" : "";
+				document.getElementById("midiInterface").value = preferences.MidiInterface;
+				document.getElementById("midiInterface").disabled = !preferences.UseMidi;
+				document.getElementById("midiDeviceConfig").value = preferences.MidiDeviceConfig;
+				document.getElementById("midiDeviceConfig").disabled = !preferences.UseMidi;
 				if (os === "darwin") {
 					/*
 					  * as nice as this would be, macos hides the /dev directory
@@ -48,6 +53,13 @@ let prefs = {
 		})
 
 	},
+
+	toggleMidi: function (ele) {
+		var checked = ele.checked;
+		document.getElementById("midiInterface").disabled = !checked;
+		document.getElementById("midiDeviceConfig").disabled = !checked;
+	},
+
 	serialPortDialog: function (ele, defaultValue) {
 		console.log("in fileDialog default: " + defaultValue);
 
@@ -96,7 +108,10 @@ let prefs = {
 			"payload": {
 				"SerialPort": document.getElementById("serialPort").value,
 				"SerialBaud": parseInt(document.getElementById("serialBaud").value, 10),
-				"LibraryPath": document.getElementById("libraryPath").value
+				"LibraryPath": document.getElementById("libraryPath").value,
+				"UseMidi": document.getElementById("UseMidi").checked,
+				"MidiInterface": document.getElementById("midiInterface").value,
+				"MidiDeviceConfig": document.getElementById("midiDeviceConfig").value
 			}
 		};
 		// Send message

@@ -501,8 +501,8 @@ func main() {
 				BackgroundColor: astikit.StrPtr("#ccc"),
 				Center:          astikit.BoolPtr(true),
 				Show:            astikit.BoolPtr(false),
-				Height:          astikit.IntPtr(500),
-				Width:           astikit.IntPtr(500),
+				Height:          astikit.IntPtr(600),
+				Width:           astikit.IntPtr(600),
 				Custom: &astilectron.WindowCustomOptions{
 					HideOnClose: astikit.BoolPtr(true),
 				},
