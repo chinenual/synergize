@@ -1138,9 +1138,19 @@ ${freqDAG}
 
 		var valueString = converter("" + value)
 
-		console.log("  updateFromMIDI " + payload.Field + "was " + ele.value);
+		//console.log("  updateFromMIDI " + payload.Field + "was " + ele.value);
+		if (ele.disabled) {
+			//console.log("   disabled!");
+			return;
+		}
+		if (ele.display == "none") {
+			//console.log("   hidden/disabled!");
+			return;
+		}
 		if (ele.nodeName == "SELECT") {
-			ele.value = valueString;
+			var opt = ele.childNodes[value]
+			ele.value = opt.value;
+			opt.selected = true;
 		} else if (ele.nodeName == "SPAN") {
 			// SOLO/MUTE buttons
 			ele.onclick();
@@ -1150,7 +1160,7 @@ ${freqDAG}
 		} else if (ele.type == "text") {
 			ele.value = valueString;
 		}
-		console.log("  updateFromMIDI " + payload.Field + "NOW " + ele.value);
+		//console.log("  updateFromMIDI " + payload.Field + "NOW " + ele.value);
 		ele.onchange();
 	},
 
