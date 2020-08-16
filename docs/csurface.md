@@ -48,7 +48,7 @@ This duplicates the Harmonics and Detune sliders from the voice tab, but in a la
 
 The Synergize Envelopes tab is split into two on the control surface due to the sheer number of things that can be controlled.  The Frequency and Amplitude envelopes have their own pages on the control surface.  When the Synergize UI changes to the Envelopes tab, the control surface switches to the Frequency Envelope. You must manually switch to the Amp envelope if needed.
 
-NOTE: as for the oscillator harminics and detune, unused envelope points still have visible sliders on the control surface - their values are ignored.
+NOTE: as for the oscillator harmonics and detune, unused envelope points still have visible sliders on the control surface - their values are ignored.
 
 ### Amp Envelopes Tab
 
