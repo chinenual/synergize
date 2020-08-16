@@ -17,7 +17,7 @@
 	<script src="static/js/Chart.bundle.min.js"></script>
 
 	<script src="static/js/lodash-4.17.15.js"></script>
-        
+
 	<script src="static/js/index.js"></script>
 	<script src="static/js/debug.js"></script>
 	<script src="static/js/viewVCE.js"></script>
@@ -38,12 +38,12 @@
 		delete window.module;
 	</script>
 
-        <script src="static/js/jquery.bootstrap-touchspin.js"></script>
+	<script src="static/js/jquery.bootstrap-touchspin.js"></script>
 
 	<script src="static/js/dagre-0.8.5.min.js"></script>
-        <script src="static/js/nomnoml-0.8.0.js"></script>
+	<script src="static/js/nomnoml-0.8.0.js"></script>
 
-        <script>
+	<script>
 		window.require = window.nodeRequire;
 		window.exports = window.nodeExports;
 		window.module = window.nodeModule;
@@ -132,9 +132,11 @@ TEST a "more button" design:
 					<div class="headerSeparator p-2"></div>
 
 					<div class="navbar-text dropdown" style="width:30em;">
-						<table id="connectButton" onclick="index.dropdownMenu('connectDropdown-content');" class="dropbtn">
+						<table id="connectButton" onclick="index.dropdownMenu('connectDropdown-content');"
+							class="dropbtn">
 							<tr>
-								<td class="centered"><img id="connectButtonImg" src="static/images/grey-button-off-full.png" height="30">
+								<td class="centered"><img id="connectButtonImg"
+										src="static/images/grey-button-off-full.png" height="30">
 								</td>
 							</tr>
 							<tr>
@@ -149,7 +151,8 @@ TEST a "more button" design:
 					</div>
 
 					<div class="navbar-text dropdown" style="width:30em;">
-						<table id="loadSaveButton"onclick="index.dropdownMenu('loadSaveDropdown-content');" class="dropbtn">
+						<table id="loadSaveButton" onclick="index.dropdownMenu('loadSaveDropdown-content');"
+							class="dropbtn">
 							<tr>
 								<td class="centered"><img src="static/images/grey-button-off-full.png" height="30"></td>
 							</tr>
@@ -160,9 +163,11 @@ TEST a "more button" design:
 						<div class="dropdown-content" id="loadSaveDropdown-content">
 							<a href="#" onclick="index.saveSYNDialog();">Save Synergy State (SYN)</a>
 							<a href="#" onclick="index.loadSYNDialog();">Load Synergy State (SYN)</a>
-							<a href="#" onclick="index.loadCRTDialog();" id="loadCRTMenuItem">Load Cartridge file (CRT)</a>
+							<a href="#" onclick="index.loadCRTDialog();" id="loadCRTMenuItem">Load Cartridge file
+								(CRT)</a>
 							<a href="#" onclick="index.loadVCEDialog();">Load Voice file (VCE)</a>
-							<a href="#" onclick="index.saveVCEDialog();"" class="disabled" id="saveVCEMenuItem">Save Voice file (VCE)</a>
+							<a href="#" onclick="index.saveVCEDialog();"" class=" disabled" id="saveVCEMenuItem">Save
+								Voice file (VCE)</a>
 						</div>
 					</div>
 
@@ -207,8 +212,7 @@ TEST a "more button" design:
 		</div>
 
 		<!-- Modal -->
-		<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" 
-			aria-hidden="true" >
+		<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-hidden="true">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -227,8 +231,7 @@ TEST a "more button" design:
 			</div>
 		</div>
 		<!-- Modal -->
-		<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" 
-			aria-hidden="true" >
+		<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-hidden="true">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -238,41 +241,42 @@ TEST a "more button" design:
 						<span id="confirmText"></span>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal" id="confirmCancelButton">Cancel</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal"
+							id="confirmCancelButton">Cancel</button>
 						<button type="button" class="btn btn-primary" data-dismiss="modal" id="confirmOKButton"">OK</button>
 					</div>
 				</div>
 			</div>
 		</div>
 		
-		<div class="row flex-fill" style="min-height:0">
-			<div class="col-3 mh-100 hiddenscroll">
-				<div id="path"></div>
-				<div id="dirs"></div>
-				<div id="CRTfiles"></div>
-				<div id="SYNfiles"></div>
-				<div id="VCEfiles"></div>
-			</div>
+		<div class=" row flex-fill" style="min-height:0">
+							<div class="col-3 mh-100 hiddenscroll">
+								<div id="path"></div>
+								<div id="dirs"></div>
+								<div id="CRTfiles"></div>
+								<div id="SYNfiles"></div>
+								<div id="VCEfiles"></div>
+							</div>
 
-			<div class="col mh-100 mainSeparator"></div>
+							<div class="col mh-100 mainSeparator"></div>
 
-			<div class="col mh-100">
+							<div class="col mh-100">
 
-				<div id="spinner" style="display:none;">
-					<div class="spinner-border text-info"" role="status">
-						<span class="sr-only">Loading...</span>
+								<div id="spinner" style="display:none;">
+									<div class="spinner-border text-info"" role=" status">
+										<span class="sr-only">Loading...</span>
+									</div>
+
+								</div>
+
+								<div class="right hiddenscroll" id="content"> </div>
+							</div>
 					</div>
-
 				</div>
 
-				<div class="right" id="content"> </div>
-			</div>
-		</div>
-	</div>
-
-	<script type="text/javascript">
-		index.init();
-	</script>
+				<script type="text/javascript">
+					index.init();
+				</script>
 
 </body>
 
