@@ -23,7 +23,8 @@ permalink: /docs/release-notes
   it should have been
   called `((1+2)~3) + ((1+2)~4) + ((5+6)~7) + ((5+6)~8)`
   (a simple typo of ~ vs. +).  Synergize now uses the corrected text name.
-
+* Fixes [issue #11](https://github.com/chinenual/synergize/issues/11):
+  type 1 envelopes sometimes erroneously showed loop points.
 
 ## 2.0.0
 
