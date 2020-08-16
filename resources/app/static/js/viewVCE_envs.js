@@ -565,6 +565,7 @@ let viewVCE_envs = {
 			} else {
 				// currently there's no visual rendering of the loop, so no need to refresh the chart
 				//				viewVCE_envs.envChartUpdate(osc, selectedEnv, false);
+				viewVCE_voice.sendToMIDI(ele, ele.id, parseInt(eleValue, 10));
 			}
 		});
 		return true;
@@ -662,6 +663,7 @@ let viewVCE_envs = {
 				return false;
 			} else {
 				viewVCE_envs.envChartUpdate(osc, selectedEnv, false);
+				viewVCE_voice.sendToMIDI(ele, ele.id, bytevalue);
 			}
 		});
 		return true;
@@ -882,16 +884,32 @@ let viewVCE_envs = {
 			$('.type1accel div.Freq').show();
 			$('#accelFreqLow').val(envelopes.FreqEnvelope.SUSTAINPT);
 			$('#accelFreqUp').val(envelopes.FreqEnvelope.LOOPPT);
+			if (animate) {
+				viewVCE_voice.sendToMIDI(null, `accelFreqLow[${i + 1}]`, envelopes.FreqEnvelope.SUSTAINPT);
+				viewVCE_voice.sendToMIDI(null, `accelFreqUp[${i + 1}]`, envelopes.FreqEnvelope.LOOPPT);
+			}
 		} else {
 			$('.type1accel div.Freq').hide();
+			if (animate) {
+				viewVCE_voice.sendToMIDI(null, `accelFreqLow[${i + 1}]`, 0);
+				viewVCE_voice.sendToMIDI(null, `acceFreqUp[${i + 1}]`, 0);
+			}
 		}
 		// only show accelleration values if type1 envelope
 		if (envelopes.AmpEnvelope.ENVTYPE === 1) {
 			$('.type1accel div.Amp').show();
 			$('#accelAmpLow').val(envelopes.AmpEnvelope.SUSTAINPT);
 			$('#accelAmpUp').val(envelopes.AmpEnvelope.LOOPPT);
+			if (animate) {
+				viewVCE_voice.sendToMIDI(null, `accelAmpLow[${i + 1}]`, envelopes.AmpEnvelope.SUSTAINPT);
+				viewVCE_voice.sendToMIDI(null, `accelAmpUp[${i + 1}]`, envelopes.AmpEnvelope.LOOPPT);
+			}
 		} else {
 			$('.type1accel div.Amp').hide();
+			if (animate) {
+				viewVCE_voice.sendToMIDI(null, `accelAmpLow[${i + 1}]`, 0);
+				viewVCE_voice.sendToMIDI(null, `accelAmpUp[${i + 1}]`, 0);
+			}
 		}
 
 		for (i = envelopes.FreqEnvelope.NPOINTS; i < 16; i++) {
@@ -954,12 +972,14 @@ let viewVCE_envs = {
 			document.getElementById(`envFreqTotLowTime[${i + 1}]`).innerHTML = totalTimeLow;
 			document.getElementById(`envFreqTotUpTime[${i + 1}]`).innerHTML = totalTimeUp;
 
-			if (envelopes.FreqEnvelope.SUSTAINPT == (i + 1)) {
-				$(`#envFreqLoop\\[${i + 1}\\] option[value='S']`).prop('selected', true);
-			}
-			if (envelopes.FreqEnvelope.LOOPPT == (i + 1)) {
-				var v = envelopes.FreqEnvelope.ENVTYPE == 3 ? 'L' : 'R'
-				$(`#envFreqLoop\\[${i + 1}\\] option[value='${v}']`).prop('selected', true);
+			if (envelopes.envelopes.FreqEnvelope.ENVTYPE != 1) {
+				if (envelopes.FreqEnvelope.SUSTAINPT == (i + 1)) {
+					$(`#envFreqLoop\\[${i + 1}\\] option[value='S']`).prop('selected', true);
+				}
+				if (envelopes.FreqEnvelope.LOOPPT == (i + 1)) {
+					var v = envelopes.FreqEnvelope.ENVTYPE == 3 ? 'L' : 'R'
+					$(`#envFreqLoop\\[${i + 1}\\] option[value='${v}']`).prop('selected', true);
+				}
 			}
 		}
 		var maxTotalTime = Math.max(totalTimeLow, totalTimeUp);
@@ -1038,12 +1058,14 @@ let viewVCE_envs = {
 				document.getElementById(`envAmpUpVal[${i + 1}]`).disabled = false;
 			}
 
-			if (envelopes.AmpEnvelope.SUSTAINPT == (i + 1)) {
-				$(`#envAmpLoop\\[${i + 1}\\] option[value='S']`).prop('selected', true);
-			}
-			if (envelopes.AmpEnvelope.LOOPPT == (i + 1)) {
-				var v = envelopes.AmpEnvelope.ENVTYPE == 3 ? 'L' : 'R'
-				$(`#envAmpLoop\\[${i + 1}\\] option[value='${v}']`).prop('selected', true);
+			if (envelopes.envelopes.AmpEnvelope.ENVTYPE != 1) {
+				if (envelopes.AmpEnvelope.SUSTAINPT == (i + 1)) {
+					$(`#envAmpLoop\\[${i + 1}\\] option[value='S']`).prop('selected', true);
+				}
+				if (envelopes.AmpEnvelope.LOOPPT == (i + 1)) {
+					var v = envelopes.AmpEnvelope.ENVTYPE == 3 ? 'L' : 'R'
+					$(`#envAmpLoop\\[${i + 1}\\] option[value='${v}']`).prop('selected', true);
+				}
 			}
 		}
 
