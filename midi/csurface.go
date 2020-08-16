@@ -76,7 +76,7 @@ func csSendEvent(field string, val uint8) (err error) {
 				return
 			}
 		} else {
-			if err = sendNoteOn(channel, fieldinfo.index, 127); err != nil {
+			if err = sendNoteOn(channel, fieldinfo.index, val); err != nil {
 				return
 			}
 		}
@@ -130,7 +130,7 @@ func csHandleNoteOn(channel uint8, note uint8, velocity uint8) {
 		log.Printf("WARN: Unknown Note event on control surface channel %d (note: %d)\n", channel+1, note)
 		return
 	}
-	_ = SendToUI(field.name, 1)
+	_ = SendToUI(field.name, int(velocity))
 }
 
 func csHandleNoteOff(channel uint8, note uint8, velocity uint8) {
