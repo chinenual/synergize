@@ -175,7 +175,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = err.Error()
 			return
 		}
-
+		midi.ClearMidiCache()
 		if err = synio.LoadVceVoicingMode(vce); err != nil {
 			payload = err.Error()
 			return

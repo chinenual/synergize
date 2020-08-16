@@ -72,9 +72,9 @@ let viewVCE_keyeq = {
 
 			obj.value = propData[idx];
 
-			if (!incrementalUpdate) {
-				viewVCE_voice.sendToMIDI(obj, id, propData[idx]);
-			}
+			//if (!incrementalUpdate) {
+			viewVCE_voice.sendToMIDI(obj, id, propData[idx]);
+			//}
 		});
 		if (viewVCE_keyeq.chart != null) {
 			viewVCE_keyeq.chart.destroy();

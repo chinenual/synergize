@@ -18,6 +18,7 @@ require (
 	github.com/mailru/easyjson v0.7.1 // indirect
 	github.com/mattn/goveralls v0.0.6 // indirect
 	github.com/orcaman/writerseeker v0.0.0-20180723184025-774071c66cec
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pelletier/go-toml v1.8.0
 	github.com/pkg/errors v0.9.1
 	github.com/snksoft/crc v1.1.0

@@ -74,9 +74,9 @@ let viewVCE_keyprop = {
 
 			obj.value = '' + propData[idx];
 
-			if (!incrementalUpdate) {
-				viewVCE_voice.sendToMIDI(obj, id, propData[idx]);
-			}
+			//if (!incrementalUpdate) {
+			viewVCE_voice.sendToMIDI(obj, id, propData[idx]);
+			//}
 		});
 		if (viewVCE_keyprop.chart != null) {
 			viewVCE_keyprop.chart.destroy();

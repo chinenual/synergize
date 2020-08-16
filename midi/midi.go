@@ -1,7 +1,11 @@
 package midi
 
 import (
+	"fmt"
 	"log"
+	"time"
+
+	"github.com/patrickmn/go-cache"
 
 	"github.com/pkg/errors"
 
@@ -19,6 +23,10 @@ var wr *writer.Writer
 var rd *reader.Reader
 var open = false
 
+// We use a cache to recognize when an event value is already set on the control surface (to reduce chattiness of the MIDI events
+// (control surface sets value, sends to UI, UI sends back value to control surface))
+var eventCache *cache.Cache
+
 func QuitMidi() (err error) {
 	if open {
 		log.Printf("Closing midi streams...\n")
@@ -34,6 +42,7 @@ func InitMidi(midiInterface string, midiDeviceConfig string) (err error) {
 	if err = loadConfig(midiDeviceConfig); err != nil {
 		return
 	}
+	ClearMidiCache()
 
 	defer func(err *error) {
 		if *err != nil {
@@ -141,43 +150,78 @@ func printOutPorts(ports []midi.Out) {
 	}
 }
 
+func ClearMidiCache() {
+	// entries expire in 3s, cache is purged every 10min
+	eventCache = cache.New(3*time.Second, 10*time.Minute)
+}
+
+func cacheHit(channel uint8, eventType EventType, v1 uint8, v2 uint8) (hit bool) {
+	key := fmt.Sprintf("%d-%d-%d", channel, eventType, v1)
+	value, found := eventCache.Get(key)
+	hit = found && v2 == value.(uint8)
+	log.Printf(" cache %s %v %v -> %v\n", key, value, v2, hit)
+	return
+}
+
+func cacheSet(channel uint8, eventType EventType, v1 uint8, v2 uint8) {
+	key := fmt.Sprintf("%d-%d-%d", channel, eventType, v1)
+	log.Printf(" SET cache %s %v\n", key, v2)
+	eventCache.Set(key, v2, cache.DefaultExpiration)
+}
+
 func sendCC(channel, cc, val uint8) (err error) {
-	log.Printf("Send CC: %d %d %d\n", channel, cc, val)
-	err = writer.ControlChange(wr, cc, val)
+	if !cacheHit(channel, Cc, cc, val) {
+		log.Printf("Send CC: %d %d %d\n", channel, cc, val)
+		cacheSet(channel, Cc, cc, val)
+		err = writer.ControlChange(wr, cc, val)
+	}
 	return
 }
 
 func sendPolyAftertouch(channel, note, velocity uint8) (err error) {
-	log.Printf("Send Poly: %d %d %d\n", channel, note, velocity)
-	err = writer.PolyAftertouch(wr, note, velocity)
+	if !cacheHit(channel, Poly, note, velocity) {
+		log.Printf("Send Poly: %d %d %d\n", channel, note, velocity)
+		cacheSet(channel, Poly, note, velocity)
+		err = writer.PolyAftertouch(wr, note, velocity)
+	}
 	return
 }
 
 func sendNoteOn(channel, note, velocity uint8) (err error) {
-	log.Printf("Send NoteOn: %d %d %d\n", channel, note, velocity)
-	err = writer.NoteOn(wr, note, velocity)
+	if !cacheHit(channel, Note, note, velocity) {
+		log.Printf("Send NoteOn: %d %d %d\n", channel, note, velocity)
+		cacheSet(channel, Note, note, velocity)
+		err = writer.NoteOn(wr, note, velocity)
+	}
 	return
 }
 
 func sendNoteOff(channel, note, velocity uint8) (err error) {
-	log.Printf("Send NoteOff: %d %d %d\n", channel, note, velocity)
-	err = writer.NoteOffVelocity(wr, note, velocity)
+	if !cacheHit(channel, Note, note, velocity) {
+		log.Printf("Send NoteOff: %d %d %d\n", channel, note, velocity)
+		cacheSet(channel, Note, note, velocity)
+		err = writer.NoteOffVelocity(wr, note, velocity)
+	}
 	return
 }
 
 func handleCC(p *reader.Position, channel, cc, val uint8) {
 	//	log.Printf("Handle CC: %d %d %d\n", channel, cc, val)
+	cacheSet(channel, Cc, cc, val)
 	csHandleCC(channel, cc, val)
 }
 func handlePolyAftertouch(p *reader.Position, channel, key, vel uint8) {
 	//	log.Printf("Handle Poly: %d %d %d\n", channel, key, vel)
+	cacheSet(channel, Poly, key, vel)
 	csHandlePolyAftertouch(channel, key, vel)
 }
 func handleNoteOn(p *reader.Position, channel, key, vel uint8) {
 	//	log.Printf("Handle NoteOn: %d %d %d\n", channel, key, vel)
+	cacheSet(channel, Note, key, vel)
 	csHandleNoteOn(channel, key, vel)
 }
 func handleNoteOff(p *reader.Position, channel, key, vel uint8) {
 	//	log.Printf("Handle NoteOff: %d %d %d\n", channel, key, vel)
+	cacheSet(channel, Note, key, vel)
 	csHandleNoteOff(channel, key, vel)
 }
