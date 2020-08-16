@@ -3,7 +3,7 @@ description: "Synergy Librarian and Editor"
 remote_theme: pmarsceill/just-the-docs
 color_scheme: "midnight"
 
-exclude: ["go.*","*.log","*.wxs","*.go", "debug-logs", "testbin", "resources", "output", "packages", "uitest", "test", "synio", "cmd", "data", "README.md", "TESTPLAN.md", "CHECKLIST.md", "TODO.md"  ]
+exclude: ["midi", "go.*","*.log","*.wxs","*.go", "debug-logs", "testbin", "resources", "output", "packages", "uitest", "test", "synio", "cmd", "data", "README.md", "TESTPLAN.md", "CHECKLIST.md", "TODO.md"  ]
 
 logo: "https://github.com/chinenual/synergize/raw/master/docs/screenshots/logo-for-github.png?raw=true"
 
