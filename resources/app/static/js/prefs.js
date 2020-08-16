@@ -109,11 +109,12 @@ let prefs = {
 				"SerialPort": document.getElementById("serialPort").value,
 				"SerialBaud": parseInt(document.getElementById("serialBaud").value, 10),
 				"LibraryPath": document.getElementById("libraryPath").value,
-				"UseMidi": document.getElementById("UseMidi").checked,
+				"UseMidi": document.getElementById("useMidi").checked,
 				"MidiInterface": document.getElementById("midiInterface").value,
 				"MidiDeviceConfig": document.getElementById("midiDeviceConfig").value
 			}
 		};
+		console.log("saveAndClose: " + message);
 		// Send message
 		astilectron.sendMessage(message, function (message) {
 			// Check error
