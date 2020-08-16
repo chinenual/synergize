@@ -260,6 +260,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			refreshNavPane(prefsUserPreferences.LibraryPath)
 		}
 		prefs_w.Hide()
+		payload = "ok"
 
 	case "saveSYN":
 		var path string
