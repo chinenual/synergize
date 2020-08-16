@@ -972,7 +972,7 @@ let viewVCE_envs = {
 			document.getElementById(`envFreqTotLowTime[${i + 1}]`).innerHTML = totalTimeLow;
 			document.getElementById(`envFreqTotUpTime[${i + 1}]`).innerHTML = totalTimeUp;
 
-			if (envelopes.envelopes.FreqEnvelope.ENVTYPE != 1) {
+			if (envelopes.FreqEnvelope.ENVTYPE != 1) {
 				if (envelopes.FreqEnvelope.SUSTAINPT == (i + 1)) {
 					$(`#envFreqLoop\\[${i + 1}\\] option[value='S']`).prop('selected', true);
 				}
@@ -1058,7 +1058,7 @@ let viewVCE_envs = {
 				document.getElementById(`envAmpUpVal[${i + 1}]`).disabled = false;
 			}
 
-			if (envelopes.envelopes.AmpEnvelope.ENVTYPE != 1) {
+			if (envelopes.AmpEnvelope.ENVTYPE != 1) {
 				if (envelopes.AmpEnvelope.SUSTAINPT == (i + 1)) {
 					$(`#envAmpLoop\\[${i + 1}\\] option[value='S']`).prop('selected', true);
 				}
