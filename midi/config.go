@@ -34,74 +34,77 @@ func loadConfig(configPath string) (err error) {
 			for _, fieldname := range page.Keys() {
 				fielddef := page.Get(fieldname).(*toml.Tree)
 				if fieldname == "page-init" {
-					cc := uint8(fielddef.Get("cc").(int64))
-					val := int(fielddef.Get("value").(int64))
-
-					midiMap.ccMap[cc] = inboundField{name: k, scale: val}
-					outboundMidiMap[k] = outboundField{eventtype: Cc, index: cc, scale: val}
-					outboundChannelMap[k] = channel
-
-				} else {
-					// field definitions
-					//log.Printf("  field " + fieldname)
-					//log.Printf("     fielddef: %v\n", fielddef)
-					scale := 1
-					if fielddef.Has("scale") {
-						scale = int(fielddef.Get("scale").(int64))
+					fieldname = k
+				}
+				//if fieldname == "page-init" {
+				//	cc := uint8(fielddef.Get("cc").(int64))
+				//	val := int(fielddef.Get("value").(int64))
+				//
+				//	midiMap.ccMap[cc] = inboundField{name: k, scale: val}
+				//	outboundMidiMap[k] = outboundField{eventtype: Cc, index: cc, scale: val}
+				//	outboundChannelMap[k] = channel
+				//
+				//} else {
+				// field definitions
+				//log.Printf("  field " + fieldname)
+				//log.Printf("     fielddef: %v\n", fielddef)
+				scale := 1
+				if fielddef.Has("scale") {
+					scale = int(fielddef.Get("scale").(int64))
+				}
+				if fielddef.Has("cc") {
+					val := fielddef.Get("cc")
+					if reflect.ValueOf(val).Kind() == reflect.Int64 {
+						v := uint8(val.(int64))
+						midiMap.ccMap[v] = inboundField{name: fieldname, scale: scale}
+						outboundMidiMap[fieldname] = outboundField{eventtype: Cc, index: v, scale: scale}
+						outboundChannelMap[fieldname] = channel
+					} else {
+						arr := val.([]interface{})
+						for i, ele := range arr {
+							v := uint8(ele.(int64))
+							name := fieldname + "[" + strconv.Itoa(i+1) + "]"
+							midiMap.ccMap[v] = inboundField{name: name, scale: scale}
+							outboundMidiMap[name] = outboundField{eventtype: Cc, index: v, scale: scale}
+							outboundChannelMap[name] = channel
+						}
 					}
-					if fielddef.Has("cc") {
-						val := fielddef.Get("cc")
-						if reflect.ValueOf(val).Kind() == reflect.Int64 {
-							v := uint8(val.(int64))
-							midiMap.ccMap[v] = inboundField{name: fieldname, scale: scale}
-							outboundMidiMap[fieldname] = outboundField{eventtype: Cc, index: v, scale: scale}
-							outboundChannelMap[fieldname] = channel
-						} else {
-							arr := val.([]interface{})
-							for i, ele := range arr {
-								v := uint8(ele.(int64))
-								name := fieldname + "[" + strconv.Itoa(i+1) + "]"
-								midiMap.ccMap[v] = inboundField{name: name, scale: scale}
-								outboundMidiMap[name] = outboundField{eventtype: Cc, index: v, scale: scale}
-								outboundChannelMap[name] = channel
-							}
+				} else if fielddef.Has("note") {
+					val := fielddef.Get("note")
+					if reflect.ValueOf(val).Kind() == reflect.Int64 {
+						v := uint8(val.(int64))
+						midiMap.noteMap[v] = inboundField{name: fieldname, scale: scale}
+						outboundMidiMap[fieldname] = outboundField{eventtype: Note, index: v, scale: scale}
+						outboundChannelMap[fieldname] = channel
+					} else {
+						arr := val.([]interface{})
+						for i, ele := range arr {
+							v := uint8(ele.(int64))
+							name := fieldname + "[" + strconv.Itoa(i+1) + "]"
+							midiMap.noteMap[v] = inboundField{name: name, scale: scale}
+							outboundMidiMap[name] = outboundField{eventtype: Note, index: v, scale: scale}
+							outboundChannelMap[name] = channel
 						}
-					} else if fielddef.Has("note") {
-						val := fielddef.Get("note")
-						if reflect.ValueOf(val).Kind() == reflect.Int64 {
-							v := uint8(val.(int64))
-							midiMap.noteMap[v] = inboundField{name: fieldname, scale: scale}
-							outboundMidiMap[fieldname] = outboundField{eventtype: Note, index: v, scale: scale}
-							outboundChannelMap[fieldname] = channel
-						} else {
-							arr := val.([]interface{})
-							for i, ele := range arr {
-								v := uint8(ele.(int64))
-								name := fieldname + "[" + strconv.Itoa(i+1) + "]"
-								midiMap.noteMap[v] = inboundField{name: name, scale: scale}
-								outboundMidiMap[name] = outboundField{eventtype: Note, index: v, scale: scale}
-								outboundChannelMap[name] = channel
-							}
-						}
-					} else if fielddef.Has("poly") {
-						val := fielddef.Get("poly")
-						if reflect.ValueOf(val).Kind() == reflect.Int64 {
-							v := uint8(val.(int64))
-							midiMap.polyMap[v] = inboundField{name: fieldname, scale: scale}
-							outboundMidiMap[fieldname] = outboundField{eventtype: Poly, index: v, scale: scale}
-							outboundChannelMap[fieldname] = channel
-						} else {
-							arr := val.([]interface{})
-							for i, ele := range arr {
-								v := uint8(ele.(int64))
-								name := fieldname + "[" + strconv.Itoa(i+1) + "]"
-								midiMap.polyMap[v] = inboundField{name: name, scale: scale}
-								outboundMidiMap[name] = outboundField{eventtype: Poly, index: v, scale: scale}
-								outboundChannelMap[name] = channel
-							}
+					}
+				} else if fielddef.Has("poly") {
+					val := fielddef.Get("poly")
+					if reflect.ValueOf(val).Kind() == reflect.Int64 {
+						v := uint8(val.(int64))
+						midiMap.polyMap[v] = inboundField{name: fieldname, scale: scale}
+						outboundMidiMap[fieldname] = outboundField{eventtype: Poly, index: v, scale: scale}
+						outboundChannelMap[fieldname] = channel
+					} else {
+						arr := val.([]interface{})
+						for i, ele := range arr {
+							v := uint8(ele.(int64))
+							name := fieldname + "[" + strconv.Itoa(i+1) + "]"
+							midiMap.polyMap[v] = inboundField{name: name, scale: scale}
+							outboundMidiMap[name] = outboundField{eventtype: Poly, index: v, scale: scale}
+							outboundChannelMap[name] = channel
 						}
 					}
 				}
+				//}
 			}
 		}
 	}

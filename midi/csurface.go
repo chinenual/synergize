@@ -59,7 +59,6 @@ func csSendEvent(field string, val uint8) (err error) {
 	}
 	if fieldinfo.eventtype == Cc {
 		v := uint8(int(val) / fieldinfo.scale)
-		// special case for the tab indicators (maybe should change these to notes so might not have to special case?)
 		if strings.HasSuffix(field, "-tab") {
 			v = uint8(fieldinfo.scale)
 		}
@@ -67,7 +66,11 @@ func csSendEvent(field string, val uint8) (err error) {
 			return
 		}
 	} else if fieldinfo.eventtype == Poly {
-		if err = sendPolyAftertouch(channel, fieldinfo.index, uint8(int(val)/fieldinfo.scale)); err != nil {
+		v := uint8(int(val) / fieldinfo.scale)
+		if strings.HasSuffix(field, "-tab") {
+			v = uint8(fieldinfo.scale)
+		}
+		if err = sendPolyAftertouch(channel, fieldinfo.index, v); err != nil {
 			return
 		}
 	} else if fieldinfo.eventtype == Note {
