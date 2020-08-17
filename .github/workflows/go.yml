@@ -19,6 +19,12 @@ jobs:
         go-version: ^1.14
       id: go
 
+    - name: Set up Homebrew
+      uses: Homebrew/actions/setup-homebrew@master
+  
+    - name: Set up portmidi
+      run: brew install portmidi
+  
     - name: Check out code 
       uses: actions/checkout@v2
 
