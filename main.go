@@ -35,6 +35,8 @@ var (
 	uitest            = flag.Int("UITEST", 0, "alter startup to support Selenium testing (specifies listening port)")
 	provisionOnly     = flag.Bool("PROVISION", false, "run the provisioner and then exit")
 	serialVerboseFlag = flag.Bool("SERIALVERBOSE", false, "Show each byte operation through the serial port")
+	verboseMidiIn     = flag.Bool("MIDIINVERBOSE", false, "Show MIDI input events")
+	verboseMidiOut    = flag.Bool("MIDIOUTVERBOSE", false, "Show MIDI output events")
 	mockSynio         = flag.Bool("MOCKSYNIO", false, "Mock the Synergy I/O for testing")
 	comtst            = flag.Bool("COMTST", false, "run command line diagnostics rather than the GUI")
 	looptst           = flag.Bool("LOOPTST", false, "run command line diagnostics rather than the GUI")
@@ -181,7 +183,8 @@ func main() {
 			}
 			os.Exit(code)
 		} else if *miditest {
-			if err = midi.InitMidi(prefsUserPreferences.MidiInterface, prefsUserPreferences.MidiDeviceConfig); err != nil {
+			if err = midi.InitMidi(prefsUserPreferences.MidiInterface, prefsUserPreferences.MidiDeviceConfig,
+				*verboseMidiIn, *verboseMidiOut); err != nil {
 				code = 1
 				log.Println(err)
 			} else {

@@ -170,7 +170,7 @@ func TestMain(m *testing.M) {
 				fmt.Println(err)
 			}
 		}()
-		err := InitMidi("Network Session 1", "./synergize-touchosc.cfg")
+		err := InitMidi("Network Session 1", "./synergize-touchosc.cfg", false, false)
 		if err != nil {
 			fmt.Printf("could not initialize io: %v\n", err)
 			os.Exit(1)

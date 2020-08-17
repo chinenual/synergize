@@ -682,7 +682,8 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			var vce data.VCE
 			payload = nil
 			if prefsUserPreferences.UseMidi {
-				if err = midi.InitMidi(prefsUserPreferences.MidiInterface, prefsUserPreferences.MidiDeviceConfig); err != nil {
+				if err = midi.InitMidi(prefsUserPreferences.MidiInterface, prefsUserPreferences.MidiDeviceConfig,
+					*verboseMidiIn, *verboseMidiOut); err != nil {
 					log.Println(err)
 					payload = err.Error()
 				} else {

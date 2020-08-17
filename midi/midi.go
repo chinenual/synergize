@@ -23,9 +23,9 @@ var wr *writer.Writer
 var rd *reader.Reader
 var open = false
 
-const verboseCache = false
-const verboseMidiIn = false
-const verboseMidiOut = false
+var verboseCache = false
+var verboseMidiIn = false
+var verboseMidiOut = false
 
 // We use a cache to recognize when an event value is already set on the control surface (to reduce chattiness of the MIDI events
 // (control surface sets value, sends to UI, UI sends back value to control surface))
@@ -42,7 +42,10 @@ func QuitMidi() (err error) {
 	return
 }
 
-func InitMidi(midiInterface string, midiDeviceConfig string) (err error) {
+func InitMidi(midiInterface string, midiDeviceConfig string, verboseIn bool, verboseOut bool) (err error) {
+	verboseMidiIn = verboseIn
+	verboseMidiOut = verboseOut
+
 	if err = loadConfig(midiDeviceConfig); err != nil {
 		return
 	}
