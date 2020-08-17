@@ -87,6 +87,7 @@ packages/Synergize-linux-arm-$(VERSION).tar.gz: $(EXE_LINUX_ARM)
 .PHONY: test
 test:
 	cd data && go test
+	cd midi && go test
 	cd synio && go test
 	go test
 
@@ -106,6 +107,7 @@ endif
 
 .PHONY: itest
 itest:
+	cd midi && go test -v -midiio
 	cd synio && go test -v -synio -port $(PORT)
 
 .PHONY: uitest

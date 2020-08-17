@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	midiio = flag.Bool("midiio", true, "run integration tests that talk to MIDI")
+	midiio = flag.Bool("midiio", false, "run integration tests that talk to MIDI")
 )
 
 func sendEventsArr(field string, fieldRange []int, valRange []int, delay time.Duration) (err error) {
