@@ -107,6 +107,7 @@ func InitMidi(midiInterface string, midiDeviceConfig string) (err error) {
 	}
 
 	wr = writer.New(out)
+	wr.ConsolidateNotes(false)
 
 	rd = reader.New(
 		//reader.NoLogger(),
