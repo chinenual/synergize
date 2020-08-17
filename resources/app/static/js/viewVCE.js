@@ -41,6 +41,7 @@ let viewVCE = {
 
         // back to normal:
         viewVCE.supressOnchange = false;
+        viewVCE_voice.sendToMIDI(null, "voice-tab", 1);
         console.log('--- finish viewVCE init');
     }
 }
