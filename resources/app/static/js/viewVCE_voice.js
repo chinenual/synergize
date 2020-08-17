@@ -1148,9 +1148,15 @@ ${freqDAG}
 			return;
 		}
 		if (ele.nodeName == "SELECT") {
-			var opt = ele.childNodes[value]
-			ele.value = opt.value;
-			opt.selected = true;
+			// cycle through the options in each click
+			var options = ele.options
+			//			console.log("cycle SELECT: currently " + options.selectedIndex + " len: " + options.length);
+			var i = options.selectedIndex + 1
+			if (i >= options.length) {
+				i = 0
+			}
+			options.selectedIndex = i;
+			//			console.log("cycle SELECT: now " + options.selectedIndex);
 		} else if (ele.nodeName == "SPAN") {
 			// SOLO/MUTE buttons
 			ele.onclick();
@@ -1182,7 +1188,7 @@ ${freqDAG}
 			}
 		};
 		astilectron.sendMessage(message, function (message) {
-			console.log("sendToMIDI returned: " + JSON.stringify(message));
+			//console.log("sendToMIDI returned: " + JSON.stringify(message));
 			// Check error
 			if (message.name === "error") {
 				index.errorNotification(message.payload);
