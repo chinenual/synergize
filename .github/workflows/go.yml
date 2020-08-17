@@ -13,15 +13,18 @@ jobs:
     runs-on: macos-10.14
     steps:
 
+    - name: Set up Homebrew
+      uses: Homebrew/actions/setup-homebrew@master
+
+    - name: uninstall brew version of go
+      run: brew uninstall --ignore-dependencies go
+
     - name: Set up Go 1.x
       uses: actions/setup-go@v2
       with:
         go-version: ^1.14
       id: go
 
-    - name: Set up Homebrew
-      uses: Homebrew/actions/setup-homebrew@master
-  
     - name: Set up portmidi
       run: brew install portmidi
   
