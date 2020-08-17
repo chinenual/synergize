@@ -23,6 +23,10 @@ var wr *writer.Writer
 var rd *reader.Reader
 var open = false
 
+const verboseCache = false
+const verboseMidiIn = false
+const verboseMidiOut = false
+
 // We use a cache to recognize when an event value is already set on the control surface (to reduce chattiness of the MIDI events
 // (control surface sets value, sends to UI, UI sends back value to control surface))
 var eventCache *cache.Cache
@@ -110,7 +114,7 @@ func InitMidi(midiInterface string, midiDeviceConfig string) (err error) {
 	wr.ConsolidateNotes(false)
 
 	rd = reader.New(
-		//reader.NoLogger(),
+		reader.NoLogger(),
 		reader.ControlChange(handleCC),
 		reader.NoteOff(handleNoteOff),
 		reader.NoteOn(handleNoteOn),
@@ -160,19 +164,25 @@ func cacheHit(channel uint8, eventType EventType, v1 uint8, v2 uint8) (hit bool)
 	key := fmt.Sprintf("%d-%d-%d", channel, eventType, v1)
 	value, found := eventCache.Get(key)
 	hit = found && v2 == value.(uint8)
-	log.Printf(" cache %s %v %v -> %v\n", key, value, v2, hit)
+	if verboseCache {
+		log.Printf(" MIDI cache %s %v %v -> %v\n", key, value, v2, hit)
+	}
 	return
 }
 
 func cacheSet(channel uint8, eventType EventType, v1 uint8, v2 uint8) {
 	key := fmt.Sprintf("%d-%d-%d", channel, eventType, v1)
-	log.Printf(" SET cache %s %v\n", key, v2)
+	if verboseCache {
+		log.Printf(" MIDI cache set %s %v\n", key, v2)
+	}
 	eventCache.Set(key, v2, cache.DefaultExpiration)
 }
 
 func sendCC(channel, cc, val uint8) (err error) {
 	if !cacheHit(channel, Cc, cc, val) {
-		log.Printf("Send CC: %d %d %d\n", channel, cc, val)
+		if verboseMidiOut {
+			log.Printf(" MIDI Send CC: %d %d %d\n", channel, cc, val)
+		}
 		cacheSet(channel, Cc, cc, val)
 		err = writer.ControlChange(wr, cc, val)
 	}
@@ -181,7 +191,9 @@ func sendCC(channel, cc, val uint8) (err error) {
 
 func sendPolyAftertouch(channel, note, velocity uint8) (err error) {
 	if !cacheHit(channel, Poly, note, velocity) {
-		log.Printf("Send Poly: %d %d %d\n", channel, note, velocity)
+		if verboseMidiOut {
+			log.Printf(" MIDI Send Poly: %d %d %d\n", channel, note, velocity)
+		}
 		cacheSet(channel, Poly, note, velocity)
 		err = writer.PolyAftertouch(wr, note, velocity)
 	}
@@ -190,7 +202,9 @@ func sendPolyAftertouch(channel, note, velocity uint8) (err error) {
 
 func sendNoteOn(channel, note, velocity uint8) (err error) {
 	if !cacheHit(channel, Note, note, velocity) {
-		log.Printf("Send NoteOn: %d %d %d\n", channel, note, velocity)
+		if verboseMidiOut {
+			log.Printf(" MIDI Send NoteOn: %d %d %d\n", channel, note, velocity)
+		}
 		cacheSet(channel, Note, note, velocity)
 		err = writer.NoteOn(wr, note, velocity)
 	}
@@ -199,7 +213,9 @@ func sendNoteOn(channel, note, velocity uint8) (err error) {
 
 func sendNoteOff(channel, note, velocity uint8) (err error) {
 	if !cacheHit(channel, Note, note, velocity) {
-		log.Printf("Send NoteOff: %d %d %d\n", channel, note, velocity)
+		if verboseMidiOut {
+			log.Printf(" MIDI Send NoteOff: %d %d %d\n", channel, note, velocity)
+		}
 		cacheSet(channel, Note, note, velocity)
 		err = writer.NoteOffVelocity(wr, note, velocity)
 	}
@@ -207,22 +223,30 @@ func sendNoteOff(channel, note, velocity uint8) (err error) {
 }
 
 func handleCC(p *reader.Position, channel, cc, val uint8) {
-	//	log.Printf("Handle CC: %d %d %d\n", channel, cc, val)
+	if verboseMidiIn {
+		log.Printf(" MIDI Handle CC: %d %d %d\n", channel, cc, val)
+	}
 	cacheSet(channel, Cc, cc, val)
 	csHandleCC(channel, cc, val)
 }
 func handlePolyAftertouch(p *reader.Position, channel, key, vel uint8) {
-	//	log.Printf("Handle Poly: %d %d %d\n", channel, key, vel)
+	if verboseMidiIn {
+		log.Printf(" MIDI Handle Poly: %d %d %d\n", channel, key, vel)
+	}
 	cacheSet(channel, Poly, key, vel)
 	csHandlePolyAftertouch(channel, key, vel)
 }
 func handleNoteOn(p *reader.Position, channel, key, vel uint8) {
-	//	log.Printf("Handle NoteOn: %d %d %d\n", channel, key, vel)
+	if verboseMidiIn {
+		log.Printf(" MID Handle NoteOn: %d %d %d\n", channel, key, vel)
+	}
 	cacheSet(channel, Note, key, vel)
 	csHandleNoteOn(channel, key, vel)
 }
 func handleNoteOff(p *reader.Position, channel, key, vel uint8) {
-	//	log.Printf("Handle NoteOff: %d %d %d\n", channel, key, vel)
+	if verboseMidiIn {
+		log.Printf(" MIDI Handle NoteOff: %d %d %d\n", channel, key, vel)
+	}
 	cacheSet(channel, Note, key, vel)
 	csHandleNoteOff(channel, key, vel)
 }

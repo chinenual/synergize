@@ -14,7 +14,7 @@ func loadConfig(configPath string) (err error) {
 		return
 	}
 
-	log.Printf("settings: %v\n", tree)
+	//log.Printf("settings: %v\n", tree)
 
 	channel := uint8(tree.Get("defaults.channel").(int64)) - 1 // config file uses 1-16, code uses 0-15
 
@@ -25,7 +25,7 @@ func loadConfig(configPath string) (err error) {
 	inboundChannelMap[channel] = midiMap
 
 	for _, k := range tree.Keys() {
-		log.Printf("page " + k)
+		//log.Printf("page " + k)
 		if k == "defaults" {
 			// ignore
 		} else {
@@ -109,9 +109,9 @@ func loadConfig(configPath string) (err error) {
 		}
 	}
 
-	log.Printf("in map: %v\n", inboundChannelMap)
-	log.Printf("out map: %v\n", outboundChannelMap)
-	log.Printf("out map: %v\n", outboundMidiMap)
+	//log.Printf("in map: %v\n", inboundChannelMap)
+	//log.Printf("out map: %v\n", outboundChannelMap)
+	//log.Printf("out map: %v\n", outboundMidiMap)
 
 	return
 }
