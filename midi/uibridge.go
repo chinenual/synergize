@@ -13,7 +13,7 @@ func RegisterBridge(w *astilectron.Window) (err error) {
 	return
 }
 
-func SendToMIDI(field string, value int) (err error) {
+func sendToCSurface(field string, value int) (err error) {
 	return csSendEvent(field, uint8(value))
 }
 
@@ -27,7 +27,7 @@ func SendToUI(field string, value int) (err error) {
 	if astilectronWindow == nil {
 		return
 	}
-	if err = bootstrap.SendMessage(astilectronWindow, "updateFromMIDI", UIMsg{field, value},
+	if err = bootstrap.SendMessage(astilectronWindow, "updateFromCSurface", UIMsg{field, value},
 		func(m *bootstrap.MessageIn) { /* ignore response */ }); err != nil {
 		return
 	}

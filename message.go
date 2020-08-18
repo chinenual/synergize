@@ -338,7 +338,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		}
 		payload = "ok"
 
-	case "sendToMIDI":
+	case "sendToCSurface":
 		var args struct {
 			Field string
 			Value int
@@ -350,7 +350,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		midi.SendToMIDI(args.Field, args.Value)
+		midi.sendToCSurface(args.Field, args.Value)
 		payload = "ok"
 
 	case "setEnvelopes":

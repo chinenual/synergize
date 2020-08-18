@@ -565,7 +565,7 @@ let viewVCE_envs = {
 			} else {
 				// currently there's no visual rendering of the loop, so no need to refresh the chart
 				//				viewVCE_envs.envChartUpdate(osc, selectedEnv, false);
-				viewVCE_voice.sendToMIDI(ele, ele.id, parseInt(eleValue, 10));
+				viewVCE_voice.sendToCSurface(ele, ele.id, parseInt(eleValue, 10));
 			}
 		});
 		return true;
@@ -663,7 +663,7 @@ let viewVCE_envs = {
 				return false;
 			} else {
 				viewVCE_envs.envChartUpdate(osc, selectedEnv, false);
-				viewVCE_voice.sendToMIDI(ele, ele.id, bytevalue);
+				viewVCE_voice.sendToCSurface(ele, ele.id, bytevalue);
 			}
 		});
 		return true;
@@ -885,14 +885,14 @@ let viewVCE_envs = {
 			$('#accelFreqLow').val(envelopes.FreqEnvelope.SUSTAINPT);
 			$('#accelFreqUp').val(envelopes.FreqEnvelope.LOOPPT);
 			if (animate) {
-				viewVCE_voice.sendToMIDI(null, `accelFreqLow[${i + 1}]`, envelopes.FreqEnvelope.SUSTAINPT);
-				viewVCE_voice.sendToMIDI(null, `accelFreqUp[${i + 1}]`, envelopes.FreqEnvelope.LOOPPT);
+				viewVCE_voice.sendToCSurface(null, `accelFreqLow[${i + 1}]`, envelopes.FreqEnvelope.SUSTAINPT);
+				viewVCE_voice.sendToCSurface(null, `accelFreqUp[${i + 1}]`, envelopes.FreqEnvelope.LOOPPT);
 			}
 		} else {
 			$('.type1accel div.Freq').hide();
 			if (animate) {
-				viewVCE_voice.sendToMIDI(null, `accelFreqLow[${i + 1}]`, 0);
-				viewVCE_voice.sendToMIDI(null, `acceFreqUp[${i + 1}]`, 0);
+				viewVCE_voice.sendToCSurface(null, `accelFreqLow[${i + 1}]`, 0);
+				viewVCE_voice.sendToCSurface(null, `acceFreqUp[${i + 1}]`, 0);
 			}
 		}
 		// only show accelleration values if type1 envelope
@@ -901,14 +901,14 @@ let viewVCE_envs = {
 			$('#accelAmpLow').val(envelopes.AmpEnvelope.SUSTAINPT);
 			$('#accelAmpUp').val(envelopes.AmpEnvelope.LOOPPT);
 			if (animate) {
-				viewVCE_voice.sendToMIDI(null, `accelAmpLow[${i + 1}]`, envelopes.AmpEnvelope.SUSTAINPT);
-				viewVCE_voice.sendToMIDI(null, `accelAmpUp[${i + 1}]`, envelopes.AmpEnvelope.LOOPPT);
+				viewVCE_voice.sendToCSurface(null, `accelAmpLow[${i + 1}]`, envelopes.AmpEnvelope.SUSTAINPT);
+				viewVCE_voice.sendToCSurface(null, `accelAmpUp[${i + 1}]`, envelopes.AmpEnvelope.LOOPPT);
 			}
 		} else {
 			$('.type1accel div.Amp').hide();
 			if (animate) {
-				viewVCE_voice.sendToMIDI(null, `accelAmpLow[${i + 1}]`, 0);
-				viewVCE_voice.sendToMIDI(null, `accelAmpUp[${i + 1}]`, 0);
+				viewVCE_voice.sendToCSurface(null, `accelAmpLow[${i + 1}]`, 0);
+				viewVCE_voice.sendToCSurface(null, `accelAmpUp[${i + 1}]`, 0);
 			}
 		}
 
@@ -922,10 +922,10 @@ let viewVCE_envs = {
 			$(`#envFreqLowTime\\[${i + 1}\\]`).hide();
 			$(`#envFreqUpTime\\[${i + 1}\\]`).hide();
 			if (animate) {
-				viewVCE_voice.sendToMIDI(null, `envFreqLowVal[${i + 1}]`, 0);
-				viewVCE_voice.sendToMIDI(null, `envFreqUpVal[${i + 1}]`, 0);
-				viewVCE_voice.sendToMIDI(null, `envFreqLowTime[${i + 1}]`, 0);
-				viewVCE_voice.sendToMIDI(null, `envFreqUpTime[${i + 1}]`, 0);
+				viewVCE_voice.sendToCSurface(null, `envFreqLowVal[${i + 1}]`, 0);
+				viewVCE_voice.sendToCSurface(null, `envFreqUpVal[${i + 1}]`, 0);
+				viewVCE_voice.sendToCSurface(null, `envFreqLowTime[${i + 1}]`, 0);
+				viewVCE_voice.sendToCSurface(null, `envFreqUpTime[${i + 1}]`, 0);
 			}
 		}
 		for (i = 0; i < envelopes.FreqEnvelope.NPOINTS; i++) {
@@ -944,10 +944,10 @@ let viewVCE_envs = {
 			var timeUp = viewVCE_envs.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i * 4 + 3], i == 0);
 
 			if (animate) {
-				viewVCE_voice.sendToMIDI(null, `envFreqLowVal[${i + 1}]`, envelopes.FreqEnvelope.Table[i * 4 + 0]);
-				viewVCE_voice.sendToMIDI(null, `envFreqUpVal[${i + 1}]`, envelopes.FreqEnvelope.Table[i * 4 + 1]);
-				viewVCE_voice.sendToMIDI(null, `envFreqLowTime[${i + 1}]`, envelopes.FreqEnvelope.Table[i * 4 + 2]);
-				viewVCE_voice.sendToMIDI(null, `envFreqUpTime[${i + 1}]`, envelopes.FreqEnvelope.Table[i * 4 + 3]);
+				viewVCE_voice.sendToCSurface(null, `envFreqLowVal[${i + 1}]`, envelopes.FreqEnvelope.Table[i * 4 + 0]);
+				viewVCE_voice.sendToCSurface(null, `envFreqUpVal[${i + 1}]`, envelopes.FreqEnvelope.Table[i * 4 + 1]);
+				viewVCE_voice.sendToCSurface(null, `envFreqLowTime[${i + 1}]`, envelopes.FreqEnvelope.Table[i * 4 + 2]);
+				viewVCE_voice.sendToCSurface(null, `envFreqUpTime[${i + 1}]`, envelopes.FreqEnvelope.Table[i * 4 + 3]);
 			}
 
 			if (i == 0) {
@@ -998,10 +998,10 @@ let viewVCE_envs = {
 			$(`#envAmpUpTime\\[${i + 1}\\]`).hide();
 
 			if (animate) {
-				viewVCE_voice.sendToMIDI(null, `envAmpLowVal[${i + 1}]`, 0);
-				viewVCE_voice.sendToMIDI(null, `envAmpUpVal[${i + 1}]`, 0);
-				viewVCE_voice.sendToMIDI(null, `envAmpLowTime[${i + 1}]`, 0);
-				viewVCE_voice.sendToMIDI(null, `envAmpUpTime[${i + 1}]`, 0);
+				viewVCE_voice.sendToCSurface(null, `envAmpLowVal[${i + 1}]`, 0);
+				viewVCE_voice.sendToCSurface(null, `envAmpUpVal[${i + 1}]`, 0);
+				viewVCE_voice.sendToCSurface(null, `envAmpLowTime[${i + 1}]`, 0);
+				viewVCE_voice.sendToCSurface(null, `envAmpUpTime[${i + 1}]`, 0);
 			}
 		}
 		for (i = 0; i < envelopes.AmpEnvelope.NPOINTS; i++) {
@@ -1027,10 +1027,10 @@ let viewVCE_envs = {
 			var timeUp = viewVCE_envs.scaleAmpTimeValue(envelopes.AmpEnvelope.Table[i * 4 + 3]);
 
 			if (animate) {
-				viewVCE_voice.sendToMIDI(null, `envAmpLowVal[${i + 1}]`, envelopes.AmpEnvelope.Table[i * 4 + 0]);
-				viewVCE_voice.sendToMIDI(null, `envAmpUpVal[${i + 1}]`, envelopes.AmpEnvelope.Table[i * 4 + 1]);
-				viewVCE_voice.sendToMIDI(null, `envAmpLowTime[${i + 1}]`, envelopes.AmpEnvelope.Table[i * 4 + 2]);
-				viewVCE_voice.sendToMIDI(null, `envAmpUpTime[${i + 1}]`, envelopes.AmpEnvelope.Table[i * 4 + 3]);
+				viewVCE_voice.sendToCSurface(null, `envAmpLowVal[${i + 1}]`, envelopes.AmpEnvelope.Table[i * 4 + 0]);
+				viewVCE_voice.sendToCSurface(null, `envAmpUpVal[${i + 1}]`, envelopes.AmpEnvelope.Table[i * 4 + 1]);
+				viewVCE_voice.sendToCSurface(null, `envAmpLowTime[${i + 1}]`, envelopes.AmpEnvelope.Table[i * 4 + 2]);
+				viewVCE_voice.sendToCSurface(null, `envAmpUpTime[${i + 1}]`, envelopes.AmpEnvelope.Table[i * 4 + 3]);
 			}
 
 			lastAmpLow = ampLow;

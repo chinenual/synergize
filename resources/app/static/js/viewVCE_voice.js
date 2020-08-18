@@ -397,7 +397,7 @@ let viewVCE_voice = {
 					index.errorNotification(message.payload);
 					return false;
 				} else {
-					viewVCE_voice.sendToMIDI(ele, ele.id, value);
+					viewVCE_voice.sendToCSurface(ele, ele.id, value);
 					if (updater != undefined) {
 						console.log("updater: " + updater);
 						updater(ele);
@@ -423,19 +423,19 @@ let viewVCE_voice = {
 
 		for (osc = vce.Head.VOITAB + 1; osc < 16; osc++) {
 			// midi initialation for unused osc's
-			viewVCE_voice.sendToMIDI(null, `OHARM[${osc + 1}]`, 0);
-			viewVCE_voice.sendToMIDI(null, `FDETUN[${osc + 1}]`, 0);
-			viewVCE_voice.sendToMIDI(null, `MUTE[${osc + 1}]`, 0);
-			viewVCE_voice.sendToMIDI(null, `SOLO[${osc + 1}]`, 0);
-			viewVCE_voice.sendToMIDI(null, `wkWAVE[${osc + 1}]`, 0);
-			viewVCE_voice.sendToMIDI(null, `wkKEYPROP[${osc + 1}]`, 0);
-			viewVCE_voice.sendToMIDI(null, `FILTER[${osc + 1}]`, 0);
-			viewVCE_voice.sendToMIDI(null, `osc-enabled[${osc + 1}]`, 0);
+			viewVCE_voice.sendToCSurface(null, `OHARM[${osc + 1}]`, 0);
+			viewVCE_voice.sendToCSurface(null, `FDETUN[${osc + 1}]`, 0);
+			viewVCE_voice.sendToCSurface(null, `MUTE[${osc + 1}]`, 0);
+			viewVCE_voice.sendToCSurface(null, `SOLO[${osc + 1}]`, 0);
+			viewVCE_voice.sendToCSurface(null, `wkWAVE[${osc + 1}]`, 0);
+			viewVCE_voice.sendToCSurface(null, `wkKEYPROP[${osc + 1}]`, 0);
+			viewVCE_voice.sendToCSurface(null, `FILTER[${osc + 1}]`, 0);
+			viewVCE_voice.sendToCSurface(null, `osc-enabled[${osc + 1}]`, 0);
 		}
 
 		// populate new ones:
 		for (osc = 0; osc <= vce.Head.VOITAB; osc++) {
-			viewVCE_voice.sendToMIDI(null, `osc-enabled[${osc + 1}]`, 1);
+			viewVCE_voice.sendToCSurface(null, `osc-enabled[${osc + 1}]`, 1);
 
 			var tr = document.createElement("tr");
 			var td = document.createElement("td");
@@ -536,7 +536,7 @@ let viewVCE_voice = {
 			min="-11" max="31"
 			disabled/></div>`;
 			tr.appendChild(td);
-			viewVCE_voice.sendToMIDI(null, `OHARM[${osc + 1}]`, vce.Envelopes[osc].FreqEnvelope.OHARM + 11)
+			viewVCE_voice.sendToCSurface(null, `OHARM[${osc + 1}]`, vce.Envelopes[osc].FreqEnvelope.OHARM + 11)
 
 			//--- Detn
 			td = document.createElement("td");
@@ -545,7 +545,7 @@ let viewVCE_voice = {
 			min="-63" max="63"
 			disabled/></div>`;
 			tr.appendChild(td);
-			viewVCE_voice.sendToMIDI(null, `FDETUN[${osc + 1}]`, vce.Envelopes[osc].FreqEnvelope.FDETUN + 63)
+			viewVCE_voice.sendToCSurface(null, `FDETUN[${osc + 1}]`, vce.Envelopes[osc].FreqEnvelope.FDETUN + 63)
 
 			var waveByte = vce.Envelopes[osc].FreqEnvelope.Table[3];
 			var wave = ((waveByte & 0x1) == 0) ? 'Sin' : 'Tri';
@@ -561,7 +561,7 @@ let viewVCE_voice = {
 			</select>
 			`;
 			tr.appendChild(td);
-			viewVCE_voice.sendToMIDI(null, `wkWAVE[${osc + 1}]`, wave == 'Sin' ? 0 : 1);
+			viewVCE_voice.sendToCSurface(null, `wkWAVE[${osc + 1}]`, wave == 'Sin' ? 0 : 1);
 
 			//--- Key
 			td = document.createElement("td");
@@ -570,7 +570,7 @@ let viewVCE_voice = {
 			${keyprop ? " checked " : ""} 
 			onchange="viewVCE_voice.voicingMode ? viewVCE_voice.onchange(this) : (this.checked=!this.checked)"/>`;
 			tr.appendChild(td);
-			viewVCE_voice.sendToMIDI(null, `wkKEYPROP[${osc + 1}]`, keyprop ? 1 : 0);
+			viewVCE_voice.sendToCSurface(null, `wkKEYPROP[${osc + 1}]`, keyprop ? 1 : 0);
 
 			//--- Flt
 			td = document.createElement("td");
@@ -588,7 +588,7 @@ let viewVCE_voice = {
 					</select>
 					`;
 			tr.appendChild(td);
-			viewVCE_voice.sendToMIDI(null, `FILTER[${osc + 1}]`, filter == 0 ? 0 : filter < 0 ? 1 : 2);
+			viewVCE_voice.sendToCSurface(null, `FILTER[${osc + 1}]`, filter == 0 ? 0 : filter < 0 ? 1 : 2);
 
 			tbody.appendChild(tr);
 		}
@@ -778,7 +778,7 @@ ${freqDAG}
 		var mode = viewVCE_voice.voicingMode;
 		//mode = true; // For debugging and CSS tweaking: force edit controls to be visible
 
-		// XREF: converter mappings : these are duplicated in updateFromMIDI
+		// XREF: converter mappings : these are duplicated in updateFromCSurface
 		if (mode) {
 			// CSS for styling the buttons when disabled is HARD.  So avoid it.
 			$('.vceNum.spinNullablePatchReg').TouchSpin({
@@ -929,19 +929,19 @@ ${freqDAG}
 		}
 
 		$('#vceTabs a[href="#vceVoiceTab"]').on('shown.bs.tab', function (e) {
-			viewVCE_voice.sendToMIDI(null, "voice-tab", 1);
+			viewVCE_voice.sendToCSurface(null, "voice-tab", 1);
 		});
 		$('#vceTabs a[href="#vceEnvsTab"]').on('shown.bs.tab', function (e) {
-			viewVCE_voice.sendToMIDI(null, "freq-envelopes-tab", 1);
+			viewVCE_voice.sendToCSurface(null, "freq-envelopes-tab", 1);
 		});
 		$('#vceTabs a[href="#vceFiltersTab"]').on('shown.bs.tab', function (e) {
-			viewVCE_voice.sendToMIDI(null, "filters-tab", 1);
+			viewVCE_voice.sendToCSurface(null, "filters-tab", 1);
 		});
 		$('#vceTabs a[href="#vceKeyEqTab"]').on('shown.bs.tab', function (e) {
-			viewVCE_voice.sendToMIDI(null, "keyeq-tab", 1);
+			viewVCE_voice.sendToCSurface(null, "keyeq-tab", 1);
 		});
 		$('#vceTabs a[href="#vceKeyPropTab"]').on('shown.bs.tab', function (e) {
-			viewVCE_voice.sendToMIDI(null, "keyprop-tab", 1);
+			viewVCE_voice.sendToCSurface(null, "keyprop-tab", 1);
 		});
 
 		viewVCE_voice.patchTable();
@@ -958,24 +958,24 @@ ${freqDAG}
 		document.getElementById("keysPlayable").innerHTML = Math.floor(32 / (vce.Head.VOITAB + 1));
 		viewVCE_voice.updateVibType();
 		document.getElementById("VIBRAT").value = vce.Head.VIBRAT;
-		viewVCE_voice.sendToMIDI(document.getElementById("VIBRAT"), "VIBRAT", vce.Head.VIBRAT)
+		viewVCE_voice.sendToCSurface(document.getElementById("VIBRAT"), "VIBRAT", vce.Head.VIBRAT)
 		document.getElementById("VIBDEL").value = vce.Head.VIBDEL;
-		viewVCE_voice.sendToMIDI(document.getElementById("VIBDEL"), "VIBDEL", vce.Head.VIBDEL)
+		viewVCE_voice.sendToCSurface(document.getElementById("VIBDEL"), "VIBDEL", vce.Head.VIBDEL)
 		document.getElementById("VIBDEP").value = vce.Head.VIBDEP;
-		viewVCE_voice.sendToMIDI(document.getElementById("VIBDEP"), "VIBDEP", vce.Head.VIBDEP)
+		viewVCE_voice.sendToCSurface(document.getElementById("VIBDEP"), "VIBDEP", vce.Head.VIBDEP)
 		document.getElementById("APVIB").value = vce.Head.APVIB;
-		viewVCE_voice.sendToMIDI(document.getElementById("APVIB"), "APVIB", vce.Head.APVIB)
+		viewVCE_voice.sendToCSurface(document.getElementById("APVIB"), "APVIB", vce.Head.APVIB)
 
 		document.getElementById("VTRANS").value = vce.Head.VTRANS;
-		viewVCE_voice.sendToMIDI(document.getElementById("VTRANS"), "VTRANS", vce.Head.VTRANS)
+		viewVCE_voice.sendToCSurface(document.getElementById("VTRANS"), "VTRANS", vce.Head.VTRANS)
 		document.getElementById("VACENT").value = vce.Head.VACENT;
-		viewVCE_voice.sendToMIDI(document.getElementById("VACENT"), "VACENT", vce.Head.VACENT)
+		viewVCE_voice.sendToCSurface(document.getElementById("VACENT"), "VACENT", vce.Head.VACENT)
 		document.getElementById("VASENS").value = vce.Head.VASENS;
-		viewVCE_voice.sendToMIDI(document.getElementById("VASENS"), "VASENS", vce.Head.VASENS)
+		viewVCE_voice.sendToCSurface(document.getElementById("VASENS"), "VASENS", vce.Head.VASENS)
 		document.getElementById("VTCENT").value = vce.Head.VTCENT;
-		viewVCE_voice.sendToMIDI(document.getElementById("VTCENT"), "VTCENT", vce.Head.VTCENT)
+		viewVCE_voice.sendToCSurface(document.getElementById("VTCENT"), "VTCENT", vce.Head.VTCENT)
 		document.getElementById("VTSENS").value = vce.Head.VTSENS;
-		viewVCE_voice.sendToMIDI(document.getElementById("VTSENS"), "VTSENS", vce.Head.VTSENS)
+		viewVCE_voice.sendToCSurface(document.getElementById("VTSENS"), "VTSENS", vce.Head.VTSENS)
 
 		var i;
 		var count = 0;
@@ -1076,7 +1076,7 @@ ${freqDAG}
 		console.log('--- finish viewVCE_voice init');
 	},
 
-	updateFromMIDI: function (payload) {
+	updateFromCSurface: function (payload) {
 		if (!viewVCE_voice.voicingMode) {
 			// ignore unless we're voicing
 		}
@@ -1104,7 +1104,7 @@ ${freqDAG}
 
 		var ele = document.getElementById(payload.Field)
 		if (ele === undefined || ele === null) {
-			console.log("updateFromMIDI " + payload.Field + " element not found");
+			console.log("updateFromCSurface " + payload.Field + " element not found");
 			return
 		}
 		var value = payload.Value
@@ -1138,7 +1138,7 @@ ${freqDAG}
 
 		var valueString = converter("" + value)
 
-		//console.log("  updateFromMIDI " + payload.Field + "was " + ele.value);
+		//console.log("  updateFromCSurface " + payload.Field + "was " + ele.value);
 		if (ele.disabled) {
 			//console.log("   disabled!");
 			return;
@@ -1166,11 +1166,11 @@ ${freqDAG}
 		} else if (ele.type == "text") {
 			ele.value = valueString;
 		}
-		//console.log("  updateFromMIDI " + payload.Field + "NOW " + ele.value);
+		//console.log("  updateFromCSurface " + payload.Field + "NOW " + ele.value);
 		ele.onchange();
 	},
 
-	sendToMIDI: function (ele, field, value) {
+	sendToCSurface: function (ele, field, value) {
 		// pass ele==null to force the value to just be sent without scaling
 
 		// value comes in scaled to "synergy byte" value - but MIDI values are always 0 based.  
@@ -1181,14 +1181,14 @@ ${freqDAG}
 		}
 
 		let message = {
-			"name": "sendToMIDI",
+			"name": "sendToCSurface",
 			"payload": {
 				Field: field,
 				Value: parseInt(value, 10)
 			}
 		};
 		astilectron.sendMessage(message, function (message) {
-			//console.log("sendToMIDI returned: " + JSON.stringify(message));
+			//console.log("sendToCSurface returned: " + JSON.stringify(message));
 			// Check error
 			if (message.name === "error") {
 				index.errorNotification(message.payload);

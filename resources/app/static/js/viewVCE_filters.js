@@ -265,7 +265,7 @@ let viewVCE_filters = {
 				var idx = parseInt(idxString, 10) - 1;
 				obj.value = vce.Extra.uncompressedFilters[filterIndex][idx];
 				//if (animate) {
-				viewVCE_voice.sendToMIDI(obj, id, vce.Extra.uncompressedFilters[filterIndex][idx]);
+				viewVCE_voice.sendToCSurface(obj, id, vce.Extra.uncompressedFilters[filterIndex][idx]);
 				//}
 			});
 			// match the color rotation below.  We don't allocate a color for an "unused" Bf. So this is
@@ -301,7 +301,7 @@ let viewVCE_filters = {
 			for (i = 1; i <= 32; i++) {
 				var id = "flt[" + i + "]";
 				var ele = document.getElementById(id);
-				viewVCE_voice.sendToMIDI(ele, id, 0);
+				viewVCE_voice.sendToCSurface(ele, id, 0);
 			}
 			//}
 

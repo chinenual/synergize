@@ -524,8 +524,8 @@ let index = {
 					index.viewDiag();
 					return { payload: "ok" };
 					break;
-				case "updateFromMIDI":
-					viewVCE_voice.updateFromMIDI(message.payload)
+				case "updateFromCSurface":
+					viewVCE_voice.updateFromCSurface(message.payload)
 					return { payload: "ok" };
 			}
 		});
