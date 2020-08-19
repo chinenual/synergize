@@ -24,11 +24,21 @@ let prefs = {
 				document.getElementById("serialPort").value = preferences.SerialPort;
 				document.getElementById("serialBaud").value = preferences.SerialBaud;
 				document.getElementById("libraryPath").value = preferences.LibraryPath;
+
 				document.getElementById("useMidi").checked = preferences.UseMidi ? "checked" : "";
 				document.getElementById("midiInterface").value = preferences.MidiInterface;
 				document.getElementById("midiInterface").disabled = !preferences.UseMidi;
 				document.getElementById("midiDeviceConfig").value = preferences.MidiDeviceConfig;
 				document.getElementById("midiDeviceConfig").disabled = !preferences.UseMidi;
+
+				document.getElementById("useOsc").checked = preferences.UseOsc ? "checked" : "";
+				document.getElementById("oscPort").value = preferences.OscPort;
+				document.getElementById("oscPort").disabled = !preferences.UseOsc;
+				document.getElementById("oscCSurfaceAddress").value = preferences.OscCSurfaceAddress;
+				document.getElementById("oscCSurfaceAddress").disabled = !preferences.UseOsc;
+				document.getElementById("oscCSurfacePort").value = preferences.OscCSurfacePort;
+				document.getElementById("oscCSurfacePort").disabled = !preferences.UseOsc;
+
 				if (os === "darwin") {
 					/*
 					  * as nice as this would be, macos hides the /dev directory
@@ -58,6 +68,12 @@ let prefs = {
 		var checked = ele.checked;
 		document.getElementById("midiInterface").disabled = !checked;
 		document.getElementById("midiDeviceConfig").disabled = !checked;
+	},
+
+	toggleOsc: function (ele) {
+		var checked = ele.checked;
+		document.getElementById("oscPort").disabled = !checked;
+		document.getElementById("oscCSurfaceAddress").disabled = !checked;
 	},
 
 	serialPortDialog: function (ele, defaultValue) {
@@ -111,7 +127,11 @@ let prefs = {
 				"LibraryPath": document.getElementById("libraryPath").value,
 				"UseMidi": document.getElementById("useMidi").checked,
 				"MidiInterface": document.getElementById("midiInterface").value,
-				"MidiDeviceConfig": document.getElementById("midiDeviceConfig").value
+				"MidiDeviceConfig": document.getElementById("midiDeviceConfig").value,
+				"UseOsc": document.getElementById("useOsc").checked,
+				"OscPort": parseInt(document.getElementById("oscPort").value, 10),
+				"OscCSurfaceAddress": document.getElementById("oscCSurfaceAddress").value,
+				"OscCSurfacePort": parseInt(document.getElementById("oscCSurfacePort").value, 10),
 			}
 		};
 		console.log("saveAndClose: " + message);

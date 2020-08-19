@@ -39,6 +39,7 @@ func QuitMidi() (err error) {
 		out.Close()
 		drv.Close()
 	}
+	open = false
 	return
 }
 

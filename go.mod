@@ -14,6 +14,7 @@ require (
 	github.com/chromedp/chromedp v0.5.3
 	github.com/elazarl/go-bindata-assetfs v1.0.0
 	github.com/gobwas/ws v1.0.3 // indirect
+	github.com/hypebeast/go-osc v0.0.0-20200115085105-85fee7fed692
 	github.com/jacobsa/go-serial v0.0.0-20180131005756-15cf729a72d4
 	github.com/mailru/easyjson v0.7.1 // indirect
 	github.com/mattn/goveralls v0.0.6 // indirect

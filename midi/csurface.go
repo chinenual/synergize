@@ -43,6 +43,9 @@ var outboundChannelMap = make(map[string]uint8)
 //type outboundFieldMap map[string]outboundField
 
 func csSendEvent(field string, val uint8) (err error) {
+	if !open {
+		return
+	}
 	var channel uint8
 	var found bool
 	var fieldinfo outboundField

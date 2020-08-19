@@ -1,4 +1,4 @@
-package midi
+package osc
 
 import (
 	"github.com/asticode/go-astilectron"
@@ -8,13 +8,9 @@ import (
 
 var astilectronWindow *astilectron.Window
 
-func RegisterBridge(w *astilectron.Window) (err error) {
+func OscRegisterBridge(w *astilectron.Window) (err error) {
 	astilectronWindow = w
 	return
-}
-
-func SendToCSurface(field string, value int) (err error) {
-	return csSendEvent(field, uint8(value))
 }
 
 type UIMsg struct {
@@ -22,7 +18,7 @@ type UIMsg struct {
 	Value int
 }
 
-func SendToUI(field string, value int) (err error) {
+func sendToUI(field string, value int) (err error) {
 	log.Printf("SendToUI: %s %d\n", field, value)
 	if astilectronWindow == nil {
 		return

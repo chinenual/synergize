@@ -12,6 +12,7 @@ import (
 
 	"github.com/chinenual/synergize/data"
 	"github.com/chinenual/synergize/midi"
+	"github.com/chinenual/synergize/osc"
 	"github.com/chinenual/synergize/synio"
 
 	"github.com/asticode/go-astilectron"
@@ -350,7 +351,8 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		midi.sendToCSurface(args.Field, args.Value)
+		midi.SendToCSurface(args.Field, args.Value)
+		osc.OscSendToCSurface(args.Field, args.Value)
 		payload = "ok"
 
 	case "setEnvelopes":
@@ -694,6 +696,16 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 					}()
 				}
 			}
+			if prefsUserPreferences.UseOsc {
+				if err = osc.OscInit(prefsUserPreferences.OscPort,
+					prefsUserPreferences.OscCSurfaceAddress,
+					prefsUserPreferences.OscCSurfacePort,
+					*verboseOscIn, *verboseOscOut); err != nil {
+
+					log.Println(err)
+					payload = err.Error()
+				}
+			}
 			if payload == nil {
 				if vce, err = synio.EnableVoicingMode(); err != nil {
 					payload = err.Error()
@@ -705,6 +717,9 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 
 		} else {
 			if err = midi.QuitMidi(); err != nil {
+				payload = err.Error()
+			}
+			if err = osc.OscQuit(); err != nil {
 				payload = err.Error()
 			}
 			if err = synio.DisableVoicingMode(); err != nil {

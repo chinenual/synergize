@@ -7,13 +7,17 @@ import (
 )
 
 type Preferences struct {
-	SerialPort       string
-	SerialBaud       uint
-	LibraryPath      string
-	HTTPDebug        bool
-	UseMidi          bool
-	MidiInterface    string
-	MidiDeviceConfig string
+	SerialPort         string
+	SerialBaud         uint
+	LibraryPath        string
+	HTTPDebug          bool
+	UseMidi            bool
+	MidiInterface      string
+	MidiDeviceConfig   string
+	UseOsc             bool
+	OscPort            uint
+	OscCSurfaceAddress string
+	OscCSurfacePort    uint
 }
 
 var preferencesPathname string = getWorkingDirectory() + "/preferences.json"
