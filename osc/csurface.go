@@ -125,7 +125,16 @@ func OscSendToCSurface(field string, val int) (err error) {
 	if strings.HasPrefix(addr, "/FILTER") {
 		var filterColorMap = []string{"gray", "red", "green"}
 		// special case the tri-state filter values to also set color
-		if err = oscSendString(addr+"/color", filterColorMap[val]); err != nil {
+		var color = filterColorMap[0]
+		if val < 0 {
+			val = 1
+			color = filterColorMap[1]
+		} else if val > 0 {
+			val = 1
+			color = filterColorMap[2]
+		}
+		//fmt.Printf("\n   %s %s %d\n\n", addr, color, val)
+		if err = oscSendString(addr+"/color", color); err != nil {
 			return
 		}
 	}

@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	oscio = flag.Bool("oscio", true, "run integration tests that talk to OSC")
+	oscio = flag.Bool("oscio", false, "run integration tests that talk to OSC")
 )
 
 func sendEventsArr(field string, fieldRange []int, valRange []int, delay time.Duration) (err error) {

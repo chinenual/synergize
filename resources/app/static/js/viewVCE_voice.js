@@ -84,14 +84,12 @@ let viewVCE_voice = {
 		} else {
 			console.log("ERROR: filterCHanged called with bad ele " + ele);
 		}
-		var filterValue;
-		if (ele.value == "") {
-			filterValue = 0;
-		} else {
-			filterValue = parseInt(ele.value, 10);
-		}
+		var filterValue = parseInt(ele.value, 10);
 		vce.Head.FILTER[osc - 1] = filterValue;
-		viewVCE_filters.init(true);
+		// don't wait for this - we want to get feedback to the control surface asap
+		async () => {
+			viewVCE_filters.init(true);
+		}
 	},
 
 	OHARMToText: function (str) {
@@ -349,6 +347,7 @@ let viewVCE_voice = {
 			param = "FILTER"
 			funcname = "setOscFILTER";
 			osc = parseInt(ret[1])
+			// the synergy wants to see -1 for Af, <osc#> for Bf and 0 for no filter
 			value = parseInt(valueConverter(ele.value), 10);
 			args = [osc, value];
 		} else if (ret = id.match(waveKeyPattern)) {
@@ -584,13 +583,13 @@ let viewVCE_voice = {
 			td.innerHTML = wave;
 			td.innerHTML = `<select class="vceEdit" id="FILTER[${osc + 1}]" value="${filter}" 
 					onchange="viewVCE_voice.onchange(this,viewVCE_voice.filterChanged)" disabled/>
-					<option ${filter == 0 ? "selected" : ""} value=""></option>
+					<option ${filter == 0 ? "selected" : ""} value="0"></option>
 					<option ${filter < 0 ? "selected" : ""} value="-1">Af</option>
 					<option ${filter > 0 ? "selected" : ""} value="${osc + 1}">Bf</option>
 					</select>
 					`;
 			tr.appendChild(td);
-			viewVCE_voice.sendToCSurface(null, `FILTER[${osc + 1}]`, filter == 0 ? 0 : filter < 0 ? 1 : 2);
+			viewVCE_voice.sendToCSurface(null, `FILTER[${osc + 1}]`, filter);
 
 			tbody.appendChild(tr);
 		}
