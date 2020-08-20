@@ -538,7 +538,7 @@ let viewVCE_voice = {
 			min="-11" max="31"
 			disabled/></div>`;
 			tr.appendChild(td);
-			viewVCE_voice.sendToCSurface(null, `OHARM[${osc + 1}]`, vce.Envelopes[osc].FreqEnvelope.OHARM + 11)
+			viewVCE_voice.sendToCSurface(null, `OHARM[${osc + 1}]`, vce.Envelopes[osc].FreqEnvelope.OHARM)
 
 			//--- Detn
 			td = document.createElement("td");
@@ -547,7 +547,7 @@ let viewVCE_voice = {
 			min="-63" max="63"
 			disabled/></div>`;
 			tr.appendChild(td);
-			viewVCE_voice.sendToCSurface(null, `FDETUN[${osc + 1}]`, vce.Envelopes[osc].FreqEnvelope.FDETUN + 63)
+			viewVCE_voice.sendToCSurface(null, `FDETUN[${osc + 1}]`, vce.Envelopes[osc].FreqEnvelope.FDETUN)
 
 			var waveByte = vce.Envelopes[osc].FreqEnvelope.Table[3];
 			var wave = ((waveByte & 0x1) == 0) ? 'Sin' : 'Tri';
