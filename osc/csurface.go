@@ -32,6 +32,28 @@ func changeOscRowVisibility(row int, onoff int) (err error) {
 	return
 }
 
+func changeAmpEnvRowVisibility(row int, onoff int) (err error) {
+	for _, field := range []string{"envAmpLowVal", "envAmpUpVal", "envAmpLowTime", "envAmpUpTime"} {
+		addr := fmt.Sprintf("/%s/%d/visible", field, row)
+
+		if err = oscSendInt(addr, int32(onoff)); err != nil {
+			return
+		}
+	}
+	return
+}
+
+func changeFreqEnvRowVisibility(row int, onoff int) (err error) {
+	for _, field := range []string{"envFreqLowVal", "envFreqUpVal", "envFreqLowTime", "envFreqUpTime"} {
+		addr := fmt.Sprintf("/%s/%d/visible", field, row)
+
+		if err = oscSendInt(addr, int32(onoff)); err != nil {
+			return
+		}
+	}
+	return
+}
+
 // field looks like "OHARM[3]" or VASENS  -- i.e an identifier followed by an optional index
 func OscSendToCSurface(field string, val int) (err error) {
 	if field == "num-osc" {
@@ -46,11 +68,42 @@ func OscSendToCSurface(field string, val int) (err error) {
 			}
 		}
 		return
+	} else if field == "num-freq-env-points" {
+		// special case for hiding unused controls:
+		for i := 1; i <= 16; i++ {
+			var onoff = 0
+			if i <= val {
+				onoff = 1
+			}
+			if err = changeFreqEnvRowVisibility(i, onoff); err != nil {
+				return
+			}
+		}
+		return
+	} else if field == "num-amp-env-points" {
+		// special case for hiding unused controls:
+		for i := 1; i <= 16; i++ {
+			var onoff = 0
+			if i <= val {
+				onoff = 1
+			}
+			if err = changeAmpEnvRowVisibility(i, onoff); err != nil {
+				return
+			}
+		}
+		return
 	}
 	addr := fieldToAddr(field)
 	//reverse := addrToField(addr)
 	//	log.Printf("  field: " + field + " OSC addr: " + addr + "  reversed: " + reverse)
 
+	if strings.HasPrefix(addr, "/FILTER") {
+		var filterColorMap = []string{"gray", "red", "green"}
+		// special case the tri-state filter values to also set color
+		if err = oscSendString(addr+"/color", filterColorMap[val]); err != nil {
+			return
+		}
+	}
 	if err = oscSendInt(addr, int32(val)); err != nil {
 		return
 	}
