@@ -10,11 +10,15 @@ permalink: /
 <img src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/logo-for-github.png?raw=true"/>
 
 A portable voice editor and librarian for the DKI Synergy synthesizer
+with a GDS-like user interface.
 
 ## Features
 
 * Native support for MacOS, Windows and Linux. No need for a Kaypro. No
 need to emulate CP/M software.
+
+* An optional integration with the TouchOSC tablet control surface
+  gives "GDS like" faders and buttons to control the Synergize editor.
 
 * Load and create virtual "carts" (CRT files).   No need for a physical
 library of carts.
@@ -52,6 +56,9 @@ If you are a user or are thinking of becoming a user, please join our Slack work
 <img title="Voice Filters view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_filters.png?raw=true" width="45%"/>
 <img title="Voice Key Equalization view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_keyeq.png?raw=true" width="45%"/>
 <img title="Voice Key Proportion view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_keyprop.png?raw=true" width="45%"/>
+
+<img title="Control Surface view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/cs-voice-tab.png?raw=true" width="45%"/>
+<img title="Control Surface view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/cs-filters-tab.png?raw=true" width="45%"/>
 
 ## Requirements and How to use
 
