@@ -70,15 +70,21 @@ surface in yellow text.
 
 ### Voice Tab
 
+![screenshot](/synergize/docs/screenshots/cs-voice-tab.png)
+
 The voice table offers controls for everything editable on the UI's Voice Tab.
 
 Each row corresponds to an oscillator.  The yellow lights indicate which oscillators are active for the voice. Inactive oscillator buttons and sliders are hidden.
 
 ### Voice Freqs Tab
 
+![screenshot](/synergize/docs/screenshots/cs-voice-freqs-tab.png)
+
 This duplicates the Harmonics and Detune sliders from the voice tab, but in a larger format giving each slide a longer "throw".
 
 ### Freq Envelopes Tab
+
+![screenshot](/synergize/docs/screenshots/cs-freq-envelopes-tab.png)
 
 The Synergize Envelopes tab is split into two on the control surface due to the sheer number of things that can be controlled.  The Frequency and Amplitude envelopes have their own pages on the control surface.  When the Synergize UI changes to the Envelopes tab, the control surface switches to the Frequency Envelope. You must manually switch to the Amp envelope if needed.
 
@@ -90,17 +96,25 @@ points are hidden.
 
 ### Amp Envelopes Tab
 
+![screenshot](/synergize/docs/screenshots/cs-amp-envelopes-tab.png)
+
 Like the Freq tab, but for the Amp envelopes.
 
 ### Filters Tab
+
+![screenshot](/synergize/docs/screenshots/cs-filters-tab.png)
 
 You must select the filter you want to edit via the Synergize UI.
 
 ### Key Equalization Tab
 
+![screenshot](/synergize/docs/screenshots/cs-keyeq-tab.png)
+
 Allows direct editing of the Key Equalization curve.
 
 ### Key Proportion Tab
+
+![screenshot](/synergize/docs/screenshots/cs-keyprop-tab.png)
 
 Allows direct editing of the Key Proportion curve.
 
