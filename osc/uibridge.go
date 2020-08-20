@@ -1,6 +1,7 @@
 package osc
 
 import (
+	"encoding/json"
 	"github.com/asticode/go-astilectron"
 	bootstrap "github.com/asticode/go-astilectron-bootstrap"
 	"log"
@@ -23,8 +24,20 @@ func sendToUI(field string, value int) (err error) {
 	if astilectronWindow == nil {
 		return
 	}
+	var strval string
 	if err = bootstrap.SendMessage(astilectronWindow, "updateFromCSurface", UIMsg{field, value},
-		func(m *bootstrap.MessageIn) { /* ignore response */ }); err != nil {
+		func(m *bootstrap.MessageIn) {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &strval); err != nil {
+				log.Printf(" SendToUI failed to decode json response : %s %d: %v\n", field, value, err)
+				return
+			}
+			// feedback to CSurface:
+			if err = oscSendString("/stringval", strval); err != nil {
+				return
+			}
+
+		}); err != nil {
 		return
 	}
 	return

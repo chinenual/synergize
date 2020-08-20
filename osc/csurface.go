@@ -21,6 +21,13 @@ func addrToField(addr string) string {
 	return addr[1:slash+1] + "[" + addr[slash+2:] + "]"
 }
 
+func csurfaceInit() (err error) {
+	if err = oscSendString("/stringval", ""); err != nil {
+		return
+	}
+	return
+}
+
 func changeOscRowVisibility(row int, onoff int) (err error) {
 	for _, field := range []string{"MUTE", "SOLO", "OHARM", "FDETUN", "wkWAVE", "wkKEYPROP", "FILTER"} {
 		addr := fmt.Sprintf("/%s/%d/visible", field, row)
@@ -90,6 +97,14 @@ func OscSendToCSurface(field string, val int) (err error) {
 			if err = changeAmpEnvRowVisibility(i, onoff); err != nil {
 				return
 			}
+		}
+		return
+	} else if field == "freq-env-accel-visible" || field == "amp-env-accel-visible" {
+		// special case for hiding unused controls:
+		addr := fmt.Sprintf("/%s/visible", field)
+
+		if err = oscSendInt(addr, int32(val)); err != nil {
+			return
 		}
 		return
 	}

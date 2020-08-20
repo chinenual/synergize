@@ -45,6 +45,10 @@ func OscInit(port uint, csurfaceAddress string, csurfacePort uint, verboseIn boo
 		}
 	}()
 
+	if err = csurfaceInit(); err != nil {
+		return
+	}
+
 	return
 }
 
