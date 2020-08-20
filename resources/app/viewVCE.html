@@ -95,9 +95,9 @@
 				<tr class="listplusminus" id="oscPlusMinus" style="display:none;">
 					<td colspan="9">
 						<div style="margin-top: 5px; float: left;">
-							<input id="delOsc" type='button' value='-'
+							<input id="del-osc" type='button' value='-'
 								onclick=' viewVCE_voice.setNumOscillators(vce.Head.VOITAB)' />
-							<input id="addOsc" type='button' value='+'
+							<input id="add-osc" type='button' value='+'
 								onclick=viewVCE_voice.setNumOscillators(vce.Head.VOITAB+2)' />
 						</div>
 					</td>
@@ -1303,17 +1303,17 @@
 				<tr class="listplusminus">
 					<td colspan="8">
 						<div style="margin-top: 5px; float: left;">
-							<input id="delFreqPoint" type='button' value='-'
+							<input id="del-freq-env-point" type='button' value='-'
 								onclick=' viewVCE_envs.changeEnvPoints("freq", -1)' />
-							<input id="addFreqPoint" type='button' value='+'
+							<input id="add-freq-env-point" type='button' value='+'
 								onclick='viewVCE_envs.changeEnvPoints("freq", 1)' />
 						</div>
 					</td>
 					<td colspan="8">
 						<div style="margin-top: 5px; float: left;">
-							<input id="delAmpPoint" type='button' value='-'
+							<input id="del-amp-env-point" type='button' value='-'
 								onclick=' viewVCE_envs.changeEnvPoints("amp", -1)' />
-							<input id="addAmpPoint" type='button' value='+'
+							<input id="add-amp-env-point" type='button' value='+'
 								onclick='viewVCE_envs.changeEnvPoints("amp", 1)' />
 						</div>
 					</td>

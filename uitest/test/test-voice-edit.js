@@ -51,24 +51,24 @@ describe('Test voice page edits', () => {
     // test increasing Osc count
     it('up-arrow to osc count 1->4', async () => {
         await app.client
-            .click(cssQuoteId('#addOsc'))
+            .click(cssQuoteId('#add-osc'))
             .waitForText(cssQuoteId('#nOsc'), '2')
 
             .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#addOsc'))
+            .click(cssQuoteId('#add-osc'))
             .waitForText(cssQuoteId('#nOsc'), '3')
 
             .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#addOsc'))
+            .click(cssQuoteId('#add-osc'))
             .waitForText(cssQuoteId('#nOsc'), '4')
 
             .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#addOsc'))
+            .click(cssQuoteId('#add-osc'))
             .waitForText(cssQuoteId('#nOsc'), '5')
             .waitForVisible(cssQuoteId('#MUTE[5]'))
 
             .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#delOsc'))
+            .click(cssQuoteId('#del-osc'))
             .pause(TYPING_PAUSE)
             .waitForText(cssQuoteId('#nOsc'), '4')
             .waitForVisible(cssQuoteId('#MUTE[4]'))

@@ -37,20 +37,20 @@ describe('Test envs page edits', () => {
         await app.client
             .isVisible(cssQuoteId('#envFreqLoop[2]')).should.eventually.equal(false)
             .pause(TYPING_PAUSE)
-            .click('#addFreqPoint')
+            .click('#add-freq-env-point')
             .waitForVisible(cssQuoteId('#envFreqLoop[2]'))
             .pause(TYPING_PAUSE)
-            .click('#addFreqPoint')
+            .click('#add-freq-env-point')
             .waitForVisible(cssQuoteId('#envFreqLoop[3]'))
             .pause(TYPING_PAUSE)
-            .click('#addFreqPoint')
+            .click('#add-freq-env-point')
             .waitForVisible(cssQuoteId('#envFreqLoop[4]'))
             .pause(TYPING_PAUSE)
-            .click('#addFreqPoint')
+            .click('#add-freq-env-point')
             .waitForVisible(cssQuoteId('#envFreqLoop[5]'))
 
             .pause(TYPING_PAUSE)
-            .click('#addAmpPoint')
+            .click('#add-amp-env-point')
             .waitForVisible(cssQuoteId('#envAmpLoop[2]'))
 
             .isVisible(cssQuoteId('#envFreqLoop[2]')).should.eventually.equal(true)
@@ -62,7 +62,7 @@ describe('Test envs page edits', () => {
 
         await app.client
             .pause(TYPING_PAUSE)
-            .click('#delFreqPoint')
+            .click('#del-freq-env-point')
             .waitForVisible(cssQuoteId('#envFreqLoop[5]'), 1000, true) // wait to disappear
             .isVisible(cssQuoteId('#envFreqLoop[5]')).should.eventually.equal(false)
             .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
@@ -145,7 +145,7 @@ describe('Test envs page edits', () => {
     it('should disallow removing row if it contains a loop point', async () => {
         await app.client
             .pause(TYPING_PAUSE)
-            .click('#delFreqPoint')
+            .click('#del-freq-env-point')
 
             .waitForVisible('#alertText')
             .then(() => { return hooks.screenshotAndCompare(app, 'envs-deleteLoopPoint-alert') })
@@ -193,7 +193,7 @@ describe('Test envs page edits', () => {
     it('now can remove a point', async () => {
         await app.client
             .pause(TYPING_PAUSE)
-            .click('#delFreqPoint')
+            .click('#del-freq-env-point')
             .waitForVisible(cssQuoteId('#envFreqLoop[5]'), 1000, true) // wait to disappear
             .isVisible(cssQuoteId('#envFreqLoop[4]')).should.eventually.equal(false)
             .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)

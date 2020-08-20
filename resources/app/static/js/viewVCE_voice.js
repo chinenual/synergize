@@ -600,9 +600,9 @@ let viewVCE_voice = {
 			temp.innerHTML = `<tr class="listplusminus" id="oscPlusMinus" style="display:none;">
 							    <td colspan="9">
 			    					<div style="margin-top: 5px; float: left;">
-				    					<input id="delOsc" type='button' value='-'
+				    					<input id="del-osc" type='button' value='-'
 										    onclick='viewVCE_voice.setNumOscillators(vce.Head.VOITAB)' />
-									    <input id="addOsc" type='button' value='+'
+									    <input id="add-osc" type='button' value='+'
 									   	    onclick='viewVCE_voice.setNumOscillators(vce.Head.VOITAB+2)' />
 								    </div>
 								</td>
@@ -692,14 +692,14 @@ ${freqDAG}
 				var oldLength = vce.Envelopes.length
 
 				if (vce.Head.VOITAB <= 0) {
-					$("#delOsc").addClass('disabled');
+					$("#del-osc").addClass('disabled');
 				} else {
-					$("#delOsc").removeClass('disabled');
+					$("#del-osc").removeClass('disabled');
 				}
 				if (vce.Head.VOITAB >= 15) {
-					$("#addOsc").addClass('disabled');
+					$("#add-osc").addClass('disabled');
 				} else {
-					$("#addOsc").removeClass('disabled');
+					$("#add-osc").removeClass('disabled');
 				}
 				if (newNum <= oldLength) {
 					// nothing to do - just ignored the extra envelopes
@@ -886,14 +886,14 @@ ${freqDAG}
 			$('#oscPlusMinus').hide();
 		}
 		if (vce.Head.VOITAB <= 0) {
-			$("#delOsc").addClass('disabled');
+			$("#del-osc").addClass('disabled');
 		} else {
-			$("#delOsc").removeClass('disabled');
+			$("#del-osc").removeClass('disabled');
 		}
 		if (vce.Head.VOITAB >= 15) {
-			$("#addOsc").addClass('disabled');
+			$("#add-osc").addClass('disabled');
 		} else {
-			$("#addOsc").removeClass('disabled');
+			$("#add-osc").removeClass('disabled');
 		}
 
 		$('.vceEdit').prop('disabled', !mode);
@@ -1101,8 +1101,15 @@ ${freqDAG}
 			return;
 		}
 
-
 		var ele = document.getElementById(payload.Field)
+
+		// special handling for the +/- buttons
+		if (payload.Field.search("add-") == 0 || payload.Field.search("del-") == 0) {
+			ele.onclick();
+			valueString = payload.Field.search("add-") == 0 ? "Add" : "Delete";
+			return valueString; // don't trigger non-existent onchange()
+		}
+
 		if (ele === undefined || ele === null) {
 			console.log("updateFromCSurface " + payload.Field + " element not found");
 			return
@@ -1171,7 +1178,7 @@ ${freqDAG}
 			// SOLO/MUTE buttons
 			ele.onclick();
 
-			valueString - ele.classList.contains("on") ? "ON" : "OFF"
+			valueString = ele.classList.contains("on") ? "ON" : "OFF"
 			return valueString; // don't trigger non-existent onchange()
 		} else if (ele.type == "checkbox") {
 			ele.checked = value == 0 ? "" : "checked";
