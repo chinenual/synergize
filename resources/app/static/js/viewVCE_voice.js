@@ -1166,10 +1166,13 @@ ${freqDAG}
 			}
 			options.selectedIndex = i;
 			//			console.log("cycle SELECT: now " + options.selectedIndex);
+			valueString = options[i].text;
 		} else if (ele.nodeName == "SPAN") {
 			// SOLO/MUTE buttons
 			ele.onclick();
-			return; // don't trigger non-existent onchange()
+
+			valueString - ele.classList.contains("on") ? "ON" : "OFF"
+			return valueString; // don't trigger non-existent onchange()
 		} else if (ele.type == "checkbox") {
 			ele.checked = value == 0 ? "" : "checked";
 		} else if (ele.type == "text") {
@@ -1177,6 +1180,7 @@ ${freqDAG}
 		}
 		//console.log("  updateFromCSurface " + payload.Field + "NOW " + ele.value);
 		ele.onchange();
+		return valueString;
 	},
 
 	sendToCSurface: function (ele, field, value) {
