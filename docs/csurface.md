@@ -130,8 +130,8 @@ Allows direct editing of the Key Proportion curve.
 A common problem is a poor network connection.  The OSC protocol is
 "fire and forget" so if your tablet or the computer running Synergize
 are on on a weak Wifi connection or separated by multiple hops,
-packets can be lost and updates may not be delivered.  Ensure both
-devices are on the same network and if using Wifi, make sure you are
-using a strong connection (if you have more than one Wifi
-router/access point near your studio, ensure the device is using the
-closest/best one).
+packets can be lost and updates may not be delivered.
+* Ensure both devices are on the same network.
+* If using Wifi, make sure you are using a strong connection.
+* If you have more than one Wifi router/access point near your studio,
+  ensure each device is using the closest/best one. 
