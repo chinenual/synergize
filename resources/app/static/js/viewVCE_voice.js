@@ -1084,7 +1084,7 @@ ${freqDAG}
 
 		// special handling for switching tabs -- fieldnames end with "-tab":
 		if (payload.Field.search("-tab") >= 0) {
-			if (payload.Field === "voice-tab") {
+			if (payload.Field === "voice-tab" || payload.Field === "voice-freqs-tab") {
 				$('#vceTabs a[href="#vceVoiceTab"]').tab('show');
 			} else if (payload.Field === "freq-envelopes-tab") {
 				$('#vceTabs a[href="#vceEnvsTab"]').tab('show');

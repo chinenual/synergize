@@ -54,10 +54,20 @@ modern hardware and operating systems (Mac, Windows, Linux).  No need
 for a 30+ year old Kaypro. Except for a couple of minor features, Synergize
 replicates everything you can do in SYNHCS.
 
+With version 2.1.0, Synergize supports an tablet based "control
+surface", providing faders akin to the original GDS user interface.
+Make your Synergy a bit more like a GDS with Synergize.
+See [Control Surface](csurface.html) for details.
+
 ## Features
 
 ### Cross Platform
 * Runs on Mac, Windows, Linux
+
+### GDS-like faders
+
+* Control the editor with an external control surface (move sliders/faders to
+  control harmonic frequency, envelope values, filter curves).
 
 ### Librarian (VCE and CRT files)
 * View voice settings

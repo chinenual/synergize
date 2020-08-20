@@ -17,7 +17,9 @@ At the moment, the only control surface supported is one written especially for 
 Upload the supplied touchosc configuration file, [Synergize.touchosc](https://github.com/chinenual/synergize/raw/master/midi/touchosc/Synergize.touchosc)
 to your tablet following the instructions at [the TouchOSC home site](https://hexler.net/docs/touchosc).
 
-Synergize-TouchOSC uses an OSC connection. 
+Synergize-TouchOSC uses an OSC connection.  Ensure both your tablet
+and the computer running Synergize have good network connections and
+are on the same local network. 
 
 ## TouchOSC side configuration
 
@@ -86,7 +88,12 @@ This duplicates the Harmonics and Detune sliders from the voice tab, but in a la
 
 ![screenshot](/synergize/docs/screenshots/cs-freq-envs-tab.png)
 
-The Synergize Envelopes tab is split into two on the control surface due to the sheer number of things that can be controlled.  The Frequency and Amplitude envelopes have their own pages on the control surface.  When the Synergize UI changes to the Envelopes tab, the control surface switches to the Frequency Envelope. You must manually switch to the Amp envelope if needed.
+The Synergize Envelopes tab is split into two on the control surface
+due to the sheer number of things that can be controlled.  The
+Frequency and Amplitude envelopes have their own pages on the control
+surface.  When the Synergize UI changes to the Envelopes tab, the
+control surface switches to the Frequency Envelope. You must manually
+switch to the Amp envelope tab to control the Amplitude Envelope.
 
 Loop / Sustain and Repeat points cannot be controlled from the control
 surface. To change those, use the Synergize UI.
@@ -118,3 +125,13 @@ Allows direct editing of the Key Equalization curve.
 
 Allows direct editing of the Key Proportion curve.
 
+## Troubleshooting
+
+A common problem is a poor network connection.  The OSC protocol is
+"fire and forget" so if your tablet or the computer running Synergize
+are on on a weak Wifi connection or separated by multiple hops,
+packets can be lost and updates may not be delivered.  Ensure both
+devices are on the same network and if using Wifi, make sure you are
+using a strong connection (if you have more than one Wifi
+router/access point near your studio, ensure the device is using the
+closest/best one).
