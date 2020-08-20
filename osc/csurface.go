@@ -99,11 +99,21 @@ func OscSendToCSurface(field string, val int) (err error) {
 			}
 		}
 		return
-	} else if field == "freq-env-accel-visible" || field == "amp-env-accel-visible" {
+	} else if field == "freq-env-accel-visible" {
 		// special case for hiding unused controls:
-		addr := fmt.Sprintf("/%s/visible", field)
-
-		if err = oscSendInt(addr, int32(val)); err != nil {
+		if err = oscSendInt("/accelFreqLow/visible", int32(val)); err != nil {
+			return
+		}
+		if err = oscSendInt("/accelFreqUp/visible", int32(val)); err != nil {
+			return
+		}
+		return
+	} else if field == "amp-env-accel-visible" {
+		// special case for hiding unused controls:
+		if err = oscSendInt("/accelAmpLow/visible", int32(val)); err != nil {
+			return
+		}
+		if err = oscSendInt("/accelAmpUp/visible", int32(val)); err != nil {
 			return
 		}
 		return

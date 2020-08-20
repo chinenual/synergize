@@ -892,15 +892,15 @@ let viewVCE_envs = {
 			$('#accelFreqUp').val(envelopes.FreqEnvelope.LOOPPT);
 			viewVCE_voice.sendToCSurface(null, `freq-env-accel-visible`, 1);
 			if (animate) {
-				viewVCE_voice.sendToCSurface(null, `accelFreqLow[${i + 1}]`, envelopes.FreqEnvelope.SUSTAINPT);
-				viewVCE_voice.sendToCSurface(null, `accelFreqUp[${i + 1}]`, envelopes.FreqEnvelope.LOOPPT);
+				viewVCE_voice.sendToCSurface(null, `accelFreqLow`, envelopes.FreqEnvelope.SUSTAINPT);
+				viewVCE_voice.sendToCSurface(null, `accelFreqUp`, envelopes.FreqEnvelope.LOOPPT);
 			}
 		} else {
 			$('.type1accel div.Freq').hide();
 			viewVCE_voice.sendToCSurface(null, `freq-env-accel-visible`, 0);
 			if (animate) {
-				viewVCE_voice.sendToCSurface(null, `accelFreqLow[${i + 1}]`, 0);
-				viewVCE_voice.sendToCSurface(null, `acceFreqUp[${i + 1}]`, 0);
+				viewVCE_voice.sendToCSurface(null, `accelFreqLow`, 0);
+				viewVCE_voice.sendToCSurface(null, `acceFreqUp`, 0);
 			}
 		}
 		// only show accelleration values if type1 envelope
@@ -910,15 +910,15 @@ let viewVCE_envs = {
 			$('#accelAmpUp').val(envelopes.AmpEnvelope.LOOPPT);
 			viewVCE_voice.sendToCSurface(null, `amp-env-accel-visible`, 1);
 			if (animate) {
-				viewVCE_voice.sendToCSurface(null, `accelAmpLow[${i + 1}]`, envelopes.AmpEnvelope.SUSTAINPT);
-				viewVCE_voice.sendToCSurface(null, `accelAmpUp[${i + 1}]`, envelopes.AmpEnvelope.LOOPPT);
+				viewVCE_voice.sendToCSurface(null, `accelAmpLow`, envelopes.AmpEnvelope.SUSTAINPT);
+				viewVCE_voice.sendToCSurface(null, `accelAmpUp`, envelopes.AmpEnvelope.LOOPPT);
 			}
 		} else {
 			$('.type1accel div.Amp').hide();
 			viewVCE_voice.sendToCSurface(null, `amp-env-accel-visible`, 0);
 			if (animate) {
-				viewVCE_voice.sendToCSurface(null, `accelAmpLow[${i + 1}]`, 0);
-				viewVCE_voice.sendToCSurface(null, `accelAmpUp[${i + 1}]`, 0);
+				viewVCE_voice.sendToCSurface(null, `accelAmpLow`, 0);
+				viewVCE_voice.sendToCSurface(null, `accelAmpUp`, 0);
 			}
 		}
 
