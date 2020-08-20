@@ -167,6 +167,9 @@ let viewVCE_filters = {
 			document.getElementById("filtersChart").style.display = "none";
 			document.getElementById("filterTable").style.display = "none";
 			$('#filterCopySelectDiv').hide();
+			for (i = 1; i <= 32; i++) {
+				viewVCE_voice.sendToCSurface(null, `flt[${i}]`, 0);
+			}
 		} else if (viewVCE_filters.filterNames.length > 1) {
 			// "All" == -1
 			viewVCE_filters.filtersChartUpdate(-1, 'All', true);
