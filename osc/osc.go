@@ -22,7 +22,12 @@ func OscInit(port uint, csurfaceAddress string, csurfacePort uint, verboseIn boo
 	addr := fmt.Sprintf("0.0.0.0:%d", port)
 	d := goosc.NewStandardDispatcher()
 	if err = d.AddMsgHandler("*", func(msg *goosc.Message) {
-		goosc.PrintMessage(msg)
+		if verboseOscIn {
+			log.Printf("  OSC handle %v", msg)
+		}
+		if err := OscHandleFromCSurface(msg.Address, msg.Arguments[0]); err != nil {
+			log.Printf("Error handling OSC message: %v\n", err)
+		}
 	}); err != nil {
 		return
 	}

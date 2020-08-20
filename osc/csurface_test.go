@@ -57,9 +57,11 @@ func TestVoiceTab(t *testing.T) {
 		t.Skip()
 	}
 	testEvents(t, "voice-tab", []int{1, 1}, 10*time.Millisecond)
+	time.Sleep(1 * time.Second)
 
 	// turn on:
-	testEventsArr(t, "osc-enabled", []int{1, 16}, []int{1, 1}, 75*time.Millisecond)
+	testEvents(t, "num-osc", []int{1, 16}, 75*time.Millisecond)
+
 	testEventsArr(t, "MUTE", []int{1, 16}, []int{1, 1}, 75*time.Millisecond)
 	testEventsArr(t, "SOLO", []int{1, 16}, []int{1, 1}, 75*time.Millisecond)
 	testEventsArr(t, "wkWAVE", []int{1, 16}, []int{1, 1}, 75*time.Millisecond)
@@ -68,13 +70,12 @@ func TestVoiceTab(t *testing.T) {
 	testEventsArr(t, "FILTER", []int{1, 16}, []int{1, 1}, 75*time.Millisecond)
 	testEventsArr(t, "FILTER", []int{1, 16}, []int{2, 2}, 75*time.Millisecond)
 
-	testEventsArr(t, "OHARM", []int{1, 16}, []int{0, 42}, 1*time.Millisecond)
-	testEventsArr(t, "FDETUN", []int{1, 16}, []int{0, 127}, 1*time.Millisecond)
+	testEventsArr(t, "OHARM", []int{1, 16}, []int{-11, 31}, 1*time.Millisecond)
+	testEventsArr(t, "FDETUN", []int{1, 16}, []int{-63, 63}, 1*time.Millisecond)
 
 	// turn off
-	testEventsArr(t, "osc-enabled", []int{1, 16}, []int{0, 0}, 75*time.Millisecond)
-	testEventsArr(t, "SOLO", []int{1, 16}, []int{0, 0}, 75*time.Millisecond)
 	testEventsArr(t, "MUTE", []int{1, 16}, []int{0, 0}, 75*time.Millisecond)
+	testEventsArr(t, "SOLO", []int{1, 16}, []int{0, 0}, 75*time.Millisecond)
 	testEventsArr(t, "wkWAVE", []int{1, 16}, []int{0, 0}, 75*time.Millisecond)
 	testEventsArr(t, "wkKEYPROP", []int{1, 16}, []int{0, 0}, 75*time.Millisecond)
 
@@ -82,37 +83,37 @@ func TestVoiceTab(t *testing.T) {
 
 	testEvents(t, "VIBDEL", []int{0, 127}, 1*time.Millisecond)
 	testEvents(t, "VIBRAT", []int{0, 127}, 1*time.Millisecond)
-	testEvents(t, "VIBDEP", []int{0, 255}, 1*time.Millisecond)
-	testEvents(t, "APVIB", []int{0, 255}, 1*time.Millisecond)
+	testEvents(t, "VIBDEP", []int{-128, 128}, 1*time.Millisecond)
+	testEvents(t, "APVIB", []int{-128, 128}, 1*time.Millisecond)
 	testEvents(t, "VACENT", []int{0, 32}, 1*time.Millisecond)
 	testEvents(t, "VASENS", []int{0, 31}, 1*time.Millisecond)
 	testEvents(t, "VTCENT", []int{0, 32}, 1*time.Millisecond)
 	testEvents(t, "VTSENS", []int{0, 31}, 1*time.Millisecond)
-	testEvents(t, "VTRANS", []int{0, 255}, 1*time.Millisecond)
+	testEvents(t, "VTRANS", []int{-127, 128}, 1*time.Millisecond)
 }
 func TestVoiceFreqsTab(t *testing.T) {
 	if !*oscio {
 		t.Skip()
 	}
 	testEvents(t, "voice-freqs-tab", []int{1, 1}, 10*time.Millisecond)
+	time.Sleep(1 * time.Second)
 
 	// turn on:
-	testEventsArr(t, "osc-enabled", []int{1, 16}, []int{1, 1}, 75*time.Millisecond)
+	testEvents(t, "num-osc", []int{1, 16}, 75*time.Millisecond)
 
 	testEventsArr(t, "OHARM", []int{1, 16}, []int{0, 42}, 1*time.Millisecond)
 	testEventsArr(t, "FDETUN", []int{1, 16}, []int{0, 127}, 1*time.Millisecond)
 
-	// turn off
-	testEventsArr(t, "osc-enabled", []int{1, 16}, []int{0, 0}, 75*time.Millisecond)
 }
 func TestFreqEnvelopeTab(t *testing.T) {
 	if !*oscio {
 		t.Skip()
 	}
 	testEvents(t, "freq-envelopes-tab", []int{1, 1}, 10*time.Millisecond)
+	time.Sleep(1 * time.Second)
 
-	testEventsArr(t, "envFreqLowVal", []int{1, 16}, []int{0, 124}, 1*time.Millisecond)
-	testEventsArr(t, "envFreqUpVal", []int{1, 16}, []int{0, 124}, 1*time.Millisecond)
+	testEventsArr(t, "envFreqLowVal", []int{1, 16}, []int{-61, 63}, 1*time.Millisecond)
+	testEventsArr(t, "envFreqUpVal", []int{1, 16}, []int{-61, 63}, 1*time.Millisecond)
 	testEventsArr(t, "envFreqLowTime", []int{1, 16}, []int{0, 84}, 1*time.Millisecond)
 	testEventsArr(t, "envFreqUpTime", []int{1, 16}, []int{0, 84}, 1*time.Millisecond)
 	testEvents(t, "accelFreqLow", []int{0, 127}, 1*time.Millisecond)
@@ -124,9 +125,10 @@ func TestAmpEnvelopeTab(t *testing.T) {
 		t.Skip()
 	}
 	testEvents(t, "amp-envelopes-tab", []int{1, 1}, 10*time.Millisecond)
+	time.Sleep(1 * time.Second)
 
-	testEventsArr(t, "envAmpLowVal", []int{1, 16}, []int{0, 72}, 1*time.Millisecond)
-	testEventsArr(t, "envAmpUpVal", []int{1, 16}, []int{0, 72}, 1*time.Millisecond)
+	testEventsArr(t, "envAmpLowVal", []int{1, 16}, []int{55, 127}, 1*time.Millisecond)
+	testEventsArr(t, "envAmpUpVal", []int{1, 16}, []int{55, 127}, 1*time.Millisecond)
 	testEventsArr(t, "envAmpLowTime", []int{1, 16}, []int{0, 84}, 1*time.Millisecond)
 	testEventsArr(t, "envAmpUpTime", []int{1, 16}, []int{0, 84}, 1*time.Millisecond)
 	testEvents(t, "accelAmpLow", []int{0, 127}, 1*time.Millisecond)
@@ -139,16 +141,18 @@ func TestFiltersTab(t *testing.T) {
 		t.Skip()
 	}
 	testEvents(t, "filters-tab", []int{1, 1}, 10*time.Millisecond)
+	time.Sleep(1 * time.Second)
 
-	testEventsArr(t, "flt", []int{1, 32}, []int{0, 127}, 1*time.Millisecond)
+	testEventsArr(t, "flt", []int{1, 32}, []int{-64, 63}, 1*time.Millisecond)
 }
 func TestKeyeqTab(t *testing.T) {
 	if !*oscio {
 		t.Skip()
 	}
 	testEvents(t, "keyeq-tab", []int{1, 1}, 10*time.Millisecond)
+	time.Sleep(1 * time.Second)
 
-	testEventsArr(t, "keyeq", []int{1, 24}, []int{0, 31}, 1*time.Millisecond)
+	testEventsArr(t, "keyeq", []int{1, 24}, []int{-24, 7}, 1*time.Millisecond)
 }
 
 func TestKeypropTab(t *testing.T) {
@@ -156,6 +160,7 @@ func TestKeypropTab(t *testing.T) {
 		t.Skip()
 	}
 	testEvents(t, "keyprop-tab", []int{1, 1}, 10*time.Millisecond)
+	time.Sleep(1 * time.Second)
 
 	testEventsArr(t, "keyprop", []int{1, 24}, []int{0, 32}, 1*time.Millisecond)
 }

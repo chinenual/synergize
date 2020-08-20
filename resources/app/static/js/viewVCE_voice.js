@@ -421,6 +421,8 @@ let viewVCE_voice = {
 		var outRegisters = [[], [], [], []];
 		var freqDAG = "";
 
+		viewVCE_voice.sendToCSurface(null, `num-osc`, vce.Head.VOITAB + 1);
+		/*
 		for (osc = vce.Head.VOITAB + 1; osc < 16; osc++) {
 			// midi initialation for unused osc's
 			viewVCE_voice.sendToCSurface(null, `OHARM[${osc + 1}]`, 0);
@@ -431,7 +433,7 @@ let viewVCE_voice = {
 			viewVCE_voice.sendToCSurface(null, `wkKEYPROP[${osc + 1}]`, 0);
 			viewVCE_voice.sendToCSurface(null, `FILTER[${osc + 1}]`, 0);
 			viewVCE_voice.sendToCSurface(null, `osc-enabled[${osc + 1}]`, 0);
-		}
+		}*/
 
 		// populate new ones:
 		for (osc = 0; osc <= vce.Head.VOITAB; osc++) {
@@ -1098,9 +1100,7 @@ ${freqDAG}
 			}
 			return;
 		}
-		// value comes in unscaled (it's a 0-based MIDI value).  
-		// Use the min value on the input control to correct for an offset and then use the text 
-		// conversion function attached the the touchspin (if any) to turn that into a string)
+
 
 		var ele = document.getElementById(payload.Field)
 		if (ele === undefined || ele === null) {
@@ -1109,10 +1109,19 @@ ${freqDAG}
 		}
 		var value = payload.Value
 
+
+		// when using MIDI
+		// value comes in unscaled (it's a 0-based MIDI value).  
+		// Use the min value on the input control to correct for an offset and then use the text 
+		// conversion function attached the the touchspin (if any) to turn that into a string)
+		//
+		// when using OSC, the value is the direct Synergy byte value - no offset
+		/*
 		if (ele.hasAttribute("min")) {
 			var min = parseInt(ele.getAttribute("min"), 10);
 			value = value + min;
 		}
+		*/
 
 		// XREF: converter mappings: it would be nicer to directly query the input element to determine what 
 		// sort of touchspin callbacks are associate, if any.  But its not obvous how to do that, so
@@ -1173,12 +1182,16 @@ ${freqDAG}
 	sendToCSurface: function (ele, field, value) {
 		// pass ele==null to force the value to just be sent without scaling
 
+		// when using MIDI
 		// value comes in scaled to "synergy byte" value - but MIDI values are always 0 based.  
+		// when using OSC, no need to scale the offset
 		// Use the min value on the input control to correct for an offset 
+		/*
 		if (ele != null && ele.hasAttribute("min")) {
 			var min = parseInt(ele.getAttribute("min"), 10);
 			value = value - min;
 		}
+		*/
 
 		let message = {
 			"name": "sendToCSurface",
