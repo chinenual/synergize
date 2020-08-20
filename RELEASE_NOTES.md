@@ -11,7 +11,7 @@ permalink: /docs/release-notes
 
 ## 2.1.0
 
-* Adds support for a TouchOSC-based external MIDI control surface to
+* Adds support for a Tablet-based TouchOSC external control surface to
   support "GDS like" editing, with sliders for oscillator tuning,
   envelopes, filters, key eq and key proportionality.
 * Fixes [issue #8](https://github.com/chinenual/synergize/issues/8):
