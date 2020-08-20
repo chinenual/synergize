@@ -447,10 +447,13 @@ let viewVCE_voice = {
 			span = document.createElement("span");
 			span.innerHTML = `&nbsp;&nbsp;<span onclick="viewVCE_voice.toggleOsc(this)" class="vceEditToggleText" id="MUTE[${osc + 1}]">M</span>`;
 			td.append(span);
+			viewVCE_voice.sendToCSurface(null, `MUTE[${osc + 1}]`, 0)
+
 			// Solo
 			span = document.createElement("span");
 			span.innerHTML = `&nbsp;<span onclick="viewVCE_voice.toggleOsc(this)" class="vceEditToggleText" id="SOLO[${osc + 1}]">S</span>`;
 			td.append(span);
+			viewVCE_voice.sendToCSurface(null, `SOLO[${osc + 1}]`, 0)
 
 			tr.appendChild(td);
 
@@ -769,6 +772,8 @@ ${freqDAG}
 					viewVCE_voice.MUTE[osc] = false;
 					viewVCE_voice.SOLO[osc] = false;
 					$('.vceEditToggle').removeClass('on');
+					viewVCE_voice.sendToCSurface(null, `MUTE[${osc + 1}]`, 0)
+					viewVCE_voice.sendToCSurface(null, `MUTE[${osc + 1}]`, 0)
 				}
 			}
 			viewVCE_voice.voicingModeVisuals();
