@@ -39,14 +39,26 @@ func changeOscRowVisibility(row int, onoff int) (err error) {
 	return
 }
 
-func changeAmpEnvRowVisibility(row int, onoff int) (err error) {
-	for _, field := range []string{"envAmpLowVal", "envAmpUpVal", "envAmpLowTime", "envAmpUpTime"} {
+func changeAmpEnvRowVisibility(row int, isLast bool, onoff int) (err error) {
+	for _, field := range []string{"envAmpLowTime", "envAmpUpTime"} {
 		addr := fmt.Sprintf("/%s/%d/visible", field, row)
 
 		if err = oscSendInt(addr, int32(onoff)); err != nil {
 			return
 		}
 	}
+	if isLast {
+		// force last amp vals elements to be disabled
+		onoff = 0
+	}
+	for _, field := range []string{"envAmpLowVal", "envAmpUpVal"} {
+		addr := fmt.Sprintf("/%s/%d/visible", field, row)
+
+		if err = oscSendInt(addr, int32(onoff)); err != nil {
+			return
+		}
+	}
+
 	return
 }
 
@@ -94,7 +106,7 @@ func OscSendToCSurface(field string, val int) (err error) {
 			if i <= val {
 				onoff = 1
 			}
-			if err = changeAmpEnvRowVisibility(i, onoff); err != nil {
+			if err = changeAmpEnvRowVisibility(i, i == val, onoff); err != nil {
 				return
 			}
 		}
