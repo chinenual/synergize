@@ -525,8 +525,8 @@ let index = {
 					return { payload: "ok" };
 					break;
 				case "updateFromCSurface":
-					viewVCE_voice.updateFromCSurface(message.payload)
-					return { payload: "ok" };
+					valueString = viewVCE_voice.updateFromCSurface(message.payload)
+					return { payload: valueString };
 			}
 		});
 	}
