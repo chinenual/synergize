@@ -1,5 +1,6 @@
 let viewVCE_voice = {
 	voicingMode: false,
+	csEnabled: false,
 
 	timbreProportionCurve: function (center, sensitivity) {
 		var result = [];
@@ -745,11 +746,13 @@ ${freqDAG}
 			if (message.name === "error") {
 				// failed - dont change the boolean
 				index.errorNotification(message.payload);
+				viewVCE_voice.csEnabled = false;
 			} else {
 				viewVCE_voice.voicingMode = mode;
 				if (message.payload != null) {
 					if (mode) {
-						vce = message.payload;
+						vce = message.payload.Vce;
+						viewVCE_voice.csEnabled = message.payload.CsEnabled;
 
 						crt_name = null;
 						crt_path = null;
@@ -760,6 +763,7 @@ ${freqDAG}
 					} else {
 						// if we just disabled voicing, clear the VCE view
 						document.getElementById("content").innerHTML = "";
+						viewVCE_voice.csEnabled = false;
 					}
 				}
 				index.infoNotification(`Voicing mode ${mode ? 'enabled' : 'disabled'}`);
@@ -1195,6 +1199,9 @@ ${freqDAG}
 	},
 
 	sendToCSurface: function (ele, field, value) {
+		if (!viewVCE_voice.csEnabled) {
+			return
+		}
 		// pass ele==null to force the value to just be sent without scaling
 
 		// when using MIDI

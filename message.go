@@ -696,7 +696,14 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 					return
 				}
 				// NOTE: need to pass reference in order to get the custom JSON marshalling to notice the VNAME
-				payload = &vce
+				resultPayload := struct {
+					Vce       *data.VCE
+					CsEnabled bool
+				}{
+					Vce:       &vce,
+					CsEnabled: prefsUserPreferences.UseOsc,
+				}
+				payload = resultPayload
 			}
 
 		} else {
