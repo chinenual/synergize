@@ -84,7 +84,7 @@ This duplicates the Harmonics and Detune sliders from the voice tab, but in a la
 
 ### Freq Envelopes Tab
 
-![screenshot](/synergize/docs/screenshots/cs-freq-envelopes-tab.png)
+![screenshot](/synergize/docs/screenshots/cs-freq-envs-tab.png)
 
 The Synergize Envelopes tab is split into two on the control surface due to the sheer number of things that can be controlled.  The Frequency and Amplitude envelopes have their own pages on the control surface.  When the Synergize UI changes to the Envelopes tab, the control surface switches to the Frequency Envelope. You must manually switch to the Amp envelope if needed.
 
@@ -96,7 +96,7 @@ points are hidden.
 
 ### Amp Envelopes Tab
 
-![screenshot](/synergize/docs/screenshots/cs-amp-envelopes-tab.png)
+![screenshot](/synergize/docs/screenshots/cs-amp-envs-tab.png)
 
 Like the Freq tab, but for the Amp envelopes.
 
