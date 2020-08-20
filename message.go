@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/chinenual/synergize/data"
-	"github.com/chinenual/synergize/midi"
 	"github.com/chinenual/synergize/osc"
 	"github.com/chinenual/synergize/synio"
 
@@ -176,7 +175,6 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = err.Error()
 			return
 		}
-		midi.ClearMidiCache()
 		if err = synio.LoadVceVoicingMode(vce); err != nil {
 			payload = err.Error()
 			return
@@ -351,7 +349,6 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		midi.SendToCSurface(args.Field, args.Value)
 		osc.OscSendToCSurface(args.Field, args.Value)
 		payload = "ok"
 
@@ -683,19 +680,6 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		if mode {
 			var vce data.VCE
 			payload = nil
-			if prefsUserPreferences.UseMidi {
-				if err = midi.InitMidi(prefsUserPreferences.MidiInterface, prefsUserPreferences.MidiDeviceConfig,
-					*verboseMidiIn, *verboseMidiOut); err != nil {
-					log.Println(err)
-					payload = err.Error()
-				} else {
-					go func() {
-						if err = midi.ListenMidi(); err != nil {
-							log.Println(err)
-						}
-					}()
-				}
-			}
 			if prefsUserPreferences.UseOsc {
 				if err = osc.OscInit(prefsUserPreferences.OscPort,
 					prefsUserPreferences.OscCSurfaceAddress,
@@ -716,9 +700,6 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			}
 
 		} else {
-			if err = midi.QuitMidi(); err != nil {
-				payload = err.Error()
-			}
 			if err = osc.OscQuit(); err != nil {
 				payload = err.Error()
 			}

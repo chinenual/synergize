@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/chinenual/synergize/data"
-	"github.com/chinenual/synergize/midi"
 	"github.com/chinenual/synergize/osc"
 	"github.com/chinenual/synergize/synio"
 
@@ -36,8 +35,6 @@ var (
 	uitest            = flag.Int("UITEST", 0, "alter startup to support Selenium testing (specifies listening port)")
 	provisionOnly     = flag.Bool("PROVISION", false, "run the provisioner and then exit")
 	serialVerboseFlag = flag.Bool("SERIALVERBOSE", false, "Show each byte operation through the serial port")
-	verboseMidiIn     = flag.Bool("MIDIINVERBOSE", false, "Show MIDI input events")
-	verboseMidiOut    = flag.Bool("MIDIOUTVERBOSE", false, "Show MIDI output events")
 	verboseOscIn      = flag.Bool("OSCINVERBOSE", false, "Show OSC input events")
 	verboseOscOut     = flag.Bool("OSCOUTVERBOSE", false, "Show OSC output events")
 	mockSynio         = flag.Bool("MOCKSYNIO", false, "Mock the Synergy I/O for testing")
@@ -52,7 +49,6 @@ var (
 	synver            = flag.Bool("SYNVER", false, "Print the firmware version of the connected Synergy")
 	rawlog            = flag.Bool("RAWLOG", false, "Turn off timestamps to make logs easier to compare")
 	//midiproxy = flag.Bool("MIDIPROXY", false, "present a MIDI interface and use serial IO to control the Synergy")
-	miditest = flag.Bool("MIDITEST", false, "run midi.InitMidi()")
 
 	w               *astilectron.Window
 	about_w         *astilectron.Window
@@ -183,15 +179,6 @@ func main() {
 			if err = diagInitAndPrintFirmwareID(); err != nil {
 				code = 1
 				log.Println(err)
-			}
-			os.Exit(code)
-		} else if *miditest {
-			if err = midi.InitMidi(prefsUserPreferences.MidiInterface, prefsUserPreferences.MidiDeviceConfig,
-				*verboseMidiIn, *verboseMidiOut); err != nil {
-				code = 1
-				log.Println(err)
-			} else {
-				midi.WaitMidi()
 			}
 			os.Exit(code)
 		} else if *comtst {
@@ -412,9 +399,6 @@ func main() {
 
 	defer func() {
 		fmt.Printf("Close Event.\n")
-		if err = midi.QuitMidi(); err != nil {
-			log.Println(err)
-		}
 		if err = osc.OscQuit(); err != nil {
 			log.Println(err)
 		}
@@ -458,9 +442,6 @@ func main() {
 			about_w = ws[1]
 			prefs_w = ws[2]
 
-			if err = midi.RegisterBridge(w); err != nil {
-				log.Println(err)
-			}
 			if err = osc.OscRegisterBridge(w); err != nil {
 				log.Println(err)
 			}

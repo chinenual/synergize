@@ -25,12 +25,6 @@ let prefs = {
 				document.getElementById("serialBaud").value = preferences.SerialBaud;
 				document.getElementById("libraryPath").value = preferences.LibraryPath;
 
-				document.getElementById("useMidi").checked = preferences.UseMidi ? "checked" : "";
-				document.getElementById("midiInterface").value = preferences.MidiInterface;
-				document.getElementById("midiInterface").disabled = !preferences.UseMidi;
-				document.getElementById("midiDeviceConfig").value = preferences.MidiDeviceConfig;
-				document.getElementById("midiDeviceConfig").disabled = !preferences.UseMidi;
-
 				document.getElementById("useOsc").checked = preferences.UseOsc ? "checked" : "";
 				document.getElementById("oscPort").value = preferences.OscPort;
 				document.getElementById("oscPort").disabled = !preferences.UseOsc;
@@ -62,12 +56,6 @@ let prefs = {
 			prefs.listen();
 		})
 
-	},
-
-	toggleMidi: function (ele) {
-		var checked = ele.checked;
-		document.getElementById("midiInterface").disabled = !checked;
-		document.getElementById("midiDeviceConfig").disabled = !checked;
 	},
 
 	toggleOsc: function (ele) {
@@ -125,9 +113,6 @@ let prefs = {
 				"SerialPort": document.getElementById("serialPort").value,
 				"SerialBaud": parseInt(document.getElementById("serialBaud").value, 10),
 				"LibraryPath": document.getElementById("libraryPath").value,
-				"UseMidi": document.getElementById("useMidi").checked,
-				"MidiInterface": document.getElementById("midiInterface").value,
-				"MidiDeviceConfig": document.getElementById("midiDeviceConfig").value,
 				"UseOsc": document.getElementById("useOsc").checked,
 				"OscPort": parseInt(document.getElementById("oscPort").value, 10),
 				"OscCSurfaceAddress": document.getElementById("oscCSurfaceAddress").value,

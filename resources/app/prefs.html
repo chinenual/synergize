@@ -55,15 +55,6 @@
 				<label for="oscCSurfacePort">Control Surface Port</label>
 				<input type="integer" class="form-control" id="oscCSurfacePort" />
 			</div>
-			<div class="form-group">
-				<label for="useMidi">Enable MIDI Control Surface</label>
-				<input type="checkbox" class="form-control" id="useMidi" onclick="prefs.toggleMidi(this);"
-					value="true" />
-				<label for="midiInterface">MIDI Interface</label>
-				<input type="string" class="form-control" id="midiInterface" />
-				<label for="midiDeviceConfig">MIDI Interface</label>
-				<input type="string" class="form-control" id="midiDeviceConfig" />
-			</div>
 			<button type="cancel" onclick="prefs.cancelAndClose();">Cancel</button>
 			<button type="submit" class="btn btn-primary" onclick="prefs.saveAndClose();">Save</button>
 		</form>

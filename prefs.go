@@ -11,9 +11,6 @@ type Preferences struct {
 	SerialBaud         uint
 	LibraryPath        string
 	HTTPDebug          bool
-	UseMidi            bool
-	MidiInterface      string
-	MidiDeviceConfig   string
 	UseOsc             bool
 	OscPort            uint
 	OscCSurfaceAddress string
