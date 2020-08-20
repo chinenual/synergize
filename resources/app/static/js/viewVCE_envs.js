@@ -845,6 +845,9 @@ let viewVCE_envs = {
 			},
 		];
 
+		viewVCE_voice.sendToCSurface(null, `num-freq-env-points`, envelopes.FreqEnvelope.NPOINTS);
+		viewVCE_voice.sendToCSurface(null, `num-amp-env-points`, envelopes.AmpEnvelope.NPOINTS);
+
 		// clear old values:
 		$('#envTable td.val input').val('');
 		$('#envTable td.total span').html('');
@@ -879,17 +882,22 @@ let viewVCE_envs = {
 		} else {
 			$(".listplusminus div").hide();
 		}
+		viewVCE_voice.sendToCSurface(null, `num-freq-env-points`, envelopes.FreqEnvelope.NPOINTS);
+		viewVCE_voice.sendToCSurface(null, `num-amp-env-points`, envelopes.AmpEnvelope.NPOINTS);
+
 		// only show accelleration values if type1 envelope
 		if (envelopes.FreqEnvelope.ENVTYPE === 1) {
 			$('.type1accel div.Freq').show();
 			$('#accelFreqLow').val(envelopes.FreqEnvelope.SUSTAINPT);
 			$('#accelFreqUp').val(envelopes.FreqEnvelope.LOOPPT);
+			viewVCE_voice.sendToCSurface(null, `freq-env-accel-visible`, 1);
 			if (animate) {
 				viewVCE_voice.sendToCSurface(null, `accelFreqLow[${i + 1}]`, envelopes.FreqEnvelope.SUSTAINPT);
 				viewVCE_voice.sendToCSurface(null, `accelFreqUp[${i + 1}]`, envelopes.FreqEnvelope.LOOPPT);
 			}
 		} else {
 			$('.type1accel div.Freq').hide();
+			viewVCE_voice.sendToCSurface(null, `freq-env-accel-visible`, 0);
 			if (animate) {
 				viewVCE_voice.sendToCSurface(null, `accelFreqLow[${i + 1}]`, 0);
 				viewVCE_voice.sendToCSurface(null, `acceFreqUp[${i + 1}]`, 0);
@@ -900,12 +908,14 @@ let viewVCE_envs = {
 			$('.type1accel div.Amp').show();
 			$('#accelAmpLow').val(envelopes.AmpEnvelope.SUSTAINPT);
 			$('#accelAmpUp').val(envelopes.AmpEnvelope.LOOPPT);
+			viewVCE_voice.sendToCSurface(null, `amp-env-accel-visible`, 1);
 			if (animate) {
 				viewVCE_voice.sendToCSurface(null, `accelAmpLow[${i + 1}]`, envelopes.AmpEnvelope.SUSTAINPT);
 				viewVCE_voice.sendToCSurface(null, `accelAmpUp[${i + 1}]`, envelopes.AmpEnvelope.LOOPPT);
 			}
 		} else {
 			$('.type1accel div.Amp').hide();
+			viewVCE_voice.sendToCSurface(null, `amp-env-accel-visible`, 0);
 			if (animate) {
 				viewVCE_voice.sendToCSurface(null, `accelAmpLow[${i + 1}]`, 0);
 				viewVCE_voice.sendToCSurface(null, `accelAmpUp[${i + 1}]`, 0);
