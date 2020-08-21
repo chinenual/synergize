@@ -22,7 +22,7 @@ module.exports = {
 
     "patchAdderInDSR[1]": { value: '1' },
 
-    "patchOutputDSR[1]": {value: '1'},
+    "patchOutputDSR[1]": { value: '1' },
 
     "OHARM[1]": { value: '1' },
     "OHARM[2]": { exist: false },
@@ -33,7 +33,7 @@ module.exports = {
 
     "wkKEYPROP[1]": { selected: false },
 
-    "FILTER[1]": { value: '' },
+    "FILTER[1]": { value: '0' },
   },
 
   envelopestab: {

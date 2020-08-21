@@ -1,7 +1,7 @@
 module.exports = {
   name: 'GUITAR2A',
   voicetab: {
-    VNAME: {value: 'GUITAR2A'},
+    VNAME: { value: 'GUITAR2A' },
     nOsc: '4',
     keysPlayable: '8',
     vibType: 'Sine',
@@ -57,7 +57,7 @@ module.exports = {
     "FILTER[1]": { value: '1' },
     "FILTER[2]": { value: '2' },
     "FILTER[3]": { value: '3' },
-    "FILTER[4]": { value: '' },
+    "FILTER[4]": { value: '0' },
   },
 
   envelopestab: {
@@ -85,8 +85,8 @@ module.exports = {
 
         "accelFreqLow": { value: '30' },
         "accelFreqUp": { value: '30' },
-        "accelAmpLow": { value: '42'  },
-        "accelAmpUp": { value: '37'  },
+        "accelAmpLow": { value: '42' },
+        "accelAmpUp": { value: '37' },
 
       },
       // skip the rest

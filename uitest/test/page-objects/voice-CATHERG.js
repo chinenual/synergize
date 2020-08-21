@@ -1,8 +1,8 @@
 module.exports = {
   name: 'CATHERG',
   voicetab: {
-    VNAME: { value: 'CATHERG'},
-    nOsc: '4' ,
+    VNAME: { value: 'CATHERG' },
+    nOsc: '4',
     keysPlayable: '8',
     vibType: 'Sine',
     VIBDEP: { value: '0' },
@@ -54,10 +54,10 @@ module.exports = {
     "wkKEYPROP[3]": { selected: false },
     "wkKEYPROP[4]": { selected: false },
 
-    "FILTER[1]": { value: '' },
-    "FILTER[2]": { value: '' },
+    "FILTER[1]": { value: '0' },
+    "FILTER[2]": { value: '0' },
     "FILTER[3]": { value: '3' },
-    "FILTER[4]": { value: '' },
+    "FILTER[4]": { value: '0' },
   },
 
   envelopestab: {

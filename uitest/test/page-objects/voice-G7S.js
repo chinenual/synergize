@@ -1,7 +1,7 @@
 module.exports = {
   name: 'G7S',
   voicetab: {
-    VNAME: { value: 'G7S'},
+    VNAME: { value: 'G7S' },
     nOsc: '4',
     keysPlayable: '8',
     vibType: 'Sine',
@@ -56,8 +56,8 @@ module.exports = {
 
     "FILTER[1]": { value: '1' },
     "FILTER[2]": { value: '2' },
-    "FILTER[3]": { value: '' },
-    "FILTER[4]": { value: '' },
+    "FILTER[3]": { value: '0' },
+    "FILTER[4]": { value: '0' },
   },
 
   envelopestab: {
