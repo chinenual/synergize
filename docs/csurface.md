@@ -74,9 +74,11 @@ surface in yellow text.
 
 ![screenshot](/synergize/docs/screenshots/cs-voice-tab.png)
 
-The voice table offers controls for everything editable on the UI's Voice Tab.
+The voice table offers controls for everything (except the patch type
+and 
+routing registers) editable on the UI's Voice Tab.
 
-Each row corresponds to an oscillator.  The yellow lights indicate which oscillators are active for the voice. Inactive oscillator buttons and sliders are hidden.
+Each row corresponds to an oscillator.  Inactive oscillator buttons and sliders are hidden.
 
 ### Voice Freqs Tab
 
