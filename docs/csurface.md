@@ -8,6 +8,7 @@ permalink: /docs/control-surface
 # OSC-based Control Surface
 
 Make your Synergy a little bit more like a GDS. Synergize includes support for an external control surface to provide GDS-like analog controls (sliders and knobs) to the Synergize. You can use both the Synergize UI and the control surface at the same time - making a change in one place is reflected in the other. 
+
 ![screenshot](/synergize/docs/screenshots/cs-animated.gif)
 
 ## TouchOSC setup
