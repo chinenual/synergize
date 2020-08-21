@@ -50,6 +50,10 @@ If you are a user or are thinking of becoming a user, please join our Slack work
 
 ## Screenshots
 
+<img title="Control Surface view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/cs-animated.png?raw=true" width="45%"/>
+<img title="Control Surface view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/cs-voice-tab.png?raw=true" width="45%"/>
+<img title="Control Surface view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/cs-filters-tab.png?raw=true" width="45%"/>
+
 <img title="Cartridge voice listing view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewCRT.png?raw=true" width="45%"/>
 <img title="Voice main patch view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_voice.png?raw=true" width="45%"/>
 <img title="Voice Envelopes view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_envs.png?raw=true" width="45%"/>
@@ -57,8 +61,6 @@ If you are a user or are thinking of becoming a user, please join our Slack work
 <img title="Voice Key Equalization view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_keyeq.png?raw=true" width="45%"/>
 <img title="Voice Key Proportion view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewVCE_keyprop.png?raw=true" width="45%"/>
 
-<img title="Control Surface view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/cs-voice-tab.png?raw=true" width="45%"/>
-<img title="Control Surface view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/cs-filters-tab.png?raw=true" width="45%"/>
 
 ## Requirements and How to use
 
