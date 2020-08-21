@@ -14,10 +14,13 @@ var verboseOscOut = false
 var client *goosc.Client
 var server *goosc.Server
 var listener net.PacketConn
+var started = false
 
 func OscInit(port uint, csurfaceAddress string, csurfacePort uint, verboseIn bool, verboseOut bool) (err error) {
 	verboseOscIn = verboseIn
 	verboseOscOut = verboseOut
+
+	started = false
 
 	addr := fmt.Sprintf("0.0.0.0:%d", port)
 	d := goosc.NewStandardDispatcher()
@@ -83,13 +86,17 @@ func closeableListenAndServe(s *goosc.Server) (err error) {
 	if err != nil {
 		return err
 	}
+	started = true
 
 	return s.Serve(listener)
 }
 
 func OscQuit() (err error) {
-	if err = listener.Close(); err != nil {
-		return
+	if started {
+		if err = listener.Close(); err != nil {
+			return
+		}
+		started = false
 	}
 	return
 }
