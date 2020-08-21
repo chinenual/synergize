@@ -7,14 +7,14 @@ permalink: /docs/control-surface
 ---
 # OSC-based Control Surface
 
-Make your Synergy a little bit more like a GDS. Synergize includes support for an external MIDI control surface to provide GDS-like analog controls (sliders and knobs) to the Synergize. You can use both the Synergize UI and the control surface at the same time - making a change in one place is reflected in the other. 
+Make your Synergy a little bit more like a GDS. Synergize includes support for an external control surface to provide GDS-like analog controls (sliders and knobs) to the Synergize. You can use both the Synergize UI and the control surface at the same time - making a change in one place is reflected in the other. 
 ![screenshot](/synergize/docs/screenshots/cs-animated.gif)
 
 ## TouchOSC setup
 
 At the moment, the only control surface supported is one written especially for Synergize.  It is based on the excellent TouchOSC tablet based control surface application (which is available for both iPad and Android tablets).
 
-Upload the supplied touchosc configuration file, [Synergize.touchosc](https://github.com/chinenual/synergize/raw/master/midi/touchosc/Synergize.touchosc)
+Upload the supplied touchosc configuration file, [Synergize.touchosc](https://github.com/chinenual/synergize/raw/master/osc/touchosc/Synergize.touchosc)
 to your tablet following the instructions at [the TouchOSC home site](https://hexler.net/docs/touchosc).
 
 Synergize-TouchOSC uses an OSC connection.  Ensure both your tablet
