@@ -50,8 +50,9 @@ If you are a user or are thinking of becoming a user, please join our Slack work
 
 ## Screenshots
 
-<img title="Control Surface view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/cs-animated.png?raw=true" width="45%"/>
+<img title="Control Surface view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/cs-animated.gif?raw=true" width="45%"/>
 <img title="Control Surface view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/cs-voice-tab.png?raw=true" width="45%"/>
+<img title="Control Surface view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/cs-freq-envs-tab.png?raw=true" width="45%"/>
 <img title="Control Surface view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/cs-filters-tab.png?raw=true" width="45%"/>
 
 <img title="Cartridge voice listing view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/viewCRT.png?raw=true" width="45%"/>
