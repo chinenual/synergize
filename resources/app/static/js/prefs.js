@@ -19,7 +19,7 @@ let prefs = {
 				var os = message.payload.Os
 				preferences = message.payload.Preferences
 
-				console.log("loaded preferences: " + os + ": " + JSON.stringify(preferences))
+				//console.log("loaded preferences: " + os + ": " + JSON.stringify(preferences))
 
 				document.getElementById("serialPort").value = preferences.SerialPort;
 				document.getElementById("serialBaud").value = preferences.SerialBaud;
@@ -65,7 +65,7 @@ let prefs = {
 	},
 
 	serialPortDialog: function (ele, defaultValue) {
-		console.log("in fileDialog default: " + defaultValue);
+		//console.log("in fileDialog default: " + defaultValue);
 
 		file = dialog.showOpenDialogSync({
 			properties: ['openFile'],
@@ -73,7 +73,7 @@ let prefs = {
 			buttonLabel: "Select",
 			defaultPath: defaultValue
 		});
-		console.log("in fileDialog: " + file);
+		//console.log("in fileDialog: " + file);
 		if (file != undefined && ele != undefined && ele != null) {
 			ele.value = file;
 		}
@@ -85,7 +85,7 @@ let prefs = {
 			defaultPath: defaultValue,
 			title: "Choose Voice Library path"
 		});
-		console.log("in folderDialog: " + folder);
+		//console.log("in folderDialog: " + folder);
 		if (folder != undefined && ele != undefined && ele != null) {
 			ele.value = folder;
 		}
@@ -119,7 +119,7 @@ let prefs = {
 				"OscCSurfacePort": parseInt(document.getElementById("oscCSurfacePort").value, 10),
 			}
 		};
-		console.log("saveAndClose: " + message);
+		//console.log("saveAndClose: " + message);
 		// Send message
 		astilectron.sendMessage(message, function (message) {
 			// Check error

@@ -27,7 +27,7 @@ let viewVCE = {
     init: function () {
         // no onchange events while we update input and text for the new voice
         viewVCE.supressOnchange = true;
-        console.log('--- start viewVCE init');
+        //console.log('--- start viewVCE init');
         Chart.defaults.global.defaultFontColor = 'white';
         Chart.defaults.global.defaultFontSize = 14;
 
@@ -42,7 +42,7 @@ let viewVCE = {
         // back to normal:
         viewVCE.supressOnchange = false;
         viewVCE_voice.sendToCSurface(null, "voice-tab", 1);
-        console.log('--- finish viewVCE init');
+        //console.log('--- finish viewVCE init');
     }
 }
 

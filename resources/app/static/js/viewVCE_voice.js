@@ -64,7 +64,7 @@ let viewVCE_voice = {
 				}
 			};
 			astilectron.sendMessage(message, function (message) {
-				console.log("setOscSolo returned: " + JSON.stringify(message));
+				//console.log("setOscSolo returned: " + JSON.stringify(message));
 				// Check error
 				if (message.name === "error") {
 					// failed - dont change the boolean
@@ -88,9 +88,9 @@ let viewVCE_voice = {
 		var filterValue = parseInt(ele.value, 10);
 		vce.Head.FILTER[osc - 1] = filterValue;
 		// don't wait for this - we want to get feedback to the control surface asap
-		async () => {
-			viewVCE_filters.init(true);
-		}
+		//async () => {
+		viewVCE_filters.init(true);
+		//}
 	},
 
 	OHARMToText: function (str) {
@@ -295,7 +295,7 @@ let viewVCE_voice = {
 			}
 		};
 		astilectron.sendMessage(message, function (message) {
-			console.log("setPatchByte returned: " + JSON.stringify(message));
+			//console.log("setPatchByte returned: " + JSON.stringify(message));
 			// Check error
 			if (message.name === "error") {
 				// failed - dont change the boolean
@@ -369,7 +369,7 @@ let viewVCE_voice = {
 			value = parseInt(valueConverter(ele.value), 10)
 			args = [osc, value]
 
-			console.log("changed: " + id + " param: " + param + " osc: " + osc);
+			//console.log("changed: " + id + " param: " + param + " osc: " + osc);
 			vce.Envelopes[osc - 1][param] = valueConverter(ele.value);
 			funcname = "setVoiceByte"
 
@@ -390,7 +390,7 @@ let viewVCE_voice = {
 				}
 			};
 			astilectron.sendMessage(message, function (message) {
-				console.log(funcname + " returned: " + JSON.stringify(message));
+				//console.log(funcname + " returned: " + JSON.stringify(message));
 				// Check error
 				if (message.name === "error") {
 					// failed - dont change the boolean
@@ -630,7 +630,7 @@ let viewVCE_voice = {
 #bendSize: 1
 ${freqDAG}
 `;
-		console.log("nomnoml src: " + patchDiagramSource);
+		//console.log("nomnoml src: " + patchDiagramSource);
 		nomnoml.draw(patchDiagramCanvas, patchDiagramSource);
 
 
@@ -644,7 +644,7 @@ ${freqDAG}
 		index.spinnerOn();
 		astilectron.sendMessage(message, function (message) {
 			index.spinnerOff();
-			console.log("setPatchType returned: " + JSON.stringify(message));
+			//console.log("setPatchType returned: " + JSON.stringify(message));
 			// Check error
 			if (message.name === "error") {
 				// failed - dont change the boolean
@@ -684,7 +684,7 @@ ${freqDAG}
 		//index.spinnerOn();
 		astilectron.sendMessage(message, function (message) {
 			//index.spinnerOff();
-			console.log("setNumOscillators returned: " + JSON.stringify(message));
+			//console.log("setNumOscillators returned: " + JSON.stringify(message));
 			// Check error
 			if (message.name === "error") {
 				// failed - dont change the boolean
@@ -741,7 +741,7 @@ ${freqDAG}
 		index.spinnerOn();
 		astilectron.sendMessage(message, function (message) {
 			index.spinnerOff();
-			console.log("toggleVoiceMode returned: " + JSON.stringify(message));
+			//console.log("toggleVoiceMode returned: " + JSON.stringify(message));
 			// Check error
 			if (message.name === "error") {
 				// failed - dont change the boolean
@@ -929,7 +929,7 @@ ${freqDAG}
 	},
 
 	init: function (incrementalUpdate) {
-		console.log('--- start viewVCE_voice init');
+		//console.log('--- start viewVCE_voice init');
 
 		if (viewVCE_voice.deb_onchange == null) {
 			viewVCE_voice.deb_onchange = index.debounceFirstArg(viewVCE_voice.raw_onchange, 50);
@@ -1083,7 +1083,7 @@ ${freqDAG}
 		// do this last to help the uitest to not start testing too soon
 		document.getElementById("vce_name").innerHTML = vce.Head.VNAME;
 		document.getElementById("VNAME").value = vce.Head.VNAME.replace(/ +$/g, ''); // trim trailing spaces for editing
-		console.log('--- finish viewVCE_voice init');
+		//console.log('--- finish viewVCE_voice init');
 	},
 
 	updateFromCSurface: function (payload) {

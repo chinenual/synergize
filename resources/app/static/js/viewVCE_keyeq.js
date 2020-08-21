@@ -41,7 +41,7 @@ let viewVCE_keyeq = {
 			}
 		};
 		astilectron.sendMessage(message, function (message) {
-			console.log("setVoiceVEQEle returned: " + JSON.stringify(message));
+			//console.log("setVoiceVEQEle returned: " + JSON.stringify(message));
 			// Check error
 			if (message.name === "error") {
 				// failed - dont change the value
@@ -56,7 +56,7 @@ let viewVCE_keyeq = {
 	},
 
 	init: function (incrementalUpdate) {
-		console.log('--- start viewVCE_keyeq init ' + incrementalUpdate);
+		//console.log('--- start viewVCE_keyeq init ' + incrementalUpdate);
 		if (viewVCE_keyeq.deb_onchange == null) {
 			//			viewVCE_keyeq.deb_onchange = _.debounce(viewVCE_keyeq.raw_onchange, 50);
 			viewVCE_keyeq.deb_onchange = viewVCE_keyeq.raw_onchange;
@@ -156,6 +156,6 @@ let viewVCE_keyeq = {
 				maintainAspectRatio: false
 			}
 		});
-		console.log('--- finish viewVCE_keyeq init');
+		//console.log('--- finish viewVCE_keyeq init');
 	}
 };

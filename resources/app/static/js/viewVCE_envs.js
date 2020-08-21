@@ -7,7 +7,7 @@ let viewVCE_envs = {
 	chart: null,
 
 	init: function (incrementalUpdate) {
-		console.log('--- start viewVCE_envs init');
+		//console.log('--- start viewVCE_envs init');
 
 		if (viewVCE_envs.deb_onchange == null) {
 			viewVCE_envs.deb_onchange = index.debounceFirstArg(viewVCE_envs.raw_onchange, 50);
@@ -34,7 +34,7 @@ let viewVCE_envs = {
 		$('#envCopySelectDiv').hide();
 
 		viewVCE_envs.envChartUpdate(1, -1, true)
-		console.log('--- finish viewVCE_envs init');
+		//console.log('--- finish viewVCE_envs init');
 	},
 
 
@@ -439,7 +439,7 @@ let viewVCE_envs = {
 			}
 		};
 		astilectron.sendMessage(message, function (message) {
-			console.log("setLoopPoint returned: " + JSON.stringify(message));
+			//console.log("setLoopPoint returned: " + JSON.stringify(message));
 			// Check error
 			if (message.name === "error") {
 				// failed - dont change the value
@@ -486,7 +486,7 @@ let viewVCE_envs = {
 		index.spinnerOn();
 		astilectron.sendMessage(message, function (message) {
 			index.spinnerOff();
-			console.log("setEnvelopes returned: " + JSON.stringify(message));
+			//console.log("setEnvelopes returned: " + JSON.stringify(message));
 			// Check error
 			if (message.name === "error") {
 				// failed - dont change the value
@@ -556,7 +556,7 @@ let viewVCE_envs = {
 			}
 		};
 		astilectron.sendMessage(message, function (message) {
-			console.log("setLoopPoint returned: " + JSON.stringify(message));
+			//console.log("setLoopPoint returned: " + JSON.stringify(message));
 			// Check error
 			if (message.name === "error") {
 				// failed - dont change the value
@@ -655,7 +655,7 @@ let viewVCE_envs = {
 			}
 		};
 		astilectron.sendMessage(message, function (message) {
-			console.log(funcName + " returned: " + JSON.stringify(message));
+			//console.log(funcName + " returned: " + JSON.stringify(message));
 			// Check error
 			if (message.name === "error") {
 				// failed - dont change the value
@@ -712,7 +712,7 @@ let viewVCE_envs = {
 				}
 			};
 			astilectron.sendMessage(message, function (message) {
-				console.log("setOscEnvLengths returned: " + JSON.stringify(message));
+				//console.log("setOscEnvLengths returned: " + JSON.stringify(message));
 				// Check error
 				if (message.name === "error") {
 					// failed - dont change the value

@@ -42,7 +42,7 @@ let viewVCE_keyprop = {
 			}
 		};
 		astilectron.sendMessage(message, function (message) {
-			console.log("setVoiceKPROPEle returned: " + JSON.stringify(message));
+			//console.log("setVoiceKPROPEle returned: " + JSON.stringify(message));
 			// Check error
 			if (message.name === "error") {
 				// failed - dont change the value
@@ -57,7 +57,7 @@ let viewVCE_keyprop = {
 	},
 
 	init: function (incrementalUpdate) {
-		console.log('--- start viewVCE_keyprop init ' + incrementalUpdate);
+		//console.log('--- start viewVCE_keyprop init ' + incrementalUpdate);
 		if (viewVCE_keyprop.deb_onchange == null) {
 			//viewVCE_keyprop.deb_onchange = index.debounceFirstArg(viewVCE_keyprop.raw_onchange, 50);
 			viewVCE_keyprop.deb_onchange = viewVCE_keyprop.raw_onchange;
@@ -171,7 +171,7 @@ let viewVCE_keyprop = {
 				maintainAspectRatio: false
 			}
 		});
-		console.log('--- finish viewVCE_keyprop init');
+		//console.log('--- finish viewVCE_keyprop init');
 	}
 
 };

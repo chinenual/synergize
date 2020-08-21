@@ -43,7 +43,7 @@ let viewVCE_filters = {
 			}
 		};
 		astilectron.sendMessage(message, function (message) {
-			console.log("setFilterEle returned: " + JSON.stringify(message));
+			///console.log("setFilterEle returned: " + JSON.stringify(message));
 			// Check error
 			if (message.name === "error") {
 				// failed - dont change the value
@@ -106,7 +106,7 @@ let viewVCE_filters = {
 	filterValues: [],
 
 	init: function (incrementalUpdate) {
-		console.log('--- start viewVCE_filters init ' + incrementalUpdate);
+		//console.log('--- start viewVCE_filters init ' + incrementalUpdate);
 		if (viewVCE_filters.deb_onchange == null) {
 			//viewVCE_filters.deb_onchange = _.debounce(viewVCE_filters.raw_onchange, 250);
 			viewVCE_filters.deb_onchange = viewVCE_filters.raw_onchange;
@@ -177,7 +177,7 @@ let viewVCE_filters = {
 			// first filter
 			viewVCE_filters.filtersChartUpdate(viewVCE_filters.filterValues[0], viewVCE_filters.filterNames[0], true);
 		}
-		console.log('--- finish viewVCE_filters init');
+		//console.log('--- finish viewVCE_filters init');
 	},
 
 	copyFrom: function (filterIndex, filterName) {
@@ -207,7 +207,7 @@ let viewVCE_filters = {
 		index.spinnerOn();
 		astilectron.sendMessage(message, function (message) {
 			index.spinnerOff();
-			console.log("setFilterArray returned: " + JSON.stringify(message));
+			//console.log("setFilterArray returned: " + JSON.stringify(message));
 			// Check error
 			if (message.name === "error") {
 				// failed - dont change the value

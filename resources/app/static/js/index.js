@@ -60,6 +60,7 @@ let index = {
 	},
 
 	confirmDialog: function (message, successCallback) {
+		console.log("CONFIRM DIALOG: " + message)
 		document.getElementById("confirmTitle").innerHTML = "Confirm";
 		document.getElementById("confirmText").innerHTML = message;
 		document.getElementById("confirmOKButton").onclick = successCallback;
@@ -69,11 +70,13 @@ let index = {
 	},
 
 	errorNotification: function (message) {
+		console.log("ERROR NOTIFICATION: " + message)
 		document.getElementById("alertTitle").innerHTML = "Error";
 		document.getElementById("alertText").innerHTML = message;
 		$('#alertModal').modal();
 	},
 	infoNotification: function (message) {
+		console.log("INFO NOTIFICATION: " + message)
 		document.getElementById("alertTitle").innerHTML = "Info";
 		document.getElementById("alertText").innerHTML = message;
 		$('#alertModal').modal();
@@ -479,7 +482,7 @@ let index = {
 	},
 	showPreferences: function () {
 		let message = { "name": "showPreferences" };
-		console.log("show preferences javascript");
+		//console.log("show preferences javascript");
 		astilectron.sendMessage(message, function (message) {
 			// nop
 		});
