@@ -16,11 +16,11 @@ func DiagCOMTST() (err error) {
 		b := byte(i)
 		log.Printf("%d (%02x) ...\n", b, b)
 
-		if err = serialWriteByte(TIMEOUT_MS, b, "write test byte"); err != nil {
+		if err = conn.LoggedWriteByteWithTimeout(TIMEOUT_MS, b, "write test byte"); err != nil {
 			return errors.Wrapf(err, "failed to write byte %02x", b)
 		}
 		var read_b byte
-		if read_b, err = serialReadByte(TIMEOUT_MS, "read test byte"); err != nil {
+		if read_b, err = conn.LoggedReadByteWithTimeout(TIMEOUT_MS, "read test byte"); err != nil {
 			return errors.Wrapf(err, "failed to read byte %02x", b)
 		}
 		if read_b != b {
@@ -42,13 +42,13 @@ func DiagLOOPTST() (err error) {
 	for {
 
 		var b byte
-		if b, err = serialReadByte(1000*60*5, "read test byte"); err != nil {
+		if b, err = conn.LoggedReadByteWithTimeout(1000*60*5, "read test byte"); err != nil {
 			return errors.Wrapf(err, "failed to read byte %02x", b)
 		}
 
 		log.Printf("%d (%02x) ...\n", b, b)
 
-		if err = serialWriteByte(TIMEOUT_MS, b, "write test byte"); err != nil {
+		if err = conn.LoggedWriteByteWithTimeout(TIMEOUT_MS, b, "write test byte"); err != nil {
 			return errors.Wrapf(err, "failed to write byte %02x", b)
 		}
 	}
@@ -80,11 +80,11 @@ func DiagLINKTST() (err error) {
 			break
 		}
 		var b = byte(r)
-		if err = serialWriteByte(TIMEOUT_MS, b, "write test byte"); err != nil {
+		if err = conn.LoggedWriteByteWithTimeout(TIMEOUT_MS, b, "write test byte"); err != nil {
 			log.Fatalln(err, "failed to write byte %02x", b)
 			break
 		}
-		if b, err = serialReadByte(1000*60*5, "read test byte"); err != nil {
+		if b, err = conn.LoggedReadByteWithTimeout(1000*60*5, "read test byte"); err != nil {
 			log.Fatalln(err, "failed to read byte %02x", b)
 			break
 		}

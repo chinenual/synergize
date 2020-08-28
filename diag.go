@@ -14,8 +14,9 @@ import (
 )
 
 var (
-	port = flag.String("port", getDefaultPort(), "the serial device")
-	baud = flag.Uint("baud", getDefaultBaud(), "the serial baud rate")
+	port   = flag.String("port", getDefaultPort(), "the serial device")
+	baud   = flag.Uint("baud", getDefaultBaud(), "the serial baud rate")
+	record = flag.String("record", "", "capture bytes to <record>.in and <record>.out")
 )
 
 func getDefaultBaud() uint {
@@ -223,5 +224,6 @@ func diagLoadSYN(path string) (err error) {
 	}
 
 	err = synio.LoadSYN(syn_bytes)
+
 	return
 }

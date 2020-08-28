@@ -22,11 +22,11 @@ func LoadVCE(slotnum byte, vce []byte) (err error) {
 		return
 	}
 
-	if err = serialWriteByte(TIMEOUT_MS, slotnum, "write slotnum"); err != nil {
+	if err = conn.LoggedWriteByteWithTimeout(TIMEOUT_MS, slotnum, "write slotnum"); err != nil {
 		return
 	}
 	var status byte
-	if status, err = serialReadByte(TIMEOUT_MS, "read slotnum ACK"); err != nil {
+	if status, err = conn.LoggedReadByteWithTimeout(TIMEOUT_MS, "read slotnum ACK"); err != nil {
 		return
 	}
 	if status != DC1 {
@@ -34,10 +34,10 @@ func LoadVCE(slotnum byte, vce []byte) (err error) {
 		err = errors.Errorf("Invalid slotnum error")
 		return
 	}
-	if err = serialWriteBytes(LONG_TIMEOUT_MS, vce, "write VCE"); err != nil {
+	if err = conn.LoggedWriteBytesWithTimeout(LONG_TIMEOUT_MS, vce, "write VCE"); err != nil {
 		return
 	}
-	if status, err = serialReadByte(LONG_TIMEOUT_MS, "read VCE ACK"); err != nil {
+	if status, err = conn.LoggedReadByteWithTimeout(LONG_TIMEOUT_MS, "read VCE ACK"); err != nil {
 		return
 	}
 	if status == ACK {
@@ -86,18 +86,18 @@ func LoadCRTBytes(crt []byte) (err error) {
 	lenHob, lenLob := data.WordToBytes(length)
 	// LOB of the length
 	calcCRCByte(lenLob)
-	if err = serialWriteByte(TIMEOUT_MS, lenLob, "write length LOB"); err != nil {
+	if err = conn.LoggedWriteByteWithTimeout(TIMEOUT_MS, lenLob, "write length LOB"); err != nil {
 		return
 	}
 	// HOB of the length
 	calcCRCByte(lenHob)
-	if err = serialWriteByte(TIMEOUT_MS, lenHob, "write length HOB"); err != nil {
+	if err = conn.LoggedWriteByteWithTimeout(TIMEOUT_MS, lenHob, "write length HOB"); err != nil {
 		return
 	}
 
 	calcCRCBytes(crt)
 
-	if err = serialWriteBytes(LONG_TIMEOUT_MS, crt, "write CRT bytes"); err != nil {
+	if err = conn.LoggedWriteBytesWithTimeout(LONG_TIMEOUT_MS, crt, "write CRT bytes"); err != nil {
 		return
 	}
 
@@ -108,16 +108,16 @@ func LoadCRTBytes(crt []byte) (err error) {
 
 	crcHob, crcLob := data.WordToBytes(crc)
 	// HOB of the crc
-	if err = serialWriteByte(TIMEOUT_MS, crcHob, "write CRC HOB"); err != nil {
+	if err = conn.LoggedWriteByteWithTimeout(TIMEOUT_MS, crcHob, "write CRC HOB"); err != nil {
 		return
 	}
 	// LOB of the crc
-	if err = serialWriteByte(TIMEOUT_MS, crcLob, "write CRC LOB"); err != nil {
+	if err = conn.LoggedWriteByteWithTimeout(TIMEOUT_MS, crcLob, "write CRC LOB"); err != nil {
 		return
 	}
 
 	var status byte
-	if status, err = serialReadByte(LONG_TIMEOUT_MS, "read CRT ACK"); err != nil {
+	if status, err = conn.LoggedReadByteWithTimeout(LONG_TIMEOUT_MS, "read CRT ACK"); err != nil {
 		return
 	}
 	if status == ACK {
@@ -142,12 +142,12 @@ func LoadSYN(bytes []byte) (err error) {
 	// the SYN file actually has everything we need to send to the Synergy:
 	// the initial byte count, the SEQ byte count and buffer and the final CRC.
 	// Just send it as a block
-	if err = serialWriteBytes(LONG_TIMEOUT_MS, bytes, "SYN bytes"); err != nil {
+	if err = conn.LoggedWriteBytesWithTimeout(LONG_TIMEOUT_MS, bytes, "SYN bytes"); err != nil {
 		return
 	}
 	// expect an ACK:
 	var status byte
-	if status, err = serialReadByte(LONG_TIMEOUT_MS, "read SYN ACK"); err != nil {
+	if status, err = conn.LoggedReadByteWithTimeout(LONG_TIMEOUT_MS, "read SYN ACK"); err != nil {
 		return
 	}
 	if status == ACK {
@@ -172,7 +172,7 @@ func SaveSYN() (bytes []byte, err error) {
 	}
 
 	var len_buf []byte
-	if len_buf, err = serialReadBytes(TIMEOUT_MS, 2, "read CMOS length"); err != nil {
+	if len_buf, err = conn.LoggedReadBytesWithTimeout(TIMEOUT_MS, 2, "read CMOS length"); err != nil {
 		return
 	}
 
@@ -185,7 +185,7 @@ func SaveSYN() (bytes []byte, err error) {
 	}
 
 	var cmos_buf []byte
-	if cmos_buf, err = serialReadBytes(LONG_TIMEOUT_MS, cmos_len*2+2, "read CMOS"); err != nil {
+	if cmos_buf, err = conn.LoggedReadBytesWithTimeout(LONG_TIMEOUT_MS, cmos_len*2+2, "read CMOS"); err != nil {
 		return
 	}
 
@@ -199,12 +199,12 @@ func SaveSYN() (bytes []byte, err error) {
 	seq_buf := []byte{}
 
 	if seq_len != 0 {
-		if seq_buf, err = serialReadBytes(LONG_TIMEOUT_MS, seq_len, "read SEQ"); err != nil {
+		if seq_buf, err = conn.LoggedReadBytesWithTimeout(LONG_TIMEOUT_MS, seq_len, "read SEQ"); err != nil {
 			return
 		}
 	}
 	var crc_buf []byte
-	if crc_buf, err = serialReadBytes(TIMEOUT_MS, 2, "read CRC"); err != nil {
+	if crc_buf, err = conn.LoggedReadBytesWithTimeout(TIMEOUT_MS, 2, "read CRC"); err != nil {
 		return
 	}
 

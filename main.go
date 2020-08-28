@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -147,10 +148,56 @@ func connectToSynergy() (err error) {
 	return
 }
 
+func connectToSynergyNoFirmwareCheck() (err error) {
+	FirmwareVersion = "Not Connected"
+	if err = synio.Init(prefsUserPreferences.SerialPort,
+		prefsUserPreferences.SerialBaud, true, *serialVerboseFlag, *mockSynio); err != nil {
+		err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n",
+			prefsUserPreferences.SerialPort,
+			prefsUserPreferences.SerialBaud)
+		l.Printf(err.Error())
+		CheckForNewVersion(true, false)
+		return
+	}
+	CheckForNewVersion(true, true)
+	l.Printf("Connected to Synergy, no check for firmware version\n")
+	return
+}
+
 func refreshNavPane(path string) {
 	if err := bootstrap.SendMessage(w, "explore", path, func(m *bootstrap.MessageIn) {}); err != nil {
 		l.Println(fmt.Errorf("sending refreshNav event failed: %w", err))
 	}
+}
+
+func recordIo(f func(string) error, arg string) (err error) {
+	if err = connectToSynergyIfNotConnected(); err != nil {
+		return
+	}
+	if *record != "" {
+		l.Printf(" --- start recording\n")
+		synio.Conn().StartRecord()
+	}
+	if err = f(arg); err != nil {
+		return
+	}
+	if *record != "" {
+		l.Printf(" --- end recording\n")
+		in, out := synio.Conn().GetRecord()
+		err = ioutil.WriteFile(*record+".in", in, 0644)
+		if err != nil {
+			log.Printf("ERROR: failed to write in bytes: %v\n", err)
+			return
+		}
+		err = ioutil.WriteFile(*record+".out", out, 0644)
+		if err != nil {
+			log.Printf("ERROR: failed to write out bytes: %v\n", err)
+			return
+		}
+		l.Printf("Saved %d bytes to %s and %d bytes to %s\n", len(in), *record+".in", len(out), *record+".out")
+		return
+	}
+	return
 }
 
 func main() {
@@ -191,31 +238,31 @@ func main() {
 			diagLINKTST()
 			os.Exit(0)
 		} else if *savevce != "" {
-			if err = diagSaveVCE(*savevce); err != nil {
+			if err = recordIo(diagSaveVCE, *savevce); err != nil {
 				code = 1
 				log.Println(err)
 			}
 			os.Exit(code)
 		} else if *loadvce != "" {
-			if err = diagLoadVCE(*loadvce); err != nil {
+			if err = recordIo(diagLoadVCE, *loadvce); err != nil {
 				code = 1
 				log.Println(err)
 			}
 			os.Exit(code)
 		} else if *loadcrt != "" {
-			if err = diagLoadCRT(*loadcrt); err != nil {
+			if err = recordIo(diagLoadCRT, *loadcrt); err != nil {
 				code = 1
 				log.Println(err)
 			}
 			os.Exit(code)
 		} else if *savesyn != "" {
-			if err = diagSaveSYN(*savesyn); err != nil {
+			if err = recordIo(diagSaveSYN, *savesyn); err != nil {
 				code = 1
 				log.Println(err)
 			}
 			os.Exit(code)
 		} else if *loadsyn != "" {
-			if err = diagLoadSYN(*loadsyn); err != nil {
+			if err = recordIo(diagLoadSYN, *loadsyn); err != nil {
 				code = 1
 				log.Println(err)
 			}

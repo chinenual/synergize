@@ -117,7 +117,7 @@ func setIMODE(val byte) (err error) {
 	if err = command(OP_IMODE, "IMODE"); err != nil {
 		return
 	}
-	if err = serialWriteByte(TIMEOUT_MS, val, "IMODE"); err != nil {
+	if err = conn.LoggedWriteByteWithTimeout(TIMEOUT_MS, val, "IMODE"); err != nil {
 		return
 	}
 	return
