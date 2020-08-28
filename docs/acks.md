@@ -13,7 +13,7 @@ permalink: /docs/acknowledgements
 Synergize is free and open source software, which uses a number of other open source technologies. They include:
 
 * Quentin Renard's excellent Go library [Astilectron](https://github.com/asticode/go-astilectron) and its related bundler and bootstrap modules.
-* Sebastian Ruml's Go [osc library](https://github.com/hypebeast/go-osc).
+* Sebastian Ruml's Go [OSC library](https://github.com/hypebeast/go-osc).
 * The [Bootstrap](https://getbootstrap.com/) CSS framework
 * István Ujj-Mészáros's [Touchspin](https://github.com/istvan-ujjmeszaros/bootstrap-touchspin).
 * Daniel Kallin's  [nomnoml](https://github.com/skanaar/nomnoml) diagram library.
