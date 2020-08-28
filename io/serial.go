@@ -111,7 +111,7 @@ func SerialInit(port string, baudRate uint) (s SerialIo, err error) {
 	return
 }
 
-func (s SerialIo) ReadByteWithTimeout(timeoutMS uint) (b byte, err error) {
+func (s SerialIo) readByte(timeoutMS uint) (b byte, err error) {
 	// use goroutines to handle timeout of synchronous IO.
 	// See https://github.com/golang/go/wiki/Timeouts
 
@@ -127,11 +127,11 @@ func (s SerialIo) ReadByteWithTimeout(timeoutMS uint) (b byte, err error) {
 	}
 }
 
-func (s SerialIo) ReadBytesWithTimeout(timeoutMS uint, num_bytes uint16) (bytes []byte, err error) {
+func (s SerialIo) readBytes(timeoutMS uint, num_bytes uint16) (bytes []byte, err error) {
 	var arr []byte = make([]byte, num_bytes)
 
 	for i := uint16(0); i < num_bytes; i++ {
-		if arr[i], err = s.ReadByteWithTimeout(timeoutMS); err != nil {
+		if arr[i], err = s.readByte(timeoutMS); err != nil {
 			bytes = arr[0:i]
 			err = errors.Wrap(err, "failed to read all bytes")
 			return
@@ -141,7 +141,7 @@ func (s SerialIo) ReadBytesWithTimeout(timeoutMS uint, num_bytes uint16) (bytes 
 	return
 }
 
-func (s SerialIo) WriteByteWithTimeout(timeoutMS uint, b byte) (err error) {
+func (s SerialIo) writeByte(timeoutMS uint, b byte) (err error) {
 	var arr []byte = make([]byte, 1)
 	arr[0] = b
 
@@ -166,7 +166,7 @@ func (s SerialIo) WriteByteWithTimeout(timeoutMS uint, b byte) (err error) {
 	return nil
 }
 
-func (s SerialIo) WriteBytesWithTimeout(timeoutMS uint, arr []byte) (err error) {
+func (s SerialIo) writeBytes(timeoutMS uint, arr []byte) (err error) {
 	// use goroutines to handle timeout of synchronous IO.
 	// See https://github.com/golang/go/wiki/Timeouts
 

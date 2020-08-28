@@ -8,16 +8,16 @@ func SelectVoiceMapping(v1, v2, v3, v4 byte) (err error) {
 	if err = command(OP_SELECT, "OP_SELECT"); err != nil {
 		return errors.Wrapf(err, "failed to OP_SELECT")
 	}
-	if err = conn.LoggedWriteByteWithTimeout(RT_TIMEOUT_MS, v1, "voice1"); err != nil {
+	if err = conn.WriteByteWithTimeout(RT_TIMEOUT_MS, v1, "voice1"); err != nil {
 		return errors.Wrapf(err, "failed to voice1 mapping")
 	}
-	if err = conn.LoggedWriteByteWithTimeout(RT_TIMEOUT_MS, v2, "voice2"); err != nil {
+	if err = conn.WriteByteWithTimeout(RT_TIMEOUT_MS, v2, "voice2"); err != nil {
 		return errors.Wrapf(err, "failed to voice2 mapping")
 	}
-	if err = conn.LoggedWriteByteWithTimeout(RT_TIMEOUT_MS, v3, "voice3"); err != nil {
+	if err = conn.WriteByteWithTimeout(RT_TIMEOUT_MS, v3, "voice3"); err != nil {
 		return errors.Wrapf(err, "failed to voice3 mapping")
 	}
-	if err = conn.LoggedWriteByteWithTimeout(RT_TIMEOUT_MS, v4, "voice4"); err != nil {
+	if err = conn.WriteByteWithTimeout(RT_TIMEOUT_MS, v4, "voice4"); err != nil {
 		return errors.Wrapf(err, "failed to voice4 mapping")
 	}
 	return
@@ -30,16 +30,16 @@ func KeyDown(voice, key, velocity byte) (err error) {
 	if err = command(OP_ASSIGNED_KEY, "OP_ASSIGNED_KEY"); err != nil {
 		return errors.Wrapf(err, "failed to OP_ASSIGNED_KEY")
 	}
-	//	if err = conn.LoggedWriteByteWithTimeout(RT_TIMEOUT_MS, OP_KEYDWN, "OP_KEYDWN"); err != nil {
+	//	if err = conn.WriteByteWithTimeout(RT_TIMEOUT_MS, OP_KEYDWN, "OP_KEYDWN"); err != nil {
 	//		return errors.Wrapf(err, "failed to OP_KEYDWN")
 	//	}
-	if err = conn.LoggedWriteByteWithTimeout(RT_TIMEOUT_MS, voice, "voice"); err != nil {
+	if err = conn.WriteByteWithTimeout(RT_TIMEOUT_MS, voice, "voice"); err != nil {
 		return errors.Wrapf(err, "failed to send notedown voice")
 	}
-	if err = conn.LoggedWriteByteWithTimeout(RT_TIMEOUT_MS, key, "key"); err != nil {
+	if err = conn.WriteByteWithTimeout(RT_TIMEOUT_MS, key, "key"); err != nil {
 		return errors.Wrapf(err, "failed to send notedown key")
 	}
-	if err = conn.LoggedWriteByteWithTimeout(RT_TIMEOUT_MS, velocity, "velocity"); err != nil {
+	if err = conn.WriteByteWithTimeout(RT_TIMEOUT_MS, velocity, "velocity"); err != nil {
 		return errors.Wrapf(err, "failed to send notedown velocity")
 	}
 	return
@@ -52,10 +52,10 @@ func KeyUp(key, velocity byte) (err error) {
 	if err = command(OP_KEYUP, "OP_KEYUP"); err != nil {
 		return errors.Wrapf(err, "failed to OP_KEYUP")
 	}
-	if err = conn.LoggedWriteByteWithTimeout(RT_TIMEOUT_MS, key, "key"); err != nil {
+	if err = conn.WriteByteWithTimeout(RT_TIMEOUT_MS, key, "key"); err != nil {
 		return errors.Wrapf(err, "failed to send noteup key")
 	}
-	if err = conn.LoggedWriteByteWithTimeout(RT_TIMEOUT_MS, velocity, "velocity"); err != nil {
+	if err = conn.WriteByteWithTimeout(RT_TIMEOUT_MS, velocity, "velocity"); err != nil {
 		return errors.Wrapf(err, "failed to send noteup velocity")
 	}
 	return
@@ -68,14 +68,14 @@ func Pedal(up bool) (err error) {
 	if err = command(OP_POT, "OP_POT"); err != nil {
 		return errors.Wrapf(err, "failed to send pedal OP")
 	}
-	if err = conn.LoggedWriteByteWithTimeout(RT_TIMEOUT_MS, OPERAND_PEDAL_SUSTAIN, "OPERAND_PEDAL_SUSTAIN"); err != nil {
+	if err = conn.WriteByteWithTimeout(RT_TIMEOUT_MS, OPERAND_PEDAL_SUSTAIN, "OPERAND_PEDAL_SUSTAIN"); err != nil {
 		return errors.Wrapf(err, "failed to send pedal SUSTAIN operand")
 	}
 	var value = byte(0) // down
 	if up {
 		value = 127
 	}
-	if err = conn.LoggedWriteByteWithTimeout(RT_TIMEOUT_MS, value, "pedal value"); err != nil {
+	if err = conn.WriteByteWithTimeout(RT_TIMEOUT_MS, value, "pedal value"); err != nil {
 		return errors.Wrapf(err, "failed to send pedal value")
 	}
 	return

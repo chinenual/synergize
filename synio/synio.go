@@ -106,7 +106,7 @@ func command(opcode byte, name string) (err error) {
 	for retry {
 		// use the short timeout for reads that may or may not have any data
 		const SHORT_TIMEOUT_MS = 1000
-		status, err = conn.LoggedReadByteWithTimeout(SHORT_TIMEOUT_MS, "test for avail bytes")
+		status, err = conn.ReadByteWithTimeout(SHORT_TIMEOUT_MS, "test for avail bytes")
 		if err != nil && (!strings.Contains(err.Error(), "TIMEOUT:")) {
 			err = errors.Wrap(err, "error syncing command comm")
 			return
@@ -125,7 +125,7 @@ func command(opcode byte, name string) (err error) {
 			case 1, 2, 3:
 				// KEY OR POT msg; consume 2 more bytes
 				for i := 0; i < 3; i++ {
-					_, err = conn.LoggedReadByteWithTimeout(TIMEOUT_MS, "read key/pot data")
+					_, err = conn.ReadByteWithTimeout(TIMEOUT_MS, "read key/pot data")
 					if err != nil {
 						err = errors.Wrap(err, "error syncing command key/pot comm")
 						return
@@ -133,7 +133,7 @@ func command(opcode byte, name string) (err error) {
 				}
 			default:
 				// otherwise, we need to send a NAK
-				if err = conn.LoggedWriteByteWithTimeout(TIMEOUT_MS, NAK, "write command NAK"); err != nil {
+				if err = conn.WriteByteWithTimeout(TIMEOUT_MS, NAK, "write command NAK"); err != nil {
 					return
 				}
 			}
@@ -146,12 +146,12 @@ func command(opcode byte, name string) (err error) {
 		countdown = countdown - 1
 		// SYNHCS doesnt limit the number of retries, but it can lead to infinite loops/hangs.
 		// We will only try N times
-		err = conn.LoggedWriteByteWithTimeout(TIMEOUT_MS, opcode, "write opcode")
+		err = conn.WriteByteWithTimeout(TIMEOUT_MS, opcode, "write opcode")
 		if err != nil {
 			err = errors.Wrap(err, "error sending opcode")
 			return
 		}
-		status, err = conn.LoggedReadByteWithTimeout(TIMEOUT_MS, "read opcode ACK/NAK")
+		status, err = conn.ReadByteWithTimeout(TIMEOUT_MS, "read opcode ACK/NAK")
 		if err != nil {
 			err = errors.Wrap(err, "error reading opcode ACK/NAK")
 			return
@@ -160,7 +160,7 @@ func command(opcode byte, name string) (err error) {
 	if status != ACK {
 		for {
 			// TEMP: DRAIN
-			status, err = conn.LoggedReadByteWithTimeout(TIMEOUT_MS, "DRAIN")
+			status, err = conn.ReadByteWithTimeout(TIMEOUT_MS, "DRAIN")
 			if err != nil {
 				log.Println("error while draining", err)
 				break
@@ -203,11 +203,11 @@ func writeU16(v uint16, purpose string) (err error) {
 
 	hob, lob := data.WordToBytes(v)
 
-	if err = conn.LoggedWriteByteWithTimeout(TIMEOUT_MS, hob, "write HOB "+purpose); err != nil {
+	if err = conn.WriteByteWithTimeout(TIMEOUT_MS, hob, "write HOB "+purpose); err != nil {
 		err = errors.Wrap(err, "error sending HOB "+purpose)
 		return
 	}
-	if err = conn.LoggedWriteByteWithTimeout(TIMEOUT_MS, lob, "write LOB "+purpose); err != nil {
+	if err = conn.WriteByteWithTimeout(TIMEOUT_MS, lob, "write LOB "+purpose); err != nil {
 		err = errors.Wrap(err, "error sending LOB "+purpose)
 		return
 	}
@@ -224,7 +224,7 @@ func BlockDump(startAddress uint16, length uint16, purpose string) (bytes []byte
 	if err = writeU16(length, "blockdump len "+purpose); err != nil {
 		return
 	}
-	if bytes, err = conn.LoggedReadBytesWithTimeout(LONG_TIMEOUT_MS, length, "block dump "+purpose); err != nil {
+	if bytes, err = conn.ReadBytesWithTimeout(LONG_TIMEOUT_MS, length, "block dump "+purpose); err != nil {
 		return
 	}
 	return
@@ -240,7 +240,7 @@ func BlockLoad(startAddress uint16, bytes []byte, purpose string) (err error) {
 	if err = writeU16(uint16(len(bytes)), "blockload len "+purpose); err != nil {
 		return
 	}
-	if err = conn.LoggedWriteBytesWithTimeout(LONG_TIMEOUT_MS, bytes, "block load "+purpose); err != nil {
+	if err = conn.WriteBytesWithTimeout(LONG_TIMEOUT_MS, bytes, "block load "+purpose); err != nil {
 		return
 	}
 	return
@@ -349,7 +349,7 @@ func DumpVRAM() (bytes []byte, err error) {
 	}
 
 	var len_buf []byte
-	if len_buf, err = conn.LoggedReadBytesWithTimeout(TIMEOUT_MS, 2, "read VRAM length"); err != nil {
+	if len_buf, err = conn.ReadBytesWithTimeout(TIMEOUT_MS, 2, "read VRAM length"); err != nil {
 		return
 	}
 
@@ -359,12 +359,12 @@ func DumpVRAM() (bytes []byte, err error) {
 		log.Printf("synio: DumpVRAM: len: %d bytes\n", vram_len)
 	}
 
-	if bytes, err = conn.LoggedReadBytesWithTimeout(LONG_TIMEOUT_MS, vram_len, "read VRAM"); err != nil {
+	if bytes, err = conn.ReadBytesWithTimeout(LONG_TIMEOUT_MS, vram_len, "read VRAM"); err != nil {
 		return
 	}
 
 	var crc_buf []byte
-	if crc_buf, err = conn.LoggedReadBytesWithTimeout(TIMEOUT_MS, 2, "read CRC"); err != nil {
+	if crc_buf, err = conn.ReadBytesWithTimeout(TIMEOUT_MS, 2, "read CRC"); err != nil {
 		return
 	}
 
@@ -403,10 +403,10 @@ func GetID() (versionID [2]byte, err error) {
 	if err = command(OP_GETID, "GETID"); err != nil {
 		return
 	}
-	if versionID[0], err = conn.LoggedReadByteWithTimeout(TIMEOUT_MS, "read id HB"); err != nil {
+	if versionID[0], err = conn.ReadByteWithTimeout(TIMEOUT_MS, "read id HB"); err != nil {
 		return
 	}
-	if versionID[1], err = conn.LoggedReadByteWithTimeout(TIMEOUT_MS, "read id LB"); err != nil {
+	if versionID[1], err = conn.ReadByteWithTimeout(TIMEOUT_MS, "read id LB"); err != nil {
 		return
 	}
 

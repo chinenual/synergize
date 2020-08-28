@@ -15,7 +15,7 @@ func SocketInit(addr string) (s SocketIo, err error) {
 	return
 }
 
-func (s SocketIo) ReadByteWithTimeout(timeoutMS uint) (b byte, err error) {
+func (s SocketIo) readByte(timeoutMS uint) (b byte, err error) {
 	if err = s.conn.SetDeadline(time.Now().Add(time.Duration(timeoutMS) * time.Millisecond)); err != nil {
 		return
 	}
@@ -33,7 +33,7 @@ func (s SocketIo) ReadByteWithTimeout(timeoutMS uint) (b byte, err error) {
 	return
 }
 
-func (s SocketIo) ReadBytesWithTimeout(timeoutMS uint, num_bytes uint16) (bytes []byte, err error) {
+func (s SocketIo) readBytes(timeoutMS uint, num_bytes uint16) (bytes []byte, err error) {
 	bytes = make([]byte, num_bytes)
 
 	if err = s.conn.SetDeadline(time.Now().Add(time.Duration(timeoutMS) * time.Millisecond)); err != nil {
@@ -51,7 +51,7 @@ func (s SocketIo) ReadBytesWithTimeout(timeoutMS uint, num_bytes uint16) (bytes 
 	return
 }
 
-func (s SocketIo) WriteByteWithTimeout(timeoutMS uint, b byte) (err error) {
+func (s SocketIo) writeByte(timeoutMS uint, b byte) (err error) {
 	if err = s.conn.SetWriteDeadline(time.Now().Add(time.Duration(timeoutMS) * time.Millisecond)); err != nil {
 		return
 	}
@@ -69,7 +69,7 @@ func (s SocketIo) WriteByteWithTimeout(timeoutMS uint, b byte) (err error) {
 	return
 }
 
-func (s SocketIo) WriteBytesWithTimeout(timeoutMS uint, arr []byte) (err error) {
+func (s SocketIo) writeBytes(timeoutMS uint, arr []byte) (err error) {
 	if err = s.conn.SetWriteDeadline(time.Now().Add(time.Duration(timeoutMS) * time.Millisecond)); err != nil {
 		return
 	}

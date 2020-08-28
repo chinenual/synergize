@@ -5,12 +5,10 @@ import (
 )
 
 type IoImpl interface {
-	// HACK: using ugly WithTimeout suffix to keep govet from complaining that ReadByte (et.al.)
-	// have different signatures than "standard" Read/Write byte methods
-	ReadByteWithTimeout(timeoutMS uint) (b byte, err error)
-	ReadBytesWithTimeout(timeoutMS uint, num_bytes uint16) (bytes []byte, err error)
-	WriteByteWithTimeout(timeoutMS uint, b byte) (err error)
-	WriteBytesWithTimeout(timeoutMS uint, arr []byte) (err error)
+	readByte(timeoutMS uint) (b byte, err error)
+	readBytes(timeoutMS uint, num_bytes uint16) (bytes []byte, err error)
+	writeByte(timeoutMS uint, b byte) (err error)
+	writeBytes(timeoutMS uint, arr []byte) (err error)
 }
 
 type Conn struct {
@@ -45,13 +43,15 @@ func (c *Conn) GetRecord() (in, out []byte) {
 	return
 }
 
-func (c *Conn) LoggedReadByteWithTimeout(timeoutMS uint, purpose string) (b byte, err error) {
+// HACK: using ugly WithTimeout suffix to keep govet from complaining that ReadByte (et.al.)
+// have different signatures than "standard" Read/Write byte methods
+func (c *Conn) ReadByteWithTimeout(timeoutMS uint, purpose string) (b byte, err error) {
 
 	if c.verbose {
 		log.Printf("       serial.Read (%d ms) - %s\n", timeoutMS, purpose)
 	}
 
-	b, err = c.impl.ReadByteWithTimeout(timeoutMS)
+	b, err = c.impl.readByte(timeoutMS)
 	if c.verbose {
 		if err != nil {
 			log.Printf("       read err: %v\n", err)
@@ -65,11 +65,11 @@ func (c *Conn) LoggedReadByteWithTimeout(timeoutMS uint, purpose string) (b byte
 	return
 }
 
-func (c *Conn) LoggedReadBytesWithTimeout(timeoutMS uint, num_bytes uint16, purpose string) (bytes []byte, err error) {
+func (c *Conn) ReadBytesWithTimeout(timeoutMS uint, num_bytes uint16, purpose string) (bytes []byte, err error) {
 	if c.verbose {
 		log.Printf("       serial.Read %d bytes (%d ms) - %s\n", num_bytes, timeoutMS, purpose)
 	}
-	bytes, err = c.impl.ReadBytesWithTimeout(timeoutMS, num_bytes)
+	bytes, err = c.impl.readBytes(timeoutMS, num_bytes)
 	if c.verbose {
 		if err != nil {
 			log.Printf("       read err: %v\n", err)
@@ -83,12 +83,12 @@ func (c *Conn) LoggedReadBytesWithTimeout(timeoutMS uint, num_bytes uint16, purp
 	return
 }
 
-func (c *Conn) LoggedWriteByteWithTimeout(timeoutMS uint, b byte, purpose string) (err error) {
+func (c *Conn) WriteByteWithTimeout(timeoutMS uint, b byte, purpose string) (err error) {
 	if c.verbose {
 		log.Printf(" --> %02x serial.Write (%d ms) - %s\n", b, timeoutMS, purpose)
 	}
 
-	err = c.impl.WriteByteWithTimeout(timeoutMS, b)
+	err = c.impl.writeByte(timeoutMS, b)
 	if c.verbose && err != nil {
 		log.Printf("        write err: %v\n", err)
 	}
@@ -98,11 +98,11 @@ func (c *Conn) LoggedWriteByteWithTimeout(timeoutMS uint, b byte, purpose string
 	return
 }
 
-func (c *Conn) LoggedWriteBytesWithTimeout(timeoutMS uint, arr []byte, purpose string) (err error) {
+func (c *Conn) WriteBytesWithTimeout(timeoutMS uint, arr []byte, purpose string) (err error) {
 	if c.verbose {
 		log.Printf(" --> %02x serial.WriteBytes (%d ms) - %s\n", arr, timeoutMS, purpose)
 	}
-	err = c.impl.WriteBytesWithTimeout(timeoutMS, arr)
+	err = c.impl.writeBytes(timeoutMS, arr)
 	if c.verbose && err != nil {
 		log.Printf("        write err: %v\n", err)
 	}
