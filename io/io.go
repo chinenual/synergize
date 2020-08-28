@@ -60,9 +60,7 @@ func (c *Conn) LoggedReadByteWithTimeout(timeoutMS uint, purpose string) (b byte
 		}
 	}
 	if c.record {
-		log.Printf("before append %d\n", len(c.recordIn))
 		c.recordIn = append(c.recordIn, b)
-		log.Printf("after append %d\n", len(c.recordIn))
 	}
 	return
 }
@@ -80,9 +78,7 @@ func (c *Conn) LoggedReadBytesWithTimeout(timeoutMS uint, num_bytes uint16, purp
 		}
 	}
 	if c.record {
-		log.Printf("before append %d\n", len(c.recordIn))
 		c.recordIn = append(c.recordIn, bytes...)
-		log.Printf("after append %d\n", len(c.recordIn))
 	}
 	return
 }
@@ -97,9 +93,7 @@ func (c *Conn) LoggedWriteByteWithTimeout(timeoutMS uint, b byte, purpose string
 		log.Printf("        write err: %v\n", err)
 	}
 	if c.record {
-		log.Printf("before append %d\n", len(c.recordOut))
 		c.recordOut = append(c.recordOut, b)
-		log.Printf("after append %d\n", len(c.recordOut))
 	}
 	return
 }
@@ -113,9 +107,7 @@ func (c *Conn) LoggedWriteBytesWithTimeout(timeoutMS uint, arr []byte, purpose s
 		log.Printf("        write err: %v\n", err)
 	}
 	if c.record {
-		log.Printf("before append %d\n", len(c.recordOut))
 		c.recordOut = append(c.recordOut, arr...)
-		log.Printf("after append %d\n", len(c.recordOut))
 	}
 	return
 }
