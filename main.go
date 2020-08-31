@@ -15,6 +15,7 @@ import (
 	"github.com/chinenual/synergize/data"
 	"github.com/chinenual/synergize/osc"
 	"github.com/chinenual/synergize/synio"
+	"github.com/chinenual/synergize/zeroconf"
 
 	"github.com/asticode/go-astikit"
 	"github.com/asticode/go-astilectron"
@@ -217,6 +218,15 @@ func main() {
 		l.SetFlags(0)
 		log.SetFlags(0)
 	}
+
+	if prefsUserPreferences.UseOsc {
+		if err := zeroconf.StartServer(prefsUserPreferences.OscPort, prefsSynergyName()); err != nil {
+			l.Printf("ERROR: could not start zeroconf: %v\n", err)
+		}
+	}
+	defer func() {
+		zeroconf.CloseServer()
+	}()
 
 	var err error
 	{

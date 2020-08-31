@@ -11,7 +11,9 @@ type SocketIo struct {
 }
 
 func SocketInit(addr string) (s SocketIo, err error) {
-	s.conn, err = net.DialTCP(addr, nil, nil)
+	var tcpAddr *net.TCPAddr
+	tcpAddr, err = net.ResolveTCPAddr("tcp4", addr)
+	s.conn, err = net.DialTCP("tcp", nil, tcpAddr)
 	return
 }
 

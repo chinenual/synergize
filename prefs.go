@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 )
 
 type Preferences struct {
@@ -45,4 +47,9 @@ func prefsSavePreferences() (err error) {
 		log.Println("Error saving preferences", err)
 	}
 	return
+}
+
+func prefsSynergyName() string {
+	hostname, _ := os.Hostname()
+	return fmt.Sprintf("%s %s", hostname, prefsUserPreferences.SerialPort)
 }

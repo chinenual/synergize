@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/chinenual/synergize/zeroconf"
 	goosc "github.com/hypebeast/go-osc/osc"
 )
 
@@ -16,7 +17,7 @@ var server *goosc.Server
 var listener net.PacketConn
 var started = false
 
-func OscInit(port uint, csurfaceAddress string, csurfacePort uint, verboseIn bool, verboseOut bool) (err error) {
+func OscInit(port uint, csurfaceAddress string, csurfacePort uint, verboseIn bool, verboseOut bool, synergyName string) (err error) {
 	verboseOscIn = verboseIn
 	verboseOscOut = verboseOut
 
@@ -40,6 +41,9 @@ func OscInit(port uint, csurfaceAddress string, csurfacePort uint, verboseIn boo
 		Dispatcher: d,
 	}
 
+	if err := zeroconf.StartServer(port, synergyName); err != nil {
+		log.Printf("ERROR: could not start zeroconf: %v\n", err)
+	}
 	client = goosc.NewClient(csurfaceAddress, int(csurfacePort))
 
 	go func() {

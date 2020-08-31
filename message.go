@@ -13,6 +13,7 @@ import (
 	"github.com/chinenual/synergize/data"
 	"github.com/chinenual/synergize/osc"
 	"github.com/chinenual/synergize/synio"
+	"github.com/chinenual/synergize/zeroconf"
 
 	"github.com/asticode/go-astilectron"
 	bootstrap "github.com/asticode/go-astilectron-bootstrap"
@@ -258,6 +259,15 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		if oldPath != prefsUserPreferences.LibraryPath {
 			refreshNavPane(prefsUserPreferences.LibraryPath)
 		}
+
+		if prefsUserPreferences.UseOsc {
+			if err := zeroconf.StartServer(prefsUserPreferences.OscPort, prefsSynergyName()); err != nil {
+				log.Printf("ERROR: could not start zeroconf: %v\n", err)
+			}
+		} else {
+			zeroconf.CloseServer()
+		}
+
 		prefs_w.Hide()
 		payload = "ok"
 
@@ -684,7 +694,8 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				if err = osc.OscInit(prefsUserPreferences.OscPort,
 					prefsUserPreferences.OscCSurfaceAddress,
 					prefsUserPreferences.OscCSurfacePort,
-					*verboseOscIn, *verboseOscOut); err != nil {
+					*verboseOscIn, *verboseOscOut,
+					prefsSynergyName()); err != nil {
 
 					log.Println(err)
 					payload = err.Error()
