@@ -26,12 +26,11 @@ let prefs = {
 				document.getElementById("libraryPath").value = preferences.LibraryPath;
 
 				document.getElementById("useOsc").checked = preferences.UseOsc ? "checked" : "";
+				document.getElementById("oscAutoConfig").checked = preferences.OscAutoConfig ? "checked" : "";
 				document.getElementById("oscPort").value = preferences.OscPort;
-				document.getElementById("oscPort").disabled = !preferences.UseOsc;
 				document.getElementById("oscCSurfaceAddress").value = preferences.OscCSurfaceAddress;
-				document.getElementById("oscCSurfaceAddress").disabled = !preferences.UseOsc;
 				document.getElementById("oscCSurfacePort").value = preferences.OscCSurfacePort;
-				document.getElementById("oscCSurfacePort").disabled = !preferences.UseOsc;
+				prefs.toggleOsc();
 
 				if (os === "darwin") {
 					/*
@@ -58,10 +57,13 @@ let prefs = {
 
 	},
 
-	toggleOsc: function (ele) {
-		var checked = ele.checked;
-		document.getElementById("oscPort").disabled = !checked;
-		document.getElementById("oscCSurfaceAddress").disabled = !checked;
+	toggleOsc: function () {
+		var useOscChecked = document.getElementById("useOsc").checked;
+		var autoChecked = document.getElementById("oscAutoConfig").checked;
+
+		document.getElementById("oscAutoConfig").disabled = (!useOscChecked);
+		document.getElementById("oscCSurfaceAddress").disabled = (!useOscChecked) || autoChecked;
+		document.getElementById("oscCSurfacePort").disabled = (!useOscChecked) || autoChecked;
 	},
 
 	serialPortDialog: function (ele, defaultValue) {
@@ -114,6 +116,7 @@ let prefs = {
 				"SerialBaud": parseInt(document.getElementById("serialBaud").value, 10),
 				"LibraryPath": document.getElementById("libraryPath").value,
 				"UseOsc": document.getElementById("useOsc").checked,
+				"OscAutoConfig": document.getElementById("oscAutoConfig").checked,
 				"OscPort": parseInt(document.getElementById("oscPort").value, 10),
 				"OscCSurfaceAddress": document.getElementById("oscCSurfaceAddress").value,
 				"OscCSurfacePort": parseInt(document.getElementById("oscCSurfacePort").value, 10),

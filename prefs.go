@@ -14,6 +14,7 @@ type Preferences struct {
 	LibraryPath        string
 	HTTPDebug          bool
 	UseOsc             bool
+	OscAutoConfig      bool
 	OscPort            uint
 	OscCSurfaceAddress string
 	OscCSurfacePort    uint
@@ -51,5 +52,5 @@ func prefsSavePreferences() (err error) {
 
 func prefsSynergyName() string {
 	hostname, _ := os.Hostname()
-	return fmt.Sprintf("%s %s", hostname, prefsUserPreferences.SerialPort)
+	return fmt.Sprintf("%s [%s]", hostname, prefsUserPreferences.SerialPort)
 }
