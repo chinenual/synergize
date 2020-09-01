@@ -56,7 +56,14 @@ func CloseServer() {
 	}
 }
 
+var browsing = false
+
 func Browse() {
+	if browsing {
+		return
+	}
+	browsing = true
+
 	// Discover services on the network
 	resolver, err := zeroconf.NewResolver(nil)
 	if err != nil {
@@ -112,5 +119,5 @@ func Browse() {
 	<-ctx2.Done()
 
 	log.Printf("ZEROCONF: end Browse OSC svcs: %v\n", OscServices)
-
+	browsing = false
 }
