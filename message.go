@@ -691,9 +691,35 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			var vce data.VCE
 			payload = nil
 			if prefsUserPreferences.UseOsc {
-				if err = osc.OscInit(prefsUserPreferences.OscPort,
-					prefsUserPreferences.OscCSurfaceAddress,
-					prefsUserPreferences.OscCSurfacePort,
+				port := prefsUserPreferences.OscPort
+				csurfaceAddress := prefsUserPreferences.OscCSurfaceAddress
+				csurfacePort := prefsUserPreferences.OscCSurfacePort
+				if prefsUserPreferences.OscAutoConfig {
+					log.Printf("ZEROCONF: top OSC svcs: %v\n", zeroconf.OscServices)
+					if len(zeroconf.OscServices) == 0 {
+						// we will try one more time to browse
+						log.Printf("ZEROCONF: No OSC services found on previous browse - trying again\n")
+						zeroconf.Browse()
+					}
+					if len(zeroconf.OscServices) == 0 {
+						log.Printf("ZEROCONF: OSC svcs: %v\n", zeroconf.OscServices)
+						err = errors.New("Cannot find Control Surface via Bonjour/zeroconf")
+						log.Println(err)
+						payload = err.Error()
+						return
+					} else if len(zeroconf.OscServices) == 1 {
+						csurfaceAddress = zeroconf.OscServices[0].Address()
+						csurfacePort = uint(zeroconf.OscServices[0].Port())
+
+						log.Printf("ZEROCONF: auto configuring csurface: %s:%d [%s: %s]\n",
+							csurfaceAddress, csurfacePort, zeroconf.OscServices[0].HostName(), zeroconf.OscServices[0].InstanceName())
+					} else {
+						// user needs to choose
+					}
+				}
+				if err = osc.OscInit(port,
+					csurfaceAddress,
+					csurfacePort,
 					*verboseOscIn, *verboseOscOut,
 					prefsSynergyName()); err != nil {
 

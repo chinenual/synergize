@@ -224,6 +224,10 @@ func main() {
 			l.Printf("ERROR: could not start zeroconf: %v\n", err)
 		}
 	}
+	log.Printf("ZEROCONF: MAIN Browse BEFORE OSC svcs: %v\n", zeroconf.OscServices)
+	zeroconf.Browse()
+	log.Printf("ZEROCONF: MAIN Browse AFTER OSC svcs: %v\n", zeroconf.OscServices)
+
 	defer func() {
 		zeroconf.CloseServer()
 	}()
@@ -546,8 +550,8 @@ func main() {
 				BackgroundColor: astikit.StrPtr("#ccc"),
 				Center:          astikit.BoolPtr(true),
 				Show:            astikit.BoolPtr(false),
-				Height:          astikit.IntPtr(600),
-				Width:           astikit.IntPtr(600),
+				Height:          astikit.IntPtr(700),
+				Width:           astikit.IntPtr(800),
 				Custom: &astilectron.WindowCustomOptions{
 					HideOnClose: astikit.BoolPtr(true),
 				},
