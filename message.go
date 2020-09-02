@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -19,6 +20,66 @@ import (
 	bootstrap "github.com/asticode/go-astilectron-bootstrap"
 	"github.com/pkg/errors"
 )
+
+func chooseZeroconfService(prompt string, choices []zeroconf.Service) (choice *zeroconf.Service, err error) {
+	choice = nil
+	var stringified []string
+	for _, s := range choices {
+		stringified = append(stringified, fmt.Sprintf("%s (%s:%d)", s.InstanceName(), s.Address(), s.Port()))
+	}
+	var msg = struct {
+		Prompt  string
+		Choices []string
+	}{prompt, stringified}
+	var intval int
+	if err = bootstrap.SendMessage(w, "chooseZeroconfService", msg,
+		func(m *bootstrap.MessageIn) {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &intval); err != nil {
+				log.Printf(" chooseZeroconfService failed to decode json response : %v\n", err)
+				return
+			}
+			if intval >= 0 && intval < len(choices) {
+				choice = &choices[intval]
+			}
+		}); err != nil {
+	}
+	return
+}
+
+func getZeroconfAddress(serviceType string, choices *[]zeroconf.Service) (addr string, port uint, err error) {
+	if len(*choices) == 0 {
+		// we will try one more time to browse
+		log.Printf("ZEROCONF: No %s services found on previous browse - trying again\n", serviceType)
+		zeroconf.Browse()
+	}
+	var choice *zeroconf.Service
+	if len(*choices) == 0 {
+		err = errors.Errorf("Cannot find %s via Bonjour/zeroconf", serviceType)
+		return
+	} else if len(*choices) == 1 {
+		choice = &(*choices)[0]
+	} else {
+		// user needs to choose
+		if choice, err = chooseZeroconfService("Choose "+serviceType, *choices); err != nil {
+			return
+		}
+		if choice == nil {
+			log.Printf("ZEROCONF: user chose 'none of the above'\n")
+		}
+	}
+	addr = ""
+	port = 0
+	if choice != nil {
+		addr = choice.Address()
+		port = uint(choice.Port())
+
+		log.Printf("ZEROCONF: auto configuring %s: %s:%d [%s: %s]\n",
+			serviceType,
+			addr, port, choice.HostName(), choice.InstanceName())
+	}
+	return
+}
 
 // handleMessages handles messages
 func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload interface{}, err error) {
@@ -690,41 +751,30 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		if mode {
 			var vce data.VCE
 			payload = nil
+			var csEnabled = false
 			if prefsUserPreferences.UseOsc {
 				port := prefsUserPreferences.OscPort
 				csurfaceAddress := prefsUserPreferences.OscCSurfaceAddress
 				csurfacePort := prefsUserPreferences.OscCSurfacePort
 				if prefsUserPreferences.OscAutoConfig {
-					log.Printf("ZEROCONF: top OSC svcs: %v\n", zeroconf.OscServices)
-					if len(zeroconf.OscServices) == 0 {
-						// we will try one more time to browse
-						log.Printf("ZEROCONF: No OSC services found on previous browse - trying again\n")
-						zeroconf.Browse()
-					}
-					if len(zeroconf.OscServices) == 0 {
-						log.Printf("ZEROCONF: OSC svcs: %v\n", zeroconf.OscServices)
-						err = errors.New("Cannot find Control Surface via Bonjour/zeroconf")
+					if csurfaceAddress, csurfacePort, err = getZeroconfAddress("Control Surface", &zeroconf.OscServices); err != nil {
 						log.Println(err)
 						payload = err.Error()
 						return
-					} else if len(zeroconf.OscServices) == 1 {
-						csurfaceAddress = zeroconf.OscServices[0].Address()
-						csurfacePort = uint(zeroconf.OscServices[0].Port())
-
-						log.Printf("ZEROCONF: auto configuring csurface: %s:%d [%s: %s]\n",
-							csurfaceAddress, csurfacePort, zeroconf.OscServices[0].HostName(), zeroconf.OscServices[0].InstanceName())
-					} else {
-						// user needs to choose
 					}
 				}
-				if err = osc.OscInit(port,
-					csurfaceAddress,
-					csurfacePort,
-					*verboseOscIn, *verboseOscOut,
-					prefsSynergyName()); err != nil {
+				if csurfaceAddress != "" {
+					if err = osc.OscInit(port,
+						csurfaceAddress,
+						csurfacePort,
+						*verboseOscIn, *verboseOscOut,
+						prefsSynergyName()); err != nil {
 
-					log.Println(err)
-					payload = err.Error()
+						log.Println(err)
+						payload = err.Error()
+					} else {
+						csEnabled = true
+					}
 				}
 			}
 			if payload == nil {
@@ -738,7 +788,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 					CsEnabled bool
 				}{
 					Vce:       &vce,
-					CsEnabled: prefsUserPreferences.UseOsc,
+					CsEnabled: csEnabled,
 				}
 				payload = resultPayload
 			}

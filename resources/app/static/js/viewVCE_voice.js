@@ -749,11 +749,13 @@ ${freqDAG}
 				viewVCE_voice.csEnabled = false;
 			} else {
 				viewVCE_voice.voicingMode = mode;
+				var csMessage = "";
 				if (message.payload != null) {
 					if (mode) {
 						vce = message.payload.Vce;
 						viewVCE_voice.csEnabled = message.payload.CsEnabled;
 
+						csMessage = ".<br>Control Surface is " + (viewVCE_voice.csEnabled ? "" : "not ") + "enabled.";
 						crt_name = null;
 						crt_path = null;
 						index.load("viewVCE.html", "content",
@@ -766,7 +768,7 @@ ${freqDAG}
 						viewVCE_voice.csEnabled = false;
 					}
 				}
-				index.infoNotification(`Voicing mode ${mode ? 'enabled' : 'disabled'}`);
+				index.infoNotification(`Voicing mode ${mode ? 'enabled' : 'disabled'}${csMessage}`);
 			}
 			index.refreshConnectionStatus();
 

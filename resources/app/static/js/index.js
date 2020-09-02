@@ -81,6 +81,13 @@ let index = {
 		document.getElementById("alertText").innerHTML = message;
 		$('#alertModal').modal();
 	},
+
+	chooseZeroconfService: function (prompt, choices) {
+		console.log("chooseZeroconfService: " + prompt + " " + JSON.stringify(choices));
+		confirm("chooseZeroconfService: " + prompt + " " + JSON.stringify(choices));
+		return -1;
+	},
+
 	saveSYNDialog: function () {
 
 		path = dialog.showSaveDialogSync({
@@ -526,6 +533,9 @@ let index = {
 				case "runDiag":
 					index.viewDiag();
 					return { payload: "ok" };
+					break;
+				case "chooseZeroconfService":
+					return index.chooseZeroconfService(message.payload.Prompt, message.payload.Choices);
 					break;
 				case "updateFromCSurface":
 					valueString = viewVCE_voice.updateFromCSurface(message.payload)
