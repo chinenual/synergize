@@ -83,7 +83,7 @@ func Browse() {
 
 	go func(results <-chan *zeroconf.ServiceEntry) {
 		for entry := range results {
-			log.Printf("ZEROCONF: ... OSC service %s\n", entry.Instance)
+			//log.Printf("ZEROCONF: ... OSC service %s\n", entry.Instance)
 			// ignore other OSC services - only those on TouchOSC might be of interest
 			if strings.Contains(entry.Instance, "TouchOSC") {
 				log.Printf("ZEROCONF: Found OSC service %s\n", entry.Instance)
