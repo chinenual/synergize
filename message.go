@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"sync"
 
 	"github.com/chinenual/synergize/data"
 	"github.com/chinenual/synergize/osc"
@@ -21,29 +22,61 @@ import (
 	"github.com/pkg/errors"
 )
 
+var chooseZeroconfServiceChan chan int
+
 func chooseZeroconfService(prompt string, choices []zeroconf.Service) (choice *zeroconf.Service, err error) {
+	log.Println("m")
 	choice = nil
 	var stringified []string
+	log.Println("l")
 	for _, s := range choices {
+		log.Println("k")
 		stringified = append(stringified, fmt.Sprintf("%s (%s:%d)", s.InstanceName(), s.Address(), s.Port()))
 	}
+	log.Println("j")
 	var msg = struct {
 		Prompt  string
 		Choices []string
 	}{prompt, stringified}
-	var intval int
+	log.Println("i")
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+	// we want to treat this as a synchronous call - need to play games to wait on the result:
 	if err = bootstrap.SendMessage(w, "chooseZeroconfService", msg,
 		func(m *bootstrap.MessageIn) {
+			defer wg.Done()
+			log.Println("h")
 			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &intval); err != nil {
-				log.Printf(" chooseZeroconfService failed to decode json response : %v\n", err)
+			var strval string
+			log.Println("g")
+			if err = json.Unmarshal(m.Payload, &strval); err != nil {
+				log.Println("f")
+				log.Printf("chooseZeroconfService failed to decode json response : %v\n", err)
 				return
 			}
-			if intval >= 0 && intval < len(choices) {
-				choice = &choices[intval]
+			log.Println("")
+			if strval != "ok" {
+				log.Println("e")
+				err = errors.Errorf("chooseZeroconfService failed to return ok: : %s", strval)
+				return
+			} else {
+				log.Println("d")
+				log.Printf(".... waiting for callback\n")
+				intval := <-chooseZeroconfServiceChan
+				log.Println("c")
+				log.Printf(".... callback returned %d\n", intval)
+
+				if intval >= 0 && intval < len(choices) {
+					choice = &choices[intval]
+				}
 			}
+			log.Println("b")
 		}); err != nil {
+		wg.Done()
 	}
+	wg.Wait()
+	log.Println("a")
 	return
 }
 
@@ -87,6 +120,16 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 	switch m.Name {
 	case "cancelPreferences":
 		prefs_w.Hide()
+
+	case "chooseZeroconfServiceCallback":
+		var selected int
+		// Unmarshal payload
+		if err = json.Unmarshal(m.Payload, &selected); err != nil {
+			payload = err.Error()
+			return
+		}
+		log.Printf("...got callback (%d) send to channel\n", selected)
+		chooseZeroconfServiceChan <- selected
 
 	case "connectToSynergy":
 		if err = connectToSynergy(); err != nil {
@@ -756,14 +799,20 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				port := prefsUserPreferences.OscPort
 				csurfaceAddress := prefsUserPreferences.OscCSurfaceAddress
 				csurfacePort := prefsUserPreferences.OscCSurfacePort
+				log.Println("FFF")
 				if prefsUserPreferences.OscAutoConfig {
+					log.Println("EEE")
 					if csurfaceAddress, csurfacePort, err = getZeroconfAddress("Control Surface", &zeroconf.OscServices); err != nil {
+						log.Println("DDD")
 						log.Println(err)
 						payload = err.Error()
 						return
 					}
+					log.Println("CCC")
 				}
+				log.Println("BBBB")
 				if csurfaceAddress != "" {
+					log.Println("AAAA")
 					if err = osc.OscInit(port,
 						csurfaceAddress,
 						csurfacePort,
@@ -777,11 +826,14 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 					}
 				}
 			}
+			log.Println("4444")
 			if payload == nil {
+				log.Println("3333")
 				if vce, err = synio.EnableVoicingMode(); err != nil {
 					payload = err.Error()
 					return
 				}
+				log.Println("2222")
 				// NOTE: need to pass reference in order to get the custom JSON marshalling to notice the VNAME
 				resultPayload := struct {
 					Vce       *data.VCE
@@ -790,7 +842,9 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 					Vce:       &vce,
 					CsEnabled: csEnabled,
 				}
+				log.Println("1111")
 				payload = resultPayload
+				log.Println("0000")
 			}
 
 		} else {

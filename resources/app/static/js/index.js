@@ -84,8 +84,52 @@ let index = {
 
 	chooseZeroconfService: function (prompt, choices) {
 		console.log("chooseZeroconfService: " + prompt + " " + JSON.stringify(choices));
-		confirm("chooseZeroconfService: " + prompt + " " + JSON.stringify(choices));
-		return -1;
+		document.getElementById("chooseZeroconfPrompt").innerHTML = prompt;
+
+		var html = "";
+		for (i = 0; i < choices.length; i++) {
+			html = html + `
+		    <div class="form-check">
+                <input class="form-check-input" type="radio" name="chooseZeroconfRadios" id="chooseZeroconfRadio${i}" value="${i}" ${i == 0 ? "checked" : ""}>
+                <label class="form-check-label" for="chooseZeroconfRadio${i}">
+                   ${choices[i]}
+                </label>
+			</div>`
+			console.log("html now " + html);
+		}
+		document.getElementById("chooseZeroconfItems").innerHTML = html;
+		console.log("innerHTML now " + document.getElementById("chooseZeroconfItems").innerHTML);
+
+		var selected = 0;
+		document.getElementById("chooseZeroconfCancelButton").onclick = function () {
+			console.log("Cancelled");
+			index.chooseZeroconfServiceCallback(-1);
+		};
+		document.getElementById("chooseZeroconfOKButton").onclick = function () {
+			selected = parseInt($('#chooseZeroconfItems input:checked').val(), 10);
+			console.log("Selected " + selected);
+			index.chooseZeroconfServiceCallback(selected);
+		};
+
+		$('#chooseZeroconfModal').modal({
+			backdrop: "static" // clicking outside the dialog doesnt close the dialog
+		});
+		// confirm("chooseZeroconfService: " + prompt + " " + JSON.stringify(choices));
+	},
+
+	chooseZeroconfServiceCallback(val) {
+		let message = {
+			"name": "chooseZeroconfServiceCallback",
+			"payload": val,
+		};
+		// Send message
+		astilectron.sendMessage(message, function (message) {
+			// Check error
+			if (message.name === "error") {
+				index.errorNotification(message.payload);
+			}
+		});
+
 	},
 
 	saveSYNDialog: function () {
@@ -535,7 +579,9 @@ let index = {
 					return { payload: "ok" };
 					break;
 				case "chooseZeroconfService":
-					return index.chooseZeroconfService(message.payload.Prompt, message.payload.Choices);
+					index.chooseZeroconfService(message.payload.Prompt, message.payload.Choices);
+					// result is returned by callback
+					return { payload: "ok" };
 					break;
 				case "updateFromCSurface":
 					valueString = viewVCE_voice.updateFromCSurface(message.payload)
