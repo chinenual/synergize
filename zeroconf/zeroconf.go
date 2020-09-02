@@ -18,6 +18,10 @@ type Service struct {
 	entry *zeroconf.ServiceEntry
 }
 
+func (s Service) GoString() string {
+	return "Service{InstanceName: " + s.InstanceName() + "; addr: " + s.Address() + ":" + fmt.Sprintf("%d", s.Port()) + "}"
+}
+
 func (s *Service) InstanceName() string {
 	return s.entry.Instance
 }
@@ -67,11 +71,12 @@ func Browse() {
 	// Discover services on the network
 	resolver, err := zeroconf.NewResolver(nil)
 	if err != nil {
-		log.Fatalln("ERROR: ZEROCONF: Failed to initialize resolver:", err.Error())
+		log.Printf("ERROR: ZEROCONF: Failed to initialize resolver: %v\n", err.Error())
 	}
+	log.Printf("ZEROCONF: start browse...\n")
 
-	OscServices := make([]Service, 0)
-	VstServices := make([]Service, 0)
+	OscServices = make([]Service, 0)
+	VstServices = make([]Service, 0)
 
 	oscEntries := make(chan *zeroconf.ServiceEntry)
 	vstEntries := make(chan *zeroconf.ServiceEntry)
@@ -84,7 +89,7 @@ func Browse() {
 				log.Printf("ZEROCONF: Found OSC service %s\n", entry.Instance)
 				var s = Service{entry: entry}
 				OscServices = append(OscServices, s)
-				log.Printf("ZEROCONF: add OSC svcs: %v\n", OscServices)
+				log.Printf("ZEROCONF: add OSC svcs: %#v\n", OscServices)
 			} else if strings.Contains(entry.Instance, "Synergize") {
 				// silently ignore
 			} else {
@@ -118,6 +123,6 @@ func Browse() {
 	<-ctx1.Done()
 	<-ctx2.Done()
 
-	log.Printf("ZEROCONF: end Browse OSC svcs: %v\n", OscServices)
+	log.Printf("ZEROCONF: end Browse OSC svcs: %#v   VST svcs: %#v\n", OscServices, VstServices)
 	browsing = false
 }

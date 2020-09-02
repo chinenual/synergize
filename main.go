@@ -226,9 +226,7 @@ func main() {
 	}
 	go func() {
 		// run the Browse in a goroutine so we don't hang during its scan
-		log.Printf("ZEROCONF: MAIN Browse BEFORE OSC svcs: %v\n", zeroconf.OscServices)
 		zeroconf.Browse()
-		log.Printf("ZEROCONF: MAIN Browse AFTER OSC svcs: %v\n", zeroconf.OscServices)
 	}()
 
 	defer func() {
