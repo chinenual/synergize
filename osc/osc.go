@@ -60,6 +60,9 @@ func OscInit(port uint, csurfaceAddress string, csurfacePort uint, verboseIn boo
 }
 
 func oscSendString(address string, arg string) (err error) {
+	if client == nil {
+		return
+	}
 	if verboseOscOut {
 		log.Printf("  OSC send %s %v", address, arg)
 	}
@@ -70,6 +73,9 @@ func oscSendString(address string, arg string) (err error) {
 	return
 }
 func oscSendInt(address string, arg int32) (err error) {
+	if client == nil {
+		return
+	}
 	if verboseOscOut {
 		log.Printf("  OSC send %s %v", address, arg)
 	}
@@ -101,6 +107,8 @@ func OscQuit() (err error) {
 			return
 		}
 		started = false
+		client = nil
+		server = nil
 	}
 	return
 }
