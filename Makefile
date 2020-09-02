@@ -27,6 +27,7 @@ $(EXE_WINDOWS_TEST): $(SRCS)
 
 .PHONY: mac
 mac: version.go
+	rm -rf output/windows* output/linux* 
 	astilectron-bundler -c bundler-mac-only.json
 
 .PHONY: cibuild
