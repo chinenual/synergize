@@ -719,6 +719,10 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
+		if args.zeroconfCs != nil {
+			log.Printf("ZEROCONF: config Control Surface selected by user: %#v\n", *args.zeroconfCs)
+			osc.OscSetControlSurface((*args.zeroconfCs).InstanceName, (*args.zeroconfCs).Address, (*args.zeroconfCs).Port)
+		}
 		if args.Mode {
 			var vce data.VCE
 			payload = nil
@@ -746,11 +750,11 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				resultPayload := struct {
 					Vce       *data.VCE
 					CsEnabled bool
-					CsName string
+					CsName    string
 				}{
 					Vce:       &vce,
 					CsEnabled: csEnabled,
-					CsName: csName,
+					CsName:    csName,
 				}
 				payload = resultPayload
 			}

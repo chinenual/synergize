@@ -810,7 +810,7 @@ ${freqDAG}
 
 						var csMessage = ""
 						if (viewVCE_voice.csEnabled) {
-							csMessage = `.<br>Control Surface is enabled: ${message.payload.csName}.`;
+							csMessage = `.<br>Control Surface is enabled: ${message.payload.CsName}.`;
 						} else {
 							csMessage = `.<br>Control Surface is not enabled.`;
 						}
