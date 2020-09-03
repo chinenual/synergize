@@ -10,7 +10,7 @@ import (
 	"github.com/grandcat/zeroconf"
 )
 
-const browseTimeout = time.Second * 20
+const browseTimeout = time.Second * 15
 
 var server *zeroconf.Server
 

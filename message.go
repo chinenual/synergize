@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"sync"
 
 	"github.com/chinenual/synergize/data"
 	"github.com/chinenual/synergize/osc"
@@ -21,109 +20,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-var chooseZeroconfServiceChan chan int
-
-func chooseZeroconfService(prompt string, choices []zeroconf.Service) (choice *zeroconf.Service, err error) {
-	log.Println("m")
-	choice = nil
-	log.Println("l")
-	log.Println("j")
-	var msg = struct {
-		Prompt  string
-		Choices []zeroconf.Service
-	}{prompt, choices}
-	log.Println("i")
-
-	var wg sync.WaitGroup
-	wg.Add(1)
-	// we want to treat this as a synchronous call - need to play games to wait on the result:
-	if err = bootstrap.SendMessage(w, "chooseZeroconfService", msg,
-		func(m *bootstrap.MessageIn) {
-			defer wg.Done()
-			log.Println("h")
-			// Unmarshal payload
-			var strval string
-			log.Println("g")
-			if err = json.Unmarshal(m.Payload, &strval); err != nil {
-				log.Println("f")
-				log.Printf("chooseZeroconfService failed to decode json response : %v\n", err)
-				return
-			}
-			log.Println("")
-			if strval != "ok" {
-				log.Println("e")
-				err = errors.Errorf("chooseZeroconfService failed to return ok: : %s", strval)
-				return
-			} else {
-				log.Println("d")
-				log.Printf(".... waiting for callback\n")
-				intval := <-chooseZeroconfServiceChan
-				log.Println("c")
-				log.Printf(".... callback returned %d\n", intval)
-
-				if intval >= 0 && intval < len(choices) {
-					choice = &choices[intval]
-				}
-			}
-			log.Println("b")
-		}); err != nil {
-		wg.Done()
-	}
-	wg.Wait()
-	log.Println("a")
-	return
-}
-
-func getZeroconfAddress(serviceType string, choices *[]zeroconf.Service) (addr string, port uint, err error) {
-	if len(*choices) == 0 {
-		// we will try one more time to browse
-		log.Printf("ZEROCONF: No %s services found on previous browse - trying again\n", serviceType)
-		zeroconf.Browse()
-	}
-	var choice *zeroconf.Service
-	if len(*choices) == 0 {
-		err = errors.Errorf("Cannot find %s via Bonjour/zeroconf", serviceType)
-		return
-	} else if len(*choices) == 1 {
-		choice = &(*choices)[0]
-	} else {
-		// user needs to choose
-		if choice, err = chooseZeroconfService("Choose "+serviceType, *choices); err != nil {
-			return
-		}
-		if choice == nil {
-			log.Printf("ZEROCONF: user chose 'none of the above'\n")
-		}
-	}
-	addr = ""
-	port = 0
-	if choice != nil {
-		addr = choice.Address
-		port = choice.Port
-
-		log.Printf("ZEROCONF: auto configuring %s: %s:%d [%s: %s]\n",
-			serviceType,
-			addr, port, choice.HostName, choice.InstanceName)
-	}
-	return
-}
-
 // handleMessages handles messages
 func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload interface{}, err error) {
 	log.Printf("Handle message: %s %s\n", m.Name, string(m.Payload))
 	switch m.Name {
 	case "cancelPreferences":
 		prefs_w.Hide()
-
-	case "chooseZeroconfServiceCallback":
-		var selected int
-		// Unmarshal payload
-		if err = json.Unmarshal(m.Payload, &selected); err != nil {
-			payload = err.Error()
-			return
-		}
-		log.Printf("...got callback (%d) send to channel\n", selected)
-		chooseZeroconfServiceChan <- selected
 
 	case "connectToSynergy":
 		if err = connectToSynergy(); err != nil {
@@ -772,62 +674,72 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		log.Printf("Show Preferences (from messages)\n")
 		prefs_w.Show()
 
+	case "getControlSurface":
+		var response struct {
+			HasControlSurface bool
+			AlreadyConfigured bool
+			Choices           *[]zeroconf.Service
+		}
+		response.HasControlSurface = prefsUserPreferences.UseOsc
+		if !osc.OscControlSurfaceConfigured() {
+			if prefsUserPreferences.OscAutoConfig {
+				if len(zeroconf.OscServices) == 1 {
+					log.Printf("ZEROCONF: auto config Control Surface: %#v\n", zeroconf.OscServices[0])
+					osc.OscSetControlSurface(zeroconf.OscServices[0].Address, zeroconf.OscServices[0].Port)
+				} else {
+					log.Printf("ZEROCONF: zero or more than one Control Surface: %#v\n", zeroconf.OscServices)
+					response.Choices = &zeroconf.OscServices
+				}
+			} else {
+				osc.OscSetControlSurface(prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort)
+			}
+		}
+		response.AlreadyConfigured = osc.OscControlSurfaceConfigured()
+		payload = response
+
+	case "rescanZeroconf":
+		log.Printf("ZEROCONF: user requested rescan...\n")
+		zeroconf.Browse()
+		log.Printf("ZEROCONF: user requested rescan completed.\n")
+		payload = "ok"
+
 	case "toggleVoicingMode":
 		if err = connectToSynergyIfNotConnected(); err != nil {
 			payload = err.Error()
 			return
 		}
-		var mode bool
+		var args struct {
+			Mode       bool
+			zeroconfCs *zeroconf.Service
+		}
 		if len(m.Payload) > 0 {
 			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &mode); err != nil {
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
 				payload = err.Error()
 				return
 			}
 		}
-		if mode {
+		if args.Mode {
 			var vce data.VCE
 			payload = nil
 			var csEnabled = false
 			if prefsUserPreferences.UseOsc {
 				port := prefsUserPreferences.OscPort
-				csurfaceAddress := prefsUserPreferences.OscCSurfaceAddress
-				csurfacePort := prefsUserPreferences.OscCSurfacePort
-				log.Println("FFF")
-				if prefsUserPreferences.OscAutoConfig {
-					log.Println("EEE")
-					if csurfaceAddress, csurfacePort, err = getZeroconfAddress("Control Surface", &zeroconf.OscServices); err != nil {
-						log.Println("DDD")
-						log.Println(err)
-						payload = err.Error()
-						return
-					}
-					log.Println("CCC")
-				}
-				log.Println("BBBB")
-				if csurfaceAddress != "" {
-					log.Println("AAAA")
-					if err = osc.OscInit(port,
-						csurfaceAddress,
-						csurfacePort,
-						*verboseOscIn, *verboseOscOut,
-						prefsSynergyName()); err != nil {
+				if err = osc.OscInit(port,
+					*verboseOscIn, *verboseOscOut,
+					prefsSynergyName()); err != nil {
 
-						log.Println(err)
-						payload = err.Error()
-					} else {
-						csEnabled = true
-					}
+					log.Println(err)
+					payload = err.Error()
+				} else {
+					csEnabled = true
 				}
 			}
-			log.Println("4444")
 			if payload == nil {
-				log.Println("3333")
 				if vce, err = synio.EnableVoicingMode(); err != nil {
 					payload = err.Error()
 					return
 				}
-				log.Println("2222")
 				// NOTE: need to pass reference in order to get the custom JSON marshalling to notice the VNAME
 				resultPayload := struct {
 					Vce       *data.VCE
@@ -836,9 +748,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 					Vce:       &vce,
 					CsEnabled: csEnabled,
 				}
-				log.Println("1111")
 				payload = resultPayload
-				log.Println("0000")
 			}
 
 		} else {

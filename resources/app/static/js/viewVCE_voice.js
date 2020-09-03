@@ -722,21 +722,74 @@ ${freqDAG}
 
 	},
 
-	toggleVoicingMode(mode) {
+	toggleVoicingMode: function (mode) {
 		if (!mode) {
 			index.confirmDialog("Disabling Voicing Mode will discard any pending edits. Are you sure?", function () {
-				viewVCE_voice.raw_toggleVoicingMode(mode);
+				viewVCE_voice.raw_toggleVoicingMode(mode, null);
 			});
 		} else {
-			viewVCE_voice.raw_toggleVoicingMode(mode);
+			// fetch the config from the server (server will return already selected config, or "not enabled" or a list of selections)
+			// if server returns "already configured" or "not enabled"
+			//      send request to start voicemode to server
+			// if server returns a list of options
+			//     popup a selection dialog
+			//        Cancel event aborts attempt to start voicemode
+			//        OK event sends the selection and request to start voicemode to server
+			//        Rescan event sends request to rescan to the server -- then recursively calls config
+			let message = {
+				"name": "getControlSurface",
+				"payload": ""
+			};
+			astilectron.sendMessage(message, function (message) {
+				if (message.name === "error") {
+					// failed - abort
+					index.errorNotification(message.payload);
+				} else {
+					if ((!message.payload.HasControlSurface) || message.payload.AlreadyConfigured) {
+						viewVCE_voice.raw_toggleVoicingMode(true, null)
+					} else {
+						// zeroconf found more than one option - show dialog
+						index.chooseZeroconfService("Choose Control Surface", message.payload.Choices,
+							function () {
+								// cancelled - do nothing
+							},
+							function (choice) {
+								// user selected one of the options 
+								viewVCE_voice.raw_toggleVoicingMode(true, choice);
+							},
+							function () {
+								// user asked for a rescan
+								let message = {
+									"name": "rescanZeroconf",
+									"payload": ""
+								};
+								index.spinnerOn();
+								astilectron.sendMessage(message, function (message) {
+									index.spinnerOff();
+									if (message.name === "error") {
+										// failed - abort
+										index.errorNotification(message.payload);
+									} else {
+										// recurse
+										viewVCE_voice.toggleVoicingMode(true);
+									}
+								});
+							}
+						)
+					}
+				}
+			});
 		}
 	},
 
-	raw_toggleVoicingMode: function (mode) {
+	raw_toggleVoicingMode: function (mode, zeroconfChoice) {
 		console.log(`VoicingMode ${mode ? 'on' : 'off'}`);
 		let message = {
 			"name": "toggleVoicingMode",
-			"payload": mode
+			"payload": {
+				"Mode": mode,
+				"ZeroconfCs": zeroconfChoice // optional param - null unless user just selected from a menu
+			}
 		};
 		index.spinnerOn();
 		astilectron.sendMessage(message, function (message) {

@@ -17,11 +17,44 @@ var server *goosc.Server
 var listener net.PacketConn
 var started = false
 
-func OscInit(port uint, csurfaceAddress string, csurfacePort uint, verboseIn bool, verboseOut bool, synergyName string) (err error) {
+var csurfaceAddress string
+var csurfacePort uint
+
+// Lifecycle:
+//  OSC server restarted when:
+//       voicing mode starts
+//  OSC client restarted when:
+//       voicing mode starts
+//
+//  VST client restarted when:
+//       IO requiring synergy connection
+//
+//  zeroconf browses when:
+//       at program startup
+//       user explicitly asks for a re-scan
+//
+//  zeroconf publishes OSC server address when:
+//       at program startup
+//       whenever server restarted
+
+func OscSetControlSurface(addr string, port uint) {
+	csurfaceAddress = addr
+	csurfacePort = port
+}
+
+func OscControlSurfaceConfigured() bool {
+	return csurfaceAddress != ""
+}
+
+func OscInit(port uint, verboseIn bool, verboseOut bool, synergyName string) (err error) {
 	verboseOscIn = verboseIn
 	verboseOscOut = verboseOut
 
 	started = false
+
+	if OscControlSurfaceConfigured() {
+		client = goosc.NewClient(csurfaceAddress, int(csurfacePort))
+	}
 
 	addr := fmt.Sprintf("0.0.0.0:%d", port)
 	d := goosc.NewStandardDispatcher()
@@ -44,7 +77,6 @@ func OscInit(port uint, csurfaceAddress string, csurfacePort uint, verboseIn boo
 	if err := zeroconf.StartServer(port, synergyName); err != nil {
 		log.Printf("ERROR: could not start zeroconf: %v\n", err)
 	}
-	client = goosc.NewClient(csurfaceAddress, int(csurfacePort))
 
 	go func() {
 		if err := closeableListenAndServe(server); err != nil {

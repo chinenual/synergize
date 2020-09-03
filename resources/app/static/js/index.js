@@ -82,7 +82,7 @@ let index = {
 		$('#alertModal').modal();
 	},
 
-	chooseZeroconfService: function (prompt, choices) {
+	chooseZeroconfService: function (prompt, choices, onCancel, onOK, onRescan) {
 		console.log("chooseZeroconfService: " + prompt + " " + JSON.stringify(choices));
 		document.getElementById("chooseZeroconfPrompt").innerHTML = prompt;
 
@@ -103,33 +103,21 @@ let index = {
 		var selected = 0;
 		document.getElementById("chooseZeroconfCancelButton").onclick = function () {
 			console.log("Cancelled");
-			index.chooseZeroconfServiceCallback(-1);
+			onCancel();
 		};
 		document.getElementById("chooseZeroconfOKButton").onclick = function () {
 			selected = parseInt($('#chooseZeroconfItems input:checked').val(), 10);
 			console.log("Selected " + selected);
-			index.chooseZeroconfServiceCallback(selected);
+			onOK(selected);
+		};
+		document.getElementById("chooseZeroconfRescanButton").onclick = function () {
+			console.log("Rescan");
+			onRescan();
 		};
 
 		$('#chooseZeroconfModal').modal({
 			backdrop: "static" // clicking outside the dialog doesnt close the dialog
 		});
-		// confirm("chooseZeroconfService: " + prompt + " " + JSON.stringify(choices));
-	},
-
-	chooseZeroconfServiceCallback(val) {
-		let message = {
-			"name": "chooseZeroconfServiceCallback",
-			"payload": val,
-		};
-		// Send message
-		astilectron.sendMessage(message, function (message) {
-			// Check error
-			if (message.name === "error") {
-				index.errorNotification(message.payload);
-			}
-		});
-
 	},
 
 	saveSYNDialog: function () {
@@ -576,11 +564,6 @@ let index = {
 					break;
 				case "runDiag":
 					index.viewDiag();
-					return { payload: "ok" };
-					break;
-				case "chooseZeroconfService":
-					index.chooseZeroconfService(message.payload.Prompt, message.payload.Choices);
-					// result is returned by callback
 					return { payload: "ok" };
 					break;
 				case "updateFromCSurface":
