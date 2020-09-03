@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -27,17 +26,12 @@ var chooseZeroconfServiceChan chan int
 func chooseZeroconfService(prompt string, choices []zeroconf.Service) (choice *zeroconf.Service, err error) {
 	log.Println("m")
 	choice = nil
-	var stringified []string
 	log.Println("l")
-	for _, s := range choices {
-		log.Println("k")
-		stringified = append(stringified, fmt.Sprintf("%s (%s:%d)", s.InstanceName(), s.Address(), s.Port()))
-	}
 	log.Println("j")
 	var msg = struct {
 		Prompt  string
-		Choices []string
-	}{prompt, stringified}
+		Choices []zeroconf.Service
+	}{prompt, choices}
 	log.Println("i")
 
 	var wg sync.WaitGroup
@@ -104,12 +98,12 @@ func getZeroconfAddress(serviceType string, choices *[]zeroconf.Service) (addr s
 	addr = ""
 	port = 0
 	if choice != nil {
-		addr = choice.Address()
-		port = uint(choice.Port())
+		addr = choice.Address
+		port = choice.Port
 
 		log.Printf("ZEROCONF: auto configuring %s: %s:%d [%s: %s]\n",
 			serviceType,
-			addr, port, choice.HostName(), choice.InstanceName())
+			addr, port, choice.HostName, choice.InstanceName)
 	}
 	return
 }

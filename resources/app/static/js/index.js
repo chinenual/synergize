@@ -92,7 +92,7 @@ let index = {
 		    <div class="form-check">
                 <input class="form-check-input" type="radio" name="chooseZeroconfRadios" id="chooseZeroconfRadio${i}" value="${i}" ${i == 0 ? "checked" : ""}>
                 <label class="form-check-label" for="chooseZeroconfRadio${i}">
-                   ${choices[i]}
+                   ${choices[i].InstanceName} (${choices[i].Address}:${choices[i].Port})
                 </label>
 			</div>`
 			console.log("html now " + html);

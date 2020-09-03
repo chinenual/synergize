@@ -15,31 +15,24 @@ const browseTimeout = time.Second * 20
 var server *zeroconf.Server
 
 type Service struct {
-	entry *zeroconf.ServiceEntry
-}
-
-func (s Service) GoString() string {
-	return "Service{InstanceName: " + s.InstanceName() + "; addr: " + s.Address() + ":" + fmt.Sprintf("%d", s.Port()) + "}"
-}
-
-func (s *Service) InstanceName() string {
-	return s.entry.Instance
-}
-func (s *Service) Address() string {
-	return s.entry.AddrIPv4[0].String()
-}
-func (s *Service) HostName() string {
-	return s.entry.HostName
-}
-func (s *Service) Port() int {
-	return s.entry.Port
-}
-func (s *Service) Text() []string {
-	return s.entry.Text
+	InstanceName string
+	Address      string
+	HostName     string
+	Port         uint
+	Text         []string
 }
 
 var OscServices []Service
 var VstServices []Service
+
+func newService(se *zeroconf.ServiceEntry) (s Service) {
+	s.InstanceName = se.Instance
+	s.Address = se.AddrIPv4[0].String()
+	s.HostName = se.HostName
+	s.Port = uint(se.Port)
+	s.Text = se.Text
+	return
+}
 
 func StartServer(oscListenPort uint, synergyName string) (err error) {
 	CloseServer()
@@ -87,7 +80,7 @@ func Browse() {
 			// ignore other OSC services - only those on TouchOSC might be of interest
 			if strings.Contains(entry.Instance, "TouchOSC") {
 				log.Printf("ZEROCONF: Found OSC service %s\n", entry.Instance)
-				var s = Service{entry: entry}
+				var s = newService(entry)
 				OscServices = append(OscServices, s)
 				log.Printf("ZEROCONF: add OSC svcs: %#v\n", OscServices)
 			} else if strings.Contains(entry.Instance, "Synergize") {
@@ -101,7 +94,7 @@ func Browse() {
 	go func(results <-chan *zeroconf.ServiceEntry) {
 		for entry := range results {
 			log.Printf("ZEROCONF: Found VST service %s\n", entry.Instance)
-			var s = Service{entry: entry}
+			var s = newService(entry)
 			VstServices = append(VstServices, s)
 		}
 	}(vstEntries)
