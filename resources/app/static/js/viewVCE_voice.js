@@ -736,6 +736,9 @@ ${freqDAG}
 			//        Cancel event aborts attempt to start voicemode
 			//        OK event sends the selection and request to start voicemode to server
 			//        Rescan event sends request to rescan to the server -- then recursively calls config
+
+			console.log("top toggleVoicingMode(true)");
+
 			let message = {
 				"name": "getControlSurface",
 				"payload": ""
@@ -745,19 +748,25 @@ ${freqDAG}
 					// failed - abort
 					index.errorNotification(message.payload);
 				} else {
+					console.log("getControlSurface returned " + JSON.stringify(message.payload));
 					if ((!message.payload.HasControlSurface) || message.payload.AlreadyConfigured) {
+						console.log("call raw_toggleVoicingMode");
 						viewVCE_voice.raw_toggleVoicingMode(true, null)
 					} else {
 						// zeroconf found more than one option - show dialog
+						console.log("show menu");
 						index.chooseZeroconfService("Choose Control Surface", message.payload.Choices,
 							function () {
+								console.log("cancelled");
 								// cancelled - do nothing
 							},
 							function (choice) {
+								console.log("user chose " + JSON.stringify(choice));
 								// user selected one of the options 
 								viewVCE_voice.raw_toggleVoicingMode(true, choice);
 							},
 							function () {
+								console.log("rescan");
 								// user asked for a rescan
 								let message = {
 									"name": "rescanZeroconf",
@@ -770,6 +779,7 @@ ${freqDAG}
 										// failed - abort
 										index.errorNotification(message.payload);
 									} else {
+										console.log("rescan done");
 										// recurse
 										viewVCE_voice.toggleVoicingMode(true);
 									}

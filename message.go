@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/chinenual/synergize/data"
 	"github.com/chinenual/synergize/osc"
@@ -683,7 +684,9 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		response.HasControlSurface = prefsUserPreferences.UseOsc
 		if !osc.OscControlSurfaceConfigured() {
 			if prefsUserPreferences.OscAutoConfig {
-				if len(zeroconf.OscServices) == 1 {
+				if false && len(zeroconf.OscServices) == 1 {
+					// Temporarily disabled since bonjour discovery is not reliably finding all devices; make sure the user
+					// gets a chance to rescan
 					log.Printf("ZEROCONF: auto config Control Surface: %#v\n", zeroconf.OscServices[0])
 					osc.OscSetControlSurface(zeroconf.OscServices[0].InstanceName, zeroconf.OscServices[0].Address, zeroconf.OscServices[0].Port)
 				} else {
@@ -699,8 +702,18 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 
 	case "rescanZeroconf":
 		log.Printf("ZEROCONF: user requested rescan...\n")
+		var start = time.Now()
 		zeroconf.Browse()
 		log.Printf("ZEROCONF: user requested rescan completed.\n")
+
+		// HACK: the javascript modal gets confused if we return too fast (attempting to open a new modal before the
+		// previous incarnation has finished transitioning causes the events to be ignored):
+		//    https://getbootstrap.com/docs/4.0/components/modal/).
+		// So if we returned too fast, add a bit of artificial delay...
+		if time.Now().Sub(start).Seconds() < 1 {
+			time.Sleep(time.Second * 5)
+		}
+
 		payload = "ok"
 
 	case "toggleVoicingMode":
