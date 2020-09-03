@@ -17,6 +17,7 @@ var server *goosc.Server
 var listener net.PacketConn
 var started = false
 
+var csurfaceName string
 var csurfaceAddress string
 var csurfacePort uint
 
@@ -37,11 +38,23 @@ var csurfacePort uint
 //       at program startup
 //       whenever server restarted
 
-func OscSetControlSurface(addr string, port uint) {
+func OscSetControlSurface(name string, addr string, port uint) {
+	csurfaceName = name
 	csurfaceAddress = addr
 	csurfacePort = port
 }
 
+func OscControlSurfaceName() string {
+	if OscControlSurfaceConfigured() {
+		if csurfaceName == "" {
+			return fmt.Sprintf("%s:%d", csurfaceAddress, csurfacePort)
+		} else {
+			return fmt.Sprintf("%s (%s:%d)", csurfaceName, csurfaceAddress, csurfacePort)
+		}
+	} else {
+		return ""
+	}
+}
 func OscControlSurfaceConfigured() bool {
 	return csurfaceAddress != ""
 }

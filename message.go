@@ -685,13 +685,13 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			if prefsUserPreferences.OscAutoConfig {
 				if len(zeroconf.OscServices) == 1 {
 					log.Printf("ZEROCONF: auto config Control Surface: %#v\n", zeroconf.OscServices[0])
-					osc.OscSetControlSurface(zeroconf.OscServices[0].Address, zeroconf.OscServices[0].Port)
+					osc.OscSetControlSurface(zeroconf.OscServices[0].InstanceName, zeroconf.OscServices[0].Address, zeroconf.OscServices[0].Port)
 				} else {
 					log.Printf("ZEROCONF: zero or more than one Control Surface: %#v\n", zeroconf.OscServices)
 					response.Choices = &zeroconf.OscServices
 				}
 			} else {
-				osc.OscSetControlSurface(prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort)
+				osc.OscSetControlSurface("", prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort)
 			}
 		}
 		response.AlreadyConfigured = osc.OscControlSurfaceConfigured()
@@ -723,6 +723,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			var vce data.VCE
 			payload = nil
 			var csEnabled = false
+			var csName = ""
 			if prefsUserPreferences.UseOsc {
 				port := prefsUserPreferences.OscPort
 				if err = osc.OscInit(port,
@@ -733,6 +734,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 					payload = err.Error()
 				} else {
 					csEnabled = true
+					csName = osc.OscControlSurfaceName()
 				}
 			}
 			if payload == nil {
@@ -744,9 +746,11 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				resultPayload := struct {
 					Vce       *data.VCE
 					CsEnabled bool
+					CsName string
 				}{
 					Vce:       &vce,
 					CsEnabled: csEnabled,
+					CsName: csName,
 				}
 				payload = resultPayload
 			}

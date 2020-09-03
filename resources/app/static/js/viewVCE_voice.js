@@ -808,7 +808,12 @@ ${freqDAG}
 						vce = message.payload.Vce;
 						viewVCE_voice.csEnabled = message.payload.CsEnabled;
 
-						csMessage = ".<br>Control Surface is " + (viewVCE_voice.csEnabled ? "" : "not ") + "enabled.";
+						var csMessage = ""
+						if (viewVCE_voice.csEnabled) {
+							csMessage = `.<br>Control Surface is enabled: ${message.payload.csName}.`;
+						} else {
+							csMessage = `.<br>Control Surface is not enabled.`;
+						}
 						crt_name = null;
 						crt_path = null;
 						index.load("viewVCE.html", "content",
@@ -821,7 +826,7 @@ ${freqDAG}
 						viewVCE_voice.csEnabled = false;
 					}
 				}
-				index.infoNotification(`Voicing mode ${mode ? 'enabled' : 'disabled'}${csMessage}`);
+				index.infoNotification(`Voicing mode ${mode ? 'enabled' : 'disabled'}.${csMessage}`);
 			}
 			index.refreshConnectionStatus();
 

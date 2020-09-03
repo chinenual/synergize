@@ -182,7 +182,7 @@ func TestMain(m *testing.M) {
 				fmt.Println(err)
 			}
 		}()
-		OscSetControlSurface("10.0.6.28", 9000)
+		OscSetControlSurface("unnamed", "10.0.6.28", 9000)
 		err := OscInit(8000, true, true, "mock-synergy-name")
 		if err != nil {
 			fmt.Printf("could not initialize io: %v\n", err)
