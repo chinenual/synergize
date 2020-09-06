@@ -10,7 +10,33 @@ import (
 	"github.com/grandcat/zeroconf"
 )
 
-const browseTimeout = time.Second * 15
+// Connection/Zeroconf Lifecycle:
+//  OSC server (re)started when:
+//       voicing mode starts
+//  OSC client (re)started when:
+//       voicing mode starts
+//
+//  VST client started when:
+//       first time IO requiring synergy connection
+//          user explictly connects
+//          load CRT for editing
+//          load CRT
+//          load SYN
+//          save SYN
+//          disable VRAM
+//          run COMTest
+//          toggle voicing mode
+//
+//  zeroconf browses when:
+//       at program startup
+//       user explicitly asks for a re-scan
+//
+//  zeroconf publishes OSC server address when:
+//       at program startup
+//       whenever server restarted
+
+const numQueries = 5
+const shortTimeout = time.Second * 3
 
 var server *zeroconf.Server
 
@@ -53,23 +79,47 @@ func CloseServer() {
 	}
 }
 
+func addIfNew(list *[]Service, entry *zeroconf.ServiceEntry) {
+	for _, v := range *list {
+		if v.InstanceName == entry.Instance {
+			return
+		}
+	}
+	s := newService(entry)
+	*list = append(*list, s)
+	return
+}
+
 var browsing = false
 
 func Browse() {
 	if browsing {
 		return
 	}
+	defer func() {
+		browsing = false
+	}()
 	browsing = true
 
+	OscServices = make([]Service, 0)
+	VstServices = make([]Service, 0)
+
+	// HACK: some devices don't respond on the first query - we run several short queries and accumulate all the unique responses.
+	for i := 0; i < numQueries; i++ {
+		browse(shortTimeout)
+	}
+
+	log.Printf("ZEROCONF: end Browse OSC svcs: %#v   VST svcs: %#v\n", OscServices, VstServices)
+
+}
+
+func browse(timeout time.Duration) {
 	// Discover services on the network
 	resolver, err := zeroconf.NewResolver(nil)
 	if err != nil {
 		log.Printf("ERROR: ZEROCONF: Failed to initialize resolver: %v\n", err.Error())
 	}
 	log.Printf("ZEROCONF: start browse...\n")
-
-	OscServices = make([]Service, 0)
-	VstServices = make([]Service, 0)
 
 	oscEntries := make(chan *zeroconf.ServiceEntry)
 	vstEntries := make(chan *zeroconf.ServiceEntry)
@@ -80,9 +130,7 @@ func Browse() {
 			// ignore other OSC services - only those on TouchOSC might be of interest
 			if strings.Contains(entry.Instance, "TouchOSC") {
 				log.Printf("ZEROCONF: Found OSC service %s\n", entry.Instance)
-				var s = newService(entry)
-				OscServices = append(OscServices, s)
-				log.Printf("ZEROCONF: add OSC svcs: %#v\n", OscServices)
+				addIfNew(&OscServices, entry)
 			} else if strings.Contains(entry.Instance, "Synergize") {
 				// silently ignore
 			} else {
@@ -94,21 +142,19 @@ func Browse() {
 	go func(results <-chan *zeroconf.ServiceEntry) {
 		for entry := range results {
 			log.Printf("ZEROCONF: Found VST service %s\n", entry.Instance)
-			var s = newService(entry)
-			VstServices = append(VstServices, s)
+			addIfNew(&VstServices, entry)
 		}
 	}(vstEntries)
 
-	ctx1, cancel1 := context.WithTimeout(context.Background(), browseTimeout)
+	ctx1, cancel1 := context.WithTimeout(context.Background(), timeout)
 	defer cancel1()
 	err = resolver.Browse(ctx1, "_osc._udp", "local.", oscEntries)
 	if err != nil {
 		log.Printf("ERROR: ZEROCONF: Failed to browse OSC: %v\n", err.Error())
 	}
-
-	ctx2, cancel2 := context.WithTimeout(context.Background(), browseTimeout)
+	ctx2, cancel2 := context.WithTimeout(context.Background(), timeout)
 	defer cancel2()
-	err = resolver.Browse(ctx2, "_synergyvst._udp", "local.", vstEntries)
+	err = resolver.Browse(ctx2, "_synergy-vst._udp", "local.", vstEntries)
 	if err != nil {
 		log.Printf("ERROR: ZEROCONF: Failed to browse VST: %v\n", err.Error())
 	}
@@ -116,6 +162,4 @@ func Browse() {
 	<-ctx1.Done()
 	<-ctx2.Done()
 
-	log.Printf("ZEROCONF: end Browse OSC svcs: %#v   VST svcs: %#v\n", OscServices, VstServices)
-	browsing = false
 }
