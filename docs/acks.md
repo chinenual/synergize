@@ -17,6 +17,7 @@ Synergize is free and open source software, which uses a number of other open so
 * The [Bootstrap](https://getbootstrap.com/) CSS framework
 * István Ujj-Mészáros's [Touchspin](https://github.com/istvan-ujjmeszaros/bootstrap-touchspin).
 * Daniel Kallin's  [nomnoml](https://github.com/skanaar/nomnoml) diagram library.
+* Stefan S's [bonjour/zeroconf]((https://github.com/grandcat/zeroconf) library.
 * Lodash's [debouncer](https://lodash.com/)
 * [Electron](electronjs.org)
 * [JQuery](https://jquery.com/)

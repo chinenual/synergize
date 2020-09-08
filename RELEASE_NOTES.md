@@ -9,6 +9,28 @@ permalink: /docs/release-notes
 
 # Release Notes
 
+## 2.2.0
+
+* Support for connecting to the [Synergia](http://www.webaudiomodules.org/wamsynths/synergia) virtual Synergy -- a chip-level emulation
+  of the Synergy that runs as a VST or AU virtual instrument.
+* Support for Bonjour/Zeroconf automatic network configuration.
+    * Synergize advertises itself so that TouchOSC can connect to it with a
+      single touch. 
+    * It can also use zeroconf to search for available TouchOSC
+      devices so you dont have to hardcode their address and port. 
+    * It uses zeroconf to search for virtual instruments.
+    * Zeroconf is enabled for TouchOSC discovery by default, but can be disabled
+      via the Preferences menu.  It is required for VST integration
+      and cannot be disabled for that purpose.
+* The UI no longer shows the firmware version in the upper left
+    corner of the menu bar. Instead it shows the name of the
+    connected synergy - which might be "serial-port" or the zeroconf
+    name of a virtual instrument.   The Firmware version of the
+    connected synergy can be viewed via Connect menu.
+* Fixes [issue #3](https://github.com/chinenual/synergize/issues/3):
+  removes a limitation on macos: serial port configuration (e.g. baud rate) can be
+  changed without requiring the application to be restarted.
+
 ## 2.1.0
 
 * Adds support for a Tablet-based TouchOSC external control surface to

@@ -9,7 +9,7 @@ permalink: /
 
 <img src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/logo-for-github.png?raw=true"/>
 
-A portable voice editor and librarian for the DKI Synergy synthesizer
+A free, open-source, portable voice editor and librarian for the DKI Synergy synthesizer
 with a GDS-like user interface.
 
 ## Features
@@ -68,13 +68,14 @@ If you are a user or are thinking of becoming a user, please join our Slack work
 See the [User Manual](intro.md) for full details on hardware, OS
 requirements and application usage.
 
+## License
+
+Synergize is free and open source software released under the [MIT](LICENSE)
+license.
 
 ## Known Issues
 
 See [HARDWARE](hardware.md) for some serial port related troubleshooting guidelines.
-
-* On MacOS, if you change serial parameters, you will need to restart the application in order to "reconnect" to the synergy with those parameters. On Windows, you can directly re-connect via the Connect->Connect to Synergy menu.
-
 * Due to the mysteries of serial port communication, attempts to save or load files to the Synergy will sometimes fail (often reporting a TIMEOUT).  If this happens, a second try will usually succeed. Fixes 
 
 * See the
