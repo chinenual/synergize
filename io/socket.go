@@ -12,8 +12,19 @@ type SocketIo struct {
 
 func SocketInit(addr string) (s SocketIo, err error) {
 	var tcpAddr *net.TCPAddr
-	tcpAddr, err = net.ResolveTCPAddr("tcp4", addr)
-	s.conn, err = net.DialTCP("tcp", nil, tcpAddr)
+	if tcpAddr, err = net.ResolveTCPAddr("tcp4", addr); err != nil {
+		return
+	}
+	if s.conn, err = net.DialTCP("tcp", nil, tcpAddr); err != nil {
+		return
+	}
+	return
+}
+
+func (s SocketIo) close() (err error) {
+	if err = s.conn.Close(); err != nil {
+		return
+	}
 	return
 }
 

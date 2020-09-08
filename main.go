@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
@@ -20,7 +21,6 @@ import (
 	"github.com/asticode/go-astikit"
 	"github.com/asticode/go-astilectron"
 	bootstrap "github.com/asticode/go-astilectron-bootstrap"
-	"github.com/pkg/errors"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
@@ -34,7 +34,10 @@ var (
 
 // Application Vars
 var (
-	uitest            = flag.Int("UITEST", 0, "alter startup to support Selenium testing (specifies listening port)")
+	port              = flag.String("port", getDefaultPort(), "the serial device")
+	baud              = flag.Uint("baud", getDefaultBaud(), "the serial baud rate")
+	record            = flag.String("RECORD", "", "capture bytes to <record>.in and <record>.out")
+	uitest            = flag.Int("UITEST", 0, "alter startup to support automated testing (specifies listening port)")
 	provisionOnly     = flag.Bool("PROVISION", false, "run the provisioner and then exit")
 	serialVerboseFlag = flag.Bool("SERIALVERBOSE", false, "Show each byte operation through the serial port")
 	verboseOscIn      = flag.Bool("OSCINVERBOSE", false, "Show OSC input events")
@@ -52,14 +55,50 @@ var (
 	rawlog            = flag.Bool("RAWLOG", false, "Turn off timestamps to make logs easier to compare")
 	//midiproxy = flag.Bool("MIDIPROXY", false, "present a MIDI interface and use serial IO to control the Synergy")
 
-	w               *astilectron.Window
-	about_w         *astilectron.Window
-	prefs_w         *astilectron.Window
-	a               *astilectron.Astilectron
-	l               *log.Logger
-	AppVersion      string
-	FirmwareVersion string
+	w          *astilectron.Window
+	about_w    *astilectron.Window
+	prefs_w    *astilectron.Window
+	a          *astilectron.Astilectron
+	l          *log.Logger
+	AppVersion string
 )
+
+func getDefaultBaud() uint {
+	// FIXME: loads the prefs twice - harmless, but annoying
+	prefsLoadPreferences()
+
+	if prefsUserPreferences.SerialBaud != 0 {
+		return prefsUserPreferences.SerialBaud
+	}
+	return 9600
+}
+
+func getDefaultPort() string {
+	// FIXME: loads the prefs twice - harmless, but annoying
+	prefsLoadPreferences()
+
+	if prefsUserPreferences.SerialPort != "" {
+		return prefsUserPreferences.SerialPort
+	}
+	if runtime.GOOS == "darwin" {
+		files, _ := filepath.Glob("/dev/tty.usbserial*")
+		for _, f := range files {
+			return f
+		}
+	} else if runtime.GOOS == "linux" {
+		files, _ := filepath.Glob("/dev/ttyUSB*")
+		for _, f := range files {
+			return f
+		}
+		// if no USB serial, assume /dev/ttyS0
+		return "/dev/ttyS0"
+
+	} else {
+		// windows
+		return "COM1"
+	}
+	return ""
+}
 
 func setVersion() {
 	// convert the BuiltAt string to something more useful as a version id.
@@ -116,55 +155,6 @@ func init() {
 	l.Printf("Running app version %s\n", AppVersion)
 }
 
-func connectToSynergyIfNotConnected() (err error) {
-	if FirmwareVersion == "" {
-		err = connectToSynergy()
-	}
-	return
-}
-
-func connectToSynergy() (err error) {
-	FirmwareVersion = "Not Connected"
-	if err = synio.Init(prefsUserPreferences.SerialPort,
-		prefsUserPreferences.SerialBaud, true, *serialVerboseFlag, *mockSynio); err != nil {
-		err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n",
-			prefsUserPreferences.SerialPort,
-			prefsUserPreferences.SerialBaud)
-		l.Printf(err.Error())
-		CheckForNewVersion(true, false)
-		return
-	}
-	var bytes [2]byte
-	bytes, err = synio.GetID()
-	if err != nil {
-		err = errors.Wrap(err, "Cannot get firmware version")
-		l.Printf(err.Error())
-		CheckForNewVersion(true, false)
-		return
-	}
-	FirmwareVersion = fmt.Sprintf("%d.%d", bytes[0], bytes[1])
-
-	CheckForNewVersion(true, true)
-	l.Printf("Connected to Synergy, firmware version: %s\n", FirmwareVersion)
-	return
-}
-
-func connectToSynergyNoFirmwareCheck() (err error) {
-	FirmwareVersion = "Not Connected"
-	if err = synio.Init(prefsUserPreferences.SerialPort,
-		prefsUserPreferences.SerialBaud, true, *serialVerboseFlag, *mockSynio); err != nil {
-		err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n",
-			prefsUserPreferences.SerialPort,
-			prefsUserPreferences.SerialBaud)
-		l.Printf(err.Error())
-		CheckForNewVersion(true, false)
-		return
-	}
-	CheckForNewVersion(true, true)
-	l.Printf("Connected to Synergy, no check for firmware version\n")
-	return
-}
-
 func refreshNavPane(path string) {
 	if err := bootstrap.SendMessage(w, "explore", path, func(m *bootstrap.MessageIn) {}); err != nil {
 		l.Println(fmt.Errorf("sending refreshNav event failed: %w", err))
@@ -172,7 +162,8 @@ func refreshNavPane(path string) {
 }
 
 func recordIo(f func(string) error, arg string) (err error) {
-	if err = connectToSynergyIfNotConnected(); err != nil {
+	// nil means use "preferences" config
+	if err = ConnectToSynergy(nil); err != nil {
 		return
 	}
 	if *record != "" {

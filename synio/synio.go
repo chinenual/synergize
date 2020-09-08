@@ -52,21 +52,42 @@ func Conn() *io.Conn {
 	return &conn
 }
 
-func Init(port string, baud uint, synVerbose bool, serialVerbose bool, mockflag bool) (err error) {
+func Close() (err error) {
+	if err = conn.Close(); err != nil {
+		return
+	}
+	return
+}
+
+func SetSynergySerialPort(device string, baud uint, synVerbose bool, serialVerbose bool, mockflag bool) (err error) {
 	synioVerbose = synVerbose
 	mock = mockflag
 	if mock {
 		log.Printf("MOCKSYNIO - initialized\n")
 		return
 	}
-
-	var s io.SerialIo
-	if s, err = io.SerialInit(port, baud); err != nil {
-		return errors.Wrap(err, "Could not open serial port")
-	}
-	if conn, err = io.IoInit(s, serialVerbose); err != nil {
+	initializeCRC()
+	if conn, err = io.SetSynergySerialPort("serial-port", device, baud, serialVerbose); err != nil {
 		return errors.Wrap(err, "Could not initialize synergy connection")
 	}
+	return
+}
+
+func SetSynergyVst(name string, addr string, port uint, synVerbose bool, serialVerbose bool, mockflag bool) (err error) {
+	synioVerbose = synVerbose
+	mock = mockflag
+	if mock {
+		log.Printf("MOCKSYNIO - initialized\n")
+		return
+	}
+	initializeCRC()
+	if conn, err = io.SetSynergyVst(name, addr, port, serialVerbose); err != nil {
+		return errors.Wrap(err, "Could not initialize synergy connection")
+	}
+	return
+}
+
+func initializeCRC() {
 
 	// From SYN-V322/CRCSET64.Z80:
 	// ;       CYCLIC REDUNDANCY CHECK CHARACTER CHALCULATOR
@@ -78,8 +99,6 @@ func Init(port string, baud uint, synVerbose bool, serialVerbose bool, mockflag 
 	CRC16_BUYPASS := &crc.Parameters{Width: 16, Polynomial: 0x8005, Init: 0x0000, ReflectIn: false, ReflectOut: false, FinalXor: 0x0}
 
 	crcHash = crc.NewHash(CRC16_BUYPASS)
-
-	return
 }
 
 func command(opcode byte, name string) (err error) {

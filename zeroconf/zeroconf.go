@@ -10,31 +10,6 @@ import (
 	"github.com/grandcat/zeroconf"
 )
 
-// Connection/Zeroconf Lifecycle:
-//  OSC server (re)started when:
-//       voicing mode starts
-//  OSC client (re)started when:
-//       voicing mode starts
-//
-//  VST client started when:
-//       first time IO requiring synergy connection
-//          user explictly connects
-//          load CRT for editing
-//          load CRT
-//          load SYN
-//          save SYN
-//          disable VRAM
-//          run COMTest
-//          toggle voicing mode
-//
-//  zeroconf browses when:
-//       at program startup
-//       user explicitly asks for a re-scan
-//
-//  zeroconf publishes OSC server address when:
-//       at program startup
-//       whenever server restarted
-
 const numQueries = 5
 const shortTimeout = time.Second * 3
 
@@ -87,7 +62,6 @@ func addIfNew(list *[]Service, entry *zeroconf.ServiceEntry) {
 	}
 	s := newService(entry)
 	*list = append(*list, s)
-	return
 }
 
 var browsing = false

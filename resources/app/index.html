@@ -144,7 +144,12 @@ TEST a "more button" design:
 							</tr>
 						</table>
 						<div class="dropdown-content" id="connectDropdown-content">
-							<a href="#" onclick="index.connectToSynergy();">Connect to Synergy</a>
+							<a href="#" onclick="viewVCE_voice.connectSynergy();" id="connectSynergyMenuItem">Connect to
+								Synergy</a>
+							<a href="#" onclick="index.disconnectSynergy();" id="disconnectSynergyMenuItem">Disconnect
+								Synergy</a>
+							<a href="#" onclick="index.disconnectControlSurface();"
+								id="disconnectControlSurfaceMenuItem">Disconnect Control Surface</a>
 							<a href="#" onclick="index.disableVRAM();" id="disableVRAMMenuItem">Disable Synergy VRAM</a>
 							<a href="#" onclick="index.viewDiag();">Serial Diagnostics</a>
 						</div>

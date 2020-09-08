@@ -392,8 +392,8 @@ let index = {
 			}
 		})
 	},
-	connectToSynergy: function () {
-		let message = { "name": "connectToSynergy" };
+	disconnectSynergy: function () {
+		let message = { "name": "disconnectSynergy" };
 		index.spinnerOn();
 		astilectron.sendMessage(message, function (message) {
 			index.spinnerOff();
@@ -402,7 +402,22 @@ let index = {
 				return
 			} else {
 				index.updateConnectionStatus(message.payload);
-				index.infoNotification("Successfully connected to Synergy - firmware version " + message.payload);
+				index.infoNotification("Disconnected Synergy");
+				return
+			}
+		});
+	},
+	disconnectControlSurface: function () {
+		let message = { "name": "disconnectControlSurface" };
+		index.spinnerOn();
+		astilectron.sendMessage(message, function (message) {
+			index.spinnerOff();
+			if (message.name === "error") {
+				index.errorNotification(message.payload);
+				return
+			} else {
+				index.infoNotification("Disconnected Control Surface");
+				$('#disableControlSurfaceMenuItem').addClass('disabled');
 				return
 			}
 		});
@@ -440,8 +455,12 @@ let index = {
 		console.log("update status: " + status);
 		document.getElementById("firmwareVersion").innerHTML = status;
 		if (status === "" || status.includes("Not")) {
+			$('#disconnectSynergyMenuItem').addClass('disabled');
+			$('#connectSynergyMenuItem').removeClass('disabled');
 			document.getElementById("connectButtonImg").src = `static/images/grey-button-off-full.png`;
 		} else {
+			$('#disconnectSynergyMenuItem').removeClass('disabled');
+			$('#connectSynergyMenuItem').addClass('disabled');
 			document.getElementById("connectButtonImg").src = `static/images/grey-button-on-full.png`;
 		}
 	},

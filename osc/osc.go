@@ -21,23 +21,6 @@ var csurfaceName string
 var csurfaceAddress string
 var csurfacePort uint
 
-// Lifecycle:
-//  OSC server restarted when:
-//       voicing mode starts
-//  OSC client restarted when:
-//       voicing mode starts
-//
-//  VST client restarted when:
-//       IO requiring synergy connection
-//
-//  zeroconf browses when:
-//       at program startup
-//       user explicitly asks for a re-scan
-//
-//  zeroconf publishes OSC server address when:
-//       at program startup
-//       whenever server restarted
-
 func OscSetControlSurface(name string, addr string, port uint) {
 	csurfaceName = name
 	csurfaceAddress = addr
@@ -55,6 +38,7 @@ func OscControlSurfaceName() string {
 		return ""
 	}
 }
+
 func OscControlSurfaceConfigured() bool {
 	return csurfaceAddress != ""
 }

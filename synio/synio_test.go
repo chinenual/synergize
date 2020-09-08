@@ -41,7 +41,7 @@ func dumpAddressSpace(path string) {
 }
 
 func connectToSynergy() (err error) {
-	return Init(*port, *baud, *verbose, *serialVerboseFlag, *mocksynio)
+	return SetSynergySerialPort(*port, *baud, *verbose, *serialVerboseFlag, *mocksynio)
 }
 
 func TestGetFirmwareId(t *testing.T) {

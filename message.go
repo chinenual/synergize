@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/chinenual/synergize/data"
+	"github.com/chinenual/synergize/io"
 	"github.com/chinenual/synergize/osc"
 	"github.com/chinenual/synergize/synio"
 	"github.com/chinenual/synergize/zeroconf"
@@ -28,12 +29,28 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 	case "cancelPreferences":
 		prefs_w.Hide()
 
-	case "connectToSynergy":
-		if err = connectToSynergy(); err != nil {
-			payload = err.Error()
-		} else {
-			payload = FirmwareVersion
+	case "connectSynergy":
+		var args struct {
+			ZeroconfChoice *zeroconf.Service
 		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if args.ZeroconfChoice != nil {
+			log.Printf("ZEROCONF: config Synergy selected by user: %#v\n", *args.ZeroconfChoice)
+			if err = ConnectToSynergy(args.ZeroconfChoice); err != nil {
+				payload = err.Error()
+				return
+			}
+		} else if !io.SynergyConfigured() {
+			payload = errors.New("invalid argument to ConnectSynergy")
+			return
+		}
+		payload = "connected to " + io.SynergyName()
 
 	case "crtEditAddVoice":
 		var args struct {
@@ -69,10 +86,6 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		if err = connectToSynergyIfNotConnected(); err != nil {
-			payload = err.Error()
-			return
-		}
 		if err = synio.LoadCRT(args.Crt); err != nil {
 			payload = err.Error()
 			return
@@ -98,10 +111,6 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		payload = "ok"
 
 	case "disableVRAM":
-		if err = connectToSynergyIfNotConnected(); err != nil {
-			payload = err.Error()
-			return
-		}
 		if err = synio.DisableVRAM(); err != nil {
 			payload = err.Error()
 			return
@@ -109,12 +118,29 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = "ok"
 		}
 
+	case "disconnectControlSurface":
+		if err = DisconnectControlSurface(); err != nil {
+			payload = err.Error()
+		} else {
+			payload = "Not Connected"
+		}
+
+	case "disconnectSynergy":
+		if err = DisconnectSynergy(); err != nil {
+			payload = err
+		} else {
+			payload = "Not Connected"
+		}
+
 	case "getCWD":
 		payload, _ = os.Getwd()
 		log.Printf("CWD: %s\n", payload)
 
 	case "getFirmwareVersion":
-		payload = FirmwareVersion
+		if payload, err = GetFirmwareVersion(); err != nil {
+			payload = err
+			return
+		}
 
 	case "getPreferences":
 		payload = struct {
@@ -222,22 +248,6 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 
 	case "runCOMTST":
 		// nothing interesting in the payload - just start the test and return results
-		if FirmwareVersion == "" {
-			// not yet connected to the Synergy.
-			// A conundrum: if user has already put the synergy into
-			// test mode, we can't query the firmware.  If we just
-			// initialize the serial connection and dont update
-			// firmware version, the UI will continue to show
-			// "not connected".
-			//
-			// Run the serial init without querying the firmware version
-			if err = synio.Init(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud, true, *serialVerboseFlag, *mockSynio); err != nil {
-				err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
-				payload = err.Error()
-				return
-			}
-			FirmwareVersion = "Connected"
-		}
 		if err = synio.DiagCOMTST(); err != nil {
 			payload = err.Error()
 			return
@@ -675,30 +685,31 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		log.Printf("Show Preferences (from messages)\n")
 		prefs_w.Show()
 
-	case "getControlSurface":
+	case "getSynergy":
 		var response struct {
-			HasControlSurface bool
+			HasDevice         bool
 			AlreadyConfigured bool
+			Name              string
 			Choices           *[]zeroconf.Service
 		}
-		response.HasControlSurface = prefsUserPreferences.UseOsc
-		if !osc.OscControlSurfaceConfigured() {
-			if prefsUserPreferences.OscAutoConfig {
-				if false && len(zeroconf.OscServices) == 1 {
-					// Temporarily disabled since bonjour discovery is not reliably finding all devices; make sure the user
-					// gets a chance to rescan
-					log.Printf("ZEROCONF: auto config Control Surface: %#v\n", zeroconf.OscServices[0])
-					osc.OscSetControlSurface(zeroconf.OscServices[0].InstanceName, zeroconf.OscServices[0].Address, zeroconf.OscServices[0].Port)
-				} else {
-					log.Printf("ZEROCONF: zero or more than one Control Surface: %#v\n", zeroconf.OscServices)
-					response.Choices = &zeroconf.OscServices
-				}
-			} else {
-				osc.OscSetControlSurface("", prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort)
-			}
+		if response.HasDevice, response.AlreadyConfigured, response.Name, response.Choices, err = GetSynergyConfig(); err != nil {
+			payload = err
+		} else {
+			payload = response
 		}
-		response.AlreadyConfigured = osc.OscControlSurfaceConfigured()
-		payload = response
+
+	case "getControlSurface":
+		var response struct {
+			HasDevice         bool
+			AlreadyConfigured bool
+			Name              string
+			Choices           *[]zeroconf.Service
+		}
+		if response.HasDevice, response.AlreadyConfigured, response.Name, response.Choices, err = GetControlSurfaceConfig(); err != nil {
+			payload = err
+		} else {
+			payload = response
+		}
 
 	case "rescanZeroconf":
 		log.Printf("ZEROCONF: user requested rescan...\n")
@@ -711,19 +722,14 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		//    https://getbootstrap.com/docs/4.0/components/modal/).
 		// So if we returned too fast, add a bit of artificial delay...
 		if time.Now().Sub(start).Seconds() < 1 {
-			time.Sleep(time.Second * 5)
+			time.Sleep(time.Second * 3)
 		}
-
 		payload = "ok"
 
 	case "toggleVoicingMode":
-		if err = connectToSynergyIfNotConnected(); err != nil {
-			payload = err.Error()
-			return
-		}
 		var args struct {
-			Mode       bool
-			zeroconfCs *zeroconf.Service
+			Mode           bool
+			ZeroconfChoice *zeroconf.Service
 		}
 		if len(m.Payload) > 0 {
 			// Unmarshal payload
@@ -732,9 +738,9 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		if args.zeroconfCs != nil {
-			log.Printf("ZEROCONF: config Control Surface selected by user: %#v\n", *args.zeroconfCs)
-			osc.OscSetControlSurface((*args.zeroconfCs).InstanceName, (*args.zeroconfCs).Address, (*args.zeroconfCs).Port)
+		if args.ZeroconfChoice != nil {
+			log.Printf("ZEROCONF: config Control Surface selected by user: %#v\n", *args.ZeroconfChoice)
+			osc.OscSetControlSurface((*args.ZeroconfChoice).InstanceName, (*args.ZeroconfChoice).Address, (*args.ZeroconfChoice).Port)
 		}
 		if args.Mode {
 			var vce data.VCE

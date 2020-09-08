@@ -18,6 +18,9 @@ type Preferences struct {
 	OscPort            uint
 	OscCSurfaceAddress string
 	OscCSurfacePort    uint
+	VstAutoConfig      bool
+	VstAddress         string
+	VstPort            uint
 }
 
 var preferencesPathname string = getWorkingDirectory() + "/preferences.json"
