@@ -131,22 +131,24 @@ let index = {
 		console.log("in fileDialog: " + path);
 
 		if (path != undefined) {
+			viewVCE_voice.connectSynergy(function () {
 
-			let message = {
-				"name": "saveSYN",
-				"payload": path
-			};
-			// Send message
-			index.spinnerOn();
-			astilectron.sendMessage(message, function (message) {
-				index.spinnerOff();
-				// Check error
-				if (message.name === "error") {
-					index.errorNotification(message.payload);
-				} else {
-					index.infoNotification("Successfully saved Synergy state to " + path);
-				}
-				index.refreshConnectionStatus();
+				let message = {
+					"name": "saveSYN",
+					"payload": path
+				};
+				// Send message
+				index.spinnerOn();
+				astilectron.sendMessage(message, function (message) {
+					index.spinnerOff();
+					// Check error
+					if (message.name === "error") {
+						index.errorNotification(message.payload);
+					} else {
+						index.infoNotification("Successfully saved Synergy state to " + path);
+					}
+					index.refreshConnectionStatus();
+				});
 			});
 		}
 	},
@@ -214,22 +216,24 @@ let index = {
 		}
 	},
 	loadSYN: function (name, path) {
-		index.confirmDialog("Load Synergy state file " + path, function () {
-			let message = {
-				"name": "loadSYN",
-				"payload": path
-			};
-			// Send message
-			index.spinnerOn();
-			astilectron.sendMessage(message, function (message) {
-				index.spinnerOff();
-				// Check error
-				if (message.name === "error") {
-					index.errorNotification(message.payload);
-				} else {
-					index.infoNotification("Successfully loaded " + name + " to Synergy")
-				}
-				index.refreshConnectionStatus();
+		viewVCE_voice.connectSynergy(function () {
+			index.confirmDialog("Load Synergy state file " + path, function () {
+				let message = {
+					"name": "loadSYN",
+					"payload": path
+				};
+				// Send message
+				index.spinnerOn();
+				astilectron.sendMessage(message, function (message) {
+					index.spinnerOff();
+					// Check error
+					if (message.name === "error") {
+						index.errorNotification(message.payload);
+					} else {
+						index.infoNotification("Successfully loaded " + name + " to Synergy")
+					}
+					index.refreshConnectionStatus();
+				});
 			});
 		});
 	},
@@ -423,16 +427,18 @@ let index = {
 		});
 	},
 	disableVRAM: function () {
-		let message = { "name": "disableVRAM" };
-		index.spinnerOn();
-		astilectron.sendMessage(message, function (message) {
-			index.spinnerOff();
-			if (message.name === "error") {
-				index.errorNotification(message.payload);
-			} else {
-				index.infoNotification("Successfully disabled Synergy's VRAM")
-			}
-			index.refreshConnectionStatus();
+		viewVCE_voice.connectSynergy(function () {
+			let message = { "name": "disableVRAM" };
+			index.spinnerOn();
+			astilectron.sendMessage(message, function (message) {
+				index.spinnerOff();
+				if (message.name === "error") {
+					index.errorNotification(message.payload);
+				} else {
+					index.infoNotification("Successfully disabled Synergy's VRAM")
+				}
+				index.refreshConnectionStatus();
+			});
 		});
 	},
 	refreshConnectionStatus: function () {
@@ -479,17 +485,19 @@ let index = {
 		return files;
 	},
 	runCOMTST: function () {
-		let message = { "name": "runCOMTST" };
-		index.spinnerOn();
-		astilectron.sendMessage(message, function (message) {
-			index.spinnerOff();
-			console.log("runCOMTST returned: " + JSON.stringify(message));
-			// Check error
-			if (message.name === "error") {
-				index.errorNotification(message.payload);
-			} else {
-				index.infoNotification(message.payload);
-			}
+		viewVCE_voice.connectSynergy(function () {
+			let message = { "name": "runCOMTST" };
+			index.spinnerOn();
+			astilectron.sendMessage(message, function (message) {
+				index.spinnerOff();
+				console.log("runCOMTST returned: " + JSON.stringify(message));
+				// Check error
+				if (message.name === "error") {
+					index.errorNotification(message.payload);
+				} else {
+					index.infoNotification(message.payload);
+				}
+			});
 		});
 		index.refreshConnectionStatus();
 	},

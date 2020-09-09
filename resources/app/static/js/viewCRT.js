@@ -17,8 +17,10 @@ let viewCRT = {
 				viewCRT.reinit();
 			});
 		} else {
-			viewCRT.editMode = true;
-			viewCRT.reinit();
+			viewVCE_voice.connectSynergy(function () {
+				viewCRT.editMode = true;
+				viewCRT.reinit();
+			});
 		}
 	},
 
@@ -66,24 +68,26 @@ let viewCRT = {
 	loadCRT: function () {
 
 		if (path != undefined) {
+			viewVCE_voice.connectSynergy(function () {
 
-			let message = {
-				"name": "crtEditLoadCRT",
-				"payload": {
-					Crt: crt
-				}
-			};
-			// Send message
-			index.spinnerOn();
-			astilectron.sendMessage(message, function (message) {
-				index.spinnerOff();
-				// Check error
-				if (message.name === "error") {
-					index.errorNotification(message.payload);
-				} else {
-					index.infoNotification("Successfully loaded CRT to Synergy");
-				}
-				index.refreshConnectionStatus();
+				let message = {
+					"name": "crtEditLoadCRT",
+					"payload": {
+						Crt: crt
+					}
+				};
+				// Send message
+				index.spinnerOn();
+				astilectron.sendMessage(message, function (message) {
+					index.spinnerOff();
+					// Check error
+					if (message.name === "error") {
+						index.errorNotification(message.payload);
+					} else {
+						index.infoNotification("Successfully loaded CRT to Synergy");
+					}
+					index.refreshConnectionStatus();
+				});
 			});
 		}
 	},
@@ -98,25 +102,27 @@ let viewCRT = {
 		console.log("in fileDialog: " + path);
 
 		if (path != undefined) {
+			viewVCE_voice.connectSynergy(function () {
 
-			let message = {
-				"name": "crtEditSaveCRT",
-				"payload": {
-					Path: path,
-					Crt: crt
-				}
-			};
-			// Send message
-			index.spinnerOn();
-			astilectron.sendMessage(message, function (message) {
-				index.spinnerOff();
-				// Check error
-				if (message.name === "error") {
-					index.errorNotification(message.payload);
-				} else {
-					index.infoNotification("Successfully saved CRT to " + path);
-				}
-				index.refreshConnectionStatus();
+				let message = {
+					"name": "crtEditSaveCRT",
+					"payload": {
+						Path: path,
+						Crt: crt
+					}
+				};
+				// Send message
+				index.spinnerOn();
+				astilectron.sendMessage(message, function (message) {
+					index.spinnerOff();
+					// Check error
+					if (message.name === "error") {
+						index.errorNotification(message.payload);
+					} else {
+						index.infoNotification("Successfully saved CRT to " + path);
+					}
+					index.refreshConnectionStatus();
+				});
 			});
 		}
 	},

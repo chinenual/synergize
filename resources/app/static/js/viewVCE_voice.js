@@ -723,7 +723,7 @@ ${freqDAG}
 	},
 
 
-	withZeroconf: function (prompt, zeroconfSelector, actionAfterSelect, recurseAction) {
+	_withZeroconf: function (prompt, zeroconfSelector, actionAfterSelect, recurseAction, successCallback) {
 		// fetch the config from the server (server will return already selected config, or "not enabled" or a list of selections)
 		// if server returns "already configured" or "not enabled"
 		//      send request to start voicemode to server
@@ -748,6 +748,7 @@ ${freqDAG}
 				if ((!message.payload.HasDevice) || message.payload.AlreadyConfigured) {
 					console.log("call raw_toggleVoicingMode");
 					actionAfterSelect(null)
+					successCallback();
 				} else {
 					// zeroconf found more than one option - show dialog
 					console.log("show menu");
@@ -760,6 +761,7 @@ ${freqDAG}
 							console.log("user chose " + JSON.stringify(choice));
 							// user selected one of the options 
 							actionAfterSelect(choice);
+							successCallback();
 						},
 						function () {
 							console.log("rescan");
@@ -787,12 +789,14 @@ ${freqDAG}
 		});
 	},
 
-	connectSynergy: function () {
-		return viewVCE_voice.withZeroconf("Choose Synergy", "getSynergy", viewVCE_voice.raw_connectSynergy, viewVCE_voice.connectSynergy);
+	connectSynergy: function (successCallback) {
+		return viewVCE_voice._withZeroconf("Choose Synergy", "getSynergy", viewVCE_voice.raw_connectSynergy, viewVCE_voice.connectSynergy, successCallback);
 	},
 
 	voicingModeOn: function () {
-		return viewVCE_voice.withZeroconf("Choose Control Surface", "getControlSurface", viewVCE_voice.raw_voicingModeOn, viewVCE_voice.voicingModeOn);
+		viewVCE_voice.connectSynergy(function () {
+			return viewVCE_voice._withZeroconf("Choose Control Surface", "getControlSurface", viewVCE_voice.raw_voicingModeOn, viewVCE_voice.voicingModeOn, function () { });
+		});
 	},
 
 	raw_connectSynergy: function (zeroconfChoice) {
@@ -823,67 +827,7 @@ ${freqDAG}
 				viewVCE_voice.raw_voicingModeOff();
 			});
 		} else {
-			// fetch the config from the server (server will return already selected config, or "not enabled" or a list of selections)
-			// if server returns "already configured" or "not enabled"
-			//      send request to start voicemode to server
-			// if server returns a list of options
-			//     popup a selection dialog
-			//        Cancel event aborts attempt to start voicemode
-			//        OK event sends the selection and request to start voicemode to server
-			//        Rescan event sends request to rescan to the server -- then recursively calls config
-
-			console.log("top toggleVoicingMode(true)");
-
-			let message = {
-				"name": "getControlSurface",
-				"payload": ""
-			};
-			astilectron.sendMessage(message, function (message) {
-				if (message.name === "error") {
-					// failed - abort
-					index.errorNotification(message.payload);
-				} else {
-					console.log("getControlSurface returned " + JSON.stringify(message.payload));
-					if ((!message.payload.HasControlSurface) || message.payload.AlreadyConfigured) {
-						console.log("call raw_toggleVoicingMode");
-						viewVCE_voice.raw_voicingModeOn(null);
-					} else {
-						// zeroconf found more than one option - show dialog
-						console.log("show menu");
-						index.chooseZeroconfService("Choose Control Surface", message.payload.Choices,
-							function () {
-								console.log("cancelled");
-								// cancelled - do nothing
-							},
-							function (choice) {
-								console.log("user chose " + JSON.stringify(choice));
-								// user selected one of the options 
-								viewVCE_voice.raw_voicingModeOn(choice);
-							},
-							function () {
-								console.log("rescan");
-								// user asked for a rescan
-								let message = {
-									"name": "rescanZeroconf",
-									"payload": ""
-								};
-								index.spinnerOn();
-								astilectron.sendMessage(message, function (message) {
-									index.spinnerOff();
-									if (message.name === "error") {
-										// failed - abort
-										index.errorNotification(message.payload);
-									} else {
-										console.log("rescan done");
-										// recurse
-										viewVCE_voice.toggleVoicingMode(true);
-									}
-								});
-							}
-						)
-					}
-				}
-			});
+			viewVCE_voice.voicingModeOn();
 		}
 	},
 
@@ -911,7 +855,7 @@ ${freqDAG}
 		});
 	},
 
-	raw_toggleVoicingModeOn: function (zeroconfChoice) {
+	raw_voicingModeOn: function (zeroconfChoice) {
 		console.log(`VoicingMode on`);
 		let message = {
 			"name": "toggleVoicingMode",
