@@ -13,13 +13,15 @@ func main() {
 	var b []byte
 	var err error
 
-	err = synio.Init("/dev/tty.usbserial-AL05OC8S", 9600, true, false, false)
+	err = synio.SetSynergySerialPort("/dev/tty.usbserial-AL05OC8S", 9600, true, false, false)
 	if err != nil {
 		log.Panic(err)
 	}
 
 	if os.Args[1] == "--addrs" {
-		synio.VoicingMode()
+		if _, err = synio.EnableVoicingMode(); err != nil {
+			log.Panic(err)
+		}
 		return
 	}
 	start, err = strconv.ParseUint(os.Args[1], 10, 16)
@@ -32,7 +34,7 @@ func main() {
 	}
 	path := os.Args[3]
 
-	b, err = synio.BlockDump(uint16(start), uint16(length))
+	b, err = synio.BlockDump(uint16(start), uint16(length), "dump")
 	if err != nil {
 		log.Panic(err)
 	}
