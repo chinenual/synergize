@@ -47,7 +47,7 @@ func GetVstServices() (result []Service) {
 func newService(se *dnssd.Service) (s Service) {
 	s.InstanceName = se.Name
 	//s.Address = se.IPs[0].String()
-	s.HostName = se.Host
+	s.HostName = "localhost" // TEMPORARY FOR DEBUGING se.Host
 	s.Port = uint(se.Port)
 	s.Text = se.Text
 	return

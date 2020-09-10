@@ -742,12 +742,14 @@ ${freqDAG}
 		astilectron.sendMessage(message, function (message) {
 			if (message.name === "error") {
 				// failed - abort
+				console.log("_withZeroconfig - sendMessage failed: " + JSON.stringify(message.payload))
 				index.errorNotification(message.payload);
 			} else {
 				console.log(zeroconfSelector + " returned " + JSON.stringify(message.payload));
 				if ((!message.payload.HasDevice) || message.payload.AlreadyConfigured) {
-					console.log("call raw_toggleVoicingMode");
+					console.log("call actionAfterSelect");
 					actionAfterSelect(null)
+					console.log("call successCallback");
 					successCallback();
 				} else {
 					// zeroconf found more than one option - show dialog

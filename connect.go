@@ -99,6 +99,7 @@ func GetSynergyConfig() (hasDevice bool, alreadyConfigured bool, name string, ch
 			}
 		} else {
 			firmwareVersion = ""
+			log.Printf("ZEROCONF: VST zeroconf disabled - using preferences config %s at %d\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
 			if err = synio.SetSynergySerialPort(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud,
 				true, *serialVerboseFlag, *mockSynio); err != nil {
 				return
@@ -126,6 +127,7 @@ func GetControlSurfaceConfig() (hasDevice bool, alreadyConfigured bool, name str
 				choices = &oscServices
 			}
 		} else {
+			log.Printf("ZEROCONF: VST zeroconf disabled - using preferences config %s:d\n", prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort)
 			osc.OscSetControlSurface("", prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort)
 		}
 	}

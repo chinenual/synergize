@@ -693,8 +693,10 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			Choices           *[]zeroconf.Service
 		}
 		if response.HasDevice, response.AlreadyConfigured, response.Name, response.Choices, err = GetSynergyConfig(); err != nil {
-			payload = err
+			log.Printf("ZEROCONF: GetSynergyConfig failed: %v\n", err)
+			payload = err.Error()
 		} else {
+			log.Printf("ZEROCONF: GetSynergyConfig success: %#v\n", response)
 			payload = response
 		}
 
@@ -706,8 +708,10 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			Choices           *[]zeroconf.Service
 		}
 		if response.HasDevice, response.AlreadyConfigured, response.Name, response.Choices, err = GetControlSurfaceConfig(); err != nil {
-			payload = err
+			log.Printf("ZEROCONF: GetControlSurfaceConfig failed: %v\n", err)
+			payload = err.Error()
 		} else {
+			log.Printf("ZEROCONF: GetControlSurfaceConfig success: %#v\n", response)
 			payload = response
 		}
 

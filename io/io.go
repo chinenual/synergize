@@ -1,6 +1,7 @@
 package io
 
 import (
+	"fmt"
 	"log"
 )
 
@@ -51,6 +52,14 @@ func SetSynergySerialPort(name string, device string, baud uint, serialVerbose b
 }
 
 func SetSynergyVst(name string, addr string, port uint, serialVerbose bool) (conn Conn, err error) {
+	var impl IoImpl
+	_ = impl
+	if impl, err = SocketInit(fmt.Sprintf("%s:%d", addr, port)); err != nil {
+		return
+	}
+	if conn, err = initConnection(name, impl, serialVerbose); err != nil {
+		return
+	}
 	return
 }
 

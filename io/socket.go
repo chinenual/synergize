@@ -2,6 +2,7 @@ package io
 
 import (
 	"github.com/pkg/errors"
+	"log"
 	"net"
 	"time"
 )
@@ -11,6 +12,7 @@ type SocketIo struct {
 }
 
 func SocketInit(addr string) (s SocketIo, err error) {
+	log.Printf(" --> socket.Open(%s)\n", addr)
 	var tcpAddr *net.TCPAddr
 	if tcpAddr, err = net.ResolveTCPAddr("tcp4", addr); err != nil {
 		return

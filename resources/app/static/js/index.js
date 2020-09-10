@@ -60,6 +60,9 @@ let index = {
 	},
 
 	confirmDialog: function (message, successCallback) {
+		if (typeof message != 'string') {
+			message = JSON.stringify(message);
+		}
 		console.log("CONFIRM DIALOG: " + message)
 		document.getElementById("confirmTitle").innerHTML = "Confirm";
 		document.getElementById("confirmText").innerHTML = message;
@@ -70,12 +73,18 @@ let index = {
 	},
 
 	errorNotification: function (message) {
+		if (typeof message != 'string') {
+			message = JSON.stringify(message);
+		}
 		console.log("ERROR NOTIFICATION: " + message)
 		document.getElementById("alertTitle").innerHTML = "Error";
 		document.getElementById("alertText").innerHTML = message;
 		$('#alertModal').modal();
 	},
 	infoNotification: function (message) {
+		if (typeof message != 'string') {
+			message = JSON.stringify(message);
+		}
 		console.log("INFO NOTIFICATION: " + message)
 		document.getElementById("alertTitle").innerHTML = "Info";
 		document.getElementById("alertText").innerHTML = message;
