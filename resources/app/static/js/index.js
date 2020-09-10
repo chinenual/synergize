@@ -88,11 +88,15 @@ let index = {
 
 		var html = "";
 		for (i = 0; i < choices.length; i++) {
+			var addr = ""
+			if (choices[i].Port != 0) {
+				addr = ` (${choices[i].HostName}:${choices[i].Port})`
+			}
 			html = html + `
 		    <div class="form-check">
                 <input class="form-check-input" type="radio" name="chooseZeroconfRadios" id="chooseZeroconfRadio${i}" value="${i}" ${i == 0 ? "checked" : ""}>
                 <label class="form-check-label" for="chooseZeroconfRadio${i}">
-                   ${choices[i].InstanceName} (${choices[i].Address}:${choices[i].Port})
+                   ${choices[i].InstanceName}${addr}
                 </label>
 			</div>`
 			console.log("html now " + html);

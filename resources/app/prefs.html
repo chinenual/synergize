@@ -22,18 +22,26 @@
 	<div class="container aboutbox">
 		<form>
 			<div class="form-group row">
-				<label class="col-md-2 col-form-label" for="serialPort">Serial Port</label>
+				<label class="col-md-3 col-form-label" for="libraryPath">Voice Library Location</label>
+				<div class="col-md-7">
+					<input type="string" class="form-control" id="libraryPath"
+						onclick="prefs.libraryFolderDialog(this,this.value);" />
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-md-3 col-form-label" for="serialPort">Serial Port (blank if no hardware
+					Synergy)</label>
 				<!-- HACK: want a file dialog on Mac; a straight text box on
 	  * windows -  make a straight text box and add the onclick
 	  * via javascript at initialization.
 	  -->
-				<div class="col-md-8">
+				<div class="col-md-7">
 					<input type="string" class="form-control" id="serialPort">
 				</div>
 			</div>
 			<div class="form-group row">
-				<label class="col-md-2 col-form-label" for="serialBaud">Serial Baud Rate</label>
-				<div class="col-md-8">
+				<label class="col-md-3 col-form-label" for="serialBaud">Serial Baud Rate</label>
+				<div class="col-md-7">
 					<select type="string" class="form-control" id="serialBaud">
 						<option value="19200">19200</option>
 						<option value="9600">9600</option>
@@ -45,46 +53,45 @@
 				</div>
 			</div>
 			<div class="form-group row">
-				<label class="col-md-2 col-form-label" for="libraryPath">Voice Library Location</label>
-				<div class="col-md-8">
-					<input type="string" class="form-control" id="libraryPath"
-						onclick="prefs.libraryFolderDialog(this,this.value);" />
+				<label class="col-md-3 col-form-label" for="vstAutoConfig">Zeroconf VST</label>
+				<div class="col-md-7">
+					<input type="checkbox" class="form-control" id="vstAutoConfig" value="true" />
 				</div>
 			</div>
+
 			<div class="form-group row">
-				<label class="col-md-2 col-form-label" for="useOsc">Enable OSC Control Surface</label>
-				<div class="col-md-8">
+				<label class="col-md-3 col-form-label" for="useOsc">Enable OSC Control Surface</label>
+				<div class="col-md-7">
 					<input type="checkbox" class="form-control" id="useOsc" onclick="prefs.toggleOsc();" value="true" />
 				</div>
 			</div>
 			<div class="form-group row">
-				<label class="col-md-2 col-form-label" for="oscPort">OSC Listening Port</label>
-				<div class="col-md-8">
-					<input type="integer" class="form-control" id="oscPort" />
-				</div>
-			</div>
-			<div class="form-group row">
-				<label class="col-md-2 col-form-label" for="oscAutoConfig">Control Surface Auto Config
-					(Bonjour/zeroconf)</label>
-				<div class="col-md-8">
+				<label class="col-md-3 col-form-label" for="oscAutoConfig">Zerconf Control Surface</label>
+				<div class="col-md-7">
 					<input type="checkbox" class="form-control" id="oscAutoConfig" onclick="prefs.toggleOsc()"
 						value="true" />
 				</div>
 			</div>
 			<div class="form-group row">
-				<label class="col-md-2 col-form-label" for="oscCSurfaceAddress">Control Surface Address</label>
-				<div class="col-md-8">
+				<label class="col-md-3 col-form-label" for="oscPort">OSC Listening Port</label>
+				<div class="col-md-7">
+					<input type="integer" class="form-control" id="oscPort" />
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-md-3 col-form-label" for="oscCSurfaceAddress">Control Surface Address</label>
+				<div class="col-md-7">
 					<input type="string" class="form-control" id="oscCSurfaceAddress" />
 				</div>
 			</div>
 			<div class="form-group row">
 
-				<label class="col-md-2 col-form-label" for="oscCSurfacePort">Control Surface Port</label>
-				<div class="col-md-8">
+				<label class="col-md-3 col-form-label" for="oscCSurfacePort">Control Surface Port</label>
+				<div class="col-md-7">
 					<input type="integer" class="form-control" id="oscCSurfacePort" />
 				</div>
 			</div>
-			<div class="col-md-8 offset-md-2">
+			<div class="col-md-7 offset-md-3">
 				<button type="cancel" onclick="prefs.cancelAndClose();">Cancel</button>
 				<button type="submit" class="btn btn-primary" onclick="prefs.saveAndClose();">Save</button>
 			</div>

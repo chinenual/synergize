@@ -712,18 +712,13 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		}
 
 	case "rescanZeroconf":
-		log.Printf("ZEROCONF: user requested rescan...\n")
-		var start = time.Now()
-		zeroconf.Browse()
-		log.Printf("ZEROCONF: user requested rescan completed.\n")
+		// NOP - basically just waiting a bit for the listener to find new stuff
 
 		// HACK: the javascript modal gets confused if we return too fast (attempting to open a new modal before the
 		// previous incarnation has finished transitioning causes the events to be ignored):
 		//    https://getbootstrap.com/docs/4.0/components/modal/).
 		// So if we returned too fast, add a bit of artificial delay...
-		if time.Now().Sub(start).Seconds() < 1 {
-			time.Sleep(time.Second * 3)
-		}
+		time.Sleep(time.Second * 3)
 		payload = "ok"
 
 	case "toggleVoicingMode":
@@ -740,7 +735,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		}
 		if args.ZeroconfChoice != nil {
 			log.Printf("ZEROCONF: config Control Surface selected by user: %#v\n", *args.ZeroconfChoice)
-			osc.OscSetControlSurface((*args.ZeroconfChoice).InstanceName, (*args.ZeroconfChoice).Address, (*args.ZeroconfChoice).Port)
+			osc.OscSetControlSurface((*args.ZeroconfChoice).InstanceName, (*args.ZeroconfChoice).HostName, (*args.ZeroconfChoice).Port)
 		}
 		if args.Mode {
 			var vce data.VCE

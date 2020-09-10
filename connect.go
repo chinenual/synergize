@@ -78,24 +78,23 @@ func DisconnectControlSurface() (err error) {
 func GetSynergyConfig() (hasDevice bool, alreadyConfigured bool, name string, choices *[]zeroconf.Service, err error) {
 	if !io.SynergyConfigured() {
 		if prefsUserPreferences.VstAutoConfig {
-			if false && len(zeroconf.OscServices) == 1 {
-				// Temporarily disabled since bonjour discovery is not reliably finding all devices; make sure the user
-				// gets a chance to rescan
-				log.Printf("ZEROCONF: auto config VST: %#v\n", zeroconf.OscServices[0])
+			vstServices := zeroconf.GetVstServices()
+			if len(vstServices) == 1 {
+				log.Printf("ZEROCONF: auto config VST: %#v\n", vstServices[0])
 				firmwareVersion = ""
-				if err = synio.SetSynergyVst(zeroconf.VstServices[0].InstanceName, zeroconf.VstServices[0].Address, zeroconf.OscServices[0].Port,
+				if err = synio.SetSynergyVst(vstServices[0].InstanceName, vstServices[0].HostName, vstServices[0].Port,
 					true, *serialVerboseFlag, *mockSynio); err != nil {
 					return
 				}
 			} else {
-				log.Printf("ZEROCONF: zero or more than one VST: %#v\n", zeroconf.VstServices)
+				log.Printf("ZEROCONF: zero or more than one VST: %#v\n", vstServices)
 				if prefsUserPreferences.SerialPort != "" {
 					var pseudoEntry zeroconf.Service
 					pseudoEntry.InstanceName = "serial-port"
-					list := append([]zeroconf.Service{pseudoEntry}, zeroconf.VstServices...)
+					list := append([]zeroconf.Service{pseudoEntry}, vstServices...)
 					choices = &list
 				} else {
-					choices = &zeroconf.VstServices
+					choices = &vstServices
 				}
 			}
 		} else {
@@ -115,14 +114,16 @@ func GetSynergyConfig() (hasDevice bool, alreadyConfigured bool, name string, ch
 func GetControlSurfaceConfig() (hasDevice bool, alreadyConfigured bool, name string, choices *[]zeroconf.Service, err error) {
 	if !osc.OscControlSurfaceConfigured() && prefsUserPreferences.UseOsc {
 		if prefsUserPreferences.OscAutoConfig {
-			if false && len(zeroconf.OscServices) == 1 {
+			oscServices := zeroconf.GetOscServices()
+
+			if false && len(oscServices) == 1 {
 				// Temporarily disabled since bonjour discovery is not reliably finding all devices; make sure the user
 				// gets a chance to rescan
-				log.Printf("ZEROCONF: auto config Control Surface: %#v\n", zeroconf.OscServices[0])
-				osc.OscSetControlSurface(zeroconf.OscServices[0].InstanceName, zeroconf.OscServices[0].Address, zeroconf.OscServices[0].Port)
+				log.Printf("ZEROCONF: auto config Control Surface: %#v\n", oscServices[0])
+				osc.OscSetControlSurface(oscServices[0].InstanceName, oscServices[0].HostName, oscServices[0].Port)
 			} else {
-				log.Printf("ZEROCONF: zero or more than one Control Surface: %#v\n", zeroconf.OscServices)
-				choices = &zeroconf.OscServices
+				log.Printf("ZEROCONF: zero or more than one Control Surface: %#v\n", oscServices)
+				choices = &oscServices
 			}
 		} else {
 			osc.OscSetControlSurface("", prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort)
@@ -169,10 +170,10 @@ func ConnectToSynergy(choice *zeroconf.Service) (err error) {
 			}
 		} else {
 			// VST
-			if err = synio.SetSynergyVst(choice.InstanceName, choice.Address,
+			if err = synio.SetSynergyVst(choice.InstanceName, choice.HostName,
 				choice.Port, true, *serialVerboseFlag, *mockSynio); err != nil {
 				err = errors.Wrapf(err, "Cannot connect to synergy VST %s at %s:%d\n",
-					choice.InstanceName, choice.Address,
+					choice.InstanceName, choice.HostName,
 					choice.Port)
 				l.Printf(err.Error())
 				CheckForNewVersion(true, false)

@@ -214,15 +214,9 @@ func main() {
 		if err := zeroconf.StartServer(prefsUserPreferences.OscPort, prefsSynergyName()); err != nil {
 			l.Printf("ERROR: could not start zeroconf: %v\n", err)
 		}
+		defer zeroconf.CloseServer()
 	}
-	go func() {
-		// run the Browse in a goroutine so we don't hang during its scan
-		zeroconf.Browse()
-	}()
-
-	defer func() {
-		zeroconf.CloseServer()
-	}()
+	zeroconf.StartListener()
 
 	var err error
 	{
@@ -542,7 +536,7 @@ func main() {
 				BackgroundColor: astikit.StrPtr("#ccc"),
 				Center:          astikit.BoolPtr(true),
 				Show:            astikit.BoolPtr(false),
-				Height:          astikit.IntPtr(700),
+				Height:          astikit.IntPtr(600),
 				Width:           astikit.IntPtr(800),
 				Custom: &astilectron.WindowCustomOptions{
 					HideOnClose: astikit.BoolPtr(true),

@@ -10,11 +10,15 @@ require (
 	github.com/asticode/go-astilectron v0.16.0
 	github.com/asticode/go-astilectron-bootstrap v0.4.1
 	github.com/asticode/go-astilectron-bundler v0.7.0 // indirect
+	github.com/brutella/dnssd v1.1.1
 	github.com/chromedp/cdproto v0.0.0-20200424080200-0de008e41fa0 // indirect
 	github.com/chromedp/chromedp v0.5.3
 	github.com/elazarl/go-bindata-assetfs v1.0.0
 	github.com/gobwas/ws v1.0.3 // indirect
+	github.com/godbus/dbus/v5 v5.0.3
 	github.com/grandcat/zeroconf v1.0.0
+	github.com/hashicorp/mdns v1.0.3
+	github.com/holoplot/go-avahi v0.0.0-20200423113835-c8b94bb23ec8
 	github.com/hypebeast/go-osc v0.0.0-20200115085105-85fee7fed692
 	github.com/jacobsa/go-serial v0.0.0-20180131005756-15cf729a72d4
 	github.com/mailru/easyjson v0.7.1 // indirect
@@ -23,6 +27,7 @@ require (
 	github.com/orcaman/writerseeker v0.0.0-20180723184025-774071c66cec
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pelletier/go-toml v1.8.0
+	github.com/pion/mdns v0.0.4
 	github.com/pkg/errors v0.9.1
 	github.com/snksoft/crc v1.1.0
 	gitlab.com/gomidi/midi v1.17.2
@@ -30,7 +35,7 @@ require (
 	gitlab.com/gomidi/rtmididrv v0.10.1
 	gitlab.com/gomidi/rtmididrv/imported/rtmidi v0.0.0-20200507143945-25294008b798 // indirect
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
-	golang.org/x/net v0.0.0-20200822124328-c89045814202 // indirect
+	golang.org/x/net v0.0.0-20200822124328-c89045814202
 	golang.org/x/sys v0.0.0-20200831180312-196b9ba8737a // indirect
 	golang.org/x/tools v0.0.0-20200616154421-b1f3cdd652a8 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0

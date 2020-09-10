@@ -25,6 +25,8 @@ let prefs = {
 				document.getElementById("serialBaud").value = preferences.SerialBaud;
 				document.getElementById("libraryPath").value = preferences.LibraryPath;
 
+				document.getElementById("vstAutoConfig").checked = preferences.VstAutoConfig ? "checked" : "";
+
 				document.getElementById("useOsc").checked = preferences.UseOsc ? "checked" : "";
 				document.getElementById("oscAutoConfig").checked = preferences.OscAutoConfig ? "checked" : "";
 				document.getElementById("oscPort").value = preferences.OscPort;
@@ -116,6 +118,7 @@ let prefs = {
 				"SerialBaud": parseInt(document.getElementById("serialBaud").value, 10),
 				"LibraryPath": document.getElementById("libraryPath").value,
 				"UseOsc": document.getElementById("useOsc").checked,
+				"VstAutoConfig": document.getElementById("vstAutoConfig").checked,
 				"OscAutoConfig": document.getElementById("oscAutoConfig").checked,
 				"OscPort": parseInt(document.getElementById("oscPort").value, 10),
 				"OscCSurfaceAddress": document.getElementById("oscCSurfaceAddress").value,
