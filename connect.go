@@ -79,7 +79,7 @@ func GetSynergyConfig() (hasDevice bool, alreadyConfigured bool, name string, ch
 	if !io.SynergyConfigured() {
 		if prefsUserPreferences.VstAutoConfig {
 			vstServices := zeroconf.GetVstServices()
-			if len(vstServices) == 1 {
+			if len(vstServices) == 1 && prefsUserPreferences.SerialPort == "" {
 				log.Printf("ZEROCONF: auto config VST: %#v\n", vstServices[0])
 				firmwareVersion = ""
 				if err = synio.SetSynergyVst(vstServices[0].InstanceName, vstServices[0].HostName, vstServices[0].Port,
