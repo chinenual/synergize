@@ -27,7 +27,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 	log.Printf("Handle message: %s %s\n", m.Name, string(m.Payload))
 	switch m.Name {
 	case "cancelPreferences":
-		prefs_w.Hide()
+		_ = prefs_w.Hide()
 
 	case "connectSynergy":
 		var args struct {
@@ -167,7 +167,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		if diagLoadCRT(path); err != nil {
+		if err = diagLoadCRT(path); err != nil {
 			payload = err.Error()
 			return
 		} else {
@@ -280,7 +280,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			zeroconf.CloseServer()
 		}
 
-		prefs_w.Hide()
+		_ = prefs_w.Hide()
 		payload = "ok"
 
 	case "saveSYN":
@@ -371,7 +371,10 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		osc.OscSendToCSurface(args.Field, args.Value)
+		if err = osc.OscSendToCSurface(args.Field, args.Value); err != nil {
+			payload = err.Error()
+			return
+		}
 		payload = "ok"
 
 	case "setEnvelopes":
@@ -680,11 +683,11 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		payload = "ok"
 
 	case "showAbout":
-		about_w.Show()
+		_ = about_w.Show()
 
 	case "showPreferences":
 		log.Printf("Show Preferences (from messages)\n")
-		prefs_w.Show()
+		_ = prefs_w.Show()
 
 	case "getSynergy":
 		var response struct {
