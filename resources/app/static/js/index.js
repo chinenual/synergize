@@ -29,6 +29,8 @@ let index = {
 				}
 			});
 
+			// init menus to default state
+			index.updateConnectionStatus("","")
 			// Listen
 			index.listen();
 			// Explore default path
@@ -105,7 +107,7 @@ let index = {
 		    <div class="form-check">
                 <input class="form-check-input" type="radio" name="chooseZeroconfRadios" id="chooseZeroconfRadio${i}" value="${i}" ${i == 0 ? "checked" : ""}>
                 <label class="form-check-label" for="chooseZeroconfRadio${i}">
-                   ${choices[i].InstanceName}${addr}are
+                   ${choices[i].InstanceName}${addr}
                 </label>
 			</div>`
 			console.log("html now " + html);
@@ -486,8 +488,10 @@ let index = {
 		}
 		if (csName === null || csName === "") {
 			$('#controlSurfaceStatus').hide();
+			$('#disconnectControlSurfaceMenuItem').addClass('disabled');
 		} else {
 			$('#controlSurfaceStatus').show();
+			$('#disconnectControlSurfaceMenuItem').removeClass('disabled');
 		}
 	},
 
