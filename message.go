@@ -47,7 +47,8 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		} else if !io.SynergyConfigured() {
-			payload = errors.New("invalid argument to ConnectSynergy")
+			err = errors.New("invalid argument to ConnectSynergy")
+			payload = err.Error()
 			return
 		}
 		payload = "connected to " + io.SynergyName()
@@ -127,7 +128,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 
 	case "disconnectSynergy":
 		if err = DisconnectSynergy(); err != nil {
-			payload = err
+			payload = err.Error()
 		} else {
 			payload = "Not Connected"
 		}
@@ -138,7 +139,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 
 	case "getFirmwareVersion":
 		if payload, err = GetFirmwareVersion(); err != nil {
-			payload = err
+			payload = err.Error()
 			return
 		}
 
