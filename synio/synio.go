@@ -1,6 +1,7 @@
 package synio
 
 import (
+	"fmt"
 	"log"
 	"strings"
 
@@ -67,7 +68,7 @@ func SetSynergySerialPort(device string, baud uint, synVerbose bool, serialVerbo
 		return
 	}
 	initializeCRC()
-	if conn, err = io.SetSynergySerialPort("serial-port", device, baud, serialVerbose); err != nil {
+	if conn, err = io.SetSynergySerialPort(fmt.Sprintf("serial-port @ %d", baud), device, baud, serialVerbose); err != nil {
 		return errors.Wrap(err, "Could not initialize synergy connection")
 	}
 	return

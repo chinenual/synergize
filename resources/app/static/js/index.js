@@ -121,7 +121,7 @@ let index = {
 		document.getElementById("chooseZeroconfOKButton").onclick = function () {
 			selected = parseInt($('#chooseZeroconfItems input:checked').val(), 10);
 			console.log("Selected " + selected);
-			onOK(selected);
+			onOK(choices[selected]);
 		};
 		document.getElementById("chooseZeroconfRescanButton").onclick = function () {
 			console.log("Rescan");

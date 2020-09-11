@@ -3,8 +3,6 @@ package io
 import (
 	"io"
 	"log"
-	"runtime"
-	"runtime/debug"
 	"time"
 
 	"github.com/jacobsa/go-serial/serial"
@@ -21,10 +19,8 @@ type SerialIo struct {
 }
 
 var readerChannel chan serialReadResponse
-var readerChannelQuit chan bool
 
 func SerialInit(port string, baudRate uint) (s SerialIo, err error) {
-	debug.PrintStack()
 	options := serial.OpenOptions{
 		PortName:              port,
 		BaudRate:              baudRate,
@@ -35,19 +31,6 @@ func SerialInit(port string, baudRate uint) (s SerialIo, err error) {
 		DataBits:              8,
 		StopBits:              1,
 	}
-	if readerChannel != nil {
-		if runtime.GOOS == "darwin" {
-			// FIXME: can't find a way to interrupt the blocking
-			// read in the goroutine; until that's changed, just
-			// throw an error if user tries to reopen the serial port
-			//
-			// This "works" on Windows due to the bug that is causing
-			// the Read to be non-blocking
-			err = errors.New("Cannot re-open the serial connection.  To reinitialize with a new port or baud rate you must restart the Synergize application.")
-			return
-		}
-		readerChannelQuit <- true
-	}
 	log.Printf(" --> serial.Open(%#v)\n", options)
 	if s.stream, err = serial.Open(options); err != nil {
 		err = errors.Wrapf(err, "Could not open serial port")
@@ -57,7 +40,6 @@ func SerialInit(port string, baudRate uint) (s SerialIo, err error) {
 	log.Printf(" make new channels \n")
 	// long lived reader goroutine so we retain state of the stream across individual "reads"
 	readerChannel = make(chan serialReadResponse)
-	readerChannelQuit = make(chan bool)
 	log.Printf(" make new goroutine \n")
 	go func(s SerialIo) {
 		defer s.stream.Close()
@@ -67,45 +49,36 @@ func SerialInit(port string, baudRate uint) (s SerialIo, err error) {
 		var sleepCount = 0
 		var EMPTY_PER_SLEEP = 5
 		for {
-			select {
-			case <-readerChannelQuit:
-				log.Printf(" closing serial channel\n")
-				close(readerChannelQuit)
-				close(readerChannel)
-				log.Printf(" ending goroutine\n")
-				return
-			default:
-				var response serialReadResponse
-				var n int
-				n, response.err = s.stream.Read(arr)
-				if response.err != nil {
-					sleepCount = 0
-					emptyCount = 0
-					readerChannel <- response
-				} else if n == 1 {
-					if (emptyCount + sleepCount*EMPTY_PER_SLEEP) > 0 {
-						log.Printf("got %d empties before this read\n", emptyCount+sleepCount*EMPTY_PER_SLEEP)
-					}
-					sleepCount = 0
-					emptyCount = 0
-					response.data = arr[0]
-					readerChannel <- response
-				} else {
-					emptyCount = emptyCount + 1
+			var response serialReadResponse
+			var n int
+			n, response.err = s.stream.Read(arr)
+			if response.err != nil {
+				sleepCount = 0
+				emptyCount = 0
+				readerChannel <- response
+			} else if n == 1 {
+				if (emptyCount + sleepCount*EMPTY_PER_SLEEP) > 0 {
+					log.Printf("got %d empties before this read\n", emptyCount+sleepCount*EMPTY_PER_SLEEP)
+				}
+				sleepCount = 0
+				emptyCount = 0
+				response.data = arr[0]
+				readerChannel <- response
+			} else {
+				emptyCount = emptyCount + 1
 
-					if emptyCount > EMPTY_PER_SLEEP {
-						// HACK: on windows, despite asking for blocking IO
-						// the Read is returning immediately with
-						// n == 0, but no error.  Sleep for a
-						// while so we don't chew up infinite CPU.
-						// However, if we sleep each time, we get REALLY SLOW IO.
-						//
-						// FIXME: I dont like picking magic numbers to tune performance
-						// need to fix the underlying serial library instead.
-						sleepCount = sleepCount + 1
-						time.Sleep(time.Duration(10) * time.Millisecond)
-						emptyCount = 0
-					}
+				if emptyCount > EMPTY_PER_SLEEP {
+					// HACK: on windows, despite asking for blocking IO
+					// the Read is returning immediately with
+					// n == 0, but no error.  Sleep for a
+					// while so we don't chew up infinite CPU.
+					// However, if we sleep each time, we get REALLY SLOW IO.
+					//
+					// FIXME: I dont like picking magic numbers to tune performance
+					// need to fix the underlying serial library instead.
+					sleepCount = sleepCount + 1
+					time.Sleep(time.Duration(10) * time.Millisecond)
+					emptyCount = 0
 				}
 			}
 		}
@@ -115,10 +88,13 @@ func SerialInit(port string, baudRate uint) (s SerialIo, err error) {
 }
 
 func (s SerialIo) close() (err error) {
-	readerChannelQuit <- true
+	log.Printf(" --> serial.close()\n")
+	log.Printf(" close....1\n")
 	if err = s.stream.Close(); err != nil {
+		log.Printf(" close....2\n")
 		return
 	}
+	log.Printf(" close....done\n")
 	return
 }
 
