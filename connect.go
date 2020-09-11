@@ -117,9 +117,7 @@ func GetControlSurfaceConfig() (hasDevice bool, alreadyConfigured bool, name str
 		if prefsUserPreferences.OscAutoConfig {
 			oscServices := zeroconf.GetOscServices()
 
-			if false && len(oscServices) == 1 {
-				// Temporarily disabled since bonjour discovery is not reliably finding all devices; make sure the user
-				// gets a chance to rescan
+			if len(oscServices) == 1 {
 				log.Printf("ZEROCONF: auto config Control Surface: %#v\n", oscServices[0])
 				osc.OscSetControlSurface(oscServices[0].InstanceName, oscServices[0].HostName, oscServices[0].Port)
 			} else {
