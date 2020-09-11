@@ -5,6 +5,7 @@ import (
 	"log"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/brutella/dnssd"
 )
@@ -130,21 +131,47 @@ func StartListener() (err error) {
 		return true
 	}
 
+	// we begin with short lived queries since (on MacOS at least), the OS might block the initial responses
+	// (until a user agrees to allow the application to connect to the network).  So we loop with 5s timeouts
+	// allowing the listen to resend the query each time -- until we get a response for one of the listens.
+	// Then we allow the listeners to run "forever"
 	go func() {
-		if err = listenFor(&oscServices, "_osc._udp.local.", touchOscName); err != nil {
-			log.Printf("ZEROCONF: ListenFor %s failed %v\n", "_osc._udp.local.", err)
-		}
-	}()
-	go func() {
-		if err = listenFor(&vstServices, "_synergia._tcp.local.", anyName); err != nil {
-			log.Printf("ZEROCONF: ListenFor %s failed %v\n", "_synergia._tcp.local.", err)
+		for {
+			var timeout time.Duration
+			if len(oscServices.m) == 0 && len(vstServices.m) == 0 {
+				timeout = time.Second * 5
+				log.Printf("ZEROCONF: no results yet - sending queries\n")
+			} else {
+				log.Printf("ZEROCONF: got first response - starting daemon\n")
+			}
+			var wg sync.WaitGroup
+			wg.Add(2)
+			go func(wg *sync.WaitGroup) {
+				defer wg.Done()
+				if err = listenFor(timeout, &oscServices, "_osc._udp.local.", touchOscName); err != nil {
+					return
+				}
+			}(&wg)
+			go func(wg *sync.WaitGroup) {
+				defer wg.Done()
+				if err = listenFor(timeout, &vstServices, "_synergia._tcp.local.", anyName); err != nil {
+					return
+				}
+			}(&wg)
+			wg.Wait()
 		}
 	}()
 	return
 }
 
-func listenFor(list *syncMap, serviceType string, validName func(string) bool) (err error) {
-	ctx, cancel := context.WithCancel(context.Background())
+func listenFor(timeout time.Duration, list *syncMap, serviceType string, validName func(string) bool) (err error) {
+	var ctx context.Context
+	var cancel context.CancelFunc
+	if timeout > 0 {
+		ctx, cancel = context.WithDeadline(context.Background(), time.Now().Add(timeout))
+	} else {
+		ctx, cancel = context.WithCancel(context.Background())
+	}
 	defer cancel()
 
 	addFn := func(srv dnssd.Service) {
@@ -167,7 +194,7 @@ func listenFor(list *syncMap, serviceType string, validName func(string) bool) (
 
 	log.Printf("ZEROCONF: ListenFor %s\n", serviceType)
 	if err = dnssd.LookupType(ctx, serviceType, addFn, rmvFn); err != nil {
-		log.Printf("ZEROCONF: ListenFor %s failed %v\n", serviceType, err)
+		log.Printf("ZEROCONF: ListenFor %s %v\n", serviceType, err)
 		return
 	}
 	log.Printf("ZEROCONF: ListenFor %s RETURNS\n", serviceType)
