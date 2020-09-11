@@ -1,10 +1,11 @@
 package io
 
 import (
-	"github.com/pkg/errors"
 	"log"
 	"net"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 type SocketIo struct {
@@ -24,6 +25,7 @@ func SocketInit(addr string) (s SocketIo, err error) {
 }
 
 func (s SocketIo) close() (err error) {
+	log.Printf(" --> socket.close(%v)\n", s.conn.RemoteAddr())
 	if err = s.conn.Close(); err != nil {
 		return
 	}
@@ -34,7 +36,7 @@ func (s SocketIo) readByte(timeoutMS uint) (b byte, err error) {
 	if err = s.conn.SetDeadline(time.Now().Add(time.Duration(timeoutMS) * time.Millisecond)); err != nil {
 		return
 	}
-	var arr []byte = make([]byte, 1)
+	var arr = make([]byte, 1)
 	var n int
 	n, err = s.conn.Read(arr)
 	if err != nil {
@@ -48,8 +50,8 @@ func (s SocketIo) readByte(timeoutMS uint) (b byte, err error) {
 	return
 }
 
-func (s SocketIo) readBytes(timeoutMS uint, num_bytes uint16) (bytes []byte, err error) {
-	bytes = make([]byte, num_bytes)
+func (s SocketIo) readBytes(timeoutMS uint, numBytes uint16) (bytes []byte, err error) {
+	bytes = make([]byte, numBytes)
 
 	if err = s.conn.SetDeadline(time.Now().Add(time.Duration(timeoutMS) * time.Millisecond)); err != nil {
 		return
@@ -59,7 +61,7 @@ func (s SocketIo) readBytes(timeoutMS uint, num_bytes uint16) (bytes []byte, err
 	if err != nil {
 		return
 	}
-	if n != int(num_bytes) {
+	if n != int(numBytes) {
 		err = errors.New("TIMEOUT reading bytes")
 		return
 	}
@@ -70,7 +72,7 @@ func (s SocketIo) writeByte(timeoutMS uint, b byte) (err error) {
 	if err = s.conn.SetWriteDeadline(time.Now().Add(time.Duration(timeoutMS) * time.Millisecond)); err != nil {
 		return
 	}
-	var arr []byte = make([]byte, 1)
+	var arr = make([]byte, 1)
 	var n int
 	arr[0] = b
 	n, err = s.conn.Write(arr)
