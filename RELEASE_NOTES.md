@@ -24,9 +24,7 @@ permalink: /docs/release-notes
       and cannot be disabled for that purpose.
 * The UI no longer shows the firmware version in the upper left
     corner of the menu bar. Instead it shows the name of the
-    connected synergy - which might be "serial-port" or the zeroconf
-    name of a virtual instrument.   The Firmware version of the
-    connected synergy can be viewed via Connect menu.
+    connected synergy and control surface.
 * Fixes [issue #3](https://github.com/chinenual/synergize/issues/3):
   removes a limitation on macos: serial port configuration (e.g. baud rate) can be
   changed without requiring the application to be restarted.
