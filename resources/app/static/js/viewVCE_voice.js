@@ -900,7 +900,7 @@ ${freqDAG}
 						});
 
 				}
-				index.infoNotification(`Voicing mode ${mode ? 'enabled' : 'disabled'}.${csMessage}`);
+				index.infoNotification(`Voicing mode ${viewVCE_voice.voicingMode ? 'enabled' : 'disabled'}.${csMessage}`);
 			}
 			index.refreshConnectionStatus();
 
