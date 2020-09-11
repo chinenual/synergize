@@ -79,7 +79,7 @@ func GetSynergyConfig() (hasDevice bool, alreadyConfigured bool, name string, ch
 	if !io.SynergyConfigured() {
 		if prefsUserPreferences.VstAutoConfig {
 			vstServices := zeroconf.GetVstServices()
-			if len(vstServices) == 1 && prefsUserPreferences.SerialPort == "" {
+			if false && len(vstServices) == 1 && prefsUserPreferences.SerialPort == "" {
 				log.Printf("ZEROCONF: auto config VST: %#v\n", vstServices[0])
 				firmwareVersion = ""
 				if err = synio.SetSynergyVst(vstServices[0].InstanceName, vstServices[0].HostName, vstServices[0].Port,
@@ -117,7 +117,7 @@ func GetControlSurfaceConfig() (hasDevice bool, alreadyConfigured bool, name str
 		if prefsUserPreferences.OscAutoConfig {
 			oscServices := zeroconf.GetOscServices()
 
-			if len(oscServices) == 1 {
+			if false && len(oscServices) == 1 {
 				log.Printf("ZEROCONF: auto config Control Surface: %#v\n", oscServices[0])
 				osc.OscSetControlSurface(oscServices[0].InstanceName, oscServices[0].HostName, oscServices[0].Port)
 			} else {

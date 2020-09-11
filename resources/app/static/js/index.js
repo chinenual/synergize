@@ -105,7 +105,7 @@ let index = {
 		    <div class="form-check">
                 <input class="form-check-input" type="radio" name="chooseZeroconfRadios" id="chooseZeroconfRadio${i}" value="${i}" ${i == 0 ? "checked" : ""}>
                 <label class="form-check-label" for="chooseZeroconfRadio${i}">
-                   ${choices[i].InstanceName}${addr}
+                   ${choices[i].InstanceName}${addr}are
                 </label>
 			</div>`
 			console.log("html now " + html);
@@ -418,7 +418,7 @@ let index = {
 				index.errorNotification(message.payload);
 				return
 			} else {
-				index.updateConnectionStatus(message.payload);
+				index.updateConnectionStatus(message.payload.SynergyName, message.payload.ControlSurfaceName);
 				index.infoNotification("Disconnected Synergy");
 				return
 			}
@@ -456,7 +456,7 @@ let index = {
 	},
 	refreshConnectionStatus: function () {
 		let message = {
-			"name": "getFirmwareVersion",
+			"name": "getConnectionStatus",
 			"payload": "DummyPayload"
 		};
 		// Send message
@@ -466,14 +466,16 @@ let index = {
 			if (message.name === "error") {
 				index.errorNotification(message.payload);
 			} else {
-				index.updateConnectionStatus(message.payload);
+				index.updateConnectionStatus(message.payload.SynergyName, message.payload.ControlSurfaceName);
 			}
 		});
 	},
-	updateConnectionStatus: function (status) {
-		console.log("update status: " + status);
-		document.getElementById("firmwareVersion").innerHTML = status;
-		if (status === "" || status.includes("Not")) {
+	updateConnectionStatus: function (synergyName, csName) {
+		console.log("update status: " + synergyName + " " + csName);
+		document.getElementById("synergyName").innerHTML = synergyName;
+		document.getElementById("controlSurfaceName").innerHTML = csName;
+		if (synergyName === null || synergyName === "") {
+			document.getElementById("synergyName").innerHTML = "not connected";
 			$('#disconnectSynergyMenuItem').addClass('disabled');
 			$('#connectSynergyMenuItem').removeClass('disabled');
 			document.getElementById("connectButtonImg").src = `static/images/grey-button-off-full.png`;
@@ -481,6 +483,11 @@ let index = {
 			$('#disconnectSynergyMenuItem').removeClass('disabled');
 			$('#connectSynergyMenuItem').addClass('disabled');
 			document.getElementById("connectButtonImg").src = `static/images/grey-button-on-full.png`;
+		}
+		if (csName === null || csName === "") {
+			$('#controlSurfaceStatus').hide();
+		} else {
+			$('#controlSurfaceStatus').show();
 		}
 	},
 
@@ -586,7 +593,7 @@ let index = {
 					index.explore(message.payload);
 					return { payload: "ok" };
 				case "updateConnectionStatus":
-					index.updateConnectionStatus(message.payload);
+					index.updateConnectionStatus(message.payload.SynergyName, message.payload.ControlSurfaceName);
 					return { payload: "ok" };
 				case "fileDialog":
 					f = index.fileDialog(message.payload);

@@ -22,6 +22,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+type connectionStatusResponse struct {
+	SynergyName        string
+	ControlSurfaceName string
+}
+
 // handleMessages handles messages
 func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload interface{}, err error) {
 	log.Printf("Handle message: %s %s\n", m.Name, string(m.Payload))
@@ -51,7 +56,8 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = err.Error()
 			return
 		}
-		payload = "connected to " + io.SynergyName()
+		response := connectionStatusResponse{io.SynergyName(), osc.OscControlSurfaceName()}
+		payload = response
 
 	case "crtEditAddVoice":
 		var args struct {
@@ -123,25 +129,25 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		if err = DisconnectControlSurface(); err != nil {
 			payload = err.Error()
 		} else {
-			payload = "Not Connected"
+			response := connectionStatusResponse{io.SynergyName(), osc.OscControlSurfaceName()}
+			payload = response
 		}
 
 	case "disconnectSynergy":
 		if err = DisconnectSynergy(); err != nil {
 			payload = err.Error()
 		} else {
-			payload = "Not Connected"
+			response := connectionStatusResponse{io.SynergyName(), osc.OscControlSurfaceName()}
+			payload = response
 		}
 
 	case "getCWD":
 		payload, _ = os.Getwd()
 		log.Printf("CWD: %s\n", payload)
 
-	case "getFirmwareVersion":
-		if payload, err = GetFirmwareVersion(); err != nil {
-			payload = err.Error()
-			return
-		}
+	case "getConnectionStatus":
+		response := connectionStatusResponse{io.SynergyName(), osc.OscControlSurfaceName()}
+		payload = response
 
 	case "getPreferences":
 		payload = struct {
@@ -770,13 +776,15 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				}
 				// NOTE: need to pass reference in order to get the custom JSON marshalling to notice the VNAME
 				resultPayload := struct {
-					Vce       *data.VCE
-					CsEnabled bool
-					CsName    string
+					Vce         *data.VCE
+					CsEnabled   bool
+					CsName      string
+					SynergyName string
 				}{
-					Vce:       &vce,
-					CsEnabled: csEnabled,
-					CsName:    csName,
+					Vce:         &vce,
+					CsEnabled:   csEnabled,
+					CsName:      csName,
+					SynergyName: io.SynergyName(),
 				}
 				payload = resultPayload
 			}
@@ -789,7 +797,8 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				payload = err.Error()
 				return
 			}
-			payload = "ok"
+			response := connectionStatusResponse{io.SynergyName(), osc.OscControlSurfaceName()}
+			payload = response
 		}
 
 	case "explore":

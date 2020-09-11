@@ -126,8 +126,14 @@ TEST a "more button" design:
 -->
 
 					<div class="navbar-text p-2 col-md-3">
-						<span class="buttonText">Synergy:<br>&nbsp;&nbsp;</span><span class="buttonText"
-							id="firmwareVersion">Not Connected</span>
+						<div>
+							<span class="buttonText"><b>Synergy:</b><br>&nbsp;&nbsp;</span>
+							<span class="buttonText" id="synergyName"></span>
+						</div>
+						<div id="controlSurfaceStatus" style="display: none;">
+							<span class="buttonText"><b>Control Surface:</b><br>&nbsp;&nbsp;</span>
+							<span class="buttonText" id="controlSurfaceName"></span>
+						</div>
 					</div>
 					<div class="headerSeparator p-2"></div>
 

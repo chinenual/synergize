@@ -816,8 +816,8 @@ ${freqDAG}
 				index.errorNotification(message.payload);
 				return
 			} else {
-				index.updateConnectionStatus(message.payload);
-				index.infoNotification("Successfully connected to Synergy - firmware version " + message.payload);
+				index.updateConnectionStatus(message.payload.SynergyName, message.payload.ControlSurfaceName);
+				index.infoNotification("Successfully connected : " + message.payload.SynergyName);
 				return
 			}
 		});
@@ -885,12 +885,9 @@ ${freqDAG}
 					var csMessage = ""
 					if (viewVCE_voice.csEnabled) {
 						csMessage = `.<br>Control Surface is enabled: ${message.payload.CsName}.`;
-						$('#disableControlSurfaceMenuItem').removeClass('disabled');
 					} else {
 						csMessage = `.<br>Control Surface is not enabled.`;
-						$('#disableControlSurfaceMenuItem').addClass('disabled');
 					}
-
 
 					crt_name = null;
 					crt_path = null;
