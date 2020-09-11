@@ -48,7 +48,7 @@ func GetVstServices() (result []Service) {
 func newService(se *dnssd.Service) (s Service) {
 	s.InstanceName = strings.ReplaceAll(se.Name, "\\", "") // zeroconf escapes spaces and parens with \
 	//s.Address = se.IPs[0].String()
-	s.HostName = "localhost" // TEMPORARY FOR DEBUGING se.Host
+	s.HostName = se.Host
 	s.Port = uint(se.Port)
 	s.Text = se.Text
 	return
