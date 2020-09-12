@@ -178,12 +178,12 @@ func TestMain(m *testing.M) {
 	if *oscio {
 		defer func() {
 			fmt.Printf("Close Event.\n")
-			if err := OscQuit(); err != nil {
+			if err := Quit(); err != nil {
 				fmt.Println(err)
 			}
 		}()
-		OscSetControlSurface("unnamed", "10.0.6.28", 9000)
-		err := OscInit(8000, true, true, "mock-synergy-name")
+		SetControlSurface("unnamed", "10.0.6.28", 9000)
+		err := Init(8000, true, true, "mock-synergy-name")
 		if err != nil {
 			fmt.Printf("could not initialize io: %v\n", err)
 			os.Exit(1)

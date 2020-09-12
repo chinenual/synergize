@@ -69,7 +69,7 @@ func DisconnectSynergy() (err error) {
 }
 
 func DisconnectControlSurface() (err error) {
-	if err = osc.OscQuit(); err != nil {
+	if err = osc.Quit(); err != nil {
 		return
 	}
 	return
@@ -113,25 +113,25 @@ func GetSynergyConfig() (hasDevice bool, alreadyConfigured bool, name string, ch
 }
 
 func GetControlSurfaceConfig() (hasDevice bool, alreadyConfigured bool, name string, choices *[]zeroconf.Service, err error) {
-	if !osc.OscControlSurfaceConfigured() && prefsUserPreferences.UseOsc {
+	if !osc.ControlSurfaceConfigured() && prefsUserPreferences.UseOsc {
 		if prefsUserPreferences.OscAutoConfig {
 			oscServices := zeroconf.GetOscServices()
 
 			if false && len(oscServices) == 1 {
 				log.Printf("ZEROCONF: auto config Control Surface: %#v\n", oscServices[0])
-				osc.OscSetControlSurface(oscServices[0].InstanceName, oscServices[0].HostName, oscServices[0].Port)
+				osc.SetControlSurface(oscServices[0].InstanceName, oscServices[0].HostName, oscServices[0].Port)
 			} else {
 				log.Printf("ZEROCONF: zero or more than one Control Surface: %#v\n", oscServices)
 				choices = &oscServices
 			}
 		} else {
 			log.Printf("ZEROCONF: VST zeroconf disabled - using preferences config %s:d\n", prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort)
-			osc.OscSetControlSurface("", prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort)
+			osc.SetControlSurface("", prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort)
 		}
 	}
 	hasDevice = prefsUserPreferences.UseOsc
-	alreadyConfigured = osc.OscControlSurfaceConfigured()
-	name = osc.OscControlSurfaceName()
+	alreadyConfigured = osc.ControlSurfaceConfigured()
+	name = osc.ControlSurfaceName()
 	return
 }
 

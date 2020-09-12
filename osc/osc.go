@@ -21,14 +21,14 @@ var csurfaceName string
 var csurfaceAddress string
 var csurfacePort uint
 
-func OscSetControlSurface(name string, addr string, port uint) {
+func SetControlSurface(name string, addr string, port uint) {
 	csurfaceName = name
 	csurfaceAddress = addr
 	csurfacePort = port
 }
 
-func OscControlSurfaceName() string {
-	if OscControlSurfaceConfigured() {
+func ControlSurfaceName() string {
+	if ControlSurfaceConfigured() {
 		if csurfaceName == "" {
 			return fmt.Sprintf("%s:%d", csurfaceAddress, csurfacePort)
 		} else {
@@ -39,17 +39,17 @@ func OscControlSurfaceName() string {
 	}
 }
 
-func OscControlSurfaceConfigured() bool {
+func ControlSurfaceConfigured() bool {
 	return csurfaceAddress != ""
 }
 
-func OscInit(port uint, verboseIn bool, verboseOut bool, synergyName string) (err error) {
+func Init(port uint, verboseIn bool, verboseOut bool, synergyName string) (err error) {
 	verboseOscIn = verboseIn
 	verboseOscOut = verboseOut
 
 	started = false
 
-	if OscControlSurfaceConfigured() {
+	if ControlSurfaceConfigured() {
 		client = goosc.NewClient(csurfaceAddress, int(csurfacePort))
 	}
 
@@ -130,7 +130,7 @@ func closeableListenAndServe(s *goosc.Server) (err error) {
 	return s.Serve(listener)
 }
 
-func OscQuit() (err error) {
+func Quit() (err error) {
 	if started {
 		if err = listener.Close(); err != nil {
 			return

@@ -446,7 +446,7 @@ func main() {
 
 	defer func() {
 		fmt.Printf("Close Event.\n")
-		if err = osc.OscQuit(); err != nil {
+		if err = osc.Quit(); err != nil {
 			log.Println(err)
 		}
 	}()

@@ -56,7 +56,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = err.Error()
 			return
 		}
-		response := connectionStatusResponse{io.SynergyName(), osc.OscControlSurfaceName()}
+		response := connectionStatusResponse{io.SynergyName(), osc.ControlSurfaceName()}
 		payload = response
 
 	case "crtEditAddVoice":
@@ -129,7 +129,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		if err = DisconnectControlSurface(); err != nil {
 			payload = err.Error()
 		} else {
-			response := connectionStatusResponse{io.SynergyName(), osc.OscControlSurfaceName()}
+			response := connectionStatusResponse{io.SynergyName(), osc.ControlSurfaceName()}
 			payload = response
 		}
 
@@ -137,7 +137,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		if err = DisconnectSynergy(); err != nil {
 			payload = err.Error()
 		} else {
-			response := connectionStatusResponse{io.SynergyName(), osc.OscControlSurfaceName()}
+			response := connectionStatusResponse{io.SynergyName(), osc.ControlSurfaceName()}
 			payload = response
 		}
 
@@ -146,7 +146,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		log.Printf("CWD: %s\n", payload)
 
 	case "getConnectionStatus":
-		response := connectionStatusResponse{io.SynergyName(), osc.OscControlSurfaceName()}
+		response := connectionStatusResponse{io.SynergyName(), osc.ControlSurfaceName()}
 		payload = response
 
 	case "getPreferences":
@@ -749,7 +749,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		}
 		if args.ZeroconfChoice != nil {
 			log.Printf("ZEROCONF: config Control Surface selected by user: %#v\n", *args.ZeroconfChoice)
-			osc.OscSetControlSurface((*args.ZeroconfChoice).InstanceName, (*args.ZeroconfChoice).HostName, (*args.ZeroconfChoice).Port)
+			osc.SetControlSurface((*args.ZeroconfChoice).InstanceName, (*args.ZeroconfChoice).HostName, (*args.ZeroconfChoice).Port)
 		}
 		if args.Mode {
 			var vce data.VCE
@@ -758,7 +758,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			var csName = ""
 			if prefsUserPreferences.UseOsc {
 				port := prefsUserPreferences.OscPort
-				if err = osc.OscInit(port,
+				if err = osc.Init(port,
 					*verboseOscIn, *verboseOscOut,
 					prefsSynergyName()); err != nil {
 
@@ -766,7 +766,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 					payload = err.Error()
 				} else {
 					csEnabled = true
-					csName = osc.OscControlSurfaceName()
+					csName = osc.ControlSurfaceName()
 				}
 			}
 			if payload == nil {
@@ -790,14 +790,14 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			}
 
 		} else {
-			if err = osc.OscQuit(); err != nil {
+			if err = osc.Quit(); err != nil {
 				payload = err.Error()
 			}
 			if err = synio.DisableVoicingMode(); err != nil {
 				payload = err.Error()
 				return
 			}
-			response := connectionStatusResponse{io.SynergyName(), osc.OscControlSurfaceName()}
+			response := connectionStatusResponse{io.SynergyName(), osc.ControlSurfaceName()}
 			payload = response
 		}
 
