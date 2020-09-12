@@ -39,6 +39,18 @@ func SynergyName() (name string) {
 	return
 }
 
+func SetSynergyMock() (conn Conn, err error) {
+	var impl IoImpl
+	_ = impl
+	if impl, err = MockInit(); err != nil {
+		return
+	}
+	if conn, err = initConnection("MOCK", impl, false); err != nil {
+		return
+	}
+	return
+}
+
 func SetSynergySerialPort(name string, device string, baud uint, serialVerbose bool) (conn Conn, err error) {
 	var impl IoImpl
 	_ = impl

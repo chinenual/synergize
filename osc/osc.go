@@ -139,5 +139,8 @@ func Quit() (err error) {
 		client = nil
 		server = nil
 	}
+
+	csurfaceName = ""
+	csurfaceAddress = ""
 	return
 }

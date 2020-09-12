@@ -185,7 +185,7 @@ let viewVCE_voice = {
 		}
 		var val = parseInt(str, 10);
 		if (val === 0) {
-			return ''
+			return '';
 		}
 		return '' + val;
 	},
@@ -723,7 +723,7 @@ ${freqDAG}
 	},
 
 
-	_withZeroconf: function (prompt, zeroconfSelector, actionAfterSelect, recurseAction, successCallback) {
+	_withZeroconf: function (prompt1, prompt2, zeroconfSelector, actionAfterSelect, recurseAction, successCallback) {
 		// fetch the config from the server (server will return already selected config, or "not enabled" or a list of selections)
 		// if server returns "already configured" or "not enabled"
 		//      send request to start voicemode to server
@@ -746,7 +746,8 @@ ${freqDAG}
 				index.errorNotification(message.payload);
 			} else {
 				console.log(zeroconfSelector + " returned " + JSON.stringify(message.payload));
-				if ((!message.payload.HasDevice) || message.payload.AlreadyConfigured) {
+				if (((!message.payload[0].HasDevice) || message.payload[0].AlreadyConfigured)
+					&& ((!message.payload[1].HasDevice) || message.payload[1].AlreadyConfigured)) {
 					console.log("call actionAfterSelect");
 					actionAfterSelect(null)
 					console.log("call successCallback");
@@ -754,15 +755,21 @@ ${freqDAG}
 				} else {
 					// zeroconf found more than one option - show dialog
 					console.log("show menu");
-					index.chooseZeroconfService(prompt, message.payload.Choices,
+					if ((!message.payload[0].HasDevice) || message.payload[0].AlreadyConfigured) {
+						prompt1 = null;
+					}
+					if ((!message.payload[1].HasDevice) || message.payload[1].AlreadyConfigured) {
+						prompt2 = null;
+					}
+					index.chooseZeroconfService(prompt1, message.payload[0].Choices, prompt2, message.payload[1].Choices,
 						function () {
 							console.log("cancelled");
 							// cancelled - do nothing
 						},
-						function (choice) {
-							console.log("user chose " + JSON.stringify(choice));
+						function (choice1, choice2) {
+							console.log("user chose " + JSON.stringify(choice1) + " " + JSON.stringify(choice2));
 							// user selected one of the options 
-							actionAfterSelect(choice);
+							actionAfterSelect(choice1, choice2);
 							successCallback();
 						},
 						function () {
@@ -792,16 +799,14 @@ ${freqDAG}
 	},
 
 	connectSynergy: function (successCallback) {
-		return viewVCE_voice._withZeroconf("Choose Synergy", "getSynergy", viewVCE_voice.raw_connectSynergy, viewVCE_voice.connectSynergy, successCallback);
+		return viewVCE_voice._withZeroconf("Choose Synergy", null, "getSynergy", viewVCE_voice.raw_connectSynergy, viewVCE_voice.connectSynergy, successCallback);
 	},
 
 	voicingModeOn: function () {
-		viewVCE_voice.connectSynergy(function () {
-			return viewVCE_voice._withZeroconf("Choose Control Surface", "getControlSurface", viewVCE_voice.raw_voicingModeOn, viewVCE_voice.voicingModeOn, function () { });
-		});
+		return viewVCE_voice._withZeroconf("Choose Synergy", "Choose Control Surface", "getSynergyAndControlSurface", viewVCE_voice.raw_voicingModeOn, viewVCE_voice.voicingModeOn, function () { });
 	},
 
-	raw_connectSynergy: function (zeroconfChoice) {
+	raw_connectSynergy: function (zeroconfChoice, ignored) {
 		let message = {
 			"name": "connectSynergy",
 			"payload": {
@@ -839,11 +844,13 @@ ${freqDAG}
 			"name": "toggleVoicingMode",
 			"payload": {
 				"Mode": false,
-				"ZeroconfChoice": null // optional param - null unless user just selected from a menu
+				"ZeroconfSynergy": null, // optional param - null unless user just selected from a menu
+				"ZeroconfCs": null, // optional param - null unless user just selected from a menu
 			}
 		};
 		index.spinnerOn();
 		astilectron.sendMessage(message, function (message) {
+			index.spinnerOff();
 			viewVCE_voice.voicingMode = false;
 			if (message.payload != null) {
 				// if we just disabled voicing, clear the VCE view
@@ -857,13 +864,14 @@ ${freqDAG}
 		});
 	},
 
-	raw_voicingModeOn: function (zeroconfChoice) {
+	raw_voicingModeOn: function (synergyZeroconfChoice, csZeroconfChoice) {
 		console.log(`VoicingMode on`);
 		let message = {
 			"name": "toggleVoicingMode",
 			"payload": {
 				"Mode": true,
-				"ZeroconfCs": zeroconfChoice // optional param - null unless user just selected from a menu
+				"ZeroconfSynergy": synergyZeroconfChoice, // optional param - null unless user just selected from a menu
+				"ZeroconfCs": csZeroconfChoice // optional param - null unless user just selected from a menu
 			}
 		};
 		index.spinnerOn();

@@ -75,6 +75,23 @@ func DisconnectControlSurface() (err error) {
 	return
 }
 
+func ConnectSynergy(zeroconfConfig zeroconf.Service) (err error) {
+	if zeroconfConfig.InstanceName == "serial-port" {
+		log.Printf("ZEROCONF: using Synergy preferences config %s at %d\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
+		if err = synio.SetSynergySerialPort(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud,
+			true, *serialVerboseFlag, *mockSynio); err != nil {
+			return
+		}
+	} else {
+		log.Printf("ZEROCONF: using Synergy zeroconf config %s (%s:%d)\n", zeroconfConfig.InstanceName, zeroconfConfig.HostName, zeroconfConfig.Port)
+		if err = synio.SetSynergyVst(zeroconfConfig.InstanceName, zeroconfConfig.HostName, zeroconfConfig.Port,
+			true, *serialVerboseFlag, *mockSynio); err != nil {
+			return
+		}
+	}
+	return
+}
+
 func GetSynergyConfig() (hasDevice bool, alreadyConfigured bool, name string, choices *[]zeroconf.Service, err error) {
 	if !io.SynergyConfigured() {
 		if prefsUserPreferences.VstAutoConfig {
@@ -108,7 +125,7 @@ func GetSynergyConfig() (hasDevice bool, alreadyConfigured bool, name string, ch
 	}
 	hasDevice = true // we assume user has a Synergy or VST
 	name = io.SynergyName()
-	alreadyConfigured = io.SynergyConfigured() || *mockSynio
+	alreadyConfigured = io.SynergyConfigured()
 	return
 }
 
@@ -125,7 +142,7 @@ func GetControlSurfaceConfig() (hasDevice bool, alreadyConfigured bool, name str
 				choices = &oscServices
 			}
 		} else {
-			log.Printf("ZEROCONF: VST zeroconf disabled - using preferences config %s:d\n", prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort)
+			log.Printf("ZEROCONF: Control Surface zeroconf disabled - using preferences config %s:%d\n", prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort)
 			osc.SetControlSurface("", prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort)
 		}
 	}

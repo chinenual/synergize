@@ -3,10 +3,11 @@ package synio
 import (
 	"bufio"
 	"fmt"
-	"github.com/pkg/errors"
-	"golang.org/x/crypto/ssh/terminal"
 	"log"
 	"os"
+
+	"github.com/pkg/errors"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 func DiagCOMTST() (err error) {
@@ -81,11 +82,11 @@ func DiagLINKTST() (err error) {
 		}
 		var b = byte(r)
 		if err = conn.WriteByteWithTimeout(TIMEOUT_MS, b, "write test byte"); err != nil {
-			log.Fatalln(err, "failed to write byte %02x", b)
+			log.Printf("failed to write byte %02x - %v\n", b, err)
 			break
 		}
 		if b, err = conn.ReadByteWithTimeout(1000*60*5, "read test byte"); err != nil {
-			log.Fatalln(err, "failed to read byte %02x", b)
+			log.Printf("failed to read byte %02x - %v\n", b, err)
 			break
 		}
 		fmt.Printf(" sent '%q' (0x%02x) ... received 0x%02x (control-C to quit)\n\r", r, r, b)

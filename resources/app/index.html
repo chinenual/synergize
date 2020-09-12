@@ -178,7 +178,7 @@ TEST a "more button" design:
 							<a href="#" onclick="index.loadCRTDialog();" id="loadCRTMenuItem">Load Cartridge file
 								(CRT)</a>
 							<a href="#" onclick="index.loadVCEDialog();">Load Voice file (VCE)</a>
-							<a href="#" onclick="index.saveVCEDialog();"" class=" disabled" id="saveVCEMenuItem">Save
+							<a href="#" onclick="index.saveVCEDialog();" class="disabled" id="saveVCEMenuItem">Save
 								Voice file (VCE)</a>
 						</div>
 					</div>
@@ -255,35 +255,46 @@ TEST a "more button" design:
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal"
 							id="confirmCancelButton">Cancel</button>
-						<button type="button" class="btn btn-primary" data-dismiss="modal" id="confirmOKButton"">OK</button>
+						<button type="button" class="btn btn-primary" data-dismiss="modal" id="confirmOKButton">OK</button>
 					</div>
 				</div>
 			</div>
 		</div>
 		<!-- Modal -->
 		<div class=" modal fade" id="chooseZeroconfModal" tabindex="-1" role="dialog" aria-hidden="true">
-							<div class="modal-dialog" role="document">
-								<div class="modal-content">
-									<form>
-										<div class="modal-header">
-											<h5 class="modal-title" id="chooseZeroconfPrompt">Confirm Title</h5>
-										</div>
-										<div class="modal-body" id="chooseZeroconfItems">
-
-										</div>
-										<div class="modal-footer">
-											<button type="button" class="btn btn-secondary" data-dismiss="modal"
-												id="chooseZeroconfCancelButton">Cancel</button>
-											<button type="button" class="btn btn-secondary" data-dismiss="modal"
-												id="chooseZeroconfRescanButton">Rescan</button>
-											<button type="button" class="btn btn-primary" data-dismiss="modal"
-												id="chooseZeroconfOKButton"">OK</button>
-					</div>
-									</form>
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<form>
+						<div id="zeroconf1Div">
+							<div class="modal-header">
+								<h5 class="modal-title" id="chooseZeroconf1Prompt">Confirm Title</h5>
+							</div>
+							<div class="modal-body" id="chooseZeroconf1Items">
+							</div>
+						</div>
+						<div id="zeroconf2Div">
+							<div class="modal-header">
+								<h5 class="modal-title" id="chooseZeroconf2Prompt">Confirm Title</h5>
+							</div>
+							<div class="modal-body" id="chooseZeroconf2Items">
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal"
+									id="chooseZeroconfCancelButton">Cancel
+							</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal"
+									id="chooseZeroconfRescanButton">Rescan
+							</button>
+							<button type="button" class="btn btn-primary" data-dismiss="modal"
+									id="chooseZeroconfOKButton">OK
+							</button>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>
-		
+
 		<div class=" row flex-fill" style="min-height:0">
 												<div class="col-3 mh-100 hiddenscroll">
 													<div id="path"></div>
@@ -298,7 +309,7 @@ TEST a "more button" design:
 												<div class="col mh-100">
 
 													<div id="spinner" style="display:none;">
-														<div class="spinner-border text-info"" role=" status">
+														<div class="spinner-border text-info" role="status">
 															<span class="sr-only">Loading...</span>
 														</div>
 

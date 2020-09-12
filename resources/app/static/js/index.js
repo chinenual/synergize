@@ -93,27 +93,63 @@ let index = {
 		$('#alertModal').modal();
 	},
 
-	chooseZeroconfService: function (prompt, choices, onCancel, onOK, onRescan) {
-		console.log("chooseZeroconfService: " + prompt + " " + JSON.stringify(choices));
-		document.getElementById("chooseZeroconfPrompt").innerHTML = prompt;
-
+	chooseZeroconfService: function (prompt1, choices1, prompt2, choices2, onCancel, onOK, onRescan) {
+		console.log("chooseZeroconfService: " + prompt1 + " " + JSON.stringify(choices1) + " " + prompt2 + " " + JSON.stringify(choices2));
+		if (prompt1 != null) {
+			document.getElementById("chooseZeroconf1Prompt").innerHTML = prompt1;
+			$('#zeroconf1Div').show();
+		} else {
+			document.getElementById("chooseZeroconf1Prompt").innerHTML = "";
+			document.getElementById("chooseZeroconf1Items").innerHTML = "";
+			$('#zeroconf1Div').hide();
+		}
+		if (prompt2 != null) {
+			document.getElementById("chooseZeroconf2Prompt").innerHTML = prompt2;
+			$('#zeroconf2Div').show();
+		} else {
+			document.getElementById("chooseZeroconf2Prompt").innerHTML = "";
+			document.getElementById("chooseZeroconf2Items").innerHTML = "";
+			$('#zeroconf2Div').hide();
+		}
 		var html = "";
-		for (i = 0; i < choices.length; i++) {
-			var addr = ""
-			if (choices[i].Port != 0) {
-				addr = ` (${choices[i].HostName}:${choices[i].Port})`
-			}
-			html = html + `
+		if (prompt1 != null && choices1  != null) {
+			for (i = 0; i < choices1.length; i++) {
+				var addr = ""
+				if (choices1[i].Port != 0) {
+					addr = ` (${choices1[i].HostName}:${choices1[i].Port})`
+				}
+				html = html + `
 		    <div class="form-check">
-                <input class="form-check-input" type="radio" name="chooseZeroconfRadios" id="chooseZeroconfRadio${i}" value="${i}" ${i == 0 ? "checked" : ""}>
-                <label class="form-check-label" for="chooseZeroconfRadio${i}">
-                   ${choices[i].InstanceName}${addr}
+                <input class="form-check-input" type="radio" name="chooseZeroconf1Radios" id="chooseZeroconf1Radio${i}" value="${i}" ${i == 0 ? "checked" : ""}>
+                <label class="form-check-label" for="chooseZeroconf1Radio${i}">
+                   ${choices1[i].InstanceName}${addr}
                 </label>
 			</div>`
-			console.log("html now " + html);
+				console.log("html now " + html);
+			}
+			document.getElementById("chooseZeroconf1Items").innerHTML = html;
+			console.log("innerHTML now " + document.getElementById("chooseZeroconf1Items").innerHTML);
 		}
-		document.getElementById("chooseZeroconfItems").innerHTML = html;
-		console.log("innerHTML now " + document.getElementById("chooseZeroconfItems").innerHTML);
+
+		if (prompt2 != null && choices2  != null) {
+			var html = "";
+			for (i = 0; i < choices2.length; i++) {
+				var addr = ""
+				if (choices2[i].Port != 0) {
+					addr = ` (${choices2[i].HostName}:${choices2[i].Port})`
+				}
+				html = html + `
+		    <div class="form-check">
+                <input class="form-check-input" type="radio" name="chooseZeroconf2Radios" id="chooseZeroconf2Radio${i}" value="${i}" ${i == 0 ? "checked" : ""}>
+                <label class="form-check-label" for="chooseZeroconf2Radio${i}">
+                   ${choices2[i].InstanceName}${addr}
+                </label>
+			</div>`
+				console.log("html now " + html);
+			}
+			document.getElementById("chooseZeroconf2Items").innerHTML = html;
+			console.log("innerHTML now " + document.getElementById("chooseZeroconf2Items").innerHTML);
+		}
 
 		var selected = 0;
 		document.getElementById("chooseZeroconfCancelButton").onclick = function () {
@@ -121,9 +157,20 @@ let index = {
 			onCancel();
 		};
 		document.getElementById("chooseZeroconfOKButton").onclick = function () {
-			selected = parseInt($('#chooseZeroconfItems input:checked').val(), 10);
-			console.log("Selected " + selected);
-			onOK(choices[selected]);
+			var idx1 = null
+			var selected1 = null
+			var idx2 = null
+			var selected2 = null
+			if (prompt1 != null) {
+				idx1 = parseInt($('#chooseZeroconf1Items input:checked').val(), 10);
+				selected1 = choices1[idx1];
+			}
+			if (prompt2 != null) {
+				idx2 = parseInt($('#chooseZeroconf2Items input:checked').val(), 10);
+				selected2 = choices2[idx2];
+			}
+			console.log("Selected " + idx1 + " " + idx2);
+			onOK(selected1, selected2);
 		};
 		document.getElementById("chooseZeroconfRescanButton").onclick = function () {
 			console.log("Rescan");
@@ -435,6 +482,7 @@ let index = {
 				index.errorNotification(message.payload);
 				return
 			} else {
+				index.updateConnectionStatus(message.payload.SynergyName, message.payload.ControlSurfaceName);
 				index.infoNotification("Disconnected Control Surface");
 				$('#disableControlSurfaceMenuItem').addClass('disabled');
 				return

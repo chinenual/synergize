@@ -19,7 +19,7 @@ Synergize is free and open source software, which uses a number of other open so
 * Daniel Kallin's  [nomnoml](https://github.com/skanaar/nomnoml) diagram library.
 * Stefan S's [bonjour/zeroconf]((https://github.com/grandcat/zeroconf) library.
 * Lodash's [debouncer](https://lodash.com/)
-* [Electron](electronjs.org)
+* [Electron](https://electronjs.org)
 * [JQuery](https://jquery.com/)
 
 ## Original Z80 Firmware, SYNHCS source code and Voice Libraries

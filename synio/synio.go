@@ -65,6 +65,9 @@ func SetSynergySerialPort(device string, baud uint, synVerbose bool, serialVerbo
 	mock = mockflag
 	if mock {
 		log.Printf("MOCKSYNIO - initialized\n")
+		if conn, err = io.SetSynergyMock(); err != nil {
+			return errors.Wrap(err, "Could not initialize synergy connection")
+		}
 		return
 	}
 	initializeCRC()
@@ -79,6 +82,9 @@ func SetSynergyVst(name string, addr string, port uint, synVerbose bool, serialV
 	mock = mockflag
 	if mock {
 		log.Printf("MOCKSYNIO - initialized\n")
+		if conn, err = io.SetSynergyMock(); err != nil {
+			return errors.Wrap(err, "Could not initialize synergy connection")
+		}
 		return
 	}
 	initializeCRC()

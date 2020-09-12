@@ -696,13 +696,13 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		_ = prefs_w.Show()
 
 	case "getSynergy":
-		var response struct {
+		var response [2]struct {
 			HasDevice         bool
 			AlreadyConfigured bool
 			Name              string
 			Choices           *[]zeroconf.Service
 		}
-		if response.HasDevice, response.AlreadyConfigured, response.Name, response.Choices, err = GetSynergyConfig(); err != nil {
+		if response[0].HasDevice, response[0].AlreadyConfigured, response[0].Name, response[0].Choices, err = GetSynergyConfig(); err != nil {
 			log.Printf("ZEROCONF: GetSynergyConfig failed: %v\n", err)
 			payload = err.Error()
 		} else {
@@ -710,14 +710,32 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = response
 		}
 
-	case "getControlSurface":
-		var response struct {
+	case "getSynergyAndControlSurface":
+		var response [2]struct {
 			HasDevice         bool
 			AlreadyConfigured bool
 			Name              string
 			Choices           *[]zeroconf.Service
 		}
-		if response.HasDevice, response.AlreadyConfigured, response.Name, response.Choices, err = GetControlSurfaceConfig(); err != nil {
+		if response[0].HasDevice, response[0].AlreadyConfigured, response[0].Name, response[0].Choices, err = GetSynergyConfig(); err != nil {
+			log.Printf("ZEROCONF: GetSynergyConfig failed: %v\n", err)
+			payload = err.Error()
+		} else if response[1].HasDevice, response[1].AlreadyConfigured, response[1].Name, response[1].Choices, err = GetControlSurfaceConfig(); err != nil {
+			log.Printf("ZEROCONF: GetControlSurfaceConfig failed: %v\n", err)
+			payload = err.Error()
+		} else {
+			log.Printf("ZEROCONF: GetControlSurfaceConfig success: %#v\n", response)
+			payload = response
+		}
+
+	case "getControlSurface":
+		var response [2]struct {
+			HasDevice         bool
+			AlreadyConfigured bool
+			Name              string
+			Choices           *[]zeroconf.Service
+		}
+		if response[0].HasDevice, response[0].AlreadyConfigured, response[0].Name, response[0].Choices, err = GetControlSurfaceConfig(); err != nil {
 			log.Printf("ZEROCONF: GetControlSurfaceConfig failed: %v\n", err)
 			payload = err.Error()
 		} else {
@@ -737,8 +755,9 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 
 	case "toggleVoicingMode":
 		var args struct {
-			Mode           bool
-			ZeroconfChoice *zeroconf.Service
+			Mode            bool
+			ZeroconfSynergy *zeroconf.Service
+			ZeroconfCs      *zeroconf.Service
 		}
 		if len(m.Payload) > 0 {
 			// Unmarshal payload
@@ -747,11 +766,19 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		if args.ZeroconfChoice != nil {
-			log.Printf("ZEROCONF: config Control Surface selected by user: %#v\n", *args.ZeroconfChoice)
-			osc.SetControlSurface((*args.ZeroconfChoice).InstanceName, (*args.ZeroconfChoice).HostName, (*args.ZeroconfChoice).Port)
-		}
 		if args.Mode {
+			if args.ZeroconfSynergy != nil {
+				log.Printf("ZEROCONF: config Synergy selected by user: %#v\n", *args.ZeroconfSynergy)
+				if err = ConnectSynergy(*args.ZeroconfSynergy); err != nil {
+					payload = err.Error()
+					return
+				}
+			}
+			if args.ZeroconfCs != nil {
+				log.Printf("ZEROCONF: config Control Surface selected by user: %#v\n", *args.ZeroconfCs)
+				osc.SetControlSurface((*args.ZeroconfCs).InstanceName, (*args.ZeroconfCs).HostName, (*args.ZeroconfCs).Port)
+			}
+
 			var vce data.VCE
 			payload = nil
 			var csEnabled = false
