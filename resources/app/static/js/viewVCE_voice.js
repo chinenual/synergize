@@ -749,9 +749,7 @@ ${freqDAG}
 				if (((!message.payload[0].HasDevice) || message.payload[0].AlreadyConfigured)
 					&& ((!message.payload[1].HasDevice) || message.payload[1].AlreadyConfigured)) {
 					console.log("call actionAfterSelect");
-					actionAfterSelect(null)
-					console.log("call successCallback");
-					successCallback();
+					actionAfterSelect(null,null,successCallback);
 				} else {
 					// zeroconf found more than one option - show dialog
 					console.log("show menu");
@@ -769,8 +767,7 @@ ${freqDAG}
 						function (choice1, choice2) {
 							console.log("user chose " + JSON.stringify(choice1) + " " + JSON.stringify(choice2));
 							// user selected one of the options 
-							actionAfterSelect(choice1, choice2);
-							successCallback();
+							actionAfterSelect(choice1, choice2, successCallback);
 						},
 						function () {
 							console.log("rescan");
@@ -806,7 +803,7 @@ ${freqDAG}
 		return viewVCE_voice._withZeroconf("Choose Synergy", "Choose Control Surface", "getSynergyAndControlSurface", viewVCE_voice.raw_voicingModeOn, viewVCE_voice.voicingModeOn, function () { });
 	},
 
-	raw_connectSynergy: function (zeroconfChoice, ignored) {
+	raw_connectSynergy: function (zeroconfChoice, ignored, callback) {
 		let message = {
 			"name": "connectSynergy",
 			"payload": {
@@ -823,6 +820,7 @@ ${freqDAG}
 			} else {
 				index.updateConnectionStatus(message.payload.SynergyName, message.payload.ControlSurfaceName);
 				index.infoNotification("Successfully connected : " + message.payload.SynergyName);
+				callback();
 				return
 			}
 		});
@@ -864,7 +862,7 @@ ${freqDAG}
 		});
 	},
 
-	raw_voicingModeOn: function (synergyZeroconfChoice, csZeroconfChoice) {
+	raw_voicingModeOn: function (synergyZeroconfChoice, csZeroconfChoice, callback) {
 		console.log(`VoicingMode on`);
 		let message = {
 			"name": "toggleVoicingMode",
@@ -918,6 +916,7 @@ ${freqDAG}
 				viewVCE_voice.sendToCSurface(null, `MUTE[${osc + 1}]`, 0)
 			}
 			viewVCE_voice.voicingModeVisuals();
+			callback();
 		});
 	},
 

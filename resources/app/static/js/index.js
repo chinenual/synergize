@@ -161,11 +161,11 @@ let index = {
 			var selected1 = null
 			var idx2 = null
 			var selected2 = null
-			if (prompt1 != null) {
+			if (choices1 != null && prompt1 != null) {
 				idx1 = parseInt($('#chooseZeroconf1Items input:checked').val(), 10);
 				selected1 = choices1[idx1];
 			}
-			if (prompt2 != null) {
+			if (choices2 != null && prompt2 != null) {
 				idx2 = parseInt($('#chooseZeroconf2Items input:checked').val(), 10);
 				selected2 = choices2[idx2];
 			}
