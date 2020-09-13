@@ -781,19 +781,13 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 
 			var vce data.VCE
 			payload = nil
-			var csEnabled = false
-			var csName = ""
-			if prefsUserPreferences.UseOsc {
-				port := prefsUserPreferences.OscPort
-				if err = osc.Init(port,
-					*verboseOscIn, *verboseOscOut,
-					prefsSynergyName()); err != nil {
+			csEnabled := osc.ControlSurfaceConfigured()
+			csName := osc.ControlSurfaceName()
 
-					log.Println(err)
+			if csEnabled {
+				if err = osc.Init(prefsUserPreferences.OscPort, *verboseOscIn, *verboseOscOut, io.SynergyName()); err != nil {
 					payload = err.Error()
-				} else {
-					csEnabled = true
-					csName = osc.ControlSurfaceName()
+					return
 				}
 			}
 			if payload == nil {
