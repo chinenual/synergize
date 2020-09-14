@@ -22,6 +22,8 @@ type syncMap struct {
 	m map[string]Service
 }
 
+var vstServiceType = "_synergia._tcp"
+
 var oscServices syncMap
 var vstServices syncMap
 
@@ -63,6 +65,7 @@ func CloseServer() {
 	}
 }
 func StartServer(oscListenPort uint, synergyName string) (err error) {
+
 	CloseServer()
 	serviceName := synergyName + " (Synergize)"
 	serviceName = strings.ReplaceAll(serviceName, ".", ",")
@@ -122,7 +125,9 @@ func ListenerRunning() bool {
 	return listenerRunning
 }
 
-func StartListener() (err error) {
+func StartListener(vstServiceTypePrefix string) (err error) {
+	vstServiceType = vstServiceTypePrefix
+
 	// once we start listening we never stop or restart
 
 	listenerRunning = true
@@ -164,7 +169,7 @@ func StartListener() (err error) {
 			}(&wg)
 			go func(wg *sync.WaitGroup) {
 				defer wg.Done()
-				if err = listenFor(timeout, &vstServices, "_synergia._tcp.local.", anyName); err != nil {
+				if err = listenFor(timeout, &vstServices, vstServiceType+".local.", anyName); err != nil {
 					return
 				}
 			}(&wg)

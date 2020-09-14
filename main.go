@@ -290,7 +290,7 @@ func main() {
 		defer zeroconf.CloseServer()
 	}
 	if prefsUserPreferences.VstAutoConfig || prefsUserPreferences.OscAutoConfig {
-		zeroconf.StartListener()
+		zeroconf.StartListener(prefsUserPreferences.VstServiceType)
 	}
 
 	macOSMenus := []*astilectron.MenuItemOptions{{

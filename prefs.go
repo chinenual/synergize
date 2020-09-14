@@ -12,13 +12,16 @@ type Preferences struct {
 	SerialPort         string
 	SerialBaud         uint
 	LibraryPath        string
-	HTTPDebug          bool
 	UseOsc             bool
 	OscAutoConfig      bool
 	OscPort            uint
 	OscCSurfaceAddress string
 	OscCSurfacePort    uint
 	VstAutoConfig      bool
+
+	// hidden from user
+	HTTPDebug      bool
+	VstServiceType string
 }
 
 var preferencesPathname = getWorkingDirectory() + "/preferences.json"
@@ -30,6 +33,8 @@ var prefsUserPreferences = Preferences{
 	OscPort:         8000,
 	OscCSurfacePort: 9000,
 	VstAutoConfig:   true,
+
+	VstServiceType: "_synergia._tcp",
 }
 
 func prefsLoadPreferences() (err error) {
