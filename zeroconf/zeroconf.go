@@ -116,7 +116,17 @@ func remove(list *syncMap, entry *dnssd.Service) {
 	delete(list.m, entry.Name)
 }
 
+var listenerRunning = false
+
+func ListenerRunning() bool {
+	return listenerRunning
+}
+
 func StartListener() (err error) {
+	// once we start listening we never stop or restart
+
+	listenerRunning = true
+
 	oscServices.Lock()
 	oscServices.m = make(map[string]Service)
 	oscServices.Unlock()

@@ -285,7 +285,9 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		} else {
 			zeroconf.CloseServer()
 		}
-
+		if (!zeroconf.ListenerRunning()) && (prefsUserPreferences.VstAutoConfig || prefsUserPreferences.OscAutoConfig) {
+			zeroconf.StartListener()
+		}
 		_ = prefs_w.Hide()
 		payload = "ok"
 

@@ -283,12 +283,15 @@ func main() {
 	}
 
 	if prefsUserPreferences.UseOsc {
+		// always advertise on zeroconf even if we're not going to listen for connections
 		if err := zeroconf.StartServer(prefsUserPreferences.OscPort, prefsSynergyName()); err != nil {
 			l.Printf("ERROR: could not start zeroconf: %v\n", err)
 		}
 		defer zeroconf.CloseServer()
 	}
-	zeroconf.StartListener()
+	if prefsUserPreferences.VstAutoConfig || prefsUserPreferences.OscAutoConfig {
+		zeroconf.StartListener()
+	}
 
 	macOSMenus := []*astilectron.MenuItemOptions{{
 		Label: astikit.StrPtr("Synergize"),
