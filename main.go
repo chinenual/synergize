@@ -210,31 +210,39 @@ func main() {
 		log.SetFlags(0)
 	}
 
-	if prefsUserPreferences.UseOsc {
-		if err := zeroconf.StartServer(prefsUserPreferences.OscPort, prefsSynergyName()); err != nil {
-			l.Printf("ERROR: could not start zeroconf: %v\n", err)
-		}
-		defer zeroconf.CloseServer()
-	}
-	zeroconf.StartListener()
-
 	var err error
 	{
 		var code = 0
 		// run the command line tests instead of the Electron app:
 		if *synver {
+			// nil means use "preferences" config
+			if err = ConnectToSynergy(nil); err != nil {
+				return
+			}
 			if err = diagInitAndPrintFirmwareID(); err != nil {
 				code = 1
 				log.Println(err)
 			}
 			os.Exit(code)
 		} else if *comtst {
+			// nil means use "preferences" config
+			if err = ConnectToSynergy(nil); err != nil {
+				return
+			}
 			diagCOMTST()
 			os.Exit(0)
 		} else if *looptst {
+			// nil means use "preferences" config
+			if err = ConnectToSynergy(nil); err != nil {
+				return
+			}
 			diagLOOPTST()
 			os.Exit(0)
 		} else if *linktst {
+			// nil means use "preferences" config
+			if err = ConnectToSynergy(nil); err != nil {
+				return
+			}
 			diagLINKTST()
 			os.Exit(0)
 		} else if *savevce != "" {
@@ -273,6 +281,14 @@ func main() {
 			//	os.Exit(code);
 		}
 	}
+
+	if prefsUserPreferences.UseOsc {
+		if err := zeroconf.StartServer(prefsUserPreferences.OscPort, prefsSynergyName()); err != nil {
+			l.Printf("ERROR: could not start zeroconf: %v\n", err)
+		}
+		defer zeroconf.CloseServer()
+	}
+	zeroconf.StartListener()
 
 	macOSMenus := []*astilectron.MenuItemOptions{{
 		Label: astikit.StrPtr("Synergize"),
