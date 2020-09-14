@@ -23,15 +23,15 @@ type Preferences struct {
 	VstPort            uint
 }
 
-var preferencesPathname string = getWorkingDirectory() + "/preferences.json"
+var preferencesPathname = getWorkingDirectory() + "/preferences.json"
 
-var prefsUserPreferences Preferences = Preferences {
-	UseOsc: false,
-	SerialBaud: 9600,
-	OscAutoConfig: true,
-	OscPort: 8000,
+var prefsUserPreferences = Preferences{
+	UseOsc:          false,
+	SerialBaud:      9600,
+	OscAutoConfig:   true,
+	OscPort:         8000,
 	OscCSurfacePort: 9000,
-	VstAutoConfig: true
+	VstAutoConfig:   true,
 }
 
 func prefsLoadPreferences() (err error) {
