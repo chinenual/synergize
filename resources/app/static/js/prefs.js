@@ -63,6 +63,7 @@ let prefs = {
 		var useOscChecked = document.getElementById("useOsc").checked;
 		var autoChecked = document.getElementById("oscAutoConfig").checked;
 
+		document.getElementById("oscPort").disabled = (!useOscChecked);
 		document.getElementById("oscAutoConfig").disabled = (!useOscChecked);
 		document.getElementById("oscCSurfaceAddress").disabled = (!useOscChecked) || autoChecked;
 		document.getElementById("oscCSurfacePort").disabled = (!useOscChecked) || autoChecked;
