@@ -376,3 +376,11 @@ span.spinNOSPIN-Enabled {
 .form-control:disabled, .form-control[readonly] {
     background-color: #aaa;
 }
+/* checkbox size override for Windows and LInux: */
+input[type="checkbox"].form-control {
+    height: 1em;
+    width: 1em;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
