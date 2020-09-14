@@ -25,7 +25,14 @@ type Preferences struct {
 
 var preferencesPathname string = getWorkingDirectory() + "/preferences.json"
 
-var prefsUserPreferences Preferences
+var prefsUserPreferences Preferences = Preferences {
+	UseOsc: false,
+	SerialBaud: 9600,
+	OscAutoConfig: true,
+	OscPort: 8000,
+	OscCSurfacePort: 9000,
+	VstAutoConfig: true
+}
 
 func prefsLoadPreferences() (err error) {
 	var b []byte
