@@ -1,6 +1,7 @@
 package io
 
 import (
+	"io"
 	"log"
 	"net"
 	"time"
@@ -57,7 +58,8 @@ func (s SocketIo) readBytes(timeoutMS uint, numBytes uint16) (bytes []byte, err 
 		return
 	}
 	var n int
-	n, err = s.conn.Read(bytes)
+
+	n, err = io.ReadFull(s.conn, bytes)
 	if err != nil {
 		return
 	}
