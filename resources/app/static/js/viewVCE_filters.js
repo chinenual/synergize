@@ -52,6 +52,7 @@ let viewVCE_filters = {
 			} else {
 				vce.Extra.uncompressedFilters[filterIndex][eleIndex - 1] = value;
 				viewVCE_filters.filtersChartUpdate(filterIndex, filterName, false);
+				viewVCE_voice.sendToCSurface(ele, id, value);
 			}
 		});
 		return true;
@@ -108,8 +109,8 @@ let viewVCE_filters = {
 	init: function (incrementalUpdate) {
 		//console.log('--- start viewVCE_filters init ' + incrementalUpdate);
 		if (viewVCE_filters.deb_onchange == null) {
-			viewVCE_filters.deb_onchange = _.debounce(viewVCE_filters.raw_onchange, DEBOUNCE_WAIT_SHORT);
-			//viewVCE_filters.deb_onchange = viewVCE_filters.raw_onchange;
+			//viewVCE_filters.deb_onchange = _.debounce(viewVCE_filters.raw_onchange, DEBOUNCE_WAIT_SHORT);
+			viewVCE_filters.deb_onchange = viewVCE_filters.raw_onchange;
 		}
 		if (viewVCE_filters.deb_copyFrom == null) {
 			viewVCE_filters.deb_copyFrom = _.debounce(viewVCE_filters.raw_copyFrom, DEBOUNCE_WAIT);
@@ -267,9 +268,9 @@ let viewVCE_filters = {
 				var idxString = id.substring(4);
 				var idx = parseInt(idxString, 10) - 1;
 				obj.value = vce.Extra.uncompressedFilters[filterIndex][idx];
-				//if (animate) {
-				viewVCE_voice.sendToCSurface(obj, id, vce.Extra.uncompressedFilters[filterIndex][idx]);
-				//}
+				if (animate) {
+				   viewVCE_voice.sendToCSurface(obj, id, vce.Extra.uncompressedFilters[filterIndex][idx]);
+				}
 			});
 			// match the color rotation below.  We don't allocate a color for an "unused" Bf. So this is
 			// senselessly complicated. Go look at the FILTERS array and figure out which "compressed" index 

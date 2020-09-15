@@ -117,7 +117,7 @@ func setIMODE(val byte) (err error) {
 	if err = command(OP_IMODE, "IMODE"); err != nil {
 		return
 	}
-	if err = conn.WriteByteWithTimeout(TIMEOUT_MS, val, "IMODE"); err != nil {
+	if err = c.conn.WriteByteWithTimeout(TIMEOUT_MS, val, "IMODE"); err != nil {
 		return
 	}
 	return
@@ -193,6 +193,9 @@ func SetFilterEle(uiFilterIndex /*0 for Af, one-based osc# for Bf */ int, index 
 	// AFilter is always at 0 in the FILTAB;
 	// Bfilters start at 2, so osc #1's filter is at zero-based index 1 of the FILTAB
 	// Bfilter value is the one-based osc#
+
+	c.Lock()
+	defer c.Unlock()
 
 	addr := VramAddr(data.Off_VRAM_FILTAB) + uint16((uiFilterIndex*data.VRAM_FILTR_length)+(index-1))
 	if err = LoadByte(addr, byte(value), "set FilterEle["+strconv.Itoa(uiFilterIndex)+"]["+strconv.Itoa(index)+"]"); err != nil {
@@ -470,6 +473,8 @@ func SetVoiceVEQEle(index /* 1-based */ int, value int) (err error) {
 	if mock {
 		return
 	}
+	c.Lock()
+	defer c.Unlock()
 	addr := VoiceHeadAddr(data.Off_EDATA_VEQ) + uint16(index-1)
 	if err = LoadByte(addr, byte(value), "set VEQ["+strconv.Itoa(index)+"]"); err != nil {
 		return
@@ -484,6 +489,8 @@ func SetVoiceKPROPEle(index /* 1-based */ int, value int) (err error) {
 	if mock {
 		return
 	}
+	c.Lock()
+	defer c.Unlock()
 	addr := VoiceHeadAddr(data.Off_EDATA_KPROP) + uint16(index-1)
 	if err = LoadByte(addr, byte(value), "set KPROP["+strconv.Itoa(index)+"]"); err != nil {
 		return

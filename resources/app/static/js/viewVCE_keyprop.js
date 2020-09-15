@@ -51,6 +51,7 @@ let viewVCE_keyprop = {
 			} else {
 				vce.Head.KPROP[eleIndex - 1] = value;
 				viewVCE_keyprop.init(true);
+				viewVCE_voice.sendToCSurface(ele, id, value);
 			}
 		});
 		return true;
@@ -59,8 +60,8 @@ let viewVCE_keyprop = {
 	init: function (incrementalUpdate) {
 		console.log('--- start viewVCE_keyprop init ' + incrementalUpdate);
 		if (viewVCE_keyprop.deb_onchange == null) {
-			viewVCE_keyprop.deb_onchange = index.debounceFirstArg(viewVCE_keyprop.raw_onchange, DEBOUNCE_WAIT);
-			//viewVCE_keyprop.deb_onchange = viewVCE_keyprop.raw_onchange;
+			//viewVCE_keyprop.deb_onchange = index.debounceFirstArg(viewVCE_keyprop.raw_onchange, DEBOUNCE_WAIT_SHORT);
+			viewVCE_keyprop.deb_onchange = viewVCE_keyprop.raw_onchange;
 		}
 
 		var propData = viewVCE_keyprop.keyPropCurve(vce.Head.KPROP);
@@ -74,9 +75,9 @@ let viewVCE_keyprop = {
 
 			obj.value = '' + propData[idx];
 
-			//if (!incrementalUpdate) {
-			viewVCE_voice.sendToCSurface(obj, id, propData[idx]);
-			//}
+			if (!incrementalUpdate) {
+			   viewVCE_voice.sendToCSurface(obj, id, propData[idx]);
+			}
 		});
 		if (viewVCE_keyprop.chart != null) {
 			viewVCE_keyprop.chart.destroy();

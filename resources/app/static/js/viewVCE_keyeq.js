@@ -50,6 +50,7 @@ let viewVCE_keyeq = {
 			} else {
 				vce.Head.VEQ[eleIndex - 1] = value;
 				viewVCE_keyeq.init(true);
+				viewVCE_voice.sendToCSurface(ele, id, value);
 			}
 		});
 		return true;
@@ -58,8 +59,8 @@ let viewVCE_keyeq = {
 	init: function (incrementalUpdate) {
 		//console.log('--- start viewVCE_keyeq init ' + incrementalUpdate);
 		if (viewVCE_keyeq.deb_onchange == null) {
-			viewVCE_keyeq.deb_onchange = _.debounce(viewVCE_keyeq.raw_onchange, DEBOUNCE_WAIT_SHORT);
-			//viewVCE_keyeq.deb_onchange = viewVCE_keyeq.raw_onchange;
+			//viewVCE_keyeq.deb_onchange = _.debounce(viewVCE_keyeq.raw_onchange, DEBOUNCE_WAIT_SHORT);
+			viewVCE_keyeq.deb_onchange = viewVCE_keyeq.raw_onchange;
 		}
 
 		var propData = viewVCE_keyeq.keyEqCurve(vce.Head.VEQ);
@@ -72,9 +73,9 @@ let viewVCE_keyeq = {
 
 			obj.value = propData[idx];
 
-			//if (!incrementalUpdate) {
-			viewVCE_voice.sendToCSurface(obj, id, propData[idx]);
-			//}
+			if (!incrementalUpdate) {
+				viewVCE_voice.sendToCSurface(obj, id, propData[idx]);
+			}
 		});
 		if (viewVCE_keyeq.chart != null) {
 			viewVCE_keyeq.chart.destroy();
