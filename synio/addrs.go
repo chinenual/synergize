@@ -27,11 +27,11 @@ func VramAddr(fieldOffset int) uint16 {
 	return synAddrs.VRAM + uint16(fieldOffset)
 }
 
-func VoiceHeadAddr(voiceFieldOffset int) uint16 {
+func voiceHeadAddr(voiceFieldOffset int) uint16 {
 	return synAddrs.VRAM + data.VRAMVoiceHeadOffset(voiceFieldOffset)
 }
 
-func VoiceOscAddr(osc /*1-based*/ int, oscFieldOffset int) uint16 {
+func voiceOscAddr(osc /*1-based*/ int, oscFieldOffset int) uint16 {
 	// osc is 1-based
 	return synAddrs.VRAM + data.VRAMVoiceOscOffset(osc, oscFieldOffset)
 }

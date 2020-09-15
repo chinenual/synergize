@@ -68,16 +68,19 @@ func initMaps() {
 }
 
 func EnableVoicingMode() (vce data.VCE, err error) {
+	c.Lock()
+	defer c.Unlock()
+
 	initMaps()
 
 	if err = getSynergyAddrs(); err != nil {
 		return
 	}
-	if err = InitVRAM(); err != nil {
+	if err = initVRAM(); err != nil {
 		return
 	}
 	data.ClearLocalEDATA()
-	if err = LoadCRTBytes(data.VRAM_EDATA[:]); err != nil {
+	if err = loadCRTBytes(data.VRAM_EDATA[:]); err != nil {
 		return
 	}
 	rdr := bytes.NewReader(data.VRAM_EDATA[data.Off_VRAM_EDATA:])
@@ -99,6 +102,9 @@ func EnableVoicingMode() (vce data.VCE, err error) {
 }
 
 func DisableVoicingMode() (err error) {
+	c.Lock()
+	defer c.Unlock()
+
 	// reset IMODE to normal "play" mode
 	if err = setIMODE(0x00); err != nil {
 		return
@@ -127,10 +133,10 @@ func rawSetOscSolo(oscStatus [16]byte) (err error) {
 	if mock {
 		return
 	}
-	if err = BlockLoad(synAddrs.SOLOSC, oscStatus[:], "set SOLOSC"); err != nil {
+	if err = blockLoad(synAddrs.SOLOSC, oscStatus[:], "set SOLOSC"); err != nil {
 		return
 	}
-	if err = ReloadNoteGenerators(); err != nil {
+	if err = reloadNoteGenerators(); err != nil {
 		return
 	}
 	return
@@ -140,6 +146,9 @@ func SetOscSolo(mute, solo []bool) (oscStatus [16]bool, err error) {
 	// 0 = on, 1 = off
 	var state = [16]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	oscStatus = [16]bool{true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true}
+
+	c.Lock()
+	defer c.Unlock()
 
 	// solo takes precedence. If any soloed, then ignore mutes
 	for _, soloed := range solo {
@@ -177,9 +186,13 @@ func SetVNAME(name string) (err error) {
 	if mock {
 		return
 	}
-	addr := VoiceHeadAddr(data.Off_EDATA_VNAME)
+
+	c.Lock()
+	defer c.Unlock()
+
+	addr := voiceHeadAddr(data.Off_EDATA_VNAME)
 	var value = []byte(data.VcePaddedName(name))
-	if err = BlockLoad(addr, value, "set VNAME "); err != nil {
+	if err = blockLoad(addr, value, "set VNAME "); err != nil {
 		return
 	}
 	return
@@ -198,10 +211,10 @@ func SetFilterEle(uiFilterIndex /*0 for Af, one-based osc# for Bf */ int, index 
 	defer c.Unlock()
 
 	addr := VramAddr(data.Off_VRAM_FILTAB) + uint16((uiFilterIndex*data.VRAM_FILTR_length)+(index-1))
-	if err = LoadByte(addr, byte(value), "set FilterEle["+strconv.Itoa(uiFilterIndex)+"]["+strconv.Itoa(index)+"]"); err != nil {
+	if err = loadByte(addr, byte(value), "set FilterEle["+strconv.Itoa(uiFilterIndex)+"]["+strconv.Itoa(index)+"]"); err != nil {
 		return
 	}
-	if err = RecalcFilters(); err != nil {
+	if err = recalcFilters(); err != nil {
 		return
 	}
 	return
@@ -216,16 +229,19 @@ func SetFilterArray(uiFilterIndex /*0 for Af, one-based osc# for Bf */ int, valu
 	// Bfilters start at 2, so osc #1's filter is at zero-based index 1 of the FILTAB
 	// Bfilter value is the one-based osc#
 
+	c.Lock()
+	defer c.Unlock()
+
 	var byteArray = make([]byte, len(values))
 	for i, v := range values {
 		byteArray[i] = byte(v)
 	}
 
 	addr := VramAddr(data.Off_VRAM_FILTAB) + uint16((uiFilterIndex * data.VRAM_FILTR_length))
-	if err = BlockLoad(addr, byteArray, "set FilterArray["+strconv.Itoa(uiFilterIndex)+"]"); err != nil {
+	if err = blockLoad(addr, byteArray, "set FilterArray["+strconv.Itoa(uiFilterIndex)+"]"); err != nil {
 		return
 	}
-	if err = RecalcFilters(); err != nil {
+	if err = recalcFilters(); err != nil {
 		return
 	}
 	return
@@ -235,7 +251,10 @@ func SetEnvelopes(osc /* 1-based*/ int, envs data.Envelope) (err error) {
 	if mock {
 		return
 	}
-	addr := VoiceOscAddr(osc, oscOffsetMap["OPTCH"].Offset)
+	addr := voiceOscAddr(osc, oscOffsetMap["OPTCH"].Offset)
+
+	c.Lock()
+	defer c.Unlock()
 
 	// serialise the data
 	var writebuf = writerseeker.WriterSeeker{}
@@ -245,11 +264,11 @@ func SetEnvelopes(osc /* 1-based*/ int, envs data.Envelope) (err error) {
 	}
 	byteArray, _ := ioutil.ReadAll(writebuf.Reader())
 
-	if err = BlockLoad(addr, byteArray, "set Envelopes["+strconv.Itoa(osc)+"]"); err != nil {
+	if err = blockLoad(addr, byteArray, "set Envelopes["+strconv.Itoa(osc)+"]"); err != nil {
 		return
 	}
 
-	if err = ReloadNoteGenerators(); err != nil {
+	if err = reloadNoteGenerators(); err != nil {
 		return
 	}
 
@@ -260,37 +279,46 @@ func SetOscFILTER(osc /*1-based*/ int, value int) (err error) {
 	if mock {
 		return
 	}
-	addr := VoiceHeadAddr(data.Off_EDATA_FILTER_arr) + uint16(osc-1)
-	if err = LoadByte(addr, byte(value), "set FILTER["+strconv.Itoa(osc)+"]"); err != nil {
+	c.Lock()
+	defer c.Unlock()
+	addr := voiceHeadAddr(data.Off_EDATA_FILTER_arr) + uint16(osc-1)
+	if err = loadByte(addr, byte(value), "set FILTER["+strconv.Itoa(osc)+"]"); err != nil {
 		return
 	}
-	if err = ReloadNoteGenerators(); err != nil {
+	if err = reloadNoteGenerators(); err != nil {
 		return
 	}
 	return
 }
 
-func SetPatchType(index int) (patchBytes [16]byte, err error) {
+func setPatchType(index int) (patchBytes [16]byte, err error) {
 	// write all 16 oscillators whether they're in use or not
 	for osc := 1; osc <= 16; osc++ {
-		if err = SetVoiceOscDataByte(osc, "OPTCH", data.PatchTypePerOscTable[index][osc-1]); err != nil {
+		if err = setVoiceOscDataByte(osc, "OPTCH", data.PatchTypePerOscTable[index][osc-1]); err != nil {
 			return
 		}
 	}
-	if err = ReloadNoteGenerators(); err != nil {
+	if err = reloadNoteGenerators(); err != nil {
 		return
 	}
 	patchBytes = data.PatchTypePerOscTable[index]
 	return
 }
+func SetPatchType(index int) (patchBytes [16]byte, err error) {
+	c.Lock()
+	defer c.Unlock()
+	return setPatchType(index)
+}
 
 func SetNumOscillators(newNumOsc int, patchType int) (patchBytes [16]byte, err error) {
 	// assumes that we dont need to reininitialize freq and amp envelopes (they were initialized
 	// when we started voicing mode and if we are reusing one partially edited, we get those edits back)
-	if err = SetVoiceHeadDataByte("VOITAB", byte(newNumOsc-1)); err != nil {
+	c.Lock()
+	defer c.Unlock()
+	if err = setVoiceHeadDataByte("VOITAB", byte(newNumOsc-1)); err != nil {
 		return
 	}
-	if patchBytes, err = SetPatchType(patchType); err != nil {
+	if patchBytes, err = setPatchType(patchType); err != nil {
 		return
 	}
 	return
@@ -300,16 +328,18 @@ func LoadVceVoicingMode(vce data.VCE) (err error) {
 	if mock {
 		return
 	}
+	c.Lock()
+	defer c.Unlock()
 	if err = data.LoadVceIntoEDATA(vce); err != nil {
 		return
 	}
-	if err = LoadCRTBytes(data.VRAM_EDATA[:]); err != nil {
+	if err = loadCRTBytes(data.VRAM_EDATA[:]); err != nil {
 		return
 	}
 	return
 }
 
-func RecalcEq() (err error) {
+func recalcEq() (err error) {
 	if mock {
 		return
 	}
@@ -325,7 +355,7 @@ func RecalcEq() (err error) {
 	return
 }
 
-func RecalcFilters() (err error) {
+func recalcFilters() (err error) {
 	if mock {
 		return
 	}
@@ -341,7 +371,7 @@ func RecalcFilters() (err error) {
 	return
 }
 
-func ReloadPerformanceControls() (err error) {
+func reloadPerformanceControls() (err error) {
 	if mock {
 		return
 	}
@@ -357,7 +387,7 @@ func ReloadPerformanceControls() (err error) {
 	return
 }
 
-func ReloadNoteGenerators() (err error) {
+func reloadNoteGenerators() (err error) {
 	if mock {
 		return
 	}
@@ -373,97 +403,73 @@ func ReloadNoteGenerators() (err error) {
 	return
 }
 
-// Sets the value in the Synergy address space and then reloads the note
-// generators
-
-func SetVoiceHeadDataArray(fieldName string, value []byte) (err error) {
+func setVoiceHeadDataByte(fieldName string, value byte) (err error) {
 	if mock {
 		return
 	}
-	// some things that are stored in the head are actually stored in a different location in CMOS
-	// at runtime.  Deal with that here:
+
 	offsetMap := cmosOffsetMap
 	var cmosUpdated = false
 	var addr uint16
 	if _, ok := voiceOffsetMap[fieldName]; ok {
 		offsetMap = voiceOffsetMap
-		addr = VoiceHeadAddr(offsetMap[fieldName].Offset)
+		addr = voiceHeadAddr(offsetMap[fieldName].Offset)
 	} else {
 		cmosUpdated = true
 		addr = CmosAddr(offsetMap[fieldName].Offset)
 	}
-
-	if err = BlockLoad(addr, value, "set array "+fieldName); err != nil {
+	if err = loadByte(addr, value, "set "+fieldName); err != nil {
 		return
 	}
 	if offsetMap[fieldName].ReloadGen {
-		if err = ReloadNoteGenerators(); err != nil {
+		if err = reloadNoteGenerators(); err != nil {
 			return
 		}
 	}
 	if cmosUpdated {
-		if err = ReloadPerformanceControls(); err != nil {
+		if err = reloadPerformanceControls(); err != nil {
 			return
 		}
 	}
 	return
 }
-
 func SetVoiceHeadDataByte(fieldName string, value byte) (err error) {
-	if mock {
-		return
-	}
-	offsetMap := cmosOffsetMap
-	var cmosUpdated = false
-	var addr uint16
-	if _, ok := voiceOffsetMap[fieldName]; ok {
-		offsetMap = voiceOffsetMap
-		addr = VoiceHeadAddr(offsetMap[fieldName].Offset)
-	} else {
-		cmosUpdated = true
-		addr = CmosAddr(offsetMap[fieldName].Offset)
-	}
-	if err = LoadByte(addr, value, "set "+fieldName); err != nil {
-		return
-	}
-	if offsetMap[fieldName].ReloadGen {
-		if err = ReloadNoteGenerators(); err != nil {
-			return
-		}
-	}
-	if cmosUpdated {
-		if err = ReloadPerformanceControls(); err != nil {
-			return
-		}
-	}
-	return
+	c.Lock()
+	defer c.Unlock()
+	return setVoiceHeadDataByte(fieldName, value)
 }
 
 // osc is 1-based
-func SetVoiceOscDataByte(osc /*1-based*/ int, fieldName string, value byte) (err error) {
+func setVoiceOscDataByte(osc /*1-based*/ int, fieldName string, value byte) (err error) {
 	if mock {
 		return
 	}
-	addr := VoiceOscAddr(osc, oscOffsetMap[fieldName].Offset)
-	if err = LoadByte(addr, value, "set "+fieldName+"["+strconv.Itoa(osc)+"]"); err != nil {
+	addr := voiceOscAddr(osc, oscOffsetMap[fieldName].Offset)
+	if err = loadByte(addr, value, "set "+fieldName+"["+strconv.Itoa(osc)+"]"); err != nil {
 		return
 	}
 	if oscOffsetMap[fieldName].ReloadGen {
-		if err = ReloadNoteGenerators(); err != nil {
+		if err = reloadNoteGenerators(); err != nil {
 			return
 		}
 	}
 	return
 }
 
+func SetVoiceOscDataByte(osc /*1-based*/ int, fieldName string, value byte) (err error) {
+	c.Lock()
+	c.Unlock()
+	return setVoiceOscDataByte(osc, fieldName, value)
+}
+
 // osc is 1-based
-func GetVoiceOscDataByte(osc /*1-based*/ int, fieldName string) (value byte, err error) {
+func getVoiceOscDataByte(osc /*1-based*/ int, fieldName string) (value byte, err error) {
 	if mock {
 		err = errors.New("not supported by mock")
 		return
 	}
-	addr := VoiceOscAddr(osc, oscOffsetMap[fieldName].Offset)
-	if value, err = DumpByte(addr, "get "+fieldName+"["+strconv.Itoa(osc)+"]"); err != nil {
+	addr := voiceOscAddr(osc, oscOffsetMap[fieldName].Offset)
+	if value, err = dumpByte(addr, "get "+fieldName+"["+strconv.Itoa(osc)+"]"); err != nil {
 		return
 	}
 	return
@@ -475,11 +481,11 @@ func SetVoiceVEQEle(index /* 1-based */ int, value int) (err error) {
 	}
 	c.Lock()
 	defer c.Unlock()
-	addr := VoiceHeadAddr(data.Off_EDATA_VEQ) + uint16(index-1)
-	if err = LoadByte(addr, byte(value), "set VEQ["+strconv.Itoa(index)+"]"); err != nil {
+	addr := voiceHeadAddr(data.Off_EDATA_VEQ) + uint16(index-1)
+	if err = loadByte(addr, byte(value), "set VEQ["+strconv.Itoa(index)+"]"); err != nil {
 		return
 	}
-	if err = RecalcEq(); err != nil {
+	if err = recalcEq(); err != nil {
 		return
 	}
 	return
@@ -491,12 +497,15 @@ func SetVoiceKPROPEle(index /* 1-based */ int, value int) (err error) {
 	}
 	c.Lock()
 	defer c.Unlock()
-	addr := VoiceHeadAddr(data.Off_EDATA_KPROP) + uint16(index-1)
-	if err = LoadByte(addr, byte(value), "set KPROP["+strconv.Itoa(index)+"]"); err != nil {
+	addr := voiceHeadAddr(data.Off_EDATA_KPROP) + uint16(index-1)
+	if err = loadByte(addr, byte(value), "set KPROP["+strconv.Itoa(index)+"]"); err != nil {
 		return
 	}
 	return
 }
+
+/** UNUSED - moved into the javascript for now:
+
 
 func EncodePatchControl(outputDSR byte, inhibitAddr byte,
 	adderInputDSR byte, inhibitF0 byte, f0InputDSR byte) (control byte) {
@@ -537,18 +546,20 @@ func DecodePatchControl(control byte) (outputDSR byte, inhibitAddr byte,
 	return
 }
 
-func GetOscWAVEControl(osc int) (value byte, err error) {
+--- END UNUSED */
+
+func getOscWAVEControl(osc int) (value byte, err error) {
 	if mock {
 		err = errors.New("not supported by mock")
 		return
 	}
-	if value, err = GetVoiceOscDataByte(osc, "FreqPoints_WAVE_KEYPROP"); err != nil {
+	if value, err = getVoiceOscDataByte(osc, "FreqPoints_WAVE_KEYPROP"); err != nil {
 		return
 	}
 	return
 }
 
-func SetOscWAVEControl(osc int, value byte) (err error) {
+func setOscWAVEControl(osc int, value byte) (err error) {
 	// based on snooping the serial line, wave is stored in 3 bits the
 	// 4th entry in the freq envelope. eesh.
 	// 0x633e, 0x01 == sine, 0x00 == triangle
@@ -581,7 +592,7 @@ func SetOscWAVEControl(osc int, value byte) (err error) {
 	if mock {
 		return
 	}
-	if err = SetVoiceOscDataByte(osc, "FreqPoints_WAVE_KEYPROP", value); err != nil {
+	if err = setVoiceOscDataByte(osc, "FreqPoints_WAVE_KEYPROP", value); err != nil {
 		return
 	}
 	return
@@ -594,8 +605,10 @@ func SetOscWAVE(osc /*1-based*/ int, triangle bool) (err error) {
 	if mock {
 		return
 	}
+	c.Lock()
+	defer c.Unlock()
 	var value byte
-	if value, err = GetOscWAVEControl(osc); err != nil {
+	if value, err = getOscWAVEControl(osc); err != nil {
 		return
 	}
 	if triangle {
@@ -603,7 +616,7 @@ func SetOscWAVE(osc /*1-based*/ int, triangle bool) (err error) {
 	} else {
 		value = 0x1 &^ value
 	}
-	if err = SetOscWAVEControl(osc, value); err != nil {
+	if err = setOscWAVEControl(osc, value); err != nil {
 		return
 	}
 	return
@@ -617,8 +630,11 @@ func SetOscKEYPROP(osc int, usesKeypro bool) (err error) {
 	if mock {
 		return
 	}
+	c.Lock()
+	defer c.Unlock()
+
 	var value byte
-	if value, err = GetOscWAVEControl(osc); err != nil {
+	if value, err = getOscWAVEControl(osc); err != nil {
 		return
 	}
 	if usesKeypro {
@@ -626,7 +642,7 @@ func SetOscKEYPROP(osc int, usesKeypro bool) (err error) {
 	} else {
 		value = 0x10 &^ value
 	}
-	if err = SetOscWAVEControl(osc, value); err != nil {
+	if err = setOscWAVEControl(osc, value); err != nil {
 		return
 	}
 	return
@@ -638,8 +654,11 @@ func SetEnvFreqLowVal(osc /* 1-based */ int, pointIndex /* 1-based */ int, value
 	if mock {
 		return
 	}
-	var addr = VoiceOscAddr(osc, data.Off_EOSC_FreqPoints) + uint16(4*(pointIndex-1)+0)
-	if err = LoadByte(addr, byte(value), "set EnvFreqLowVal["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
+	c.Lock()
+	defer c.Unlock()
+
+	var addr = voiceOscAddr(osc, data.Off_EOSC_FreqPoints) + uint16(4*(pointIndex-1)+0)
+	if err = loadByte(addr, byte(value), "set EnvFreqLowVal["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
 		return
 	}
 	return
@@ -649,8 +668,11 @@ func SetEnvFreqUpVal(osc /* 1-based */ int, pointIndex /* 1-based */ int, value 
 	if mock {
 		return
 	}
-	var addr = VoiceOscAddr(osc, data.Off_EOSC_FreqPoints) + uint16(4*(pointIndex-1)+1)
-	if err = LoadByte(addr, byte(value), "set EnvFreqUpVal["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
+	c.Lock()
+	defer c.Unlock()
+
+	var addr = voiceOscAddr(osc, data.Off_EOSC_FreqPoints) + uint16(4*(pointIndex-1)+1)
+	if err = loadByte(addr, byte(value), "set EnvFreqUpVal["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
 		return
 	}
 	return
@@ -660,8 +682,11 @@ func SetEnvFreqLowTime(osc /* 1-based */ int, pointIndex /* 1-based */ int, valu
 	if mock {
 		return
 	}
-	var addr = VoiceOscAddr(osc, data.Off_EOSC_FreqPoints) + uint16(4*(pointIndex-1)+2)
-	if err = LoadByte(addr, byte(value), "set EnvFreqLowTime["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
+	c.Lock()
+	defer c.Unlock()
+
+	var addr = voiceOscAddr(osc, data.Off_EOSC_FreqPoints) + uint16(4*(pointIndex-1)+2)
+	if err = loadByte(addr, byte(value), "set EnvFreqLowTime["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
 		return
 	}
 	return
@@ -671,8 +696,11 @@ func SetEnvFreqUpTime(osc /* 1-based */ int, pointIndex /* 1-based */ int, value
 	if mock {
 		return
 	}
-	var addr = VoiceOscAddr(osc, data.Off_EOSC_FreqPoints) + uint16(4*(pointIndex-1)+3)
-	if err = LoadByte(addr, byte(value), "set EnvFreqUpTime["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
+	c.Lock()
+	defer c.Unlock()
+
+	var addr = voiceOscAddr(osc, data.Off_EOSC_FreqPoints) + uint16(4*(pointIndex-1)+3)
+	if err = loadByte(addr, byte(value), "set EnvFreqUpTime["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
 		return
 	}
 	return
@@ -682,8 +710,11 @@ func SetEnvAmpLowVal(osc /* 1-based */ int, pointIndex /* 1-based */ int, value 
 	if mock {
 		return
 	}
-	var addr = VoiceOscAddr(osc, data.Off_EOSC_AmpPoints) + uint16(4*(pointIndex-1)+0)
-	if err = LoadByte(addr, byte(value), "set EnvAmpLowVal["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
+	c.Lock()
+	defer c.Unlock()
+
+	var addr = voiceOscAddr(osc, data.Off_EOSC_AmpPoints) + uint16(4*(pointIndex-1)+0)
+	if err = loadByte(addr, byte(value), "set EnvAmpLowVal["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
 		return
 	}
 	return
@@ -693,8 +724,11 @@ func SetEnvAmpUpVal(osc /* 1-based */ int, pointIndex /* 1-based */ int, value b
 	if mock {
 		return
 	}
-	var addr = VoiceOscAddr(osc, data.Off_EOSC_AmpPoints) + uint16(4*(pointIndex-1)+1)
-	if err = LoadByte(addr, byte(value), "set EnvAmpUpVal["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
+	c.Lock()
+	defer c.Unlock()
+
+	var addr = voiceOscAddr(osc, data.Off_EOSC_AmpPoints) + uint16(4*(pointIndex-1)+1)
+	if err = loadByte(addr, byte(value), "set EnvAmpUpVal["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
 		return
 	}
 	return
@@ -704,8 +738,11 @@ func SetEnvAmpLowTime(osc /* 1-based */ int, pointIndex /* 1-based */ int, value
 	if mock {
 		return
 	}
-	var addr = VoiceOscAddr(osc, data.Off_EOSC_AmpPoints) + uint16(4*(pointIndex-1)+2)
-	if err = LoadByte(addr, byte(value), "set EnvAmpLowTime["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
+	c.Lock()
+	defer c.Unlock()
+
+	var addr = voiceOscAddr(osc, data.Off_EOSC_AmpPoints) + uint16(4*(pointIndex-1)+2)
+	if err = loadByte(addr, byte(value), "set EnvAmpLowTime["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
 		return
 	}
 	return
@@ -715,8 +752,11 @@ func SetEnvAmpUpTime(osc /* 1-based */ int, pointIndex /* 1-based */ int, value 
 	if mock {
 		return
 	}
-	var addr = VoiceOscAddr(osc, data.Off_EOSC_AmpPoints) + uint16(4*(pointIndex-1)+3)
-	if err = LoadByte(addr, byte(value), "set EnvAmpUpTime["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
+	c.Lock()
+	defer c.Unlock()
+
+	var addr = voiceOscAddr(osc, data.Off_EOSC_AmpPoints) + uint16(4*(pointIndex-1)+3)
+	if err = loadByte(addr, byte(value), "set EnvAmpUpTime["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
 		return
 	}
 	return
@@ -726,12 +766,14 @@ func SetOscEnvLengths(osc /* 1-based */ int, freqLength int, ampLength int) (err
 	if mock {
 		return
 	}
-	var addr = VoiceOscAddr(osc, data.Off_EOSC_FreqNPOINTS)
-	if err = LoadByte(addr, byte(freqLength), "set EnvFreq NPOINTS["+strconv.Itoa(osc)+"]"); err != nil {
+	c.Lock()
+	defer c.Unlock()
+	var addr = voiceOscAddr(osc, data.Off_EOSC_FreqNPOINTS)
+	if err = loadByte(addr, byte(freqLength), "set EnvFreq NPOINTS["+strconv.Itoa(osc)+"]"); err != nil {
 		return
 	}
-	addr = VoiceOscAddr(osc, data.Off_EOSC_AmpNPOINTS)
-	if err = LoadByte(addr, byte(ampLength), "set EnvAmp NPOINTS["+strconv.Itoa(osc)+"]"); err != nil {
+	addr = voiceOscAddr(osc, data.Off_EOSC_AmpNPOINTS)
+	if err = loadByte(addr, byte(ampLength), "set EnvAmp NPOINTS["+strconv.Itoa(osc)+"]"); err != nil {
 		return
 	}
 	return
@@ -742,25 +784,29 @@ func SetEnvLoopPoint(osc /* 1-based */ int, env string, envtype int, sustainPt i
 	if mock {
 		return
 	}
+
+	c.Lock()
+	defer c.Unlock()
+
 	var typeAddr uint16
 	var susAddr uint16
 	var loopAddr uint16
 	if env == "Freq" {
-		typeAddr = VoiceOscAddr(osc, data.Off_EOSC_FreqENVTYPE)
-		susAddr = VoiceOscAddr(osc, data.Off_EOSC_FreqSUSTAINPT)
-		loopAddr = VoiceOscAddr(osc, data.Off_EOSC_FreqLOOPPT)
+		typeAddr = voiceOscAddr(osc, data.Off_EOSC_FreqENVTYPE)
+		susAddr = voiceOscAddr(osc, data.Off_EOSC_FreqSUSTAINPT)
+		loopAddr = voiceOscAddr(osc, data.Off_EOSC_FreqLOOPPT)
 	} else {
-		typeAddr = VoiceOscAddr(osc, data.Off_EOSC_AmpENVTYPE)
-		susAddr = VoiceOscAddr(osc, data.Off_EOSC_AmpSUSTAINPT)
-		loopAddr = VoiceOscAddr(osc, data.Off_EOSC_AmpLOOPPT)
+		typeAddr = voiceOscAddr(osc, data.Off_EOSC_AmpENVTYPE)
+		susAddr = voiceOscAddr(osc, data.Off_EOSC_AmpSUSTAINPT)
+		loopAddr = voiceOscAddr(osc, data.Off_EOSC_AmpLOOPPT)
 	}
-	if err = LoadByte(typeAddr, byte(envtype), "set Env"+env+" type["+strconv.Itoa(osc)+"]"); err != nil {
+	if err = loadByte(typeAddr, byte(envtype), "set Env"+env+" type["+strconv.Itoa(osc)+"]"); err != nil {
 		return
 	}
-	if err = LoadByte(susAddr, byte(sustainPt), "set Env"+env+" sustainpt["+strconv.Itoa(osc)+"]"); err != nil {
+	if err = loadByte(susAddr, byte(sustainPt), "set Env"+env+" sustainpt["+strconv.Itoa(osc)+"]"); err != nil {
 		return
 	}
-	if err = LoadByte(loopAddr, byte(loopPt), "set Env"+env+" looppt["+strconv.Itoa(osc)+"]"); err != nil {
+	if err = loadByte(loopAddr, byte(loopPt), "set Env"+env+" looppt["+strconv.Itoa(osc)+"]"); err != nil {
 		return
 	}
 	return

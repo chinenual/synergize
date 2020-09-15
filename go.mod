@@ -27,8 +27,10 @@ require (
 	github.com/orcaman/writerseeker v0.0.0-20180723184025-774071c66cec
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pelletier/go-toml v1.8.0
+	github.com/petermattis/goid v0.0.0-20180202154549-b0b1615b78e5 // indirect
 	github.com/pion/mdns v0.0.4
 	github.com/pkg/errors v0.9.1
+	github.com/sasha-s/go-deadlock v0.2.0
 	github.com/snksoft/crc v1.1.0
 	gitlab.com/gomidi/midi v1.17.2
 	gitlab.com/gomidi/portmididrv v0.6.0

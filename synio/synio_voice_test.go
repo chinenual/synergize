@@ -2,8 +2,10 @@ package synio
 
 import (
 	"bytes"
-	"github.com/chinenual/synergize/data"
 	"log"
+
+	"github.com/chinenual/synergize/data"
+
 	//	"github.com/orcaman/writerseeker"
 	"testing"
 )
@@ -13,7 +15,7 @@ func TestReloadNoteGenerators(t *testing.T) {
 		t.Skip()
 	}
 	var err error
-	if err = ReloadNoteGenerators(); err != nil {
+	if err = reloadNoteGenerators(); err != nil {
 		t.Fatalf("Error reloading note generators: %v\n", err)
 	}
 }

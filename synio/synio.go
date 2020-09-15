@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"log"
 	"strings"
-	"sync"
+
+	"github.com/sasha-s/go-deadlock"
+
+	//"sync"
 
 	"github.com/chinenual/synergize/data"
 	"github.com/chinenual/synergize/io"
@@ -49,7 +52,7 @@ var crcHash *crc.Hash
 var mock bool = false
 
 type synchConnection struct {
-	sync.Mutex
+	deadlock.Mutex
 	conn io.Conn
 }
 
@@ -208,20 +211,20 @@ func command(opcode byte, name string) (err error) {
 	return
 }
 
-func LoadByte(addr uint16, value byte, purpose string) (err error) {
+func loadByte(addr uint16, value byte, purpose string) (err error) {
 	var arr = []byte{value}
 	if synioVerbose {
 		log.Printf("synio: SetByte, addr: %04x, val: %02x (%s)", addr, value, purpose)
 	}
-	if err = BlockLoad(addr, arr, purpose); err != nil {
+	if err = blockLoad(addr, arr, purpose); err != nil {
 		return
 	}
 	return
 }
 
-func DumpByte(addr uint16, purpose string) (value byte, err error) {
+func dumpByte(addr uint16, purpose string) (value byte, err error) {
 	var arr []byte
-	if arr, err = BlockDump(addr, 1, purpose); err != nil {
+	if arr, err = blockDump(addr, 1, purpose); err != nil {
 		return
 	}
 	value = arr[0]
@@ -246,7 +249,7 @@ func writeU16(v uint16, purpose string) (err error) {
 	return
 }
 
-func BlockDump(startAddress uint16, length uint16, purpose string) (bytes []byte, err error) {
+func blockDump(startAddress uint16, length uint16, purpose string) (bytes []byte, err error) {
 	if err = command(OP_BLOCKDUMP, "OP_BLOCKDUMP"); err != nil {
 		return
 	}
@@ -261,8 +264,13 @@ func BlockDump(startAddress uint16, length uint16, purpose string) (bytes []byte
 	}
 	return
 }
+func BlockDump(startAddress uint16, length uint16, purpose string) (bytes []byte, err error) {
+	c.Lock()
+	defer c.Unlock()
+	return blockDump(startAddress, length, purpose)
+}
 
-func BlockLoad(startAddress uint16, bytes []byte, purpose string) (err error) {
+func blockLoad(startAddress uint16, bytes []byte, purpose string) (err error) {
 	if err = command(OP_BLOCKLOAD, "OP_BLOCKLOAD"); err != nil {
 		return
 	}
@@ -317,7 +325,7 @@ func getSynergyAddrs() (err error) {
 		return
 	}
 	var b []byte
-	if b, err = BlockDump(0x00c5, 14, "getSynergyAddrs"); err != nil {
+	if b, err = blockDump(0x00c5, 14, "getSynergyAddrs"); err != nil {
 		return
 	}
 	synAddrs.SEQTAB = data.BytesToWord(b[1], b[0])
@@ -358,7 +366,7 @@ func getSynergyAddrs() (err error) {
 	return
 }
 
-func InitVRAM() (err error) {
+func initVRAM() (err error) {
 	if mock {
 		return
 	}
@@ -376,6 +384,8 @@ func InitVRAM() (err error) {
 }
 
 func DumpVRAM() (bytes []byte, err error) {
+	c.Lock()
+	defer c.Unlock()
 	if err = command(OP_VRDUMP, "VRDUMP"); err != nil {
 		return
 	}
@@ -432,6 +442,8 @@ func GetID() (versionID [2]byte, err error) {
 		versionID[1] = 22
 		return
 	}
+	c.Lock()
+	defer c.Unlock()
 	if err = command(OP_GETID, "GETID"); err != nil {
 		return
 	}
@@ -453,6 +465,8 @@ func DisableVRAM() (err error) {
 	if mock {
 		return
 	}
+	c.Lock()
+	defer c.Unlock()
 	if err = command(OP_DISABLEVRAM, "DISABLEVRAM"); err == nil {
 		// errors will implicitly show  up in the log but we need to explicitly log success
 		if synioVerbose {

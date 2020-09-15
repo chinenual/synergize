@@ -28,7 +28,7 @@ func dumpAddressSpace(path string) {
 	var b []byte
 	var err error
 
-	b, err = BlockDump(uint16(0), uint16(65323), "dump addr space")
+	b, err = blockDump(uint16(0), uint16(65323), "dump addr space")
 	if err != nil {
 		fmt.Printf("Error: %v", err)
 		os.Exit(1)
@@ -93,14 +93,14 @@ func TestInitVRAM(t *testing.T) {
 	//	dumpAddressSpace("before-initVRAM.bin");
 
 	var err error
-	if err = InitVRAM(); err != nil {
+	if err = initVRAM(); err != nil {
 		t.Fatalf("Error initializing VRAM: %v\n", err)
 	}
 
 	//	dumpAddressSpace("after-initVRAM.bin");
 
 	var b byte
-	if b, err = DumpByte(MIDIC_addr, "get MIDIC"); err != nil {
+	if b, err = dumpByte(MIDIC_addr, "get MIDIC"); err != nil {
 		t.Fatalf("Error getting MIDIC value: %v\n", err)
 	}
 	if b != 0xff {
@@ -122,7 +122,7 @@ func TestDisableVRAM(t *testing.T) {
 	//	dumpAddressSpace("after-disableVRAM.bin");
 
 	var b byte
-	if b, err = DumpByte(MIDIC_addr, "get MIDIC"); err != nil {
+	if b, err = dumpByte(MIDIC_addr, "get MIDIC"); err != nil {
 		t.Fatalf("Error getting MIDIC value: %v\n", err)
 	}
 	if b != 0 {
@@ -141,7 +141,7 @@ func TestDumpVRAM(t *testing.T) {
 	var bytes []byte
 
 	// will fail unless vram is enabled on the synergy side:
-	if err = InitVRAM(); err != nil {
+	if err = initVRAM(); err != nil {
 		t.Fatalf("Error initializing VRAM: %v\n", err)
 	}
 
@@ -163,7 +163,7 @@ func TestBlockDump(t *testing.T) {
 		t.Fatalf("Error disabling VRAM: %v\n", err)
 	}
 
-	if syn_bytes, err = BlockDump(0x6000, 41, "get header bytes"); err != nil {
+	if syn_bytes, err = blockDump(0x6000, 41, "get header bytes"); err != nil {
 		t.Fatalf("Error executing block dump: %v", err)
 	}
 	var expect_bytes = []byte("COPYRIGHT (C) 1982 DIGITAL KEYBOARDS INC.")
@@ -187,17 +187,17 @@ func TestBlockLoad(t *testing.T) {
 	// to overwrite anything that affects basic event loop processing (else
 	// the Synergy can't respond to next command).
 	var addr uint16 = synAddrs.SEQTAB
-	if orig_bytes, err = BlockDump(addr, len_expect, "get SEQTAB"); err != nil {
+	if orig_bytes, err = blockDump(addr, len_expect, "get SEQTAB"); err != nil {
 		t.Fatalf("Error executing block dump: %v", err)
 	}
-	if err = BlockLoad(addr, expect_bytes, "load test bytes"); err != nil {
+	if err = blockLoad(addr, expect_bytes, "load test bytes"); err != nil {
 		t.Fatalf("Error executing block load -- POWER CYCLE Synergy TO ENSURE DATA BACK TO NORMAL: %v", err)
 	}
-	if syn_bytes, err = BlockDump(addr, len_expect, "dump test bytes"); err != nil {
+	if syn_bytes, err = blockDump(addr, len_expect, "dump test bytes"); err != nil {
 		t.Fatalf("Error executing block dump -- POWER CYCLE Synergy TO ENSURE DATA BACK TO NORMAL: %v", err)
 	}
 	// restore the original data:
-	if err = BlockLoad(addr, orig_bytes, "reload orig data"); err != nil {
+	if err = blockLoad(addr, orig_bytes, "reload orig data"); err != nil {
 		t.Fatalf("Error executing block load to restore data -- POWER CYCLE Synergy TO ENSURE DATA BACK TO NORMAL: %v", err)
 	}
 
@@ -213,19 +213,19 @@ func TestDumpByte(t *testing.T) {
 	// first few bytes of the the copyright header
 	var b byte
 	var err error
-	if b, err = DumpByte(0x6000, "get test byte0"); err != nil {
+	if b, err = dumpByte(0x6000, "get test byte0"); err != nil {
 		t.Fatalf("Error dumping byte: %v", err)
 	}
 	if b != byte('C') {
 		t.Fatalf("Dumped byte doesnt match expected value got %v expected %v", b, 'C')
 	}
-	if b, err = DumpByte(0x6001, "get test byte1"); err != nil {
+	if b, err = dumpByte(0x6001, "get test byte1"); err != nil {
 		t.Fatalf("Error dumping byte: %v", err)
 	}
 	if b != byte('O') {
 		t.Fatalf("Dumped byte doesnt match expected value got %v expected %v", b, 'O')
 	}
-	if b, err = DumpByte(0x6002, "get test byte2"); err != nil {
+	if b, err = dumpByte(0x6002, "get test byte2"); err != nil {
 		t.Fatalf("Error dumping byte: %v", err)
 	}
 	if b != byte('P') {

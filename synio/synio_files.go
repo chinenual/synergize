@@ -13,7 +13,11 @@ func LoadVCE(slotnum byte, vce []byte) (err error) {
 	if mock {
 		return
 	}
-	if err = InitVRAM(); err != nil {
+
+	c.Lock()
+	defer c.Unlock()
+
+	if err = initVRAM(); err != nil {
 		err = errors.Wrap(err, "Failed to initialize Synergy VRAM")
 		return
 	}
@@ -52,23 +56,31 @@ func LoadVCE(slotnum byte, vce []byte) (err error) {
 	return
 }
 
-func LoadCRT(crt data.CRT) (err error) {
+func loadCRT(crt data.CRT) (err error) {
 	var writebuf = writerseeker.WriterSeeker{}
 	if err = data.WriteCrt(&writebuf, crt.Voices); err != nil {
 		return
 	}
 	crt_bytes, _ := ioutil.ReadAll(writebuf.Reader())
-	if err = LoadCRTBytes(crt_bytes); err != nil {
+
+	if err = loadCRTBytes(crt_bytes); err != nil {
 		return
 	}
 	return
 }
+func LoadCRT(crt data.CRT) (err error) {
+	c.Lock()
+	defer c.Unlock()
 
-func LoadCRTBytes(crt []byte) (err error) {
+	return loadCRT(crt)
+}
+
+func loadCRTBytes(crt []byte) (err error) {
 	if mock {
 		return
 	}
-	if err = InitVRAM(); err != nil {
+
+	if err = initVRAM(); err != nil {
 		return
 	}
 
@@ -131,11 +143,19 @@ func LoadCRTBytes(crt []byte) (err error) {
 	return
 }
 
+func LoadCRTBytes(crt []byte) (err error) {
+	c.Lock()
+	defer c.Unlock()
+	return loadCRTBytes(crt)
+}
+
 // Send Synergy "state" (STLOAD in the Z80 sources)
 func LoadSYN(bytes []byte) (err error) {
 	if mock {
 		return
 	}
+	c.Lock()
+	defer c.Unlock()
 	if err = command(OP_STLOAD, "STLOAD"); err != nil {
 		return
 	}
@@ -167,6 +187,8 @@ func SaveSYN() (bytes []byte, err error) {
 		err = errors.New("not supported by mock") // FIXME: we dont have a template for a generic dump
 		return
 	}
+	c.Lock()
+	defer c.Unlock()
 	if err = command(OP_STDUMP, "STDUMP"); err != nil {
 		return
 	}
