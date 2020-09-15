@@ -2,6 +2,9 @@ const { dialog } = require('electron').remote;
 
 let shell = require('electron').shell
 
+const DEBOUNCE_WAIT_SHORT = 50;
+const DEBOUNCE_WAIT = 250;
+
 let index = {
 	init: function () {
 		// make sure external web links open in system browser - not the application:

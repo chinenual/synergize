@@ -57,10 +57,10 @@ let viewVCE_keyprop = {
 	},
 
 	init: function (incrementalUpdate) {
-		//console.log('--- start viewVCE_keyprop init ' + incrementalUpdate);
+		console.log('--- start viewVCE_keyprop init ' + incrementalUpdate);
 		if (viewVCE_keyprop.deb_onchange == null) {
-			//viewVCE_keyprop.deb_onchange = index.debounceFirstArg(viewVCE_keyprop.raw_onchange, 50);
-			viewVCE_keyprop.deb_onchange = viewVCE_keyprop.raw_onchange;
+			viewVCE_keyprop.deb_onchange = index.debounceFirstArg(viewVCE_keyprop.raw_onchange, DEBOUNCE_WAIT);
+			//viewVCE_keyprop.deb_onchange = viewVCE_keyprop.raw_onchange;
 		}
 
 		var propData = viewVCE_keyprop.keyPropCurve(vce.Head.KPROP);

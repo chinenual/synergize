@@ -1068,10 +1068,10 @@ ${freqDAG}
 		//console.log('--- start viewVCE_voice init');
 
 		if (viewVCE_voice.deb_onchange == null) {
-			viewVCE_voice.deb_onchange = index.debounceFirstArg(viewVCE_voice.raw_onchange, 50);
+			viewVCE_voice.deb_onchange = index.debounceFirstArg(viewVCE_voice.raw_onchange, DEBOUNCE_WAIT);
 		}
 		if (viewVCE_voice.deb_setNumOscillators == null) {
-			viewVCE_voice.deb_setNumOscillators = _.debounce(viewVCE_voice.raw_setNumOscillators, 250);
+			viewVCE_voice.deb_setNumOscillators = _.debounce(viewVCE_voice.raw_setNumOscillators, DEBOUNCE_WAIT);
 		}
 
 		$('#vceTabs a[href="#vceVoiceTab"]').on('shown.bs.tab', function (e) {

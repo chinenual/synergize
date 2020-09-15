@@ -58,8 +58,8 @@ let viewVCE_keyeq = {
 	init: function (incrementalUpdate) {
 		//console.log('--- start viewVCE_keyeq init ' + incrementalUpdate);
 		if (viewVCE_keyeq.deb_onchange == null) {
-			//			viewVCE_keyeq.deb_onchange = _.debounce(viewVCE_keyeq.raw_onchange, 50);
-			viewVCE_keyeq.deb_onchange = viewVCE_keyeq.raw_onchange;
+			viewVCE_keyeq.deb_onchange = _.debounce(viewVCE_keyeq.raw_onchange, DEBOUNCE_WAIT_SHORT);
+			//viewVCE_keyeq.deb_onchange = viewVCE_keyeq.raw_onchange;
 		}
 
 		var propData = viewVCE_keyeq.keyEqCurve(vce.Head.VEQ);

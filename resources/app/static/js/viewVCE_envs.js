@@ -10,13 +10,13 @@ let viewVCE_envs = {
 		//console.log('--- start viewVCE_envs init');
 
 		if (viewVCE_envs.deb_onchange == null) {
-			viewVCE_envs.deb_onchange = index.debounceFirstArg(viewVCE_envs.raw_onchange, 50);
+			viewVCE_envs.deb_onchange = index.debounceFirstArg(viewVCE_envs.raw_onchange, DEBOUNCE_WAIT);
 		}
 		if (viewVCE_envs.deb_onchangeEnvAccel == null) {
-			viewVCE_envs.deb_onchangeEnvAccel = _.debounce(viewVCE_envs.raw_onchangeEnvAccel, 50);
+			viewVCE_envs.deb_onchangeEnvAccel = _.debounce(viewVCE_envs.raw_onchangeEnvAccel, DEBOUNCE_WAIT);
 		}
 		if (viewVCE_envs.deb_copyFrom == null) {
-			viewVCE_envs.deb_copyFrom = _.debounce(viewVCE_envs.raw_copyFrom, 50);
+			viewVCE_envs.deb_copyFrom = _.debounce(viewVCE_envs.raw_copyFrom, DEBOUNCE_WAIT);
 		}
 
 		var selectEle = document.getElementById("envOscSelect");
