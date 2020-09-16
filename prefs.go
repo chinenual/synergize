@@ -30,10 +30,10 @@ var preferencesPathname = getWorkingDirectory() + "/preferences.json"
 var prefsUserPreferences = Preferences{
 	UseOsc:          false,
 	SerialBaud:      9600,
-	OscAutoConfig:   true,
+	OscAutoConfig:   false,
 	OscPort:         8000,
 	OscCSurfacePort: 9000,
-	VstAutoConfig:   true,
+	VstAutoConfig:   false,
 
 	VstServiceType: "_synergia._tcp",
 }
@@ -41,11 +41,11 @@ var prefsUserPreferences = Preferences{
 func prefsLoadPreferences() (err error) {
 	var b []byte
 	if b, err = ioutil.ReadFile(preferencesPathname); err != nil {
-		logger.Error("Error loading preferences", err)
+		logger.Errorf("Error loading preferences.  Using defaults %#v: %v", prefsUserPreferences, err)
 		return
 	}
 	if err = json.Unmarshal(b, &prefsUserPreferences); err != nil {
-		logger.Error("Error parsing preferences", err)
+		logger.Errorf("Error parsing preferences.  Using defaults %#v: %v", prefsUserPreferences, err)
 		return
 	}
 	logger.Infof("Loaded preferences %#v from file %s\n", prefsUserPreferences, preferencesPathname)

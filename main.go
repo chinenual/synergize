@@ -272,7 +272,7 @@ func main() {
 		}
 		defer zeroconf.CloseServer()
 	}
-	if prefsUserPreferences.VstAutoConfig || prefsUserPreferences.OscAutoConfig {
+	if prefsUserPreferences.VstAutoConfig || (prefsUserPreferences.UseOsc && prefsUserPreferences.OscAutoConfig) {
 		zeroconf.StartListener(prefsUserPreferences.VstServiceType)
 	}
 
