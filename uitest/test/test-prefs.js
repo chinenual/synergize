@@ -24,8 +24,6 @@ describe('Check initial preferences', () => {
       .getTitle().should.eventually.equal('Synergize Preferences')
 
         .$('#libraryPath').setValue('../data/testfiles')
-        .$('#oscAutoConfig').click() // set to off
-        .$('#vstAutoConfig').click() // set to off
 
         .click('button[type=submit]')
         .pause(WINDOW_PAUSE) // HACK: but without this switching windows is unreliable.
