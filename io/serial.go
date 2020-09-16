@@ -2,9 +2,9 @@ package io
 
 import (
 	"io"
-	"log"
 	"time"
 
+	"github.com/chinenual/synergize/logger"
 	"github.com/jacobsa/go-serial/serial"
 	"github.com/pkg/errors"
 )
@@ -31,16 +31,16 @@ func SerialInit(port string, baudRate uint) (s SerialIo, err error) {
 		DataBits:              8,
 		StopBits:              1,
 	}
-	log.Printf(" --> serial.Open(%#v)\n", options)
+	logger.Infof(" --> serial.Open(%#v)\n", options)
 	if s.stream, err = serial.Open(options); err != nil {
 		err = errors.Wrapf(err, "Could not open serial port")
 		return
 	}
 
-	log.Printf(" make new channels \n")
+	logger.Infof(" make new channels \n")
 	// long lived reader goroutine so we retain state of the stream across individual "reads"
 	readerChannel = make(chan serialReadResponse)
-	log.Printf(" make new goroutine \n")
+	logger.Infof(" make new goroutine \n")
 	go func(s SerialIo) {
 		defer s.stream.Close()
 
@@ -58,7 +58,7 @@ func SerialInit(port string, baudRate uint) (s SerialIo, err error) {
 				readerChannel <- response
 			} else if n == 1 {
 				if (emptyCount + sleepCount*EMPTY_PER_SLEEP) > 0 {
-					log.Printf("got %d empties before this read\n", emptyCount+sleepCount*EMPTY_PER_SLEEP)
+					logger.Infof("got %d empties before this read\n", emptyCount+sleepCount*EMPTY_PER_SLEEP)
 				}
 				sleepCount = 0
 				emptyCount = 0
@@ -88,13 +88,13 @@ func SerialInit(port string, baudRate uint) (s SerialIo, err error) {
 }
 
 func (s SerialIo) close() (err error) {
-	log.Printf(" --> serial.close()\n")
-	log.Printf(" close....1\n")
+	logger.Infof(" --> serial.close()\n")
+	logger.Infof(" close....1\n")
 	if err = s.stream.Close(); err != nil {
-		log.Printf(" close....2\n")
+		logger.Infof(" close....2\n")
 		return
 	}
-	log.Printf(" close....done\n")
+	logger.Infof(" close....done\n")
 	return
 }
 

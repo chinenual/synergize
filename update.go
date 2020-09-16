@@ -3,10 +3,11 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"runtime"
 	"strconv"
+
+	"github.com/chinenual/synergize/logger"
 )
 
 var newVersionAvailable bool = false
@@ -22,17 +23,17 @@ type GithubReleaseApiResponse []struct {
 func getLatest(url string) (version string, err error) {
 	var response *http.Response
 	if response, err = http.Get(url); err != nil {
-		log.Printf("Check for new version API call failed with %v\n", err)
+		logger.Infof("Check for new version API call failed with %v\n", err)
 		return
 	} else {
 		var bytes []byte
 		if bytes, err = ioutil.ReadAll(response.Body); err != nil {
-			log.Printf("could not read response stream %v\n", err)
+			logger.Infof("could not read response stream %v\n", err)
 			return
 		} else {
 			var res GithubReleaseApiResponse
 			if err = json.Unmarshal(bytes, &res); err != nil {
-				log.Printf("could not decode response %v\n", err)
+				logger.Infof("could not decode response %v\n", err)
 				return
 			} else if res[0].Redirect != "" {
 				version, err = getLatest(res[0].Redirect)
@@ -54,10 +55,10 @@ func CheckForNewVersion(forceRecheck bool, connected bool) (newVersion bool) {
 			url = versionUrl + "&connected=" + strconv.FormatBool(connected)
 		}
 		if latestVersion, err = getLatest(url); err != nil {
-			log.Printf("Error checking for new version: %v", err)
+			logger.Errorf("Error checking for new version: %v", err)
 			return
 		}
-		log.Printf("Latest version is %s\n", latestVersion)
+		logger.Infof("Latest version is %s\n", latestVersion)
 		if "v"+Version != latestVersion {
 			newVersionAvailable = true
 		}

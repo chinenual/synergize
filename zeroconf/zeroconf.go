@@ -2,10 +2,11 @@ package zeroconf
 
 import (
 	"context"
-	"log"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/chinenual/synergize/logger"
 
 	"github.com/brutella/dnssd"
 )
@@ -69,7 +70,7 @@ func StartServer(oscListenPort uint, synergyName string) (err error) {
 	CloseServer()
 	serviceName := synergyName + " (Synergize)"
 	serviceName = strings.ReplaceAll(serviceName, ".", ",")
-	log.Printf("ZEROCONF: Starting Zeroconf registration server... for service %s (%s) on port %d\n", serviceName, synergyName, oscListenPort)
+	logger.Infof("ZEROCONF: Starting Zeroconf registration server... for service %s (%s) on port %d\n", serviceName, synergyName, oscListenPort)
 
 	cfg := dnssd.Config{
 		Name: serviceName,
@@ -155,9 +156,9 @@ func StartListener(vstServiceTypePrefix string) (err error) {
 			var timeout time.Duration
 			if len(oscServices.m) == 0 && len(vstServices.m) == 0 {
 				timeout = time.Second * 5
-				log.Printf("ZEROCONF: no results yet - sending queries\n")
+				logger.Infof("ZEROCONF: no results yet - sending queries\n")
 			} else {
-				log.Printf("ZEROCONF: got first response - starting daemon\n")
+				logger.Infof("ZEROCONF: got first response - starting daemon\n")
 			}
 			var wg sync.WaitGroup
 			wg.Add(2)
@@ -191,27 +192,31 @@ func listenFor(timeout time.Duration, list *syncMap, serviceType string, validNa
 
 	addFn := func(srv dnssd.Service) {
 		if validName(srv.Name) {
-			log.Printf("ZEROCONF: Add	%s	%s	%s\n", srv.Domain, srv.Type, srv.Name)
+			logger.Infof("ZEROCONF: Add	%s	%s	%s\n", srv.Domain, srv.Type, srv.Name)
 			add(list, &srv)
 		} else {
-			log.Printf("ZEROCONF: IGNORING: Add	%s	%s	%s\n", srv.Domain, srv.Type, srv.Name)
+			logger.Infof("ZEROCONF: IGNORING: Add	%s	%s	%s\n", srv.Domain, srv.Type, srv.Name)
 		}
 	}
 
 	rmvFn := func(srv dnssd.Service) {
 		if validName(srv.Name) {
-			log.Printf("ZEROCONF: Rmv	%s	%s	%s\n", srv.Domain, srv.Type, srv.Name)
+			logger.Infof("ZEROCONF: Rmv	%s	%s	%s\n", srv.Domain, srv.Type, srv.Name)
 			remove(list, &srv)
 		} else {
-			log.Printf("ZEROCONF: IGNORING: Rmv	%s	%s	%s\n", srv.Domain, srv.Type, srv.Name)
+			logger.Infof("ZEROCONF: IGNORING: Rmv	%s	%s	%s\n", srv.Domain, srv.Type, srv.Name)
 		}
 	}
 
-	log.Printf("ZEROCONF: ListenFor %s\n", serviceType)
+	logger.Debugf("ZEROCONF: ListenFor %s\n", serviceType)
 	if err = dnssd.LookupType(ctx, serviceType, addFn, rmvFn); err != nil {
-		log.Printf("ZEROCONF: ListenFor %s %v\n", serviceType, err)
+		if strings.Contains(err.Error(), "context deadline exceeded") {
+			logger.Debugf("ZEROCONF: ListenFor %s %v\n", serviceType, err)
+		} else {
+			logger.Errorf("ZEROCONF: ListenFor %s %v\n", serviceType, err)
+		}
 		return
 	}
-	log.Printf("ZEROCONF: ListenFor %s RETURNS\n", serviceType)
+	logger.Infof("ZEROCONF: ListenFor %s RETURNS\n", serviceType)
 	return
 }

@@ -2,7 +2,8 @@ package io
 
 import (
 	"fmt"
-	"log"
+
+	"github.com/chinenual/synergize/logger"
 )
 
 type IoImpl interface {
@@ -66,7 +67,7 @@ func SetSynergySerialPort(name string, device string, baud uint, serialVerbose b
 func SetSynergyVst(name string, addr string, port uint, serialVerbose bool) (conn Conn, err error) {
 	var impl IoImpl
 	_ = impl
-	log.Printf("WARNING: overriding VST hostname (%s) to localhost for %s\n", addr, name)
+	logger.Warnf("overriding VST hostname (%s) to localhost for %s\n", addr, name)
 	addr = "localhost"
 	if impl, err = SocketInit(fmt.Sprintf("%s:%d", addr, port)); err != nil {
 		return
@@ -118,15 +119,15 @@ func (c *Conn) GetRecord() (in, out []byte) {
 func (c *Conn) ReadByteWithTimeout(timeoutMS uint, purpose string) (b byte, err error) {
 
 	if c.verbose {
-		log.Printf("       serial.Read (%d ms) - %s\n", timeoutMS, purpose)
+		logger.Infof("       serial.Read (%d ms) - %s\n", timeoutMS, purpose)
 	}
 
 	b, err = c.impl.readByte(timeoutMS)
 	if c.verbose {
 		if err != nil {
-			log.Printf("       read err: %v\n", err)
+			logger.Infof("       read err: %v\n", err)
 		} else {
-			log.Printf(" %02x <-- serial.Read (%v ms)\n", b, timeoutMS)
+			logger.Infof(" %02x <-- serial.Read (%v ms)\n", b, timeoutMS)
 		}
 	}
 	if c.record {
@@ -137,14 +138,14 @@ func (c *Conn) ReadByteWithTimeout(timeoutMS uint, purpose string) (b byte, err 
 
 func (c *Conn) ReadBytesWithTimeout(timeoutMS uint, num_bytes uint16, purpose string) (bytes []byte, err error) {
 	if c.verbose {
-		log.Printf("       serial.Read %d bytes (%d ms) - %s\n", num_bytes, timeoutMS, purpose)
+		logger.Infof("       serial.Read %d bytes (%d ms) - %s\n", num_bytes, timeoutMS, purpose)
 	}
 	bytes, err = c.impl.readBytes(timeoutMS, num_bytes)
 	if c.verbose {
 		if err != nil {
-			log.Printf("       read err: %v\n", err)
+			logger.Infof("       read err: %v\n", err)
 		} else {
-			log.Printf(" %02x <-- serial.Read (%d ms)\n", bytes, timeoutMS)
+			logger.Infof(" %02x <-- serial.Read (%d ms)\n", bytes, timeoutMS)
 		}
 	}
 	if c.record {
@@ -155,12 +156,12 @@ func (c *Conn) ReadBytesWithTimeout(timeoutMS uint, num_bytes uint16, purpose st
 
 func (c *Conn) WriteByteWithTimeout(timeoutMS uint, b byte, purpose string) (err error) {
 	if c.verbose {
-		log.Printf(" --> %02x serial.Write (%d ms) - %s\n", b, timeoutMS, purpose)
+		logger.Infof(" --> %02x serial.Write (%d ms) - %s\n", b, timeoutMS, purpose)
 	}
 
 	err = c.impl.writeByte(timeoutMS, b)
 	if c.verbose && err != nil {
-		log.Printf("        write err: %v\n", err)
+		logger.Infof("        write err: %v\n", err)
 	}
 	if c.record {
 		c.recordOut = append(c.recordOut, b)
@@ -170,11 +171,11 @@ func (c *Conn) WriteByteWithTimeout(timeoutMS uint, b byte, purpose string) (err
 
 func (c *Conn) WriteBytesWithTimeout(timeoutMS uint, arr []byte, purpose string) (err error) {
 	if c.verbose {
-		log.Printf(" --> %02x serial.WriteBytes (%d ms) - %s\n", arr, timeoutMS, purpose)
+		logger.Infof(" --> %02x serial.WriteBytes (%d ms) - %s\n", arr, timeoutMS, purpose)
 	}
 	err = c.impl.writeBytes(timeoutMS, arr)
 	if c.verbose && err != nil {
-		log.Printf("        write err: %v\n", err)
+		logger.Infof("        write err: %v\n", err)
 	}
 	if c.record {
 		c.recordOut = append(c.recordOut, arr...)

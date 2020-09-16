@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/chinenual/synergize/logger"
+
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -15,7 +17,7 @@ func DiagCOMTST() (err error) {
 	var i int
 	for i = 0; i < 256; i++ {
 		b := byte(i)
-		log.Printf("%d (%02x) ...\n", b, b)
+		logger.Infof("%d (%02x) ...\n", b, b)
 
 		if err = c.conn.WriteByteWithTimeout(TIMEOUT_MS, b, "write test byte"); err != nil {
 			return errors.Wrapf(err, "failed to write byte %02x", b)
@@ -30,7 +32,7 @@ func DiagCOMTST() (err error) {
 	}
 	// errors will implicitly show  up in the log but we need to explicitly log success
 	if synioVerbose {
-		log.Printf("synio: COMTST Success\n")
+		logger.Infof("synio: COMTST Success\n")
 	}
 	return nil
 }
@@ -38,7 +40,7 @@ func DiagCOMTST() (err error) {
 func DiagLOOPTST() (err error) {
 
 	if synioVerbose {
-		log.Printf("WARNING: LOOPTST causes Synergize to enter an infinte loop supporting the Synergy based test.  You must explicitly kill the Synergize process to stop the test.\n")
+		logger.Warnf("LOOPTST causes Synergize to enter an infinte loop supporting the Synergy based test.  You must explicitly kill the Synergize process to stop the test.\n")
 	}
 	for {
 
@@ -47,7 +49,7 @@ func DiagLOOPTST() (err error) {
 			return errors.Wrapf(err, "failed to read byte %02x", b)
 		}
 
-		log.Printf("%d (%02x) ...\n", b, b)
+		logger.Infof("%d (%02x) ...\n", b, b)
 
 		if err = c.conn.WriteByteWithTimeout(TIMEOUT_MS, b, "write test byte"); err != nil {
 			return errors.Wrapf(err, "failed to write byte %02x", b)
@@ -65,7 +67,7 @@ func DiagLINKTST() (err error) {
 	defer func() {
 		fmt.Println("Exiting...\n\r")
 		if err := terminal.Restore(int(os.Stdin.Fd()), state); err != nil {
-			log.Println("warning, failed to restore terminal:", err)
+			logger.Warn("failed to restore terminal:", err)
 			return
 		}
 	}()
@@ -74,7 +76,7 @@ func DiagLINKTST() (err error) {
 	for {
 		r, _, err := in.ReadRune()
 		if err != nil {
-			log.Println("stdin:", err)
+			logger.Error("stdin:", err)
 			break
 		}
 		if r == '\x03' {
@@ -82,11 +84,11 @@ func DiagLINKTST() (err error) {
 		}
 		var b = byte(r)
 		if err = c.conn.WriteByteWithTimeout(TIMEOUT_MS, b, "write test byte"); err != nil {
-			log.Printf("failed to write byte %02x - %v\n", b, err)
+			logger.Infof("failed to write byte %02x - %v\n", b, err)
 			break
 		}
 		if b, err = c.conn.ReadByteWithTimeout(1000*60*5, "read test byte"); err != nil {
-			log.Printf("failed to read byte %02x - %v\n", b, err)
+			logger.Infof("failed to read byte %02x - %v\n", b, err)
 			break
 		}
 		fmt.Printf(" sent '%q' (0x%02x) ... received 0x%02x (control-C to quit)\n\r", r, r, b)

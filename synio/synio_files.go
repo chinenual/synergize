@@ -2,9 +2,9 @@ package synio
 
 import (
 	"io/ioutil"
-	"log"
 
 	"github.com/chinenual/synergize/data"
+	"github.com/chinenual/synergize/logger"
 	"github.com/orcaman/writerseeker"
 	"github.com/pkg/errors"
 )
@@ -48,7 +48,7 @@ func LoadVCE(slotnum byte, vce []byte) (err error) {
 		// done - no filters
 		// errors will implicitly show  up in the log but we need to explicitly log success
 		if synioVerbose {
-			log.Printf("synio: VCELOD Success\n")
+			logger.Infof("synio: VCELOD Success\n")
 		}
 		return
 	}
@@ -92,7 +92,7 @@ func loadCRTBytes(crt []byte) (err error) {
 
 	var length = uint16(len(crt))
 	if synioVerbose {
-		log.Printf("synio: LoadCRTBytes: length: %d (dec) %x (hex)\n", length, length)
+		logger.Infof("synio: LoadCRTBytes: length: %d (dec) %x (hex)\n", length, length)
 	}
 
 	lenHob, lenLob := data.WordToBytes(length)
@@ -115,7 +115,7 @@ func loadCRTBytes(crt []byte) (err error) {
 
 	crc := crcHash.CRC16()
 	if synioVerbose {
-		log.Printf("synio: CRC: %d (dec) %x (hex) %x\n", crc, crc, crcHash.CRC())
+		logger.Infof("synio: CRC: %d (dec) %x (hex) %x\n", crc, crc, crcHash.CRC())
 	}
 
 	crcHob, crcLob := data.WordToBytes(crc)
@@ -135,7 +135,7 @@ func loadCRTBytes(crt []byte) (err error) {
 	if status == ACK {
 		// errors will implicitly show  up in the log but we need to explicitly log success
 		if synioVerbose {
-			log.Printf("synio: VRLOD Success\n")
+			logger.Infof("synio: VRLOD Success\n")
 		}
 		return
 	}
@@ -173,7 +173,7 @@ func LoadSYN(bytes []byte) (err error) {
 	if status == ACK {
 		// errors will implicitly show  up in the log but we need to explicitly log success
 		if synioVerbose {
-			log.Printf("synio: STLOD Success\n")
+			logger.Infof("synio: STLOD Success\n")
 		}
 		return
 	}
@@ -203,7 +203,7 @@ func SaveSYN() (bytes []byte, err error) {
 	// read two CMOS data banks and the length of the sequencer (2 more bytes);
 
 	if synioVerbose {
-		log.Printf("synio: CMOS LEN %d so read %d\n", cmos_len, cmos_len*2+2)
+		logger.Infof("synio: CMOS LEN %d so read %d\n", cmos_len, cmos_len*2+2)
 	}
 
 	var cmos_buf []byte
@@ -214,7 +214,7 @@ func SaveSYN() (bytes []byte, err error) {
 	// decode sequencer length and possibly grab more
 	seq_len := data.BytesToWord(cmos_buf[len(cmos_buf)-1], cmos_buf[len(cmos_buf)-2])
 	if synioVerbose {
-		log.Printf("synio: SEQ LEN from synergy %d\n", seq_len)
+		logger.Infof("synio: SEQ LEN from synergy %d\n", seq_len)
 	}
 
 	// empty buf unless we have non-zero length to read
@@ -240,7 +240,7 @@ func SaveSYN() (bytes []byte, err error) {
 	calcCRCBytes(cmos_buf)
 	calcCRCBytes(seq_buf)
 	if synioVerbose {
-		log.Printf("synio: CRC from synergy %04x - our calculation %04x\n", crcFromSynergy, crcHash.CRC16())
+		logger.Infof("synio: CRC from synergy %04x - our calculation %04x\n", crcFromSynergy, crcHash.CRC16())
 	}
 
 	if crcFromSynergy != crcHash.CRC16() {
@@ -250,7 +250,7 @@ func SaveSYN() (bytes []byte, err error) {
 	}
 	// errors will implicitly show  up in the log but we need to explicitly log success
 	if synioVerbose {
-		log.Printf("synio: STDUMP Success\n")
+		logger.Infof("synio: STDUMP Success\n")
 	}
 
 	bytes = append(len_buf, cmos_buf...)

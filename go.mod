@@ -10,6 +10,7 @@ require (
 	github.com/asticode/go-astilectron v0.16.0
 	github.com/asticode/go-astilectron-bootstrap v0.4.1
 	github.com/asticode/go-astilectron-bundler v0.7.0 // indirect
+	github.com/asticode/go-astilog v1.7.0
 	github.com/brutella/dnssd v1.1.1
 	github.com/chromedp/cdproto v0.0.0-20200424080200-0de008e41fa0 // indirect
 	github.com/chromedp/chromedp v0.5.3

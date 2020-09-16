@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/chinenual/synergize/io"
+	"github.com/chinenual/synergize/logger"
 	"github.com/chinenual/synergize/osc"
 	"github.com/chinenual/synergize/synio"
 	"github.com/chinenual/synergize/zeroconf"
@@ -77,13 +77,13 @@ func DisconnectControlSurface() (err error) {
 
 func ConnectSynergy(zeroconfConfig zeroconf.Service) (err error) {
 	if zeroconfConfig.InstanceName == "serial-port" {
-		log.Printf("ZEROCONF: using Synergy preferences config %s at %d\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
+		logger.Infof("ZEROCONF: using Synergy preferences config %s at %d\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
 		if err = synio.SetSynergySerialPort(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud,
 			true, *serialVerboseFlag, *mockSynio); err != nil {
 			return
 		}
 	} else {
-		log.Printf("ZEROCONF: using Synergy zeroconf config %s (%s:%d)\n", zeroconfConfig.InstanceName, zeroconfConfig.HostName, zeroconfConfig.Port)
+		logger.Infof("ZEROCONF: using Synergy zeroconf config %s (%s:%d)\n", zeroconfConfig.InstanceName, zeroconfConfig.HostName, zeroconfConfig.Port)
 		if err = synio.SetSynergyVst(zeroconfConfig.InstanceName, zeroconfConfig.HostName, zeroconfConfig.Port,
 			true, *serialVerboseFlag, *mockSynio); err != nil {
 			return
@@ -97,14 +97,14 @@ func GetSynergyConfig() (hasDevice bool, alreadyConfigured bool, name string, ch
 		if prefsUserPreferences.VstAutoConfig {
 			vstServices := zeroconf.GetVstServices()
 			if false && len(vstServices) == 1 && prefsUserPreferences.SerialPort == "" {
-				log.Printf("ZEROCONF: auto config VST: %#v\n", vstServices[0])
+				logger.Infof("ZEROCONF: auto config VST: %#v\n", vstServices[0])
 				firmwareVersion = ""
 				if err = synio.SetSynergyVst(vstServices[0].InstanceName, vstServices[0].HostName, vstServices[0].Port,
 					true, *serialVerboseFlag, *mockSynio); err != nil {
 					return
 				}
 			} else {
-				log.Printf("ZEROCONF: zero or more than one VST: %#v\n", vstServices)
+				logger.Infof("ZEROCONF: zero or more than one VST: %#v\n", vstServices)
 				if prefsUserPreferences.SerialPort != "" {
 					var pseudoEntry zeroconf.Service
 					pseudoEntry.InstanceName = "serial-port"
@@ -116,7 +116,7 @@ func GetSynergyConfig() (hasDevice bool, alreadyConfigured bool, name string, ch
 			}
 		} else {
 			firmwareVersion = ""
-			log.Printf("ZEROCONF: VST zeroconf disabled - using preferences config %s at %d\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
+			logger.Infof("ZEROCONF: VST zeroconf disabled - using preferences config %s at %d\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
 			if err = synio.SetSynergySerialPort(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud,
 				true, *serialVerboseFlag, *mockSynio); err != nil {
 				return
@@ -135,14 +135,14 @@ func GetControlSurfaceConfig() (hasDevice bool, alreadyConfigured bool, name str
 			oscServices := zeroconf.GetOscServices()
 
 			if false && len(oscServices) == 1 {
-				log.Printf("ZEROCONF: auto config Control Surface: %#v\n", oscServices[0])
+				logger.Infof("ZEROCONF: auto config Control Surface: %#v\n", oscServices[0])
 				osc.SetControlSurface(oscServices[0].InstanceName, oscServices[0].HostName, oscServices[0].Port)
 			} else {
-				log.Printf("ZEROCONF: zero or more than one Control Surface: %#v\n", oscServices)
+				logger.Infof("ZEROCONF: zero or more than one Control Surface: %#v\n", oscServices)
 				choices = &oscServices
 			}
 		} else {
-			log.Printf("ZEROCONF: Control Surface zeroconf disabled - using preferences config %s:%d\n", prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort)
+			logger.Infof("ZEROCONF: Control Surface zeroconf disabled - using preferences config %s:%d\n", prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort)
 			osc.SetControlSurface("", prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort)
 		}
 	}
@@ -162,11 +162,11 @@ func GetFirmwareVersion() (id string, err error) {
 			bytes, err = synio.GetID()
 			if err != nil {
 				err = errors.Wrap(err, "Cannot get firmware version")
-				l.Printf(err.Error())
+				logger.Errorf(err.Error())
 				return
 			}
 			firmwareVersion = fmt.Sprintf("%d.%d", bytes[0], bytes[1])
-			l.Printf("Connected to Synergy, firmware version: %s\n", firmwareVersion)
+			logger.Infof("Connected to Synergy, firmware version: %s\n", firmwareVersion)
 		}
 	}
 	return
@@ -181,7 +181,7 @@ func ConnectToSynergy(choice *zeroconf.Service) (err error) {
 				err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n",
 					prefsUserPreferences.SerialPort,
 					prefsUserPreferences.SerialBaud)
-				l.Printf(err.Error())
+				logger.Errorf(err.Error())
 				CheckForNewVersion(true, false)
 				return
 			}
@@ -192,13 +192,13 @@ func ConnectToSynergy(choice *zeroconf.Service) (err error) {
 				err = errors.Wrapf(err, "Cannot connect to synergy VST %s at %s:%d\n",
 					choice.InstanceName, choice.HostName,
 					choice.Port)
-				l.Printf(err.Error())
+				logger.Errorf(err.Error())
 				CheckForNewVersion(true, false)
 				return
 			}
 		}
 		CheckForNewVersion(true, true)
-		l.Printf("Connected to Synergy %s\n", io.SynergyName())
+		logger.Infof("Connected to Synergy %s\n", io.SynergyName())
 	}
 	return
 }

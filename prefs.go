@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+
+	"github.com/chinenual/synergize/logger"
 )
 
 type Preferences struct {
@@ -40,21 +42,21 @@ var prefsUserPreferences = Preferences{
 func prefsLoadPreferences() (err error) {
 	var b []byte
 	if b, err = ioutil.ReadFile(preferencesPathname); err != nil {
-		log.Println("Error loading preferences", err)
+		logger.Error("Error loading preferences", err)
 		return
 	}
 	if err = json.Unmarshal(b, &prefsUserPreferences); err != nil {
-		log.Println("Error parsing preferences", err)
+		logger.Error("Error parsing preferences", err)
 		return
 	}
-	log.Printf("Loaded preferences %#v from file %s\n", prefsUserPreferences, preferencesPathname)
+	logger.Infof("Loaded preferences %#v from file %s\n", prefsUserPreferences, preferencesPathname)
 	return
 }
 
 func prefsSavePreferences() (err error) {
 	var b []byte
 	if b, err = json.MarshalIndent(prefsUserPreferences, "", " "); err != nil {
-		log.Println("Error saving preferences", err)
+		logger.Error("Error saving preferences", err)
 	}
 	log.Printf("Save preferences %#v to file %s\n", prefsUserPreferences, preferencesPathname)
 	if err = ioutil.WriteFile(preferencesPathname, b, 0644); err != nil {

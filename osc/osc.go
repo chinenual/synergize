@@ -2,9 +2,9 @@ package osc
 
 import (
 	"fmt"
-	"log"
 	"net"
 
+	"github.com/chinenual/synergize/logger"
 	"github.com/chinenual/synergize/zeroconf"
 	goosc "github.com/hypebeast/go-osc/osc"
 )
@@ -57,27 +57,27 @@ func Init(port uint, verboseIn bool, verboseOut bool, synergyName string) (err e
 	d := goosc.NewStandardDispatcher()
 	if err = d.AddMsgHandler("*", func(msg *goosc.Message) {
 		if verboseOscIn {
-			log.Printf("  OSC handle %v", msg)
+			logger.Infof("  OSC handle %v", msg)
 		}
 		if err := OscHandleFromCSurface(msg.Address, msg.Arguments[0]); err != nil {
-			log.Printf("Error handling OSC message: %v\n", err)
+			logger.Errorf("Error handling OSC message: %v\n", err)
 		}
 	}); err != nil {
 		return
 	}
-	log.Printf("OSC listen to %s...\n", addr)
+	logger.Infof("OSC listen to %s...\n", addr)
 	server = &goosc.Server{
 		Addr:       addr,
 		Dispatcher: d,
 	}
 
 	if err := zeroconf.StartServer(port, synergyName); err != nil {
-		log.Printf("ERROR: could not start zeroconf: %v\n", err)
+		logger.Errorf("could not start zeroconf: %v\n", err)
 	}
 
 	go func() {
 		if err := closeableListenAndServe(server); err != nil {
-			log.Printf("ERROR: could not start OSC server %v\n", err)
+			logger.Errorf("could not start OSC server %v\n", err)
 		}
 	}()
 
@@ -93,7 +93,7 @@ func oscSendString(address string, arg string) (err error) {
 		return
 	}
 	if verboseOscOut {
-		log.Printf("  OSC send %s %v", address, arg)
+		logger.Infof("  OSC send %s %v", address, arg)
 	}
 	message := goosc.NewMessage(address, arg)
 	if err = client.Send(message); err != nil {
@@ -106,7 +106,7 @@ func oscSendInt(address string, arg int32) (err error) {
 		return
 	}
 	if verboseOscOut {
-		log.Printf("  OSC send %s %v", address, arg)
+		logger.Infof("  OSC send %s %v", address, arg)
 	}
 	message := goosc.NewMessage(address, arg)
 	if err = client.Send(message); err != nil {

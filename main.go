@@ -3,9 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io"
 	"io/ioutil"
-	"log"
+
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -14,6 +13,7 @@ import (
 	"time"
 
 	"github.com/chinenual/synergize/data"
+	"github.com/chinenual/synergize/logger"
 	"github.com/chinenual/synergize/osc"
 	"github.com/chinenual/synergize/synio"
 	"github.com/chinenual/synergize/zeroconf"
@@ -21,7 +21,6 @@ import (
 	"github.com/asticode/go-astikit"
 	"github.com/asticode/go-astilectron"
 	bootstrap "github.com/asticode/go-astilectron-bootstrap"
-	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 // Vars injected via ldflags by bundler
@@ -52,14 +51,14 @@ var (
 	savesyn           = flag.String("SAVESYN", "", "save the Synergy state to the named SYN file")
 	loadsyn           = flag.String("LOADSYN", "", "load the named SYN file into Synergy")
 	synver            = flag.Bool("SYNVER", false, "Print the firmware version of the connected Synergy")
-	rawlog            = flag.Bool("RAWLOG", false, "Turn off timestamps to make logs easier to compare")
+	//	rawlog            = flag.Bool("RAWLOG", false, "Turn off timestamps to make logs easier to compare")
 	//midiproxy = flag.Bool("MIDIPROXY", false, "present a MIDI interface and use serial IO to control the Synergy")
 
-	w          *astilectron.Window
-	about_w    *astilectron.Window
-	prefs_w    *astilectron.Window
-	a          *astilectron.Astilectron
-	l          *log.Logger
+	w       *astilectron.Window
+	about_w *astilectron.Window
+	prefs_w *astilectron.Window
+	a       *astilectron.Astilectron
+	//l          logger.Logger //*log.Logger
 	AppVersion string
 )
 
@@ -138,26 +137,14 @@ func getWorkingDirectory() (path string) {
 }
 
 func init() {
+	logger.Init(getWorkingDirectory()+"/synergize.log", logger.LevelInfo)
 	setVersion()
-
-	multi := io.MultiWriter(
-		&lumberjack.Logger{
-			Filename:   getWorkingDirectory() + "/synergize.log",
-			MaxSize:    5, // megabytes
-			MaxBackups: 2,
-			Compress:   false,
-		},
-		os.Stderr)
-	log.SetOutput(multi)
-	// Create logger
-	l = log.New(log.Writer(), log.Prefix(), log.Flags()|log.Lshortfile)
-
-	l.Printf("Running app version %s\n", AppVersion)
+	logger.Infof("Running app version %s\n", AppVersion)
 }
 
 func refreshNavPane(path string) {
 	if err := bootstrap.SendMessage(w, "explore", path, func(m *bootstrap.MessageIn) {}); err != nil {
-		l.Println(fmt.Errorf("sending refreshNav event failed: %w", err))
+		logger.Error(fmt.Errorf("sending refreshNav event failed: %w", err))
 	}
 }
 
@@ -167,26 +154,26 @@ func recordIo(f func(string) error, arg string) (err error) {
 		return
 	}
 	if *record != "" {
-		l.Printf(" --- start recording\n")
+		logger.Infof(" --- start recording\n")
 		synio.Conn().StartRecord()
 	}
 	if err = f(arg); err != nil {
 		return
 	}
 	if *record != "" {
-		l.Printf(" --- end recording\n")
+		logger.Infof(" --- end recording\n")
 		in, out := synio.Conn().GetRecord()
 		err = ioutil.WriteFile(*record+".in", in, 0644)
 		if err != nil {
-			log.Printf("ERROR: failed to write in bytes: %v\n", err)
+			logger.Errorf("ERROR: failed to write in bytes: %v\n", err)
 			return
 		}
 		err = ioutil.WriteFile(*record+".out", out, 0644)
 		if err != nil {
-			log.Printf("ERROR: failed to write out bytes: %v\n", err)
+			logger.Errorf("ERROR: failed to write out bytes: %v\n", err)
 			return
 		}
-		l.Printf("Saved %d bytes to %s and %d bytes to %s\n", len(in), *record+".in", len(out), *record+".out")
+		logger.Infof("Saved %d bytes to %s and %d bytes to %s\n", len(in), *record+".in", len(out), *record+".out")
 		return
 	}
 	return
@@ -201,14 +188,14 @@ func main() {
 	prefsUserPreferences.SerialPort = *port
 	prefsUserPreferences.SerialBaud = *baud
 
-	l.Printf("Default serial device is %s at %d baud\n",
+	logger.Infof("Default serial device is %s at %d baud\n",
 		prefsUserPreferences.SerialPort,
 		prefsUserPreferences.SerialBaud)
 
-	if *rawlog {
-		l.SetFlags(0)
-		log.SetFlags(0)
-	}
+	//	if *rawlog {
+	//		l.SetFlags(0)
+	//		log.SetFlags(0)
+	//	}
 
 	var err error
 	{
@@ -221,7 +208,7 @@ func main() {
 			}
 			if err = diagInitAndPrintFirmwareID(); err != nil {
 				code = 1
-				log.Println(err)
+				logger.Error(err)
 			}
 			os.Exit(code)
 		} else if *comtst {
@@ -248,44 +235,40 @@ func main() {
 		} else if *savevce != "" {
 			if err = recordIo(diagSaveVCE, *savevce); err != nil {
 				code = 1
-				log.Println(err)
+				logger.Error(err)
 			}
 			os.Exit(code)
 		} else if *loadvce != "" {
 			if err = recordIo(diagLoadVCE, *loadvce); err != nil {
 				code = 1
-				log.Println(err)
+				logger.Error(err)
 			}
 			os.Exit(code)
 		} else if *loadcrt != "" {
 			if err = recordIo(diagLoadCRT, *loadcrt); err != nil {
 				code = 1
-				log.Println(err)
+				logger.Error(err)
 			}
 			os.Exit(code)
 		} else if *savesyn != "" {
 			if err = recordIo(diagSaveSYN, *savesyn); err != nil {
 				code = 1
-				log.Println(err)
+				logger.Error(err)
 			}
 			os.Exit(code)
 		} else if *loadsyn != "" {
 			if err = recordIo(diagLoadSYN, *loadsyn); err != nil {
 				code = 1
-				log.Println(err)
+				logger.Error(err)
 			}
 			os.Exit(code)
-			//} else if *midiproxy {
-			//	err = midiProxy()
-			//	if err != nil { code=1; log.Println(err) }
-			//	os.Exit(code);
 		}
 	}
 
 	if prefsUserPreferences.UseOsc {
 		// always advertise on zeroconf even if we're not going to listen for connections
 		if err := zeroconf.StartServer(prefsUserPreferences.OscPort, prefsSynergyName()); err != nil {
-			l.Printf("ERROR: could not start zeroconf: %v\n", err)
+			logger.Errorf("could not start zeroconf: %v\n", err)
 		}
 		defer zeroconf.CloseServer()
 	}
@@ -300,7 +283,7 @@ func main() {
 				Label: astikit.StrPtr("About Synergize"),
 				OnClick: func(e astilectron.Event) (deleteListener bool) {
 					if err := bootstrap.SendMessage(about_w, "setVersion", AppVersion, func(m *bootstrap.MessageIn) {}); err != nil {
-						l.Println(fmt.Errorf("sending about event failed: %w", err))
+						logger.Errorf("sending about event failed: %w", err)
 					}
 					about_w.Show()
 					return
@@ -348,90 +331,6 @@ func main() {
 			},
 		*/
 	}
-	/*
-		*********
-		Bare minimum Mac menu - on all functionality is reachable from the main app menu
-		and easier to document if same on both Mac and Windows.
-		*********
-
-		 ,{
-					Label: astikit.StrPtr("File"),
-					SubMenu: []*astilectron.MenuItemOptions{
-						{
-							Label: astikit.StrPtr("Connect to Synergy..."),
-		                                        OnClick: func(e astilectron.Event) (deleteListener bool) {
-								// FIXME: show errors on the GUI:
-								err := connectToSynergy()
-								if err = bootstrap.SendMessage(w, "updateConnectionStatus", FirmwareVersion, func(m *bootstrap.MessageIn) {
-									// Unmarshal payload
-									var s string
-									if err := json.Unmarshal(m.Payload, &s); err != nil {
-										l.Println(fmt.Errorf("unmarshaling payload failed: %s : %w", m.Payload, err))
-										return
-									}
-									l.Printf("updateConnectionStatus is %s!\n", s)
-								}); err != nil {
-									l.Println(fmt.Errorf("sending updateConnectionStatus event failed: %w", err))
-								}
-								return
-							},
-						},
-						{
-							Label: astikit.StrPtr("Open File..."),
-							Accelerator: astilectron.NewAccelerator("CommandOrControl+O"),
-		                                        OnClick: func(e astilectron.Event) (deleteListener bool) {
-		                                                if err := bootstrap.SendMessage(w, "fileDialog", "", func(m *bootstrap.MessageIn) {
-		                                                        // Unmarshal payload
-		                                                        var s []string
-		                                                        if err := json.Unmarshal(m.Payload, &s); err != nil {
-		                                                                l.Println(fmt.Errorf("unmarshaling payload failed: %s : %w", m.Payload, err))
-		                                                                return
-		                                                        }
-		                                                        l.Printf("fileDialog payload is %s!\n", s)
-
-									vce,_ := vceReadFile(s[0]);
-									if err := bootstrap.SendMessage(w, "viewVCE", vce, func(m *bootstrap.MessageIn) {
-										// Unmarshal payload
-										var s string
-										if err := json.Unmarshal(m.Payload, &s); err != nil {
-											l.Println(fmt.Errorf("unmarshaling payload failed: %s : %w", m.Payload, err))
-											return
-										}
-										l.Printf("viewVCE payload is %s!\n", s)
-									}); err != nil {
-										l.Println(fmt.Errorf("sending viewVCE event failed: %w", err))
-									}
-								}); err != nil {
-									l.Println(fmt.Errorf("sending fileDialog event failed: %w", err))
-								}
-								return
-							},
-						},
-					},
-				},
-				{
-					Label: astikit.StrPtr("Diagnostics"),
-					SubMenu: []*astilectron.MenuItemOptions{
-						{
-							Label: astikit.StrPtr("Sanity Test..."),
-							OnClick: func(e astilectron.Event) (deleteListener bool) {
-								if err := bootstrap.SendMessage(w, "runDiag", nil, func(m *bootstrap.MessageIn) {
-									// Unmarshal payload
-									var s string
-									if err := json.Unmarshal(m.Payload, &s); err != nil {
-										l.Println(fmt.Errorf("unmarshaling payload failed: %s : %w", m.Payload, err))
-										return
-									}
-									l.Printf("diag payload is %s!\n", s)
-								}); err != nil {
-									l.Println(fmt.Errorf("sending viewVCE event failed: %w", err))
-								}
-								return
-							},
-						},
-					},
-				},
-	*/
 
 	var menuOptions = []*astilectron.MenuItemOptions{}
 	if runtime.GOOS == "darwin" {
@@ -458,7 +357,7 @@ func main() {
 		acceptTimeout = time.Minute * 3
 
 		adapter = func(a *astilectron.Astilectron) {
-			l.Printf("======= In UI Test adapter - suppressing executor\n")
+			logger.Infof("======= In UI Test adapter - suppressing executor\n")
 			a.SetExecuter(executer)
 		}
 	}
@@ -466,7 +365,7 @@ func main() {
 	defer func() {
 		fmt.Printf("Close Event.\n")
 		if err = osc.Quit(); err != nil {
-			log.Println(err)
+			logger.Error(err)
 		}
 	}()
 
@@ -493,11 +392,11 @@ func main() {
 			//},
 		},
 		Debug:       prefsUserPreferences.HTTPDebug,
-		Logger:      l,
+		Logger:      logger.GetLogger(),
 		MenuOptions: menuOptions,
 		OnWait: func(as *astilectron.Astilectron, ws []*astilectron.Window, _ *astilectron.Menu, _ *astilectron.Tray, _ *astilectron.Menu) error {
 			if *provisionOnly {
-				log.Printf("Provisioning completed. Exiting.\n")
+				logger.Infof("Provisioning completed. Exiting.\n")
 				// Quit causes a segv.  Exiting without it sometimes leaves a dialog open
 				// the later is more compatible with github CI
 				//a.Quit();
@@ -509,7 +408,7 @@ func main() {
 			prefs_w = ws[2]
 
 			if err = osc.OscRegisterBridge(w); err != nil {
-				log.Println(err)
+				logger.Error(err)
 			}
 
 			// Need to explicitly intercept Closed event on the main
@@ -563,6 +462,6 @@ func main() {
 			},
 		}},
 	}); err != nil {
-		l.Fatal(fmt.Errorf("running bootstrap failed: %w", err))
+		logger.Errorf("running bootstrap failed: %w", err)
 	}
 }

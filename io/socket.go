@@ -2,10 +2,10 @@ package io
 
 import (
 	"io"
-	"log"
 	"net"
 	"time"
 
+	"github.com/chinenual/synergize/logger"
 	"github.com/pkg/errors"
 )
 
@@ -14,7 +14,7 @@ type SocketIo struct {
 }
 
 func SocketInit(addr string) (s SocketIo, err error) {
-	log.Printf(" --> socket.Open(%s)\n", addr)
+	logger.Infof(" --> socket.Open(%s)\n", addr)
 	var tcpAddr *net.TCPAddr
 	if tcpAddr, err = net.ResolveTCPAddr("tcp4", addr); err != nil {
 		return
@@ -26,7 +26,7 @@ func SocketInit(addr string) (s SocketIo, err error) {
 }
 
 func (s SocketIo) close() (err error) {
-	log.Printf(" --> socket.close(%v)\n", s.conn.RemoteAddr())
+	logger.Infof(" --> socket.close(%v)\n", s.conn.RemoteAddr())
 	if err = s.conn.Close(); err != nil {
 		return
 	}

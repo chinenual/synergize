@@ -23,10 +23,12 @@ describe('Check initial preferences', () => {
 
       .getTitle().should.eventually.equal('Synergize Preferences')
 
-      .$('#libraryPath').setValue('../data/testfiles')
-      .click('button[type=submit]')
+        .$('#libraryPath').setValue('../data/testfiles')
+        .$('#oscAutoConfig').click() // set to off
+        .$('#vstAutoConfig').click() // set to off
 
-      .pause(WINDOW_PAUSE) // HACK: but without this switching windows is unreliable. 
+        .click('button[type=submit]')
+        .pause(WINDOW_PAUSE) // HACK: but without this switching windows is unreliable.
 
       .switchWindow('Synergize')
       .getTitle().should.eventually.equal('Synergize')

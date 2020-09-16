@@ -2,8 +2,9 @@ package osc
 
 import (
 	"fmt"
-	"github.com/pkg/errors"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 // convert the field to an OSC address.  OHARM[3] -> /OHARM/3   VASENS -> /VASENS
@@ -132,7 +133,7 @@ func OscSendToCSurface(field string, val int) (err error) {
 	}
 	addr := fieldToAddr(field)
 	//reverse := addrToField(addr)
-	//	log.Printf("  field: " + field + " OSC addr: " + addr + "  reversed: " + reverse)
+	//	logger.Infof("  field: " + field + " OSC addr: " + addr + "  reversed: " + reverse)
 
 	if strings.HasPrefix(addr, "/FILTER") {
 		var filterColorMap = []string{"gray", "red", "green"}

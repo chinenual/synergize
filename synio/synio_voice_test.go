@@ -2,9 +2,9 @@ package synio
 
 import (
 	"bytes"
-	"log"
 
 	"github.com/chinenual/synergize/data"
+	"github.com/chinenual/synergize/logger"
 
 	//	"github.com/orcaman/writerseeker"
 	"testing"
@@ -137,8 +137,8 @@ func TestRoundTrip(t *testing.T) {
 		return
 	}
 	dumpedVce = *dumpedCrt.Voices[0]
-	log.Printf("dumped CRT: %s\n", data.CrtToJson(dumpedCrt))
-	log.Printf("dumped VCE: %s\n", data.VceToJson(dumpedVce))
+	logger.Infof("dumped CRT: %s\n", data.CrtToJson(dumpedCrt))
+	logger.Infof("dumped VCE: %s\n", data.VceToJson(dumpedVce))
 
 	if data.VceName(dumpedVce.Head) != "ROUNDTRI" {
 		t.Errorf("Round trip value failed %s to %v - got %v", "VEQ[0]", "ROUNDTRI", data.VceName(dumpedVce.Head))

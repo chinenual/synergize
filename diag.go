@@ -4,18 +4,18 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
-	"log"
 
 	"github.com/chinenual/synergize/data"
+	"github.com/chinenual/synergize/logger"
 	"github.com/chinenual/synergize/synio"
 )
 
 func diagCOMTST() {
 	if err := synio.DiagCOMTST(); err != nil {
-		log.Printf("ERROR: %s\n", err)
-		log.Printf("Note:\n\tThe Synergy must be running in COMTST mode before executing this test.\n\tPress RESTORE + PROGRAM 4 on the Synergy then rerun this program.\n")
+		logger.Errorf("%s\n", err)
+		logger.Errorf("Note:\n\tThe Synergy must be running in COMTST mode before executing this test.\n\tPress RESTORE + PROGRAM 4 on the Synergy then rerun this program.\n")
 	} else {
-		log.Printf("SUCCESS!\n")
+		logger.Infof("SUCCESS!\n")
 	}
 }
 
@@ -24,7 +24,7 @@ func diagLOOPTST() {
 	fmt.Printf("Start the test by pressing RESTORE + RESTORE + PROGRAM 1 on the Synergy\n")
 
 	if err := synio.DiagLOOPTST(); err != nil {
-		log.Printf("ERROR: %s\n", err)
+		logger.Errorf("%s\n", err)
 	}
 }
 
@@ -35,17 +35,17 @@ func diagLINKTST() {
 	fmt.Printf("\nStart the test by pressing RESTORE + PROGRAM 4 on the Synergy\n")
 
 	if err := synio.DiagLINKTST(); err != nil {
-		log.Printf("ERROR: %s\n", err)
+		logger.Errorf("%s\n", err)
 	}
 }
 
 func diagInitAndPrintFirmwareID() (err error) {
 	var version [2]byte
 	if version, err = synio.GetID(); err != nil {
-		log.Printf("ERROR: %s\n", err)
+		logger.Errorf("%s\n", err)
 		return
 	}
-	log.Printf("Synergy is running firmware version %d.%d\n", version[0], version[1])
+	logger.Infof("Synergy is running firmware version %d.%d\n", version[0], version[1])
 	return
 }
 
@@ -57,7 +57,7 @@ func diagLoadVCE(path string) (err error) {
 		return
 	}
 
-	log.Printf("VCE %s -- %d bytes into slotnum %d\n", path, len(vce_bytes), slotnum)
+	logger.Infof("VCE %s -- %d bytes into slotnum %d\n", path, len(vce_bytes), slotnum)
 
 	if err = synio.LoadVCE(slotnum, vce_bytes); err != nil {
 		return
@@ -75,7 +75,7 @@ func diagLoadCRT(path string) (err error) {
 		return
 	}
 
-	log.Printf("CRT %s -- %d bytes \n", path, len(crt_bytes))
+	logger.Infof("CRT %s -- %d bytes \n", path, len(crt_bytes))
 
 	err = synio.LoadCRTBytes(crt_bytes)
 	return
@@ -88,7 +88,7 @@ func diagSaveSYN(path string) (err error) {
 		return
 	}
 
-	log.Printf("SYN %s -- %d bytes \n", path, len(syn_bytes))
+	logger.Infof("SYN %s -- %d bytes \n", path, len(syn_bytes))
 
 	err = ioutil.WriteFile(path, syn_bytes, 0644)
 	return
@@ -105,11 +105,11 @@ func diagSaveVCE(path string) (err error) {
 	var dumpedVce data.VCE
 
 	if dumpedCrt, err = data.ReadCrt(readbuf); err != nil {
-		log.Printf("error parsing dumpedVRAM %v", err)
+		logger.Errorf("error parsing dumpedVRAM %v", err)
 		return
 	}
 	dumpedVce = *dumpedCrt.Voices[0]
-	log.Printf("VCE %s -- %d bytes: %s\n", path, len(dumpedBytes), data.VceToJson(dumpedVce))
+	logger.Infof("VCE %s -- %d bytes: %s\n", path, len(dumpedBytes), data.VceToJson(dumpedVce))
 
 	err = data.WriteVceFile(path, dumpedVce)
 	return

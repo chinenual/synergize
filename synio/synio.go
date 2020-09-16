@@ -2,8 +2,9 @@ package synio
 
 import (
 	"fmt"
-	"log"
 	"strings"
+
+	"github.com/chinenual/synergize/logger"
 
 	"github.com/sasha-s/go-deadlock"
 
@@ -73,7 +74,7 @@ func SetSynergySerialPort(device string, baud uint, synVerbose bool, serialVerbo
 	synioVerbose = synVerbose
 	mock = mockflag
 	if mock {
-		log.Printf("MOCKSYNIO - initialized\n")
+		logger.Infof("MOCKSYNIO - initialized\n")
 		if c.conn, err = io.SetSynergyMock(); err != nil {
 			return errors.Wrap(err, "Could not initialize synergy connection")
 		}
@@ -90,7 +91,7 @@ func SetSynergyVst(name string, addr string, port uint, synVerbose bool, serialV
 	synioVerbose = synVerbose
 	mock = mockflag
 	if mock {
-		log.Printf("MOCKSYNIO - initialized\n")
+		logger.Infof("MOCKSYNIO - initialized\n")
 		if c.conn, err = io.SetSynergyMock(); err != nil {
 			return errors.Wrap(err, "Could not initialize synergy connection")
 		}
@@ -131,7 +132,7 @@ func command(opcode byte, name string) (err error) {
 	// then send our opcode and loop until ACK'd
 
 	if synioVerbose {
-		log.Printf("synio: Send command opcode %02x - %s\n", opcode, name)
+		logger.Infof("synio: Send command opcode %02x - %s\n", opcode, name)
 	}
 
 	var status byte
@@ -197,12 +198,12 @@ func command(opcode byte, name string) (err error) {
 			// TEMP: DRAIN
 			status, err = c.conn.ReadByteWithTimeout(TIMEOUT_MS, "DRAIN")
 			if err != nil {
-				log.Println("error while draining", err)
+				logger.Error("error while draining", err)
 				break
 			} else if status == ACK {
 				return
 			}
-			log.Printf("DRAIN: %x\n", status)
+			logger.Infof("DRAIN: %x\n", status)
 		}
 
 		err = errors.Errorf("com error sending opcode %02x - did not get ACK/NAK, got %02x", opcode, status)
@@ -214,7 +215,7 @@ func command(opcode byte, name string) (err error) {
 func loadByte(addr uint16, value byte, purpose string) (err error) {
 	var arr = []byte{value}
 	if synioVerbose {
-		log.Printf("synio: SetByte, addr: %04x, val: %02x (%s)", addr, value, purpose)
+		logger.Infof("synio: SetByte, addr: %04x, val: %02x (%s)", addr, value, purpose)
 	}
 	if err = blockLoad(addr, arr, purpose); err != nil {
 		return
@@ -229,7 +230,7 @@ func dumpByte(addr uint16, purpose string) (value byte, err error) {
 	}
 	value = arr[0]
 	if synioVerbose {
-		log.Printf("synio: GetByte, addr: %04x, val: %02x (%s)", addr, value, purpose)
+		logger.Infof("synio: GetByte, addr: %04x, val: %02x (%s)", addr, value, purpose)
 	}
 	return
 }
@@ -361,7 +362,7 @@ func getSynergyAddrs() (err error) {
 	synAddrs.exec_SETCON = uint16(0x00b9)
 
 	if synioVerbose {
-		log.Printf("synio: Synergy Addrs: %#v\n", synAddrs)
+		logger.Infof("synio: Synergy Addrs: %#v\n", synAddrs)
 	}
 	return
 }
@@ -378,7 +379,7 @@ func initVRAM() (err error) {
 	}
 	// errors will implicitly show  up in the log but we need to explicitly log success
 	if synioVerbose {
-		log.Printf("synio: ENABLEVRAM Success\n")
+		logger.Infof("synio: ENABLEVRAM Success\n")
 	}
 	return
 }
@@ -398,7 +399,7 @@ func DumpVRAM() (bytes []byte, err error) {
 	vram_len := data.BytesToWord(len_buf[1], len_buf[0])
 
 	if synioVerbose {
-		log.Printf("synio: DumpVRAM: len: %d bytes\n", vram_len)
+		logger.Infof("synio: DumpVRAM: len: %d bytes\n", vram_len)
 	}
 
 	if bytes, err = c.conn.ReadBytesWithTimeout(LONG_TIMEOUT_MS, vram_len, "read VRAM"); err != nil {
@@ -419,7 +420,7 @@ func DumpVRAM() (bytes []byte, err error) {
 	//	calcCRCBytes(crc_buf)
 
 	if synioVerbose {
-		log.Printf("synio: CRC from synergy %04x - our calculation %04x\n", crcFromSynergy, crcHash.CRC16())
+		logger.Infof("synio: CRC from synergy %04x - our calculation %04x\n", crcFromSynergy, crcHash.CRC16())
 	}
 
 	if crcFromSynergy != crcHash.CRC16() {
@@ -429,7 +430,7 @@ func DumpVRAM() (bytes []byte, err error) {
 	}
 	// errors will implicitly show  up in the log but we need to explicitly log success
 	if synioVerbose {
-		log.Printf("synio: VRDUMP Success\n")
+		logger.Infof("synio: VRDUMP Success\n")
 	}
 
 	return
@@ -456,7 +457,7 @@ func GetID() (versionID [2]byte, err error) {
 
 	// errors will implicitly show  up in the log but we need to explicitly log success
 	if synioVerbose {
-		log.Printf("synio: GETID Success\n")
+		logger.Infof("synio: GETID Success\n")
 	}
 	return
 }
@@ -470,7 +471,7 @@ func DisableVRAM() (err error) {
 	if err = command(OP_DISABLEVRAM, "DISABLEVRAM"); err == nil {
 		// errors will implicitly show  up in the log but we need to explicitly log success
 		if synioVerbose {
-			log.Printf("synio: DISABLEVRAM Success\n")
+			logger.Infof("synio: DISABLEVRAM Success\n")
 		}
 	}
 	return
