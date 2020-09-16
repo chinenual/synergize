@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"io"
 	"io/ioutil"
-	"log"
 
 	"github.com/orcaman/writerseeker"
 	"github.com/pkg/errors"
@@ -262,14 +261,14 @@ func LoadVceIntoEDATA(vce VCE) (err error) {
 	if _, err = buf.Seek(Off_VRAM_EDATA, io.SeekStart); err != nil {
 		return
 	}
-	log.Printf("SEEK - top of voice at %x", Off_VRAM_EDATA)
+	//log.Printf("SEEK - top of voice at %x", Off_VRAM_EDATA)
 	if err = WriteVcePreserveOffsets(&buf, vce, VceName(vce.Head), true /*skip filters*/); err != nil {
 		return
 	}
 
 	// A-filter is always the first filter in the FILTAB:
 	var offset = uint16(Off_VRAM_FILTAB)
-	log.Printf("SEEK - top of AFILTER at %x", offset)
+	//log.Printf("SEEK - top of AFILTER at %x", offset)
 	if _, err = buf.Seek(int64(offset), io.SeekStart); err != nil {
 		err = errors.Wrapf(err, "failed to seek to filter-a start")
 		return
@@ -281,7 +280,7 @@ func LoadVceIntoEDATA(vce VCE) (err error) {
 	// B-filters always start as the second filter in the FILTAB:
 
 	offset = uint16(Off_VRAM_FILTAB + 32)
-	log.Printf("SEEK - top of BFILTER at %x", offset)
+	//log.Printf("SEEK - top of BFILTER at %x", offset)
 	if _, err = buf.Seek(int64(offset), io.SeekStart); err != nil {
 		err = errors.Wrapf(err, "failed to seek to filter-b start")
 		return

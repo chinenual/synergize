@@ -6,9 +6,9 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
 
+	"github.com/chinenual/synergize/logger"
 	"github.com/pkg/errors"
 )
 
@@ -53,18 +53,18 @@ func ReadCrt(buf io.ReadSeeker) (crt CRT, err error) {
 	// A CRT file is a long header containing filter info, followed by a list of CCE fragments (each voice missing the filter params since they are concatenated elsewhere in the file).
 
 	if err = binary.Read(buf, binary.LittleEndian, &crt.Head); err != nil {
-		log.Println("binary.Read failed:", err)
+		logger.Error("binary.Read failed:", err)
 		return
 	}
 
 	if verboseParsing {
-		log.Println(crtHeadToJson(crt.Head))
+		logger.Info(crtHeadToJson(crt.Head))
 	}
 
 	for i, offset := range crt.Head.VOIPTR {
 		if offset != 0 {
 			if verboseParsing {
-				log.Printf("READ voice #%d: seek to 0x%04x -> 0x%04x\n", i+1, offset, Off_VRAM_VOITAB+offset)
+				logger.Infof("READ voice #%d: seek to 0x%04x -> 0x%04x\n", i+1, offset, Off_VRAM_VOITAB+offset)
 			}
 
 			if _, err = buf.Seek(int64(Off_VRAM_VOITAB+offset), io.SeekStart); err != nil {
@@ -80,7 +80,7 @@ func ReadCrt(buf io.ReadSeeker) (crt CRT, err error) {
 			if VceAFilterCount(vce) > 0 {
 				offset = uint16(crt.Head.AFILTR[i]-1) * 32
 				if verboseParsing {
-					log.Printf("READ voice #%d: A-Filter: seek to %d 0x%04x -> 0x%04x\n", i+1, crt.Head.AFILTR[i], offset, Off_VRAM_FILTAB+offset)
+					logger.Infof("READ voice #%d: A-Filter: seek to %d 0x%04x -> 0x%04x\n", i+1, crt.Head.AFILTR[i], offset, Off_VRAM_FILTAB+offset)
 				}
 				if _, err = buf.Seek(int64(Off_VRAM_FILTAB+offset), io.SeekStart); err != nil {
 					err = errors.Wrapf(err, "failed to seek to voice #%d filter-b start", i)
@@ -93,7 +93,7 @@ func ReadCrt(buf io.ReadSeeker) (crt CRT, err error) {
 			if VceBFilterCount(vce) > 0 {
 				offset = uint16(crt.Head.BFILTR[i]-1) * 32
 				if verboseParsing {
-					log.Printf("READ voice #%d: B-Filters: seek to %d 0x%04x -> 0x%04x\n", i+1, crt.Head.BFILTR[i], offset, Off_VRAM_FILTAB+offset)
+					logger.Infof("READ voice #%d: B-Filters: seek to %d 0x%04x -> 0x%04x\n", i+1, crt.Head.BFILTR[i], offset, Off_VRAM_FILTAB+offset)
 				}
 				if _, err = buf.Seek(int64(Off_VRAM_FILTAB+offset), io.SeekStart); err != nil {
 					err = errors.Wrapf(err, "failed to seek to voice #%d filter-b start", i)
@@ -130,7 +130,7 @@ func addVce(buf io.WriteSeeker, slot /*one-based*/ int, cursor *crtCursor, vce V
 		return
 	}
 	if verboseWriting {
-		log.Printf(" WRITE voice #%d: VOIPTR  0x%04x\n", slot, uint16(cursor.VoiceOffset)-Off_VRAM_VOITAB)
+		logger.Infof(" WRITE voice #%d: VOIPTR  0x%04x\n", slot, uint16(cursor.VoiceOffset)-Off_VRAM_VOITAB)
 	}
 
 	// VOIPTR offsets are relative to the VOITAB field not the start of the file (sigh...):
@@ -146,7 +146,7 @@ func addVce(buf io.WriteSeeker, slot /*one-based*/ int, cursor *crtCursor, vce V
 		return
 	}
 	if verboseWriting {
-		log.Printf(" WRITE voice #%d: a-filter index %d at 0x%04x\n", slot, filterindex, int64(Off_VRAM_AFILTR+(slot-1)))
+		logger.Infof(" WRITE voice #%d: a-filter index %d at 0x%04x\n", slot, filterindex, int64(Off_VRAM_AFILTR+(slot-1)))
 	}
 	if err = binary.Write(buf, binary.LittleEndian, filterindex); err != nil {
 		return
@@ -157,7 +157,7 @@ func addVce(buf io.WriteSeeker, slot /*one-based*/ int, cursor *crtCursor, vce V
 		return
 	}
 	if verboseWriting {
-		log.Printf(" WRITE voice #%d: %d a-filters at 0x%04x\n", slot, VceAFilterCount(vce), cursor.AfilterOffset)
+		logger.Infof(" WRITE voice #%d: %d a-filters at 0x%04x\n", slot, VceAFilterCount(vce), cursor.AfilterOffset)
 	}
 	if err = VceWriteAFilters(buf, vce); err != nil {
 		return
@@ -173,7 +173,7 @@ func addVce(buf io.WriteSeeker, slot /*one-based*/ int, cursor *crtCursor, vce V
 		filterindex = cursor.BfilterIndex
 	}
 	if verboseWriting {
-		log.Printf(" WRITE voice #%d: b-filter index %d at 0x%04x\n", slot, filterindex, int64(Off_VRAM_BFILTR+(slot-1)))
+		logger.Infof(" WRITE voice #%d: b-filter index %d at 0x%04x\n", slot, filterindex, int64(Off_VRAM_BFILTR+(slot-1)))
 	}
 	// update the BFILTR entry in the CRT header
 	if _, err = buf.Seek(int64(Off_VRAM_BFILTR+(slot-1)), io.SeekStart); err != nil {
@@ -187,7 +187,7 @@ func addVce(buf io.WriteSeeker, slot /*one-based*/ int, cursor *crtCursor, vce V
 		return
 	}
 	if verboseWriting {
-		log.Printf(" WRITE voice #%d: %d b-filters at 0x%04x\n", slot, VceBFilterCount(vce), cursor.BfilterOffset)
+		logger.Infof(" WRITE voice #%d: %d b-filters at 0x%04x\n", slot, VceBFilterCount(vce), cursor.BfilterOffset)
 	}
 	if err = VceWriteBFilters(buf, vce); err != nil {
 		return
@@ -199,12 +199,12 @@ func addVce(buf io.WriteSeeker, slot /*one-based*/ int, cursor *crtCursor, vce V
 	}
 	cursor.BfilterIndex = cursor.BfilterIndex + byte(VceBFilterCount(vce))
 	if verboseWriting {
-		log.Printf("         WRITE voice #%d: b-filters cursor advanced: 0x%04x (%d filters)\n", slot, cursor.BfilterOffset-oldOffset, (cursor.BfilterOffset-oldOffset)/VRAM_FILTR_length)
+		logger.Infof("         WRITE voice #%d: b-filters cursor advanced: 0x%04x (%d filters)\n", slot, cursor.BfilterOffset-oldOffset, (cursor.BfilterOffset-oldOffset)/VRAM_FILTR_length)
 	}
 
 	// Now the voice itself:
 	if verboseWriting {
-		log.Printf(" WRITE voice #%d: at 0x%04x\n", slot, cursor.VoiceOffset)
+		logger.Infof(" WRITE voice #%d: at 0x%04x\n", slot, cursor.VoiceOffset)
 	}
 	if _, err = buf.Seek(cursor.VoiceOffset, io.SeekStart); err != nil {
 		return
@@ -292,7 +292,7 @@ func WriteCrt(buf io.WriteSeeker, vces []*VCE) (err error) {
 		}
 	}
 	if verboseWriting {
-		log.Printf(" WRITE a filter count: %d, b filter count: %d\n", aFilterCount, bFilterCount)
+		logger.Infof(" WRITE a filter count: %d, b filter count: %d\n", aFilterCount, bFilterCount)
 	}
 	var cursor crtCursor
 	cursor.AfilterOffset = Off_VRAM_FILTAB
@@ -302,7 +302,7 @@ func WriteCrt(buf io.WriteSeeker, vces []*VCE) (err error) {
 	cursor.VoiceOffset = cursor.BfilterOffset + int64((bFilterCount)*VRAM_FILTR_length)
 
 	if verboseWriting {
-		log.Printf(" WRITE cursors before first voice: a, b voice: 0x%04x 0x%04x 0x%04x\n", cursor.AfilterOffset, cursor.BfilterOffset, cursor.VoiceOffset)
+		logger.Infof(" WRITE cursors before first voice: a, b voice: 0x%04x 0x%04x 0x%04x\n", cursor.AfilterOffset, cursor.BfilterOffset, cursor.VoiceOffset)
 	}
 	for i, vce := range vces {
 		if vce != nil {
@@ -312,7 +312,7 @@ func WriteCrt(buf io.WriteSeeker, vces []*VCE) (err error) {
 		}
 	}
 	if verboseWriting {
-		log.Printf(" WRITE cursors after last voice: a, b voice: 0x%04x 0x%04x 0x%04x\n", cursor.AfilterOffset, cursor.BfilterOffset, cursor.VoiceOffset)
+		logger.Infof(" WRITE cursors after last voice: a, b voice: 0x%04x 0x%04x 0x%04x\n", cursor.AfilterOffset, cursor.BfilterOffset, cursor.VoiceOffset)
 	}
 	return
 }

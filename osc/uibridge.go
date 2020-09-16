@@ -2,9 +2,10 @@ package osc
 
 import (
 	"encoding/json"
+
 	"github.com/asticode/go-astilectron"
 	bootstrap "github.com/asticode/go-astilectron-bootstrap"
-	"log"
+	"github.com/chinenual/synergize/logger"
 )
 
 var astilectronWindow *astilectron.Window
@@ -20,7 +21,9 @@ type UIMsg struct {
 }
 
 func sendToUI(field string, value int) (err error) {
-	log.Printf("SendToUI: %s %d\n", field, value)
+	if verboseOscIn {
+		logger.Infof("OSC: SendToUI: %s %d\n", field, value)
+	}
 	if astilectronWindow == nil {
 		return
 	}
@@ -29,7 +32,7 @@ func sendToUI(field string, value int) (err error) {
 		func(m *bootstrap.MessageIn) {
 			// Unmarshal payload
 			if err = json.Unmarshal(m.Payload, &strval); err != nil {
-				log.Printf(" SendToUI failed to decode json response : %s %d: %v\n", field, value, err)
+				logger.Errorf(" SendToUI failed to decode json response : %s %d: %v\n", field, value, err)
 				return
 			}
 			// feedback to CSurface:

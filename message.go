@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -845,7 +844,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 	default:
 		err = errors.New("Unhandled message " + m.Name)
 		payload = err.Error()
-		log.Printf("ERROR: %v %v\n", payload, err)
+		logger.Errorf("%v %v\n", payload, err)
 	}
 	return
 }

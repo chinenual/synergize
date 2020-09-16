@@ -6,10 +6,10 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
 	"strings"
 
+	"github.com/chinenual/synergize/logger"
 	"github.com/pkg/errors"
 )
 
@@ -240,7 +240,7 @@ func VceWriteAFilters(buf io.Writer, vce VCE) (err error) {
 	for i := byte(0); i <= vce.Head.VOITAB; i++ {
 		if vce.Head.FILTER[i] < 0 {
 			if verboseWriting {
-				log.Printf("WRITE A filter %d %v\n", i, vce.Filters[0])
+				logger.Infof("WRITE A filter %d %v\n", i, vce.Filters[0])
 			}
 			for j := 0; j < 32; j++ {
 				if err = binary.Write(buf, binary.LittleEndian, vce.Filters[0][j]); err != nil {
@@ -309,7 +309,7 @@ func VceWriteBFilters(buf io.Writer, vce VCE) (err error) {
 			// filters are one-based
 			var index = int(f) - 1 + offset
 			if verboseWriting {
-				log.Printf("WRITE B filter %d (index: %d)\n", f, index)
+				logger.Infof("WRITE B filter %d (index: %d)\n", f, index)
 			}
 			for j := 0; j < 32; j++ {
 				if err = binary.Write(buf, binary.LittleEndian, vce.Filters[index][j]); err != nil {
@@ -334,7 +334,7 @@ func ReadVce(buf io.ReadSeeker, skipFilters bool) (vce VCE, err error) {
 	}
 
 	if verboseParsing {
-		log.Printf("voice head: %s\n", vceHeadToJson(vce.Head))
+		logger.Infof("voice head: %s\n", vceHeadToJson(vce.Head))
 	}
 
 	vce.Envelopes = make([]Envelope, vce.Head.VOITAB+1)
@@ -610,7 +610,7 @@ func writeVce(buf io.WriteSeeker, vce VCE, name string, skipFilters bool, preser
 		return
 	}
 	if verboseWriting {
-		log.Printf("SEEK - top of voice at 0x%04x", headOffset)
+		logger.Infof("SEEK - top of voice at 0x%04x", headOffset)
 	}
 	vce.Head.VNAME = stringToSpaceEncodedString(name)
 	if !preserveOffsets {
@@ -634,7 +634,7 @@ func writeVce(buf io.WriteSeeker, vce VCE, name string, skipFilters bool, preser
 			if _, err = buf.Seek(oscOffset, io.SeekStart); err != nil {
 				return
 			}
-			//log.Printf("SEEK - top of osc[%d] at 0x%04x", i, headOffset+int64(vce.Head.OSCPTR[i]))
+			//logger.Infof("SEEK - top of osc[%d] at 0x%04x", i, headOffset+int64(vce.Head.OSCPTR[i]))
 		} else {
 			if oscOffset, err = buf.Seek(0, io.SeekCurrent); err != nil {
 				return

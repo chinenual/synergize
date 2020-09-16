@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 
 	"github.com/chinenual/synergize/logger"
@@ -58,9 +57,9 @@ func prefsSavePreferences() (err error) {
 	if b, err = json.MarshalIndent(prefsUserPreferences, "", " "); err != nil {
 		logger.Error("Error saving preferences", err)
 	}
-	log.Printf("Save preferences %#v to file %s\n", prefsUserPreferences, preferencesPathname)
+	logger.Infof("Save preferences %#v to file %s\n", prefsUserPreferences, preferencesPathname)
 	if err = ioutil.WriteFile(preferencesPathname, b, 0644); err != nil {
-		log.Println("Error saving preferences", err)
+		logger.Error("Error saving preferences", err)
 	}
 	return
 }
