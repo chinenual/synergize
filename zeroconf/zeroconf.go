@@ -133,6 +133,8 @@ func StartListener(vstServiceTypePrefix string) (err error) {
 
 	listenerRunning = true
 
+	logger.Infof("ZEROCONF: Starting Zeroconf listener for service %s and %s\n", "_osc._udp", vstServiceType)
+
 	oscServices.Lock()
 	oscServices.m = make(map[string]Service)
 	oscServices.Unlock()
