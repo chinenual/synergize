@@ -45,18 +45,29 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
+
+		var alreadyConfgured = io.SynergyConfigured()
 		if args.ZeroconfChoice != nil {
 			logger.Infof("ZEROCONF: config Synergy selected by user: %#v\n", *args.ZeroconfChoice)
 			if err = ConnectToSynergy(args.ZeroconfChoice); err != nil {
 				payload = err.Error()
 				return
 			}
-		} else if !io.SynergyConfigured() {
+		} else if !alreadyConfgured {
 			err = errors.New("invalid argument to ConnectSynergy")
 			payload = err.Error()
 			return
 		}
-		response := connectionStatusResponse{io.SynergyName(), osc.ControlSurfaceName()}
+		type responseType struct {
+			AlreadyConnected bool
+			Status           connectionStatusResponse
+		}
+		response := responseType{
+			AlreadyConnected: alreadyConfgured,
+			Status: connectionStatusResponse{
+				SynergyName:        io.SynergyName(),
+				ControlSurfaceName: osc.ControlSurfaceName(),
+			}}
 		payload = response
 
 	case "crtEditAddVoice":

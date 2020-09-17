@@ -818,8 +818,10 @@ ${freqDAG}
 				index.errorNotification(message.payload);
 				return
 			} else {
-				index.updateConnectionStatus(message.payload.SynergyName, message.payload.ControlSurfaceName);
-				index.infoNotification("Successfully connected : " + message.payload.SynergyName);
+				index.updateConnectionStatus(message.payload.Status.SynergyName, message.payload.Status.ControlSurfaceName);
+				if (!message.payload.AlreadyConnected) {
+					index.infoNotification("Successfully connected to Synergy: " + message.payload.Status.SynergyName);
+				}
 				callback();
 				return
 			}
