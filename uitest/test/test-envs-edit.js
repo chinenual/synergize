@@ -85,7 +85,7 @@ describe('Test envs page edits', () => {
             .selectByValue(cssQuoteId('#envFreqLoop[2]'), 'L')
 
             .waitForVisible('#alertText')
-            .then(() => { return hooks.screenshotAndCompare(app, 'envs-LoopAfterSustain-alert') })
+            .then(() => { return hooks.screenshotAndCompare(app, 'envs-LLoopAfterSustain-alert') })
 
             .getText('#alertText').should.eventually.include('SUSTAIN point must be after')
 
@@ -96,7 +96,7 @@ describe('Test envs page edits', () => {
             .selectByValue(cssQuoteId('#envFreqLoop[2]'), 'R')
 
             .waitForVisible('#alertText')
-            .then(() => { return hooks.screenshotAndCompare(app, 'envs-LoopAfterSustain-alert') })
+            .then(() => { return hooks.screenshotAndCompare(app, 'envs-RLoopAfterSustain-alert') })
 
             .getText('#alertText').should.eventually.include('SUSTAIN point must be after')
 

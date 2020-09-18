@@ -4,6 +4,7 @@ const WINDOW_PAUSE = 1000;
 const LOAD_VCE_TIMEOUT = 20000; // loading in voicing mode can take a while...
 const TYPING_PAUSE = 500; // slow down typing just a bit to reduce stress on Synergy for non-debounced typing to separate fields
 const ADD_OSC_PAUSE = 2000;
+const PATCH_PAUSE = 2000;
 
 let app;
 
@@ -264,6 +265,7 @@ describe('Test voice page edits', () => {
             await app.client
                 .getValue(cssQuoteId('#patchAdderInDSR[1]')).should.eventually.equal('')
                 .click(cssQuoteId('#patchAdderInDSR[1]')).keys('ArrowUp')
+                .pause(PATCH_PAUSE)
                 .getValue(cssQuoteId('#patchAdderInDSR[1]')).should.eventually.equal('1')
         });
         it('freq', async () => {
@@ -271,18 +273,18 @@ describe('Test voice page edits', () => {
                 .getValue(cssQuoteId('#patchFOInputDSR[3]')).should.eventually.equal('')
                 .click(cssQuoteId('#patchFOInputDSR[3]')).keys('ArrowUp')
 
-                .pause(TYPING_PAUSE)
-                .pause(TYPING_PAUSE)
+                .pause(PATCH_PAUSE)
                 .getValue(cssQuoteId('#patchFOInputDSR[3]')).should.eventually.equal('1')
                 .click(cssQuoteId('#patchFOInputDSR[3]')).keys('ArrowUp')
 
-                .pause(TYPING_PAUSE)
+                .pause(PATCH_PAUSE)
                 .getValue(cssQuoteId('#patchFOInputDSR[3]')).should.eventually.equal('2')
         });
         it('out', async () => {
             await app.client
                 .getValue(cssQuoteId('#patchOutputDSR[4]')).should.eventually.equal('1')
                 .click(cssQuoteId('#patchOutputDSR[4]')).keys('ArrowUp')
+                .pause(PATCH_PAUSE)
                 .getValue(cssQuoteId('#patchOutputDSR[4]')).should.eventually.equal('2')
         });
     });
