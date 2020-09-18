@@ -227,7 +227,7 @@ func SetFilterEle(uiFilterIndex /*0 for Af, one-based osc# for Bf */ int, index 
 		logger.Infof("SYNIO: ** SetFilterEle %d %d %d\n", uiFilterIndex, index, value)
 	}
 
-	addr := VramAddr(data.Off_VRAM_FILTAB) + uint16((uiFilterIndex*data.VRAM_FILTR_length)+(index-1))
+	addr := vramAddr(data.Off_VRAM_FILTAB) + uint16((uiFilterIndex*data.VRAM_FILTR_length)+(index-1))
 	if err = loadByte(addr, byte(value), "set FilterEle["+strconv.Itoa(uiFilterIndex)+"]["+strconv.Itoa(index)+"]"); err != nil {
 		return
 	}
@@ -257,7 +257,7 @@ func SetFilterArray(uiFilterIndex /*0 for Af, one-based osc# for Bf */ int, valu
 		byteArray[i] = byte(v)
 	}
 
-	addr := VramAddr(data.Off_VRAM_FILTAB) + uint16((uiFilterIndex * data.VRAM_FILTR_length))
+	addr := vramAddr(data.Off_VRAM_FILTAB) + uint16((uiFilterIndex * data.VRAM_FILTR_length))
 	if err = blockLoad(addr, byteArray, "set FilterArray["+strconv.Itoa(uiFilterIndex)+"]"); err != nil {
 		return
 	}
@@ -453,7 +453,7 @@ func setVoiceHeadDataByte(fieldName string, value byte) (err error) {
 		addr = voiceHeadAddr(offsetMap[fieldName].Offset)
 	} else {
 		cmosUpdated = true
-		addr = CmosAddr(offsetMap[fieldName].Offset)
+		addr = cmosAddr(offsetMap[fieldName].Offset)
 	}
 	if err = loadByte(addr, value, "set "+fieldName); err != nil {
 		return
