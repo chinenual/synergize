@@ -30,6 +30,13 @@ type connectionStatusResponse struct {
 // handleMessages handles messages
 func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload interface{}, err error) {
 	logger.Debugf("Handle message: %s %s\n", m.Name, string(m.Payload))
+
+	defer func() {
+		if err != nil {
+			logger.Errorf("Error handling message: {Name: %s, Payload: %s}: %v", m.Name, string(m.Payload), err)
+		}
+	}()
+
 	switch m.Name {
 	case "cancelPreferences":
 		_ = prefs_w.Hide()
