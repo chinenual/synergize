@@ -3,7 +3,7 @@ const { dialog } = require('electron').remote;
 let shell = require('electron').shell
 
 const DEBOUNCE_WAIT_SHORT = 50;
-const DEBOUNCE_WAIT = 250;
+const DEBOUNCE_WAIT = 50;
 
 let index = {
 	init: function () {
