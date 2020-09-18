@@ -116,10 +116,19 @@ func GetSynergyConfig() (hasDevice bool, alreadyConfigured bool, name string, ch
 			}
 		} else {
 			firmwareVersion = ""
-			logger.Infof("ZEROCONF: VST zeroconf disabled - using preferences config %s at %d\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
-			if err = synio.SetSynergySerialPort(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud,
-				true, *serialVerboseFlag, *mockSynio); err != nil {
-				return
+			if *vst != 0 {
+				// VST command line option
+				logger.Infof("ZEROCONF: VST zeroconf disabled - using -VST command line config %d\n", *vst)
+				if err = synio.SetSynergyVst(fmt.Sprintf("VST localhost:%d", *vst), "localhost", *vst,
+					true, *serialVerboseFlag, *mockSynio); err != nil {
+					return
+				}
+			} else {
+				logger.Infof("ZEROCONF: VST zeroconf disabled - using preferences config %s at %d\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
+				if err = synio.SetSynergySerialPort(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud,
+					true, *serialVerboseFlag, *mockSynio); err != nil {
+					return
+				}
 			}
 		}
 	}

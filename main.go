@@ -35,6 +35,7 @@ var (
 var (
 	port              = flag.String("port", getDefaultPort(), "the serial device")
 	baud              = flag.Uint("baud", getDefaultBaud(), "the serial baud rate")
+	vst               = flag.Uint("vst", 0, "port for the VST instrument")
 	record            = flag.String("RECORD", "", "capture bytes to <record>.in and <record>.out")
 	uitest            = flag.Int("UITEST", 0, "alter startup to support automated testing (specifies listening port)")
 	provisionOnly     = flag.Bool("PROVISION", false, "run the provisioner and then exit")
