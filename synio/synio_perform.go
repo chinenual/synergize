@@ -1,12 +1,16 @@
 package synio
 
 import (
+	"github.com/chinenual/synergize/logger"
 	"github.com/pkg/errors"
 )
 
 func SelectVoiceMapping(v1, v2, v3, v4 byte) (err error) {
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SelectVoiceMapping\n")
+	}
 
 	if err = command(OP_SELECT, "OP_SELECT"); err != nil {
 		return errors.Wrapf(err, "failed to OP_SELECT")
@@ -32,6 +36,9 @@ func SelectVoiceMapping(v1, v2, v3, v4 byte) (err error) {
 func KeyDown(voice, key, velocity byte) (err error) {
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** KeyDown\n")
+	}
 
 	if err = command(OP_ASSIGNED_KEY, "OP_ASSIGNED_KEY"); err != nil {
 		return errors.Wrapf(err, "failed to OP_ASSIGNED_KEY")
@@ -57,6 +64,9 @@ func KeyDown(voice, key, velocity byte) (err error) {
 func KeyUp(key, velocity byte) (err error) {
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** KeyUp\n")
+	}
 
 	if err = command(OP_KEYUP, "OP_KEYUP"); err != nil {
 		return errors.Wrapf(err, "failed to OP_KEYUP")
@@ -73,6 +83,9 @@ func KeyUp(key, velocity byte) (err error) {
 func Pedal(up bool) (err error) {
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** Pedal\n")
+	}
 
 	const OPERAND_PEDAL_SUSTAIN = byte(64)
 	//const OPERAND_PEDAL_LATCH = byte(65)

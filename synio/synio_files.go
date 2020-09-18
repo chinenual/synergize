@@ -16,6 +16,9 @@ func LoadVCE(slotnum byte, vce []byte) (err error) {
 
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** LoadVCE\n")
+	}
 
 	if err = initVRAM(); err != nil {
 		err = errors.Wrap(err, "Failed to initialize Synergy VRAM")
@@ -48,7 +51,7 @@ func LoadVCE(slotnum byte, vce []byte) (err error) {
 		// done - no filters
 		// errors will implicitly show  up in the log but we need to explicitly log success
 		if synioVerbose {
-			logger.Infof("synio: VCELOD Success\n")
+			logger.Infof("SYNIO: VCELOD Success\n")
 		}
 		return
 	}
@@ -71,6 +74,9 @@ func loadCRT(crt data.CRT) (err error) {
 func LoadCRT(crt data.CRT) (err error) {
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** LoadCRT\n")
+	}
 
 	return loadCRT(crt)
 }
@@ -92,7 +98,7 @@ func loadCRTBytes(crt []byte) (err error) {
 
 	var length = uint16(len(crt))
 	if synioVerbose {
-		logger.Infof("synio: LoadCRTBytes: length: %d (dec) %x (hex)\n", length, length)
+		logger.Infof("SYNIO: LoadCRTBytes: length: %d (dec) %x (hex)\n", length, length)
 	}
 
 	lenHob, lenLob := data.WordToBytes(length)
@@ -115,7 +121,7 @@ func loadCRTBytes(crt []byte) (err error) {
 
 	crc := crcHash.CRC16()
 	if synioVerbose {
-		logger.Infof("synio: CRC: %d (dec) %x (hex) %x\n", crc, crc, crcHash.CRC())
+		logger.Infof("SYNIO: CRC: %d (dec) %x (hex) %x\n", crc, crc, crcHash.CRC())
 	}
 
 	crcHob, crcLob := data.WordToBytes(crc)
@@ -135,7 +141,7 @@ func loadCRTBytes(crt []byte) (err error) {
 	if status == ACK {
 		// errors will implicitly show  up in the log but we need to explicitly log success
 		if synioVerbose {
-			logger.Infof("synio: VRLOD Success\n")
+			logger.Infof("SYNIO: VRLOD Success\n")
 		}
 		return
 	}
@@ -146,6 +152,9 @@ func loadCRTBytes(crt []byte) (err error) {
 func LoadCRTBytes(crt []byte) (err error) {
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** LoadCRTBytes\n")
+	}
 	return loadCRTBytes(crt)
 }
 
@@ -156,6 +165,9 @@ func LoadSYN(bytes []byte) (err error) {
 	}
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** LoadSYN\n")
+	}
 	if err = command(OP_STLOAD, "STLOAD"); err != nil {
 		return
 	}
@@ -173,7 +185,7 @@ func LoadSYN(bytes []byte) (err error) {
 	if status == ACK {
 		// errors will implicitly show  up in the log but we need to explicitly log success
 		if synioVerbose {
-			logger.Infof("synio: STLOD Success\n")
+			logger.Infof("SYNIO: STLOD Success\n")
 		}
 		return
 	}
@@ -189,6 +201,9 @@ func SaveSYN() (bytes []byte, err error) {
 	}
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SaveSYN\n")
+	}
 	if err = command(OP_STDUMP, "STDUMP"); err != nil {
 		return
 	}
@@ -203,7 +218,7 @@ func SaveSYN() (bytes []byte, err error) {
 	// read two CMOS data banks and the length of the sequencer (2 more bytes);
 
 	if synioVerbose {
-		logger.Infof("synio: CMOS LEN %d so read %d\n", cmos_len, cmos_len*2+2)
+		logger.Infof("SYNIO: CMOS LEN %d so read %d\n", cmos_len, cmos_len*2+2)
 	}
 
 	var cmos_buf []byte
@@ -214,7 +229,7 @@ func SaveSYN() (bytes []byte, err error) {
 	// decode sequencer length and possibly grab more
 	seq_len := data.BytesToWord(cmos_buf[len(cmos_buf)-1], cmos_buf[len(cmos_buf)-2])
 	if synioVerbose {
-		logger.Infof("synio: SEQ LEN from synergy %d\n", seq_len)
+		logger.Infof("SYNIO: SEQ LEN from synergy %d\n", seq_len)
 	}
 
 	// empty buf unless we have non-zero length to read
@@ -240,7 +255,7 @@ func SaveSYN() (bytes []byte, err error) {
 	calcCRCBytes(cmos_buf)
 	calcCRCBytes(seq_buf)
 	if synioVerbose {
-		logger.Infof("synio: CRC from synergy %04x - our calculation %04x\n", crcFromSynergy, crcHash.CRC16())
+		logger.Infof("SYNIO: CRC from synergy %04x - our calculation %04x\n", crcFromSynergy, crcHash.CRC16())
 	}
 
 	if crcFromSynergy != crcHash.CRC16() {
@@ -250,7 +265,7 @@ func SaveSYN() (bytes []byte, err error) {
 	}
 	// errors will implicitly show  up in the log but we need to explicitly log success
 	if synioVerbose {
-		logger.Infof("synio: STDUMP Success\n")
+		logger.Infof("SYNIO: STDUMP Success\n")
 	}
 
 	bytes = append(len_buf, cmos_buf...)

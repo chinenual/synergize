@@ -32,7 +32,7 @@ func DiagCOMTST() (err error) {
 	}
 	// errors will implicitly show  up in the log but we need to explicitly log success
 	if synioVerbose {
-		logger.Infof("synio: COMTST Success\n")
+		logger.Infof("SYNIO: COMTST Success\n")
 	}
 	return nil
 }

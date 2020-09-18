@@ -19,11 +19,11 @@ const (
 	Off_CMOS_VTRANS = 212 //
 )
 
-func CmosAddr(fieldOffset int) uint16 {
+func cmosAddr(fieldOffset int) uint16 {
 	return synAddrs.CMOS + uint16(fieldOffset)
 }
 
-func VramAddr(fieldOffset int) uint16 {
+func vramAddr(fieldOffset int) uint16 {
 	return synAddrs.VRAM + uint16(fieldOffset)
 }
 

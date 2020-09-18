@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"strconv"
 
+	"github.com/chinenual/synergize/logger"
+
 	"github.com/chinenual/synergize/data"
 	"github.com/orcaman/writerseeker"
 	"github.com/pkg/errors"
@@ -70,6 +72,9 @@ func initMaps() {
 func EnableVoicingMode() (vce data.VCE, err error) {
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** EnableVoicingMode\n")
+	}
 
 	initMaps()
 
@@ -104,6 +109,9 @@ func EnableVoicingMode() (vce data.VCE, err error) {
 func DisableVoicingMode() (err error) {
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** DisableVoicingMode\n")
+	}
 
 	// reset IMODE to normal "play" mode
 	if err = setIMODE(0x00); err != nil {
@@ -149,6 +157,9 @@ func SetOscSolo(mute, solo []bool) (oscStatus [16]bool, err error) {
 
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetOscSolo %v %v\n", mute, solo)
+	}
 
 	// solo takes precedence. If any soloed, then ignore mutes
 	for _, soloed := range solo {
@@ -189,6 +200,9 @@ func SetVNAME(name string) (err error) {
 
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetVNAME %s\n", name)
+	}
 
 	addr := voiceHeadAddr(data.Off_EDATA_VNAME)
 	var value = []byte(data.VcePaddedName(name))
@@ -209,6 +223,9 @@ func SetFilterEle(uiFilterIndex /*0 for Af, one-based osc# for Bf */ int, index 
 
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetFilterEle %d %d %d\n", uiFilterIndex, index, value)
+	}
 
 	addr := VramAddr(data.Off_VRAM_FILTAB) + uint16((uiFilterIndex*data.VRAM_FILTR_length)+(index-1))
 	if err = loadByte(addr, byte(value), "set FilterEle["+strconv.Itoa(uiFilterIndex)+"]["+strconv.Itoa(index)+"]"); err != nil {
@@ -231,6 +248,9 @@ func SetFilterArray(uiFilterIndex /*0 for Af, one-based osc# for Bf */ int, valu
 
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetFilterArray %d %v\n", uiFilterIndex, values)
+	}
 
 	var byteArray = make([]byte, len(values))
 	for i, v := range values {
@@ -255,6 +275,9 @@ func SetEnvelopes(osc /* 1-based*/ int, envs data.Envelope) (err error) {
 
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetEnvelopes %d %v\n", osc, envs)
+	}
 
 	// serialise the data
 	var writebuf = writerseeker.WriterSeeker{}
@@ -281,6 +304,10 @@ func SetOscFILTER(osc /*1-based*/ int, value int) (err error) {
 	}
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetOscFilter %d %d\n", osc, value)
+	}
+
 	addr := voiceHeadAddr(data.Off_EDATA_FILTER_arr) + uint16(osc-1)
 	if err = loadByte(addr, byte(value), "set FILTER["+strconv.Itoa(osc)+"]"); err != nil {
 		return
@@ -307,6 +334,10 @@ func setPatchType(index int) (patchBytes [16]byte, err error) {
 func SetPatchType(index int) (patchBytes [16]byte, err error) {
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetPatchType %d\n", index)
+	}
+
 	return setPatchType(index)
 }
 
@@ -315,6 +346,9 @@ func SetNumOscillators(newNumOsc int, patchType int) (patchBytes [16]byte, err e
 	// when we started voicing mode and if we are reusing one partially edited, we get those edits back)
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetNumOscilators %d %d\n", newNumOsc, patchType)
+	}
 	if err = setVoiceHeadDataByte("VOITAB", byte(newNumOsc-1)); err != nil {
 		return
 	}
@@ -330,6 +364,9 @@ func LoadVceVoicingMode(vce data.VCE) (err error) {
 	}
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** LoadVCEVoicingMode\n")
+	}
 	if err = data.LoadVceIntoEDATA(vce); err != nil {
 		return
 	}
@@ -436,6 +473,9 @@ func setVoiceHeadDataByte(fieldName string, value byte) (err error) {
 func SetVoiceHeadDataByte(fieldName string, value byte) (err error) {
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetVoiceHeadDataByte %s %d\n", fieldName, value)
+	}
 	return setVoiceHeadDataByte(fieldName, value)
 }
 
@@ -459,6 +499,9 @@ func setVoiceOscDataByte(osc /*1-based*/ int, fieldName string, value byte) (err
 func SetVoiceOscDataByte(osc /*1-based*/ int, fieldName string, value byte) (err error) {
 	c.Lock()
 	c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetVoiceOscDataByte %d %s %d\n", osc, fieldName, value)
+	}
 	return setVoiceOscDataByte(osc, fieldName, value)
 }
 
@@ -481,6 +524,9 @@ func SetVoiceVEQEle(index /* 1-based */ int, value int) (err error) {
 	}
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetVoiceVEQEle %d %d\n", index, value)
+	}
 	addr := voiceHeadAddr(data.Off_EDATA_VEQ) + uint16(index-1)
 	if err = loadByte(addr, byte(value), "set VEQ["+strconv.Itoa(index)+"]"); err != nil {
 		return
@@ -497,6 +543,9 @@ func SetVoiceKPROPEle(index /* 1-based */ int, value int) (err error) {
 	}
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetVoiceKPROPEle\n", index, value)
+	}
 	addr := voiceHeadAddr(data.Off_EDATA_KPROP) + uint16(index-1)
 	if err = loadByte(addr, byte(value), "set KPROP["+strconv.Itoa(index)+"]"); err != nil {
 		return
@@ -607,6 +656,9 @@ func SetOscWAVE(osc /*1-based*/ int, triangle bool) (err error) {
 	}
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetOscWAVE %d %v\n", osc, triangle)
+	}
 	var value byte
 	if value, err = getOscWAVEControl(osc); err != nil {
 		return
@@ -632,6 +684,9 @@ func SetOscKEYPROP(osc int, usesKeypro bool) (err error) {
 	}
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetOscKEYPROP %d %v\n", osc, usesKeypro)
+	}
 
 	var value byte
 	if value, err = getOscWAVEControl(osc); err != nil {
@@ -656,6 +711,9 @@ func SetEnvFreqLowVal(osc /* 1-based */ int, pointIndex /* 1-based */ int, value
 	}
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetEnvFreqLowVal %d %d %d\n", osc, pointIndex, value)
+	}
 
 	var addr = voiceOscAddr(osc, data.Off_EOSC_FreqPoints) + uint16(4*(pointIndex-1)+0)
 	if err = loadByte(addr, byte(value), "set EnvFreqLowVal["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
@@ -670,6 +728,9 @@ func SetEnvFreqUpVal(osc /* 1-based */ int, pointIndex /* 1-based */ int, value 
 	}
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetEnvFreqUpVal %d %d %d\n", osc, pointIndex, value)
+	}
 
 	var addr = voiceOscAddr(osc, data.Off_EOSC_FreqPoints) + uint16(4*(pointIndex-1)+1)
 	if err = loadByte(addr, byte(value), "set EnvFreqUpVal["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
@@ -684,6 +745,9 @@ func SetEnvFreqLowTime(osc /* 1-based */ int, pointIndex /* 1-based */ int, valu
 	}
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetEnvFreqLowTime %d %d %d\n", osc, pointIndex, value)
+	}
 
 	var addr = voiceOscAddr(osc, data.Off_EOSC_FreqPoints) + uint16(4*(pointIndex-1)+2)
 	if err = loadByte(addr, byte(value), "set EnvFreqLowTime["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
@@ -698,6 +762,9 @@ func SetEnvFreqUpTime(osc /* 1-based */ int, pointIndex /* 1-based */ int, value
 	}
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetEnvFreqUpTime %d %d %d\n", osc, pointIndex, value)
+	}
 
 	var addr = voiceOscAddr(osc, data.Off_EOSC_FreqPoints) + uint16(4*(pointIndex-1)+3)
 	if err = loadByte(addr, byte(value), "set EnvFreqUpTime["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
@@ -712,6 +779,9 @@ func SetEnvAmpLowVal(osc /* 1-based */ int, pointIndex /* 1-based */ int, value 
 	}
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetEnvAmpLowVal %d %d %d\n", osc, pointIndex, value)
+	}
 
 	var addr = voiceOscAddr(osc, data.Off_EOSC_AmpPoints) + uint16(4*(pointIndex-1)+0)
 	if err = loadByte(addr, byte(value), "set EnvAmpLowVal["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
@@ -726,6 +796,9 @@ func SetEnvAmpUpVal(osc /* 1-based */ int, pointIndex /* 1-based */ int, value b
 	}
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetEnvAmpUpVal %d %d %d\n", osc, pointIndex, value)
+	}
 
 	var addr = voiceOscAddr(osc, data.Off_EOSC_AmpPoints) + uint16(4*(pointIndex-1)+1)
 	if err = loadByte(addr, byte(value), "set EnvAmpUpVal["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
@@ -740,6 +813,9 @@ func SetEnvAmpLowTime(osc /* 1-based */ int, pointIndex /* 1-based */ int, value
 	}
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetEnvAmpLowTime %d %d %d\n", osc, pointIndex, value)
+	}
 
 	var addr = voiceOscAddr(osc, data.Off_EOSC_AmpPoints) + uint16(4*(pointIndex-1)+2)
 	if err = loadByte(addr, byte(value), "set EnvAmpLowTime["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
@@ -754,6 +830,9 @@ func SetEnvAmpUpTime(osc /* 1-based */ int, pointIndex /* 1-based */ int, value 
 	}
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetEnvAmpUpTime %d %d %d\n", osc, pointIndex, value)
+	}
 
 	var addr = voiceOscAddr(osc, data.Off_EOSC_AmpPoints) + uint16(4*(pointIndex-1)+3)
 	if err = loadByte(addr, byte(value), "set EnvAmpUpTime["+strconv.Itoa(osc)+"]["+strconv.Itoa(pointIndex)+"]"); err != nil {
@@ -768,6 +847,9 @@ func SetOscEnvLengths(osc /* 1-based */ int, freqLength int, ampLength int) (err
 	}
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetOscEnvLengths %d %d %d\n", osc, freqLength, ampLength)
+	}
 	var addr = voiceOscAddr(osc, data.Off_EOSC_FreqNPOINTS)
 	if err = loadByte(addr, byte(freqLength), "set EnvFreq NPOINTS["+strconv.Itoa(osc)+"]"); err != nil {
 		return
@@ -787,6 +869,9 @@ func SetEnvLoopPoint(osc /* 1-based */ int, env string, envtype int, sustainPt i
 
 	c.Lock()
 	defer c.Unlock()
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SetEnvLoopPoint %d %s %d %d\n", osc, env, sustainPt, loopPt)
+	}
 
 	var typeAddr uint16
 	var susAddr uint16
