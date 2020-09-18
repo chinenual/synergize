@@ -3,6 +3,7 @@ const { DownloadItem } = require('electron');
 const WINDOW_PAUSE = 1000;
 const LOAD_VCE_TIMEOUT = 20000; // loading in voicing mode can take a while...
 const TYPING_PAUSE = 500; // slow down typing just a bit to reduce stress on Synergy for non-debounced typing to separate fields
+const ADD_OSC_PAUSE = 2000;
 
 let app;
 
@@ -54,22 +55,22 @@ describe('Test voice page edits', () => {
             .click(cssQuoteId('#add-osc'))
             .waitForText(cssQuoteId('#nOsc'), '2')
 
-            .pause(TYPING_PAUSE)
+            .pause(ADD_OSC_PAUSE)
             .click(cssQuoteId('#add-osc'))
             .waitForText(cssQuoteId('#nOsc'), '3')
 
-            .pause(TYPING_PAUSE)
+            .pause(ADD_OSC_PAUSE)
             .click(cssQuoteId('#add-osc'))
             .waitForText(cssQuoteId('#nOsc'), '4')
 
-            .pause(TYPING_PAUSE)
+            .pause(ADD_OSC_PAUSE)
             .click(cssQuoteId('#add-osc'))
             .waitForText(cssQuoteId('#nOsc'), '5')
             .waitForVisible(cssQuoteId('#MUTE[5]'))
 
-            .pause(TYPING_PAUSE)
+            .pause(ADD_OSC_PAUSE)
             .click(cssQuoteId('#del-osc'))
-            .pause(TYPING_PAUSE)
+            .pause(ADD_OSC_PAUSE)
             .waitForText(cssQuoteId('#nOsc'), '4')
             .waitForVisible(cssQuoteId('#MUTE[4]'))
             .isVisible(cssQuoteId('#MUTE[5]')).should.eventually.equal(false)
@@ -269,8 +270,13 @@ describe('Test voice page edits', () => {
             await app.client
                 .getValue(cssQuoteId('#patchFOInputDSR[3]')).should.eventually.equal('')
                 .click(cssQuoteId('#patchFOInputDSR[3]')).keys('ArrowUp')
+
+                .pause(TYPING_PAUSE)
+                .pause(TYPING_PAUSE)
                 .getValue(cssQuoteId('#patchFOInputDSR[3]')).should.eventually.equal('1')
                 .click(cssQuoteId('#patchFOInputDSR[3]')).keys('ArrowUp')
+
+                .pause(TYPING_PAUSE)
                 .getValue(cssQuoteId('#patchFOInputDSR[3]')).should.eventually.equal('2')
         });
         it('out', async () => {
