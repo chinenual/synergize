@@ -12,7 +12,9 @@ const SCREEN_DIFFS_ARE_FAILURES = false;
 const APPNAME = 'Synergize';
 const PORT = 55555; // the port the main process will listen to
 const MOCKSYNIO = "-MOCKSYNIO";
-//const MOCKSYNIO = "";
+//const MOCKSYNIO = "-vst 53763";
+//const MOCKSYNIO = ""; // serial port
+
 const SERIALVERBOSE = "-SERIALVERBOSE";
 
 global.before(() => {

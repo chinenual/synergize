@@ -380,6 +380,9 @@ func recalcEq() (err error) {
 	if mock {
 		return
 	}
+	if synioVerbose {
+		logger.Infof("SYNIO: execute recalcEq (REAEQ)\n")
+	}
 	if err = command(OP_EXECUTE, "OP_EXECUTE"); err != nil {
 		return
 	}
@@ -395,6 +398,9 @@ func recalcEq() (err error) {
 func recalcFilters() (err error) {
 	if mock {
 		return
+	}
+	if synioVerbose {
+		logger.Infof("SYNIO: execute recalcFilters (REFIL)\n")
 	}
 	if err = command(OP_EXECUTE, "OP_EXECUTE"); err != nil {
 		return
@@ -412,6 +418,9 @@ func reloadPerformanceControls() (err error) {
 	if mock {
 		return
 	}
+	if synioVerbose {
+		logger.Infof("SYNIO: execute reloadPerformanceControls (SETCON)\n")
+	}
 	if err = command(OP_EXECUTE, "OP_EXECUTE"); err != nil {
 		return
 	}
@@ -427,6 +436,9 @@ func reloadPerformanceControls() (err error) {
 func reloadNoteGenerators() (err error) {
 	if mock {
 		return
+	}
+	if synioVerbose {
+		logger.Infof("SYNIO: execute reloadNoteGenerators (LDGENR)\n")
 	}
 	if err = command(OP_EXECUTE, "OP_EXECUTE"); err != nil {
 		return
@@ -498,7 +510,7 @@ func setVoiceOscDataByte(osc /*1-based*/ int, fieldName string, value byte) (err
 
 func SetVoiceOscDataByte(osc /*1-based*/ int, fieldName string, value byte) (err error) {
 	c.Lock()
-	c.Unlock()
+	defer c.Unlock()
 	if synioVerbose {
 		logger.Infof("SYNIO: ** SetVoiceOscDataByte %d %s %d\n", osc, fieldName, value)
 	}
