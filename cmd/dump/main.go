@@ -35,7 +35,7 @@ func main() {
 	}
 	path := os.Args[3]
 
-	b, err = synio.blockDump(uint16(start), uint16(length), "dump")
+	b, err = synio.BlockDump(uint16(start), uint16(length), "dump")
 	if err != nil {
 		log.Panic(err)
 	}
