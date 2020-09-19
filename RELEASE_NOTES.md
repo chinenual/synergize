@@ -11,6 +11,11 @@ permalink: /docs/release-notes
 
 ## 2.2.0
 
+* Fixes to the serial communications interface that results in far
+  fewer problems (often reported as "timeouts" in previous versions of
+  Synergize).  This is a _signifacant_ improvement, especially when
+  using the iPad control surface interface. All users of older
+  verisons are encouraged to upgrade.
 * Support for connecting to the [Synergia](http://www.webaudiomodules.org/wamsynths/synergia) virtual Synergy -- a chip-level emulation
   of the Synergy that runs as a VST or AU virtual instrument.
 * Support for Bonjour/Zeroconf automatic network configuration.
@@ -25,6 +30,7 @@ permalink: /docs/release-notes
 * The UI no longer shows the firmware version in the upper left
     corner of the menu bar. Instead it shows the name of the
     connected synergy and control surface.
+* The default configuration for the synergize.log is much less verbose
 * Fixes [issue #3](https://github.com/chinenual/synergize/issues/3):
   removes a limitation on macos: serial port configuration (e.g. baud rate) can be
   changed without requiring the application to be restarted.
