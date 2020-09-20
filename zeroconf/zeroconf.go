@@ -68,7 +68,7 @@ func CloseServer() {
 func StartServer(oscListenPort uint, synergyName string) (err error) {
 
 	CloseServer()
-	serviceName := synergyName + " (Synergize)"
+	serviceName := "Synergize " + synergyName
 	serviceName = strings.ReplaceAll(serviceName, ".", ",")
 	logger.Infof("ZEROCONF: Starting Zeroconf registration server... for service %s (%s) on port %d\n", serviceName, synergyName, oscListenPort)
 
@@ -149,20 +149,25 @@ func StartListener(vstServiceTypePrefix string) (err error) {
 		return true
 	}
 
-	// we begin with short lived queries since (on MacOS at least), the OS might block the initial responses
+	// we begin with short lived generic service discovery queries since (on MacOS at least), the OS might block the initial responses
 	// (until a user agrees to allow the application to connect to the network).  So we loop with 5s timeouts
 	// allowing the listen to resend the query each time -- until we get a response for one of the listens.
-	// Then we allow the listeners to run "forever"
+	// Then we allow the service-specific listeners to run "forever"
 	go func() {
+		//logger.Infof("ZEROCONF: sleeping 5s.... ")
+		//time.Sleep(time.Second * 5)
 		for {
 			var timeout time.Duration
+			var wg sync.WaitGroup
+
+			timeout = 0
 			if len(oscServices.m) == 0 && len(vstServices.m) == 0 {
-				timeout = time.Second * 5
-				logger.Infof("ZEROCONF: no results yet - sending queries\n")
+				timeout = time.Second * 10
+				logger.Infof("ZEROCONF: no results yet - sending serviceDiscovery query\n")
 			} else {
 				logger.Infof("ZEROCONF: got first response - starting daemon\n")
 			}
-			var wg sync.WaitGroup
+
 			wg.Add(2)
 			go func(wg *sync.WaitGroup) {
 				defer wg.Done()
@@ -176,6 +181,7 @@ func StartListener(vstServiceTypePrefix string) (err error) {
 					return
 				}
 			}(&wg)
+
 			wg.Wait()
 		}
 	}()
@@ -211,7 +217,14 @@ func listenFor(timeout time.Duration, list *syncMap, serviceType string, validNa
 	}
 
 	logger.Debugf("ZEROCONF: ListenFor %s\n", serviceType)
-	if err = dnssd.LookupType(ctx, serviceType, addFn, rmvFn); err != nil {
+	type lookupFunc = func(context.Context, string, dnssd.AddServiceFunc, dnssd.RmvServiceFunc) error
+	var lookup lookupFunc
+	if timeout == 0 {
+		lookup = dnssd.LookupTypeUnicast
+	} else {
+		lookup = dnssd.LookupType
+	}
+	if err = lookup(ctx, serviceType, addFn, rmvFn); err != nil {
 		if strings.Contains(err.Error(), "context deadline exceeded") {
 			logger.Debugf("ZEROCONF: ListenFor %s %v\n", serviceType, err)
 		} else {
