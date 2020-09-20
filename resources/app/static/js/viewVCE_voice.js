@@ -796,11 +796,29 @@ ${freqDAG}
 	},
 
 	connectSynergy: function (successCallback) {
-		return viewVCE_voice._withZeroconf("Choose Synergy", null, "getSynergy", viewVCE_voice.raw_connectSynergy, viewVCE_voice.connectSynergy, successCallback);
+		var wasDisconnectedSynergy = index.synergyName === null;
+		return viewVCE_voice._withZeroconf("Choose Synergy", null, "getSynergy",
+			viewVCE_voice.raw_connectSynergy,
+			viewVCE_voice.connectSynergy,
+			function() {
+				if (wasDisconnectedSynergy){
+					index.checkVersion(wasDisconnectedSynergy,false/*don't care*/);
+				}
+				successCallback();
+			});
 	},
 
 	voicingModeOn: function () {
-		return viewVCE_voice._withZeroconf("Choose Synergy", "Choose Control Surface", "getSynergyAndControlSurface", viewVCE_voice.raw_voicingModeOn, viewVCE_voice.voicingModeOn, function () { });
+		var wasDisconnectedSynergy = index.synergyName === null;
+		var wasDisconnectedCs = index.controlSurfaceName === null;
+		return viewVCE_voice._withZeroconf("Choose Synergy", "Choose Control Surface", "getSynergyAndControlSurface",
+			viewVCE_voice.raw_voicingModeOn,
+			viewVCE_voice.voicingModeOn,
+			function() {
+				if (wasDisconnectedSynergy||wasDisconnectedCs) {
+					index.checkVersion(wasDisconnectedSynergy,wasDisconnectedCs);
+				}
+			});
 	},
 
 	raw_connectSynergy: function (zeroconfChoice, ignored, callback) {

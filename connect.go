@@ -191,7 +191,6 @@ func ConnectToSynergy(choice *zeroconf.Service) (err error) {
 					prefsUserPreferences.SerialPort,
 					prefsUserPreferences.SerialBaud)
 				logger.Errorf(err.Error())
-				CheckForNewVersion(true, false)
 				return
 			}
 		} else {
@@ -202,11 +201,9 @@ func ConnectToSynergy(choice *zeroconf.Service) (err error) {
 					choice.InstanceName, choice.HostName,
 					choice.Port)
 				logger.Errorf(err.Error())
-				CheckForNewVersion(true, false)
 				return
 			}
 		}
-		CheckForNewVersion(true, true)
 		logger.Infof("Connected to Synergy %s\n", io.SynergyName())
 	}
 	return

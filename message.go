@@ -41,6 +41,23 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 	case "cancelPreferences":
 		_ = prefs_w.Hide()
 
+	case "checkVersion":
+		var args struct {
+			SynergyWasDisconnected        bool
+			ControlSurfaceWasDisconnected bool
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if args.SynergyWasDisconnected || (args.ControlSurfaceWasDisconnected && prefsUserPreferences.UseOsc) {
+			CheckForNewVersion(true, io.SynergyConnectionType(), osc.ControlSurfaceConfigured())
+		}
+		payload = "ok"
+
 	case "connectSynergy":
 		var args struct {
 			ZeroconfChoice *zeroconf.Service
@@ -177,7 +194,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		payload = struct {
 			Version             string
 			NewVersionAvailable bool
-		}{AppVersion, CheckForNewVersion(false, false)}
+		}{AppVersion, CheckForNewVersion(false, io.SynergyConnectionType(), osc.ControlSurfaceConfigured())}
 
 	case "isHTTPDebug":
 		payload = prefsUserPreferences.HTTPDebug
@@ -798,7 +815,6 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				logger.Infof("ZEROCONF: config Control Surface selected by user: %#v\n", *args.ZeroconfCs)
 				osc.SetControlSurface((*args.ZeroconfCs).InstanceName, (*args.ZeroconfCs).HostName, (*args.ZeroconfCs).Port)
 			}
-
 			var vce data.VCE
 			payload = nil
 			csEnabled := osc.ControlSurfaceConfigured()

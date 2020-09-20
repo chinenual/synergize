@@ -31,6 +31,22 @@ func SynergyConfigured() bool {
 	return conn != nil
 }
 
+func SynergyConnectionType() string {
+	if conn == nil {
+		return "none"
+	} else {
+		switch (interface{}(conn.impl)).(type) {
+		case SerialIo:
+			return "serial"
+		case SocketIo:
+			return "vst"
+		case MockIo:
+			return "mock"
+		default:
+			return "unknown"
+		}
+	}
+}
 func SynergyName() (name string) {
 	if conn != nil {
 		name = conn.name

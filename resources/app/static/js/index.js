@@ -523,7 +523,14 @@ let index = {
 			}
 		});
 	},
+
+	synergyName: null,
+	controlSurfaceName: null,
+
 	updateConnectionStatus: function (synergyName, csName) {
+		index.synergyName = (synergyName == null || synergyName === "") ? null : synergyName;
+		index.contronSurfaceName = (csName == null || csName === "") ? null : csName;
+
 		console.log("update status: " + synergyName + " " + csName);
 		document.getElementById("synergyName").innerHTML = synergyName;
 		document.getElementById("controlSurfaceName").innerHTML = csName;
@@ -544,6 +551,24 @@ let index = {
 			$('#controlSurfaceStatus').show();
 			$('#disconnectControlSurfaceMenuItem').removeClass('disabled');
 		}
+	},
+
+	checkVersion: function(synergyWasDisconnected, controlSurfaceWasDisconnected) {
+		console.log("checkVersion " + synergyWasDisconnected + " " + controlSurfaceWasDisconnected);
+		let message = { "name": "checkVersion",
+			"payload": {
+			"SynergyWasDisconnected" : synergyWasDisconnected,
+				"ControlSurfaceWasDisconnected": controlSurfaceWasDisconnected
+			}
+		};
+		astilectron.sendMessage(message, function (message) {
+			if (message.name === "error") {
+				index.errorNotification(message.payload);
+				return
+			} else {
+				return
+			}
+		});
 	},
 
 	fileDialog: function () {
