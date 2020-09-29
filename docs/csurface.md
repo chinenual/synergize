@@ -20,11 +20,12 @@ to your tablet following the instructions at [the TouchOSC home site](https://he
 
 Synergize-TouchOSC uses an OSC connection.  Ensure both your tablet
 and the computer running Synergize have good network connections and
-are on the same local network. 
+are on the same local network.
+
 
 ## TouchOSC side configuration
 
-In TouchOSC, configure OSC:
+In TouchOSC, configure OSC.  
 
 * `Enabled` - must be turned on.
 
@@ -36,6 +37,10 @@ In TouchOSC, configure OSC:
 * `Port (incoming)` - the network port Synergize will use to send data
   to TouchOSC.
   Must match the `Control Surface Port` configuration in Synergize.
+
+Synergize advertises itself via Bonjour/Zeroconf, so the `Host` and `Port
+(outgoing)` settings can be selected by a simple selection of the
+Synergize instance displayed at the bottom of the configuration page.
 
 ## Synergize side configuration
 
@@ -49,6 +54,11 @@ use the external control surface.
 recieve data from the control surface.  Must match the `Port
 (outgoing)` setting in TouchOSC.
 
+* `Zeroconf Control Surface` - when checked, Synergize will use
+  Bonjour/Zeroconf to find available TouchOSC instances.  If not 
+  checked you must configure the host and port with the following
+  options:
+  
 * `Control Surface Address` - the IP address of the control surface.
 TouchOSC reports this as `Local IP address`.
 

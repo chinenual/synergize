@@ -17,6 +17,20 @@ Synergize connects to a Synergy II+ via its RS232 serial port.  It is tested wit
 
 You'll also need a null modem serial cable and possibly a USB serial device depending on your computer's capablities. See [HARDWARE](hardware.md) for some details.
 
+### Synergia VST
+
+Alternatively (or additionally), Synergize can also connect to the
+Synergia virtual instrument - a chip level emulation of the Synergy.
+Due to the nature of the way they communicate, Synergia and Synergize
+must run on the same computer.  Multiple instances of Synergia can be
+running at the same time, but Synergize can only connect to one at a
+time.  Synergize finds Synergia instances via the Bonjour/Zeroconf
+protocol.
+
+To enable access to the Synergia VST, select the `Zeroconf VST` option on the
+Preferences menu.   Synergize can connect to Synergia only when the
+`VRAM` button on Synergia is enabled.
+
 ### Operating Systems
 
 Synergize has been tested on:
@@ -51,7 +65,9 @@ Use the `Help -> Preferences` menu to configure Synergize to your local setup.
 
 ### Serial Port
 
-Set your Serial Port device here. 
+Set your Serial Port device here.   If you don't have a hardware
+synergy and plan to use the Synergia virtual instrument instead, leave
+this blank.
 
 ### Baud Rate
 
@@ -63,7 +79,8 @@ This tells Synergize where to find your voice library (Synergize defaults your H
 
 ## Test your connection to the Synergy
 
-You can test the connection by selecting the `Connect->Connect to Synergy` menu.  If successful, Synergize will report the firmware version of the connected Synergy in the upper left pane of the display.
+You can test the connection by selecting the `Connect->Connect to
+Synergy` menu.  If successful, Synergize will display the connection information in the upper left pane of the display.
 
 It is not necessary to explicitly connect in this way. Synergize will connect the first time you invoke  a command that needs to communicate with the Synergy.
 
