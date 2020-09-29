@@ -25,6 +25,7 @@ type syncMap struct {
 
 var vstServiceType = "_synergia._tcp"
 
+var sawNetworkActivity = false
 var oscServices syncMap
 var vstServices syncMap
 
@@ -161,7 +162,7 @@ func StartListener(vstServiceTypePrefix string) (err error) {
 			var wg sync.WaitGroup
 
 			timeout = 0
-			if len(oscServices.m) == 0 && len(vstServices.m) == 0 {
+			if !sawNetworkActivity {
 				timeout = time.Second * 10
 				logger.Infof("ZEROCONF: no results yet - sending serviceDiscovery query\n")
 			} else {
@@ -199,6 +200,7 @@ func listenFor(timeout time.Duration, list *syncMap, serviceType string, validNa
 	defer cancel()
 
 	addFn := func(srv dnssd.Service) {
+		sawNetworkActivity = true
 		if validName(srv.Name) {
 			logger.Infof("ZEROCONF: Add	%s	%s	%s\n", srv.Domain, srv.Type, srv.Name)
 			add(list, &srv)
@@ -208,6 +210,7 @@ func listenFor(timeout time.Duration, list *syncMap, serviceType string, validNa
 	}
 
 	rmvFn := func(srv dnssd.Service) {
+		sawNetworkActivity = true
 		if validName(srv.Name) {
 			logger.Infof("ZEROCONF: Rmv	%s	%s	%s\n", srv.Domain, srv.Type, srv.Name)
 			remove(list, &srv)
@@ -220,9 +223,9 @@ func listenFor(timeout time.Duration, list *syncMap, serviceType string, validNa
 	type lookupFunc = func(context.Context, string, dnssd.AddServiceFunc, dnssd.RmvServiceFunc) error
 	var lookup lookupFunc
 	if timeout == 0 {
-		lookup = dnssd.LookupTypeUnicast
-	} else {
 		lookup = dnssd.LookupType
+	} else {
+		lookup = dnssd.LookupTypeUnicast
 	}
 	if err = lookup(ctx, serviceType, addFn, rmvFn); err != nil {
 		if strings.Contains(err.Error(), "context deadline exceeded") {
