@@ -20,16 +20,34 @@ You'll also need a null modem serial cable and possibly a USB serial device depe
 ### Synergia VST
 
 Alternatively (or additionally), Synergize can also connect to the
-Synergia virtual instrument - a chip level emulation of the Synergy.
-Due to the nature of the way they communicate, Synergia and Synergize
-must run on the same computer.  Multiple instances of Synergia can be
-running at the same time, but Synergize can only connect to one at a
-time.  Synergize finds Synergia instances via the Bonjour/Zeroconf
-protocol.
+[Synergia](https://jariseon.github.io/synergia) virtual instrument - a
+chip level emulation of the Synergy.  Due to the nature of the way
+they communicate, Synergia and Synergize must run on the same
+computer.  Synergize
+finds Synergia instances via the Bonjour/Zeroconf protocol.
 
 To enable access to the Synergia VST, select the `Zeroconf VST` option on the
 Preferences menu.   Synergize can connect to Synergia only when the
 `VRAM` button on Synergia is enabled.
+
+When Synergize needs to connect to a Synergy and the `Zeroconf VST`
+option is enabled, it will present a list of all available Synergies
+(both via the local serial port and virtual ones via Synergia).  You
+can then select which one to connect to.  If the one you wish to
+connect to is not included in the selection, click `Rescan` and
+Synergize will try again.
+
+A hardware Synergy and one or more instances of Synergia can be running at the same
+time, but Synergize can only connect to one at a time. 
+If you are connected to a Synergy or Synergia instance and wish to
+connect to a different one, first disconnect via the
+`Connect->Disconnect Synergy` menu option.
+
+<p class="callout">
+<b>NOTE:</b> If Synergize cannot find a Synergia instance, toggle the
+VRAM switch in Synergia and try again (turn the VRAM button off, pause, then turn
+it back on, then Rescan from Synergize).
+</p>
 
 ### Operating Systems
 

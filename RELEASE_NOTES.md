@@ -16,7 +16,7 @@ permalink: /docs/release-notes
   Synergize).  This is a _signifacant_ improvement, especially when
   using the iPad control surface interface. All users of older
   verisons are encouraged to upgrade.
-* Support for connecting to the [Synergia](http://www.webaudiomodules.org/wamsynths/synergia) virtual Synergy -- a chip-level emulation
+* Support for connecting to the [Synergia](https://jariseon.github.io/synergia) virtual Synergy -- a chip-level emulation
   of the Synergy that runs as a VST or AU virtual instrument.
 * Support for Bonjour/Zeroconf automatic network configuration.
     * Synergize advertises itself so that TouchOSC can connect to it with a

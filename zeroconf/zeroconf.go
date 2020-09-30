@@ -225,6 +225,7 @@ func listenFor(timeout time.Duration, list *syncMap, serviceType string, validNa
 	if timeout == 0 {
 		lookup = dnssd.LookupType
 	} else {
+		// NOTE: requires forked dnssd (chinenual/dnssd) library
 		lookup = dnssd.LookupTypeUnicast
 	}
 	if err = lookup(ctx, serviceType, addFn, rmvFn); err != nil {
