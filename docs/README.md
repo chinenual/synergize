@@ -32,6 +32,10 @@ Edit existing voices or create your own from scratch.
 * Load and save synergy "state" (SYN files).  This preserves
 sequencer, portamento, vibrato and other performance customizations.
 
+* Interfaces with both hardware Synergies and the
+  [Synergia](https://jariseon.github.io/synergia) virtual Synergy -- a
+  chip-level emulation of the Synergy that runs as a VST or AU virtual instrument.
+
 Note: Synergize does not itself include the original voice libraries -- download a copy from one of the links below.
 
 ## Download
@@ -73,13 +77,5 @@ requirements and application usage.
 Synergize is free and open source software released under the [MIT](LICENSE)
 license.
 
-## Known Issues
-
-See [HARDWARE](hardware.md) for some serial port related troubleshooting guidelines.
-* Due to the mysteries of serial port communication, attempts to save or load files to the Synergy will sometimes fail (often reporting a TIMEOUT).  If this happens, a second try will usually succeed. Fixes 
-
-* See the
-[Release Notes](https://github.com/chinenual/synergize/releases)
-for some caveats regarding the Linux builds.
 
 
