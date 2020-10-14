@@ -10,6 +10,7 @@ import (
 )
 
 type Preferences struct {
+	UseSerial          bool
 	SerialPort         string
 	SerialBaud         uint
 	LibraryPath        string
@@ -29,6 +30,7 @@ var preferencesPathname = getWorkingDirectory() + "/preferences.json"
 
 var prefsUserPreferences = Preferences{
 	UseOsc:          false,
+	UseSerial:       true,
 	SerialBaud:      9600,
 	OscAutoConfig:   false,
 	OscPort:         8000,

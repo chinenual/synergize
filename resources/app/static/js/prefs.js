@@ -21,8 +21,10 @@ let prefs = {
 
 				//console.log("loaded preferences: " + os + ": " + JSON.stringify(preferences))
 
+				document.getElementById("useSerial").checked = preferences.UseSerial ? "checked" : "";
 				document.getElementById("serialPort").value = preferences.SerialPort;
 				document.getElementById("serialBaud").value = preferences.SerialBaud;
+
 				document.getElementById("libraryPath").value = preferences.LibraryPath;
 
 				document.getElementById("vstAutoConfig").checked = preferences.VstAutoConfig ? "checked" : "";
@@ -60,8 +62,13 @@ let prefs = {
 	},
 
 	toggleOsc: function () {
+		var useSerialChecked = document.getElementById("useSerial").checked;
 		var useOscChecked = document.getElementById("useOsc").checked;
 		var autoChecked = document.getElementById("oscAutoConfig").checked;
+
+
+		document.getElementById("serialPort").disabled = (!useSerialChecked);
+		document.getElementById("serialBaud").disabled = (!useSerialChecked);
 
 		document.getElementById("oscPort").disabled = (!useOscChecked);
 		document.getElementById("oscAutoConfig").disabled = (!useOscChecked);
@@ -115,6 +122,7 @@ let prefs = {
 		let message = {
 			"name": "savePreferences",
 			"payload": {
+				"UseSerial": document.getElementById("useSerial").checked,
 				"SerialPort": document.getElementById("serialPort").value,
 				"SerialBaud": parseInt(document.getElementById("serialBaud").value, 10),
 				"LibraryPath": document.getElementById("libraryPath").value,

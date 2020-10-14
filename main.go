@@ -151,6 +151,7 @@ func refreshNavPane(path string) {
 
 func recordIo(f func(string) error, arg string) (err error) {
 	// nil means use "preferences" config
+	prefsUserPreferences.UseSerial = true
 	if err = ConnectToSynergy(nil); err != nil {
 		return
 	}
@@ -204,6 +205,7 @@ func main() {
 		// run the command line tests instead of the Electron app:
 		if *synver {
 			// nil means use "preferences" config
+			prefsUserPreferences.UseSerial = true
 			if err = ConnectToSynergy(nil); err != nil {
 				return
 			}
@@ -214,6 +216,7 @@ func main() {
 			os.Exit(code)
 		} else if *comtst {
 			// nil means use "preferences" config
+			prefsUserPreferences.UseSerial = true
 			if err = ConnectToSynergy(nil); err != nil {
 				return
 			}
@@ -221,6 +224,7 @@ func main() {
 			os.Exit(0)
 		} else if *looptst {
 			// nil means use "preferences" config
+			prefsUserPreferences.UseSerial = true
 			if err = ConnectToSynergy(nil); err != nil {
 				return
 			}
@@ -228,6 +232,7 @@ func main() {
 			os.Exit(0)
 		} else if *linktst {
 			// nil means use "preferences" config
+			prefsUserPreferences.UseSerial = true
 			if err = ConnectToSynergy(nil); err != nil {
 				return
 			}
@@ -455,7 +460,7 @@ func main() {
 				BackgroundColor: astikit.StrPtr("#ccc"),
 				Center:          astikit.BoolPtr(true),
 				Show:            astikit.BoolPtr(false),
-				Height:          astikit.IntPtr(650),
+				Height:          astikit.IntPtr(700),
 				Width:           astikit.IntPtr(800),
 				Custom: &astilectron.WindowCustomOptions{
 					HideOnClose: astikit.BoolPtr(true),

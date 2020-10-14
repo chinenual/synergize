@@ -96,7 +96,7 @@ func GetSynergyConfig() (hasDevice bool, alreadyConfigured bool, name string, ch
 	if !io.SynergyConfigured() {
 		if prefsUserPreferences.VstAutoConfig {
 			vstServices := zeroconf.GetVstServices()
-			if false && len(vstServices) == 1 && prefsUserPreferences.SerialPort == "" {
+			if false && len(vstServices) == 1 && (!prefsUserPreferences.UseSerial) {
 				logger.Infof("ZEROCONF: auto config VST: %#v\n", vstServices[0])
 				firmwareVersion = ""
 				if err = synio.SetSynergyVst(vstServices[0].InstanceName, vstServices[0].HostName, vstServices[0].Port,
@@ -105,7 +105,7 @@ func GetSynergyConfig() (hasDevice bool, alreadyConfigured bool, name string, ch
 				}
 			} else {
 				logger.Infof("ZEROCONF: zero or more than one VST: %#v\n", vstServices)
-				if prefsUserPreferences.SerialPort != "" {
+				if prefsUserPreferences.UseSerial {
 					var pseudoEntry zeroconf.Service
 					pseudoEntry.InstanceName = "serial-port"
 					list := append([]zeroconf.Service{pseudoEntry}, vstServices...)
