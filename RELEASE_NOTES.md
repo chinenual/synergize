@@ -30,7 +30,7 @@ permalink: /docs/release-notes
 * The UI no longer shows the firmware version in the upper left
     corner of the menu bar. Instead it shows the name of the
     connected synergy and control surface.
-* The default configuration for the synergize.log is much less verbose
+* The default configuration for the `synergize.log` is much less verbose
 * Fixes [issue #3](https://github.com/chinenual/synergize/issues/3):
   removes a limitation on macos: serial port configuration (e.g. baud rate) can be
   changed without requiring the application to be restarted.
