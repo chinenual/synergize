@@ -57,7 +57,7 @@ replicates everything you can do in SYNHCS.
 With version 2.1.0, Synergize supports an tablet based "control
 surface", providing faders akin to the original GDS user interface.
 Make your Synergy a bit more like a GDS with Synergize.
-See [Control Surface](csurface.html) for details.
+See [Control Surface](control-surface.md) for details.
 
 ## Features
 
@@ -72,7 +72,7 @@ See [Control Surface](csurface.html) for details.
 ### Librarian (VCE and CRT files)
 * View voice settings
 * Load "carts" and play them. The original DK voice libraries are
-  available online. See [Voice Library](voice-library.html) for
+  available online. See [Voice Library](voice-library.md) for
   links.
 * Create your own "carts" of 24 voices
 
