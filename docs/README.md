@@ -1,6 +1,6 @@
 ---
 nav_exclude: true
-layout: landing
+layout: default
 permalink: /
 ---
 <!--![Go](https://github.com/chinenual/synergize/workflows/Go/badge.svg)-->

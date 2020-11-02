@@ -57,7 +57,7 @@ replicates everything you can do in SYNHCS.
 With version 2.1.0, Synergize supports an tablet based "control
 surface", providing faders akin to the original GDS user interface.
 Make your Synergy a bit more like a GDS with Synergize.
-See [Control Surface](control-surface.md) for details.
+See [Control Surface](csurface.md) for details.
 
 ## Features
 
