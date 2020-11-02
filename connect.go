@@ -75,60 +75,53 @@ func DisconnectControlSurface() (err error) {
 	return
 }
 
-func ConnectSynergy(zeroconfConfig zeroconf.Service) (err error) {
-	if zeroconfConfig.InstanceName == "serial-port" {
-		logger.Infof("ZEROCONF: using Synergy preferences config %s at %d\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
-		if err = synio.SetSynergySerialPort(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud,
-			true, *serialVerboseFlag, *mockSynio); err != nil {
-			return
-		}
-	} else {
-		logger.Infof("ZEROCONF: using Synergy zeroconf config %s (%s:%d)\n", zeroconfConfig.InstanceName, zeroconfConfig.HostName, zeroconfConfig.Port)
-		if err = synio.SetSynergyVst(zeroconfConfig.InstanceName, zeroconfConfig.HostName, zeroconfConfig.Port,
-			true, *serialVerboseFlag, *mockSynio); err != nil {
-			return
-		}
-	}
-	return
-}
-
 func GetSynergyConfig() (hasDevice bool, alreadyConfigured bool, name string, choices *[]zeroconf.Service, err error) {
 	if !io.SynergyConfigured() {
-		if prefsUserPreferences.VstAutoConfig {
+		firmwareVersion = ""
+		if *vst != 0 {
+			// VST command line option
+			logger.Infof("ZEROCONF: using -VST command line config %d\n", *vst)
+			if err = synio.SetSynergyVst(fmt.Sprintf("VST localhost:%d", *vst), "localhost", *vst,
+				true, *serialVerboseFlag, *mockSynio); err != nil {
+				return
+			}
+		} else if prefsUserPreferences.UseVst && prefsUserPreferences.VstAutoConfig {
+			// VST via Zeroconf and possibly a serial port if configured
 			vstServices := zeroconf.GetVstServices()
-			if false && len(vstServices) == 1 && (!prefsUserPreferences.UseSerial) {
-				logger.Infof("ZEROCONF: auto config VST: %#v\n", vstServices[0])
-				firmwareVersion = ""
-				if err = synio.SetSynergyVst(vstServices[0].InstanceName, vstServices[0].HostName, vstServices[0].Port,
+			logger.Infof("ZEROCONF: zero or more than one VST: %#v\n", vstServices)
+			if prefsUserPreferences.UseSerial {
+				var pseudoEntry zeroconf.Service
+				pseudoEntry.InstanceName = "serial-port"
+				list := append([]zeroconf.Service{pseudoEntry}, vstServices...)
+				choices = &list
+			} else {
+				choices = &vstServices
+			}
+		} else if prefsUserPreferences.UseVst {
+			// VST hardcoded port and possibly a serial port if configured
+			var pseudoEntry zeroconf.Service
+			pseudoEntry.InstanceName = "Synergia VST"
+			pseudoEntry.Port = prefsUserPreferences.VstPort
+			pseudoEntry.HostName = "localhost"
+			list := []zeroconf.Service{pseudoEntry}
+			if prefsUserPreferences.UseSerial {
+				var pseudoEntry zeroconf.Service
+				pseudoEntry.InstanceName = "serial-port"
+				list = append([]zeroconf.Service{pseudoEntry}, list...)
+				choices = &list
+			} else {
+				// no hardware - connect to the configured VST
+				if err = synio.SetSynergyVst(fmt.Sprintf("Synergia (localhost:%d)", prefsUserPreferences.VstPort), "localhost", prefsUserPreferences.VstPort,
 					true, *serialVerboseFlag, *mockSynio); err != nil {
 					return
-				}
-			} else {
-				logger.Infof("ZEROCONF: zero or more than one VST: %#v\n", vstServices)
-				if prefsUserPreferences.UseSerial {
-					var pseudoEntry zeroconf.Service
-					pseudoEntry.InstanceName = "serial-port"
-					list := append([]zeroconf.Service{pseudoEntry}, vstServices...)
-					choices = &list
-				} else {
-					choices = &vstServices
 				}
 			}
 		} else {
-			firmwareVersion = ""
-			if *vst != 0 {
-				// VST command line option
-				logger.Infof("ZEROCONF: VST zeroconf disabled - using -VST command line config %d\n", *vst)
-				if err = synio.SetSynergyVst(fmt.Sprintf("VST localhost:%d", *vst), "localhost", *vst,
-					true, *serialVerboseFlag, *mockSynio); err != nil {
-					return
-				}
-			} else {
-				logger.Infof("ZEROCONF: VST zeroconf disabled - using preferences config %s at %d\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
-				if err = synio.SetSynergySerialPort(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud,
-					true, *serialVerboseFlag, *mockSynio); err != nil {
-					return
-				}
+			// Serial port command line option
+			logger.Infof("ZEROCONF: using -port and -baud commnd line config %s at %d\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
+			if err = synio.SetSynergySerialPort(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud,
+				true, *serialVerboseFlag, *mockSynio); err != nil {
+				return
 			}
 		}
 	}
@@ -176,6 +169,24 @@ func GetFirmwareVersion() (id string, err error) {
 			}
 			firmwareVersion = fmt.Sprintf("%d.%d", bytes[0], bytes[1])
 			logger.Infof("Connected to Synergy, firmware version: %s\n", firmwareVersion)
+		}
+	}
+	return
+}
+
+func ConnectSynergy(zeroconfConfig zeroconf.Service) (err error) {
+	// FIXME:ConnectSynergy and ConnectToSynergy are more or less identical except for the "if already connected" check.  Consolidate them.
+	if zeroconfConfig.InstanceName == "serial-port" {
+		logger.Infof("ZEROCONF: using Synergy preferences config %s at %d\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
+		if err = synio.SetSynergySerialPort(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud,
+			true, *serialVerboseFlag, *mockSynio); err != nil {
+			return
+		}
+	} else {
+		logger.Infof("ZEROCONF: using Synergy zeroconf config %s (%s:%d)\n", zeroconfConfig.InstanceName, zeroconfConfig.HostName, zeroconfConfig.Port)
+		if err = synio.SetSynergyVst(zeroconfConfig.InstanceName, zeroconfConfig.HostName, zeroconfConfig.Port,
+			true, *serialVerboseFlag, *mockSynio); err != nil {
+			return
 		}
 	}
 	return
