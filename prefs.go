@@ -19,7 +19,9 @@ type Preferences struct {
 	OscPort            uint
 	OscCSurfaceAddress string
 	OscCSurfacePort    uint
+	UseVst             bool
 	VstAutoConfig      bool
+	VstPort            uint
 
 	// hidden from user
 	HTTPDebug      bool
@@ -35,7 +37,9 @@ var prefsUserPreferences = Preferences{
 	OscAutoConfig:   false,
 	OscPort:         8000,
 	OscCSurfacePort: 9000,
-	VstAutoConfig:   false,
+	VstAutoConfig:   true,
+	UseVst:          true,
+	VstPort:         0,
 
 	VstServiceType: "_synergia._tcp",
 }

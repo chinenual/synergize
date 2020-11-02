@@ -18,6 +18,14 @@ permalink: /docs/release-notes
   verisons are encouraged to upgrade.
 * Support for connecting to the [Synergia](https://jariseon.github.io/synergia) virtual Synergy -- a chip-level emulation
   of the Synergy that runs as a VST or AU virtual instrument.
+    * During beta testing, we've noticed that Synergize sometimes does
+      not discover a running Synergia instance via
+      Bonjour/Zeroconf. Often, toggling the VRAM button in Synergia is
+      enough to get Synergize's attention. If that does not work,
+      however, you can hardcode Synergia's network port (shown in
+      green text under the VRAM button) via Synergize's
+      Help->Preferences menu.   We are tracking this issue as
+      [issue #13](https://github.com/chinenual/synergize/issues/13). 
 * Support for Bonjour/Zeroconf automatic network configuration.
     * Synergize advertises itself so that TouchOSC can connect to it with a
       single touch. 

@@ -1,152 +1,171 @@
 let prefs = {
-	init: function () {
-		// Wait for astilectron to be ready
-		document.addEventListener('astilectron-ready', function () {
+        init: function () {
+            // Wait for astilectron to be ready
+            document.addEventListener('astilectron-ready', function () {
 
-			let message = {
-				"name": "getPreferences",
-				"payload": ""
-			};
-			var preferences;
+                let message = {
+                    "name": "getPreferences",
+                    "payload": ""
+                };
+                var preferences;
 
-			// Send message
-			astilectron.sendMessage(message, function (message) {
-				// Check error
-				if (message.name === "error") {
-					index.errorNotification(message.payload);
-					return
-				}
-				var os = message.payload.Os
-				preferences = message.payload.Preferences
+                // Send message
+                astilectron.sendMessage(message, function (message) {
+                    // Check error
+                    if (message.name === "error") {
+                        index.errorNotification(message.payload);
+                        return
+                    }
+                    var os = message.payload.Os
+                    preferences = message.payload.Preferences
 
-				//console.log("loaded preferences: " + os + ": " + JSON.stringify(preferences))
+                    //console.log("loaded preferences: " + os + ": " + JSON.stringify(preferences))
 
-				document.getElementById("useSerial").checked = preferences.UseSerial ? "checked" : "";
-				document.getElementById("serialPort").value = preferences.SerialPort;
-				document.getElementById("serialBaud").value = preferences.SerialBaud;
+                    document.getElementById("useSerial").checked = preferences.UseSerial ? "checked" : "";
+                    document.getElementById("serialPort").value = preferences.SerialPort;
+                    document.getElementById("serialBaud").value = preferences.SerialBaud;
 
-				document.getElementById("libraryPath").value = preferences.LibraryPath;
+                    document.getElementById("libraryPath").value = preferences.LibraryPath;
 
-				document.getElementById("vstAutoConfig").checked = preferences.VstAutoConfig ? "checked" : "";
+                    document.getElementById("vstAutoConfig").checked = preferences.VstAutoConfig ? "checked" : "";
+                    document.getElementById("useVst").checked = preferences.UseVst ? "checked" : "";
+                    document.getElementById("vstPort").value = preferences.VstPort;
 
-				document.getElementById("useOsc").checked = preferences.UseOsc ? "checked" : "";
-				document.getElementById("oscAutoConfig").checked = preferences.OscAutoConfig ? "checked" : "";
-				document.getElementById("oscPort").value = preferences.OscPort;
-				document.getElementById("oscCSurfaceAddress").value = preferences.OscCSurfaceAddress;
-				document.getElementById("oscCSurfacePort").value = preferences.OscCSurfacePort;
-				prefs.toggleOsc();
+                    document.getElementById("useOsc").checked = preferences.UseOsc ? "checked" : "";
+                    document.getElementById("oscAutoConfig").checked = preferences.OscAutoConfig ? "checked" : "";
+                    document.getElementById("oscPort").value = preferences.OscPort;
+                    document.getElementById("oscCSurfaceAddress").value = preferences.OscCSurfaceAddress;
+                    document.getElementById("oscCSurfacePort").value = preferences.OscCSurfacePort;
+                    prefs.toggleVst();
+                    prefs.toggleOsc();
 
-				if (os === "darwin") {
-					/*
-					  * as nice as this would be, macos hides the /dev directory
-					  * from the UI dialogs.  Best to just let folk type it in...
-					  *
-		
-					// add an onclick handler to popup a file dialog
-					var ele = document.getElementById("serialPort");
-					ele.onclick = function() {
-					prefs.serialPortDialog(this,this.value);
-					}
-		
-					*
-					*/
-				} else {
-					// on windows, use a straight text box 
-				}
-			});
+                    if (os === "darwin") {
+                        /*
+                          * as nice as this would be, macos hides the /dev directory
+                          * from the UI dialogs.  Best to just let folk type it in...
+                          *
 
-			// Listen
-			prefs.listen();
-		})
+                        // add an onclick handler to popup a file dialog
+                        var ele = document.getElementById("serialPort");
+                        ele.onclick = function() {
+                        prefs.serialPortDialog(this,this.value);
+                        }
 
-	},
+                        *
+                        */
+                    } else {
+                        // on windows, use a straight text box
+                    }
+                });
 
-	toggleOsc: function () {
-		var useSerialChecked = document.getElementById("useSerial").checked;
-		var useOscChecked = document.getElementById("useOsc").checked;
-		var autoChecked = document.getElementById("oscAutoConfig").checked;
+                // Listen
+                prefs.listen();
+            })
+
+        },
+
+        toggleVst: function () {
+            var useVstChecked = document.getElementById("useVst").checked;
+            var autoChecked = document.getElementById("vstAutoConfig").checked;
+
+            document.getElementById("vstAutoConfig").disabled = (!useVstChecked);
+            document.getElementById("vstPort").disabled = (!useVstChecked) || autoChecked;
+        },
+
+        toggleOsc: function () {
+            var useSerialChecked = document.getElementById("useSerial").checked;
+            var useOscChecked = document.getElementById("useOsc").checked;
+            var autoChecked = document.getElementById("oscAutoConfig").checked;
 
 
-		document.getElementById("serialPort").disabled = (!useSerialChecked);
-		document.getElementById("serialBaud").disabled = (!useSerialChecked);
+            document.getElementById("serialPort").disabled = (!useSerialChecked);
+            document.getElementById("serialBaud").disabled = (!useSerialChecked);
 
-		document.getElementById("oscPort").disabled = (!useOscChecked);
-		document.getElementById("oscAutoConfig").disabled = (!useOscChecked);
-		document.getElementById("oscCSurfaceAddress").disabled = (!useOscChecked) || autoChecked;
-		document.getElementById("oscCSurfacePort").disabled = (!useOscChecked) || autoChecked;
-	},
+            document.getElementById("oscPort").disabled = (!useOscChecked);
+            document.getElementById("oscAutoConfig").disabled = (!useOscChecked);
+            document.getElementById("oscCSurfaceAddress").disabled = (!useOscChecked) || autoChecked;
+            document.getElementById("oscCSurfacePort").disabled = (!useOscChecked) || autoChecked;
+        },
 
-	serialPortDialog: function (ele, defaultValue) {
-		//console.log("in fileDialog default: " + defaultValue);
+        serialPortDialog: function (ele, defaultValue) {
+                //console.log("in fileDialog default: " + defaultValue);
 
-		file = dialog.showOpenDialogSync({
-			properties: ['openFile'],
-			title: "Select Serial Port",
-			buttonLabel: "Select",
-			defaultPath: defaultValue
-		});
-		//console.log("in fileDialog: " + file);
-		if (file != undefined && ele != undefined && ele != null) {
-			ele.value = file;
-		}
-		return file;
-	},
-	libraryFolderDialog: function (ele, defaultValue) {
-		folder = dialog.showOpenDialogSync({
-			properties: ['openDirectory'],
-			defaultPath: defaultValue,
-			title: "Choose Voice Library path"
-		});
-		//console.log("in folderDialog: " + folder);
-		if (folder != undefined && ele != undefined && ele != null) {
-			ele.value = folder;
-		}
-		return folder;
-	},
+                file = dialog.showOpenDialogSync({
+                    properties: ['openFile'],
+                    title: "Select Serial Port",
+                    buttonLabel: "Select",
+                    defaultPath: defaultValue
+                });
+                //console.log("in fileDialog: " + file);
+                if (file != undefined && ele != undefined && ele != null) {
+                    ele.value = file;
+                }
+                return file;
+            }
 
-	cancelAndClose: function () {
-		let message = {
-			"name": "cancelPreferences",
-			payload: ""
-		};
-		// Send message
-		astilectron.sendMessage(message, function (message) {
-			// Check error
-			if (message.name === "error") {
-				index.errorNotification(message.payload);
-			}
-		});
-	},
+        ,
+        libraryFolderDialog: function (ele, defaultValue) {
+            folder = dialog.showOpenDialogSync({
+                properties: ['openDirectory'],
+                defaultPath: defaultValue,
+                title: "Choose Voice Library path"
+            });
+            //console.log("in folderDialog: " + folder);
+            if (folder != undefined && ele != undefined && ele != null) {
+                ele.value = folder;
+            }
+            return folder;
+        }
+        ,
 
-	saveAndClose: function () {
-		let message = {
-			"name": "savePreferences",
-			"payload": {
-				"UseSerial": document.getElementById("useSerial").checked,
-				"SerialPort": document.getElementById("serialPort").value,
-				"SerialBaud": parseInt(document.getElementById("serialBaud").value, 10),
-				"LibraryPath": document.getElementById("libraryPath").value,
-				"UseOsc": document.getElementById("useOsc").checked,
-				"VstAutoConfig": document.getElementById("vstAutoConfig").checked,
-				"OscAutoConfig": document.getElementById("oscAutoConfig").checked,
-				"OscPort": parseInt(document.getElementById("oscPort").value, 10),
-				"OscCSurfaceAddress": document.getElementById("oscCSurfaceAddress").value,
-				"OscCSurfacePort": parseInt(document.getElementById("oscCSurfacePort").value, 10),
-			}
-		};
-		//console.log("saveAndClose: " + message);
-		// Send message
-		astilectron.sendMessage(message, function (message) {
-			// Check error
-			if (message.name === "error") {
-				index.errorNotification(message.payload);
-			}
-		});
-	},
-	listen: function () {
-		console.log("prefs listening...")
-		astilectron.onMessage(function (message) {
-			console.log("unexpected msg: " + JSON.stringify(message));
-		});
-	}
-};
+        cancelAndClose: function () {
+            let message = {
+                "name": "cancelPreferences",
+                payload: ""
+            };
+            // Send message
+            astilectron.sendMessage(message, function (message) {
+                // Check error
+                if (message.name === "error") {
+                    index.errorNotification(message.payload);
+                }
+            });
+        }
+        ,
+
+        saveAndClose: function () {
+            let message = {
+                "name": "savePreferences",
+                "payload": {
+                    "UseSerial": document.getElementById("useSerial").checked,
+                    "SerialPort": document.getElementById("serialPort").value,
+                    "SerialBaud": parseInt(document.getElementById("serialBaud").value, 10),
+                    "LibraryPath": document.getElementById("libraryPath").value,
+                    "UseOsc": document.getElementById("useOsc").checked,
+                    "UseVst": document.getElementById("useVst").checked,
+                    "VstAutoConfig": document.getElementById("vstAutoConfig").checked,
+                    "VstPort": parseInt(document.getElementById("vstPort").value, 10),
+                    "OscAutoConfig": document.getElementById("oscAutoConfig").checked,
+                    "OscPort": parseInt(document.getElementById("oscPort").value, 10),
+                    "OscCSurfaceAddress": document.getElementById("oscCSurfaceAddress").value,
+                    "OscCSurfacePort": parseInt(document.getElementById("oscCSurfacePort").value, 10),
+                }
+            };
+            //console.log("saveAndClose: " + message);
+            // Send message
+            astilectron.sendMessage(message, function (message) {
+                // Check error
+                if (message.name === "error") {
+                    index.errorNotification(message.payload);
+                }
+            });
+        }
+        ,
+        listen: function () {
+            console.log("prefs listening...")
+            astilectron.onMessage(function (message) {
+                console.log("unexpected msg: " + JSON.stringify(message));
+            });
+        }
+    }
+;
