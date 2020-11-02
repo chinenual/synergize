@@ -20,6 +20,10 @@ need to emulate CP/M software.
 * An optional integration with the TouchOSC tablet control surface
   gives "GDS like" faders and buttons to control the Synergize editor.
 
+* Interfaces with both hardware Synergies and the
+  [Synergia](https://jariseon.github.io/synergia) virtual Synergy -- a
+  chip-level emulation of the Synergy that runs as a VST or AU virtual instrument.
+
 * Load and create virtual "carts" (CRT files).   No need for a physical
 library of carts.
 
@@ -31,10 +35,6 @@ Edit existing voices or create your own from scratch.
 
 * Load and save synergy "state" (SYN files).  This preserves
 sequencer, portamento, vibrato and other performance customizations.
-
-* Interfaces with both hardware Synergies and the
-  [Synergia](https://jariseon.github.io/synergia) virtual Synergy -- a
-  chip-level emulation of the Synergy that runs as a VST or AU virtual instrument.
 
 Note: Synergize does not itself include the original voice libraries -- download a copy from one of the links below.
 
