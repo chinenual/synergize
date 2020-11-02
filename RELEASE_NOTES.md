@@ -13,11 +13,12 @@ permalink: /docs/release-notes
 
 * Fixes to the serial communications interface that results in far
   fewer problems (often reported as "timeouts" in previous versions of
-  Synergize).  This is a _signifacant_ improvement, especially when
+  Synergize).  This is a _**significant**_ improvement, especially when
   using the iPad control surface interface. All users of older
   verisons are encouraged to upgrade.
-* Support for connecting to the [Synergia](https://jariseon.github.io/synergia) virtual Synergy -- a chip-level emulation
-  of the Synergy that runs as a VST or AU virtual instrument.
+* Support for connecting to the new [Synergia](https://jariseon.github.io/synergia)
+  virtual Synergy -- a chip-level emulation of the Synergy that runs
+  as a VST or AU virtual instrument. 
     * During beta testing, we've noticed that Synergize sometimes does
       not discover a running Synergia instance via
       Bonjour/Zeroconf. Often, toggling the VRAM button in Synergia is
@@ -33,8 +34,7 @@ permalink: /docs/release-notes
       devices so you dont have to hardcode their address and port. 
     * It uses zeroconf to search for virtual instruments.
     * Zeroconf is enabled for TouchOSC discovery by default, but can be disabled
-      via the Preferences menu.  It is required for VST integration
-      and cannot be disabled for that purpose.
+      via the Preferences menu. 
 * The UI no longer shows the firmware version in the upper left
     corner of the menu bar. Instead it shows the name of the
     connected synergy and control surface.
