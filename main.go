@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"github.com/matishsiao/goInfo"
+
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -141,6 +143,19 @@ func init() {
 	logger.Init(getWorkingDirectory()+"/synergize.log", logger.LevelInfo)
 	setVersion()
 	logger.Infof("Running app version %s\n", AppVersion)
+	// log some info about the operating system.  This uses uname on linux and macos, and ver on windows, so info is limited.
+	// for windows, version reports via ver:
+	//    Core:"10.0.18363.1016",
+	//      the 18363 corresponds to the Build version
+	// for macos, it reports the darwin version:
+	//    Core:"18.8.0"
+	//      18.* = Mojave
+	//      19.* = Catalina
+	//      20.* = Big Sure
+	// for linux, it reports the kernel
+	//    Core:"5.4.0-52-generic"
+	gi := goInfo.GetInfo()
+	logger.Infof("Operating environment: %#v\n", gi)
 }
 
 func refreshNavPane(path string) {

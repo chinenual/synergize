@@ -15,6 +15,7 @@ require (
 	github.com/hypebeast/go-osc v0.0.0-20200115085105-85fee7fed692
 	github.com/jacobsa/go-serial v0.0.0-20180131005756-15cf729a72d4
 	github.com/kr/pretty v0.1.0 // indirect
+	github.com/matishsiao/goInfo v0.0.0-20200404012835-b5f882ee2288
 	github.com/miekg/dns v1.1.31 // indirect
 	github.com/orcaman/writerseeker v0.0.0-20180723184025-774071c66cec
 	github.com/petermattis/goid v0.0.0-20180202154549-b0b1615b78e5 // indirect
