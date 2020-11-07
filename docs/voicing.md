@@ -37,9 +37,10 @@ the effect can be heard in real time.
 ## Default Voice
 
 When Voicing Mode is initiated Synergize loads an empty "default
-voice" to the Synergy.  You can either start creating your new voice
-from this default or your can load an existing VCE file and start from
-there.
+voice" to the Synergy. That voice is single-oscillator and is
+"silent" (its amplitude envelope allows no sound). You can either
+start creating your new voice from this default or your can load an
+existing VCE file and start from there.
 
 ## Saving your edits
 
