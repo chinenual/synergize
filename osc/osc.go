@@ -59,8 +59,11 @@ func Init(port uint, verboseIn bool, verboseOut bool, synergyName string) (err e
 		if verboseOscIn {
 			logger.Infof("  OSC handle %v", msg)
 		}
-		if err := OscHandleFromCSurface(msg.Address, msg.Arguments[0]); err != nil {
-			logger.Errorf("Error handling OSC message: %v\n", err)
+		if len(msg.Arguments) > 0 {
+			// the touchosc can send empty args (eg for /ping) - filter them
+			if err := OscHandleFromCSurface(msg.Address, msg.Arguments[0]); err != nil {
+				logger.Errorf("Error handling OSC message: %v\n", err)
+			}
 		}
 	}); err != nil {
 		return

@@ -12,14 +12,32 @@ func fieldToAddr(field string) string {
 	return "/" + strings.ReplaceAll(strings.ReplaceAll(field, "[", "/"), "]", "")
 }
 
+// preemptively filter accelerometer, ping and touch messages from touchosc
+var oscBlacklist = map[string]bool{
+	"/accxyz": true,
+	"/ping":   true,
+}
+
 // convert an OSC address to a field.  /OHARM/3 -> OHARM[3],   /VASENS -> VASENS
-func addrToField(addr string) string {
+func addrToField(addr string) (field string, ok bool) {
 	// assume first character is "/"
+	ok = true
+	if _, blacklisted := oscBlacklist[addr]; blacklisted {
+		ok = false
+		return
+	}
+	if strings.LastIndex(addr, "/z") == len(addr)-2 {
+		// touchOSC can send extra "touch" messages for any control /theaddr/z
+		ok = false
+		return
+	}
 	slash := strings.IndexByte(addr[1:], '/')
 	if slash < 0 {
-		return addr[1:]
+		field = addr[1:]
+		return
 	}
-	return addr[1:slash+1] + "[" + addr[slash+2:] + "]"
+	field = addr[1:slash+1] + "[" + addr[slash+2:] + "]"
+	return
 }
 
 func csurfaceInit() (err error) {
@@ -158,7 +176,11 @@ func OscSendToCSurface(field string, val int) (err error) {
 }
 
 func OscHandleFromCSurface(addr string, args ...interface{}) (err error) {
-	field := addrToField(addr)
+	field, ok := addrToField(addr)
+	if !ok {
+		// blacklisted message
+		return
+	}
 	var arg int
 	if len(args) >= 1 {
 		switch args[0].(type) {
