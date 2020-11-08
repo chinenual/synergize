@@ -9,6 +9,15 @@ permalink: /docs/release-notes
 
 # Release Notes
 
+## 2.2.1
+
+* Synergize no longer uses Bonjour/Zeroconf to discover Synergia
+  VST. A much more reliable mechanism has been implemented. Requires
+  version Synergia 0.97 beta or later.
+* Fixes [issue #15](https://github.com/chinenual/synergize/issues/15):
+  Tolerates TouchOSC configurations which have the optional
+  accellerometer, touch or ping messages enabled.
+  
 ## 2.2.0
 
 * Fixes to the serial communications interface that results in far
