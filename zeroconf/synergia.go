@@ -18,7 +18,7 @@ func getSynergiaState() (result []Service) {
 
 	if os.IsNotExist(err) {
 		// not state file, so no VSTs to find
-		logger.Infof("No Synergia state file %s.  %v", path, err)
+		logger.Infof("No Synergia state file %s.", path)
 		return
 	}
 	var f *os.File
