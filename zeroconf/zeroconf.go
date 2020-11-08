@@ -40,11 +40,15 @@ func GetOscServices() (result []Service) {
 }
 
 func GetVstServices() (result []Service) {
-	vstServices.RLock()
-	defer vstServices.RUnlock()
+	if vstViaSharedFile {
+		result = getSynergiaState()
+	} else {
+		vstServices.RLock()
+		defer vstServices.RUnlock()
 
-	for _, v := range vstServices.m {
-		result = append(result, v)
+		for _, v := range vstServices.m {
+			result = append(result, v)
+		}
 	}
 	return
 }
@@ -134,14 +138,19 @@ func StartListener(vstServiceTypePrefix string) (err error) {
 
 	listenerRunning = true
 
-	logger.Infof("ZEROCONF: Starting Zeroconf listener for service %s and %s\n", "_osc._udp", vstServiceType)
-
+	if !vstViaSharedFile {
+		logger.Infof("ZEROCONF: Starting Zeroconf listener for service %s and %s\n", "_osc._udp", vstServiceType)
+	} else {
+		logger.Infof("ZEROCONF: Starting Zeroconf listener for service %s\n", "_osc._udp")
+	}
 	oscServices.Lock()
 	oscServices.m = make(map[string]Service)
 	oscServices.Unlock()
-	vstServices.Lock()
-	vstServices.m = make(map[string]Service)
-	vstServices.Unlock()
+	if !vstViaSharedFile {
+		vstServices.Lock()
+		vstServices.m = make(map[string]Service)
+		vstServices.Unlock()
+	}
 
 	touchOscName := func(name string) bool {
 		return strings.Contains(name, "TouchOSC")
@@ -176,13 +185,14 @@ func StartListener(vstServiceTypePrefix string) (err error) {
 					return
 				}
 			}(&wg)
-			go func(wg *sync.WaitGroup) {
-				defer wg.Done()
-				if err = listenFor(timeout, &vstServices, vstServiceType+".local.", anyName); err != nil {
-					return
-				}
-			}(&wg)
-
+			if !vstViaSharedFile {
+				go func(wg *sync.WaitGroup) {
+					defer wg.Done()
+					if err = listenFor(timeout, &vstServices, vstServiceType+".local.", anyName); err != nil {
+						return
+					}
+				}(&wg)
+			}
 			wg.Wait()
 		}
 	}()
