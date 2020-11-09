@@ -26,7 +26,7 @@ var csurfacePort uint
 func SetControlSurface(name string, addr string, port uint) (err error) {
 	{
 		// Eek -- if csurfaceAddress is mis-configured -- eg.  "10.0.6" and missing a fourth quad, the net resolver code
-		// gets confused and creates an address 10.0.0.6.  Huh?   Surely this is a bug in standard net the library.
+		// gets confused and creates an address 10.0.0.6.  Huh?   Surely this is a bug in standard net library.
 		// But until that's fixed, we need to defend and give the user a useful error.
 		// not quite as easy as it sounds since the address might be an IPV4 quad or might be a DNS name
 		ip := net.ParseIP(addr)
