@@ -138,14 +138,18 @@ func GetControlSurfaceConfig() (hasDevice bool, alreadyConfigured bool, name str
 
 			if false && len(oscServices) == 1 {
 				logger.Infof("ZEROCONF: auto config Control Surface: %#v\n", oscServices[0])
-				osc.SetControlSurface(oscServices[0].InstanceName, oscServices[0].HostName, oscServices[0].Port)
+				if err = osc.SetControlSurface(oscServices[0].InstanceName, oscServices[0].HostName, oscServices[0].Port); err != nil {
+					return
+				}
 			} else {
 				logger.Infof("ZEROCONF: zero or more than one Control Surface: %#v\n", oscServices)
 				choices = &oscServices
 			}
 		} else {
 			logger.Infof("ZEROCONF: Control Surface zeroconf disabled - using preferences config %s:%d\n", prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort)
-			osc.SetControlSurface("", prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort)
+			if err = osc.SetControlSurface("", prefsUserPreferences.OscCSurfaceAddress, prefsUserPreferences.OscCSurfacePort); err != nil {
+				return
+			}
 		}
 	}
 	hasDevice = prefsUserPreferences.UseOsc

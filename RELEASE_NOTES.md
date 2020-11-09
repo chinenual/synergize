@@ -14,9 +14,17 @@ permalink: /docs/release-notes
 * Synergize no longer uses Bonjour/Zeroconf to discover Synergia
   VST. A much more reliable mechanism has been implemented. Requires
   version Synergia 0.97 beta or later.
+    * Bonjour can still be used to configure the interface to the
+      TouchOSC control surface, however this appears to not be
+      particularly reliable on Windows - on Windows please manually
+      configure your OSC connection. 
 * Fixes [issue #15](https://github.com/chinenual/synergize/issues/15):
   Tolerates TouchOSC configurations which have the optional
   accellerometer, touch or ping messages enabled.
+* Fixes [issue #18](https://github.com/chinenual/synergize/issues/18):
+  Adds address validation for the control surface address. It was
+  possible to specify an invalid address without getting any sort of
+  error message.
   
 ## 2.2.0
 

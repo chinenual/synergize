@@ -416,6 +416,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			}
 		}
 		if err = osc.OscSendToCSurface(args.Field, args.Value); err != nil {
+			logger.Errorf("Error sending to csurface: %v\n", err)
 			payload = err.Error()
 			return
 		}
