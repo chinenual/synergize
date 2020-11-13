@@ -11,9 +11,9 @@ permalink: /docs/release-notes
 
 ## 2.2.1
 
-* Synergize no longer uses Bonjour/Zeroconf to discover Synergia
-  VST. A much more reliable mechanism has been implemented. Requires
-  version Synergia 0.97 beta or later.
+* Synergize no longer uses Bonjour/Zeroconf to discover the Synergia
+  virtual instrument. A much more reliable mechanism has been
+  implemented. Requires version Synergia 0.97 beta or later.
     * Bonjour can still be used to configure the interface to the
       TouchOSC control surface, however this appears to not be
       particularly reliable on Windows - on Windows please manually
@@ -25,6 +25,8 @@ permalink: /docs/release-notes
   Adds address validation for the control surface address. It was
   possible to specify an invalid address without getting any sort of
   error message.
+* Fixes [issue #20](https://github.com/chinenual/synergize/issues/20):
+  Mute and solo buttons did not transmit to control surface. 
   
 ## 2.2.0
 

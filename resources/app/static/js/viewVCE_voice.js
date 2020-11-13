@@ -52,8 +52,8 @@ let viewVCE_voice = {
 			param = ret[1];
 			osc = parseInt(ret[2], 10); /* 1-based */
 
-			state = ele.classList.contains("on");
-			viewVCE_voice[param][osc - 1] = !state;
+			state = !ele.classList.contains("on");
+			viewVCE_voice[param][osc - 1] = state;
 			ele.classList.toggle('on');
 
 			let message = {
@@ -70,6 +70,9 @@ let viewVCE_voice = {
 					// failed - dont change the boolean
 					index.errorNotification(message.payload);
 					return false;
+				} else {
+					console.log("send to csurface " + ele.id + " " + state)
+					viewVCE_voice.sendToCSurface(ele, ele.id, state ? 1 : 0);
 				}
 			});
 		}
