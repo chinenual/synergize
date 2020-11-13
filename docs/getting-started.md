@@ -23,19 +23,13 @@ Alternatively (or additionally), Synergize can also connect to the
 [Synergia](https://jariseon.github.io/synergia) virtual instrument - a
 chip level emulation of the Synergy.  Due to the nature of the way
 they communicate, Synergia and Synergize must run on the same
-computer.  Synergize
-finds Synergia instances via the Bonjour/Zeroconf protocol.
+computer.  
 
-To enable access to the Synergia VST, select the `Zeroconf VST` option on the
-Preferences menu.   Synergize can connect to Synergia only when the
-`VRAM` button on Synergia is enabled.
-
-When Synergize needs to connect to a Synergy and the `Zeroconf VST`
-option is enabled, it will present a list of all available Synergies
+When Synergize needs to connect to a Synergy it will present a list of all available Synergies
 (both via the local serial port and virtual ones via Synergia).  You
 can then select which one to connect to.  If the one you wish to
 connect to is not included in the selection, click `Rescan` and
-Synergize will try again.
+Synergize will search again.
 
 A hardware Synergy and one or more instances of Synergia can be running at the same
 time, but Synergize can only connect to one at a time. 
