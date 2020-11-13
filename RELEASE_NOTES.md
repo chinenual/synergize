@@ -20,7 +20,7 @@ permalink: /docs/release-notes
       configure your OSC connection. 
 * Fixes [issue #15](https://github.com/chinenual/synergize/issues/15):
   Tolerates TouchOSC configurations which have the optional
-  accellerometer, touch or ping messages enabled.
+  accelerometer, touch or ping messages enabled.
 * Fixes [issue #18](https://github.com/chinenual/synergize/issues/18):
   Adds address validation for the control surface address. It was
   possible to specify an invalid address without getting any sort of
@@ -32,7 +32,7 @@ permalink: /docs/release-notes
   fewer problems (often reported as "timeouts" in previous versions of
   Synergize).  This is a _**significant**_ improvement, especially when
   using the iPad control surface interface. All users of older
-  verisons are encouraged to upgrade.
+  versions are encouraged to upgrade.
 * Support for connecting to the new [Synergia](https://jariseon.github.io/synergia)
   virtual Synergy -- a chip-level emulation of the Synergy that runs
   as a VST or AU virtual instrument. 
@@ -70,7 +70,7 @@ permalink: /docs/release-notes
 * Fixes [issue #9](https://github.com/chinenual/synergize/issues/9):
   the name of "standard patch 6".  SYNHCS called this
   patch `((1~2)~3) + ((1~2)~4) + ((5~6)~7) + ((5~6)~8)`,
-  but in fact based on the register assigments it actually uses 
+  but in fact based on the register assignments it actually uses 
   it should have been
   called `((1+2)~3) + ((1+2)~4) + ((5+6)~7) + ((5+6)~8)`
   (a simple typo of ~ vs. +).  Synergize now uses the corrected text name.
