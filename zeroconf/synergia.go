@@ -3,17 +3,22 @@ package zeroconf
 import (
 	"bufio"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 
 	"github.com/chinenual/synergize/logger"
 )
 
-const vstViaSharedFile = true
-
-func getSynergiaState() (result []Service) {
-	path, _ := os.UserConfigDir()
-	path = path + "/Synergia/state.dat"
+func GetVstServices() (result []Service) {
+	var path string
+	if runtime.GOOS == "windows" {
+		path = os.Getenv("ProgramData")
+	} else {
+		// ~/Library/Caches
+		path, _ = os.UserCacheDir()
+	}
+	path = path + "/Synergia/ports.dat"
 	_, err := os.Stat(path)
 
 	if os.IsNotExist(err) {

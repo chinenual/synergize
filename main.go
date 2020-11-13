@@ -38,6 +38,7 @@ var (
 	port              = flag.String("port", getDefaultPort(), "the serial device")
 	baud              = flag.Uint("baud", getDefaultBaud(), "the serial baud rate")
 	vst               = flag.Uint("vst", 0, "port for the VST instrument")
+	serial            = flag.Bool("serial", false, "use the serial port even if a VST is available")
 	record            = flag.String("RECORD", "", "capture bytes to <record>.in and <record>.out")
 	uitest            = flag.Int("UITEST", 0, "alter startup to support automated testing (specifies listening port)")
 	provisionOnly     = flag.Bool("PROVISION", false, "run the provisioner and then exit")
@@ -293,8 +294,8 @@ func main() {
 		}
 		defer zeroconf.CloseServer()
 	}
-	if (prefsUserPreferences.UseVst && prefsUserPreferences.VstAutoConfig) || (prefsUserPreferences.UseOsc && prefsUserPreferences.OscAutoConfig) {
-		zeroconf.StartListener(prefsUserPreferences.VstServiceType)
+	if prefsUserPreferences.UseOsc && prefsUserPreferences.OscAutoConfig {
+		zeroconf.StartListener()
 	}
 
 	macOSMenus := []*astilectron.MenuItemOptions{{
@@ -475,7 +476,7 @@ func main() {
 				BackgroundColor: astikit.StrPtr("#ccc"),
 				Center:          astikit.BoolPtr(true),
 				Show:            astikit.BoolPtr(false),
-				Height:          astikit.IntPtr(800),
+				Height:          astikit.IntPtr(630),
 				Width:           astikit.IntPtr(800),
 				Custom: &astilectron.WindowCustomOptions{
 					HideOnClose: astikit.BoolPtr(true),

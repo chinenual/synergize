@@ -78,14 +78,21 @@ func DisconnectControlSurface() (err error) {
 func GetSynergyConfig() (hasDevice bool, alreadyConfigured bool, name string, choices *[]zeroconf.Service, err error) {
 	if !io.SynergyConfigured() {
 		firmwareVersion = ""
-		if *vst != 0 {
+		if *mockSynio || *serial {
+			// Serial port command line option
+			logger.Infof("ZEROCONF: using -port and -baud commnd line config %s at %d\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
+			if err = synio.SetSynergySerialPort(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud,
+				true, *serialVerboseFlag, *mockSynio); err != nil {
+				return
+			}
+		} else if *vst != 0 {
 			// VST command line option
 			logger.Infof("ZEROCONF: using -VST command line config %d\n", *vst)
 			if err = synio.SetSynergyVst(fmt.Sprintf("VST localhost:%d", *vst), "localhost", *vst,
 				true, *serialVerboseFlag, *mockSynio); err != nil {
 				return
 			}
-		} else if prefsUserPreferences.UseVst && prefsUserPreferences.VstAutoConfig {
+		} else {
 			// VST via Zeroconf and possibly a serial port if configured
 			vstServices := zeroconf.GetVstServices()
 			logger.Infof("ZEROCONF: zero or more than one VST: %#v\n", vstServices)
@@ -97,34 +104,9 @@ func GetSynergyConfig() (hasDevice bool, alreadyConfigured bool, name string, ch
 			} else {
 				choices = &vstServices
 			}
-		} else if prefsUserPreferences.UseVst {
-			// VST hardcoded port and possibly a serial port if configured
-			var pseudoEntry zeroconf.Service
-			pseudoEntry.InstanceName = "Synergia VST"
-			pseudoEntry.Port = prefsUserPreferences.VstPort
-			pseudoEntry.HostName = "localhost"
-			list := []zeroconf.Service{pseudoEntry}
-			if prefsUserPreferences.UseSerial {
-				var pseudoEntry zeroconf.Service
-				pseudoEntry.InstanceName = "serial-port"
-				list = append([]zeroconf.Service{pseudoEntry}, list...)
-				choices = &list
-			} else {
-				// no hardware - connect to the configured VST
-				if err = synio.SetSynergyVst(fmt.Sprintf("Synergia (localhost:%d)", prefsUserPreferences.VstPort), "localhost", prefsUserPreferences.VstPort,
-					true, *serialVerboseFlag, *mockSynio); err != nil {
-					return
-				}
-			}
-		} else {
-			// Serial port command line option
-			logger.Infof("ZEROCONF: using -port and -baud commnd line config %s at %d\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
-			if err = synio.SetSynergySerialPort(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud,
-				true, *serialVerboseFlag, *mockSynio); err != nil {
-				return
-			}
 		}
 	}
+
 	hasDevice = true // we assume user has a Synergy or VST
 	name = io.SynergyName()
 	alreadyConfigured = io.SynergyConfigured()

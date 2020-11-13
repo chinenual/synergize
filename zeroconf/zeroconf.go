@@ -23,11 +23,8 @@ type syncMap struct {
 	m map[string]Service
 }
 
-var vstServiceType = "_synergia._tcp"
-
 var sawNetworkActivity = false
 var oscServices syncMap
-var vstServices syncMap
 
 func GetOscServices() (result []Service) {
 	oscServices.RLock()
@@ -35,20 +32,6 @@ func GetOscServices() (result []Service) {
 
 	for _, v := range oscServices.m {
 		result = append(result, v)
-	}
-	return
-}
-
-func GetVstServices() (result []Service) {
-	if vstViaSharedFile {
-		result = getSynergiaState()
-	} else {
-		vstServices.RLock()
-		defer vstServices.RUnlock()
-
-		for _, v := range vstServices.m {
-			result = append(result, v)
-		}
 	}
 	return
 }
@@ -131,32 +114,19 @@ func ListenerRunning() bool {
 	return listenerRunning
 }
 
-func StartListener(vstServiceTypePrefix string) (err error) {
-	vstServiceType = vstServiceTypePrefix
-
+func StartListener() (err error) {
 	// once we start listening we never stop or restart
 
 	listenerRunning = true
 
-	if !vstViaSharedFile {
-		logger.Infof("ZEROCONF: Starting Zeroconf listener for service %s and %s\n", "_osc._udp", vstServiceType)
-	} else {
-		logger.Infof("ZEROCONF: Starting Zeroconf listener for service %s\n", "_osc._udp")
-	}
+	logger.Infof("ZEROCONF: Starting Zeroconf listener for service %s\n", "_osc._udp")
+
 	oscServices.Lock()
 	oscServices.m = make(map[string]Service)
 	oscServices.Unlock()
-	if !vstViaSharedFile {
-		vstServices.Lock()
-		vstServices.m = make(map[string]Service)
-		vstServices.Unlock()
-	}
 
 	touchOscName := func(name string) bool {
 		return strings.Contains(name, "TouchOSC")
-	}
-	anyName := func(name string) bool {
-		return true
 	}
 
 	// we begin with short lived generic service discovery queries since (on MacOS at least), the OS might block the initial responses
@@ -185,14 +155,6 @@ func StartListener(vstServiceTypePrefix string) (err error) {
 					return
 				}
 			}(&wg)
-			if !vstViaSharedFile {
-				go func(wg *sync.WaitGroup) {
-					defer wg.Done()
-					if err = listenFor(timeout, &vstServices, vstServiceType+".local.", anyName); err != nil {
-						return
-					}
-				}(&wg)
-			}
 			wg.Wait()
 		}
 	}()
