@@ -17,7 +17,10 @@ permalink: /docs/release-notes
     * Bonjour can still be used to configure the interface to the
       TouchOSC control surface, however this appears to not be
       particularly reliable on Windows - on Windows please manually
-      configure your OSC connection. 
+      configure your OSC connection.
+* Implements [issue #17](https://github.com/chinenual/synergize/issues/17):
+  Change in behavior: if a voice is being viewed when enabling Voice
+  Mode, it is loaded into the editor rather than the default empty voice.
 * Fixes [issue #15](https://github.com/chinenual/synergize/issues/15):
   Tolerates TouchOSC configurations which have the optional
   accelerometer, touch or ping messages enabled.
