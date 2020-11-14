@@ -1055,12 +1055,12 @@ ${freqDAG}
 			$('#saveVCEMenuItem').addClass('disabled');
 			$('#oscPlusMinus').hide();
 		}
-		if (vce.Head.VOITAB <= 0) {
+		if (vce && vce.Head.VOITAB <= 0) {
 			$("#del-osc").addClass('disabled');
 		} else {
 			$("#del-osc").removeClass('disabled');
 		}
-		if (vce.Head.VOITAB >= 15) {
+		if (vce && vce.Head.VOITAB >= 15) {
 			$("#add-osc").addClass('disabled');
 		} else {
 			$("#add-osc").removeClass('disabled');
