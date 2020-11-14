@@ -795,6 +795,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 	case "toggleVoicingMode":
 		var args struct {
 			Mode            bool
+			Vce             *data.VCE
 			ZeroconfSynergy *zeroconf.Service
 			ZeroconfCs      *zeroconf.Service
 		}
@@ -817,7 +818,6 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				logger.Infof("ZEROCONF: config Control Surface selected by user: %#v\n", *args.ZeroconfCs)
 				osc.SetControlSurface((*args.ZeroconfCs).InstanceName, (*args.ZeroconfCs).HostName, (*args.ZeroconfCs).Port)
 			}
-			var vce data.VCE
 			payload = nil
 			csEnabled := osc.ControlSurfaceConfigured()
 			csName := osc.ControlSurfaceName()
@@ -829,7 +829,8 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				}
 			}
 			if payload == nil {
-				if vce, err = synio.EnableVoicingMode(); err != nil {
+				var vce data.VCE
+				if vce, err = synio.EnableVoicingMode(args.Vce); err != nil {
 					payload = err.Error()
 					return
 				}

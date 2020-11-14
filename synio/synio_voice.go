@@ -69,7 +69,7 @@ func initMaps() {
 	oscOffsetMap["AmpPoints"] = offsetMapEle{data.Off_EOSC_AmpPoints, true}
 }
 
-func EnableVoicingMode() (vce data.VCE, err error) {
+func EnableVoicingMode(useVce *data.VCE) (vce data.VCE, err error) {
 	c.Lock()
 	defer c.Unlock()
 	if synioVerbose {
@@ -84,13 +84,20 @@ func EnableVoicingMode() (vce data.VCE, err error) {
 	if err = initVRAM(); err != nil {
 		return
 	}
-	data.ClearLocalEDATA()
-	if err = loadCRTBytes(data.VRAM_EDATA[:]); err != nil {
-		return
-	}
-	rdr := bytes.NewReader(data.VRAM_EDATA[data.Off_VRAM_EDATA:])
-	if vce, err = data.ReadVce(rdr, false); err != nil {
-		return
+	if useVce != nil {
+		vce = *useVce
+		if err = LoadVceVoicingMode(vce); err != nil {
+			return
+		}
+	} else {
+		data.ClearLocalEDATA()
+		if err = loadCRTBytes(data.VRAM_EDATA[:]); err != nil {
+			return
+		}
+		rdr := bytes.NewReader(data.VRAM_EDATA[data.Off_VRAM_EDATA:])
+		if vce, err = data.ReadVce(rdr, false); err != nil {
+			return
+		}
 	}
 
 	// though not documented, some features (e.g., OSCSOLO) of the voicing mode are conditional

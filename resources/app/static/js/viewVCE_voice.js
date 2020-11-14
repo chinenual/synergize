@@ -865,6 +865,7 @@ ${freqDAG}
 			"name": "toggleVoicingMode",
 			"payload": {
 				"Mode": false,
+				"Vce" : null,
 				"ZeroconfSynergy": null, // optional param - null unless user just selected from a menu
 				"ZeroconfCs": null, // optional param - null unless user just selected from a menu
 			}
@@ -879,6 +880,7 @@ ${freqDAG}
 				$('#disableControlSurfaceMenuItem').addClass('disabled');
 				viewVCE_voice.csEnabled = false;
 			}
+			vce = null;
 			viewVCE_voice.voicingModeVisuals();
 			index.infoNotification(`Voicing mode disabled.`);
 			index.refreshConnectionStatus();
@@ -891,6 +893,7 @@ ${freqDAG}
 			"name": "toggleVoicingMode",
 			"payload": {
 				"Mode": true,
+				"Vce" : vce,
 				"ZeroconfSynergy": synergyZeroconfChoice, // optional param - null unless user just selected from a menu
 				"ZeroconfCs": csZeroconfChoice // optional param - null unless user just selected from a menu
 			}
