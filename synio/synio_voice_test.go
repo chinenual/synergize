@@ -72,7 +72,7 @@ func TestRoundTrip(t *testing.T) {
 
 	var vce data.VCE
 	var err error
-	if _, err = EnableVoicingMode(); err != nil {
+	if _, err = EnableVoicingMode(nil); err != nil {
 		t.Fatalf("Failed to init voicing mode")
 	}
 

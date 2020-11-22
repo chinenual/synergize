@@ -56,8 +56,8 @@ packages/Synergize-Installer-mac-$(VERSION).dmg : $(EXE_MAC)
 
 # uses msitools (installed via "brew install msitools"):
 .PHONY: packageWindows
-packageWindows: packages/Synergize-Installer-windows-$(VERSION).msi $(EXE_WINDOWS)
-packages/Synergize-Installer-windows-$(VERSION).msi : windows-installer.wxs $(EXE_WINDOWS)
+packageWindows: packages/Synergize-Installer-windows-$(VERSION).msi $(EXE_WINDOWS) $(EXE_WINDOWS_TEST)
+packages/Synergize-Installer-windows-$(VERSION).msi : windows-installer.wxs $(EXE_WINDOWS) $(EXE_WINDOWS_TEST)
 	mkdir -p packages
 	rm -f packages/Synergize-Installer-windows-$(VERSION).msi
 	wixl -v \

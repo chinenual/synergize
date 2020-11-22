@@ -15,8 +15,8 @@ func GetVstServices() (result []Service) {
 	if runtime.GOOS == "windows" {
 		path = os.Getenv("ProgramData")
 	} else {
-		// ~/Library/Caches
-		path, _ = os.UserCacheDir()
+		// ~/Library/Application Support
+		path, _ = os.UserConfigDir()
 	}
 	path = path + "/Synergia/ports.dat"
 	_, err := os.Stat(path)
