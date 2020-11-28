@@ -747,6 +747,11 @@ let viewVCE_envs = {
 		vce.Extra.uncompressedEnvelopes = true;
 	},
 
+	changeTimeScale: function(val) {
+		this.chart.options.scales.xAxes [0].type = val;
+		this.chart.update();
+	},
+
 	envChartUpdate: function (oscNum, envNum, animate) {
 		viewVCE_envs.supressOnchange = true;
 
