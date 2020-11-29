@@ -752,6 +752,12 @@ let viewVCE_envs = {
 		this.chart.update();
 	},
 
+	changeTimeZoom: function(val) {
+		var div = document.getElementById('envZoomDiv');
+		div.style.width = val;
+		//this.chart.update();
+	},
+
 	envChartUpdate: function (oscNum, envNum, animate) {
 		viewVCE_envs.supressOnchange = true;
 
@@ -1197,7 +1203,7 @@ let viewVCE_envs = {
 						}
 					}],
 				},
-				responsive: false,
+				responsive: true,
 				maintainAspectRatio: false
 			}
 		});

@@ -250,7 +250,7 @@
 
 	</div>
 
-	<div id="vceEnvsTab" class="tab-pane fade ">
+	<div id="vceEnvsTab" class="tab-pane fade">
 
 		Oscillator:&nbsp;
 		<select id="envOscSelect"
@@ -278,7 +278,6 @@
 				<option>2</option>
 			</select>
 		</div>
-
 		<div id="timeScaleDiv" style="display:inline-block;">
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Time Scale:&nbsp;
 			<select id="timeScale" onchange="viewVCE_envs.changeTimeScale(this.options[this.selectedIndex].value)">
@@ -286,8 +285,20 @@
 				<option value="linear">Linear</option>
 			</select>
 		</div>
-
-		<canvas id="envChart" height="400" width="600" style="border:solid #666;"></canvas>
+		<!--
+                <div id="timeZoomDiv" style="display:inline-block;">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Zoom:&nbsp;
+                    <select id="timeScale" onchange="viewVCE_envs.changeTimeZoom(this.options[this.selectedIndex].value)">
+                        <option value="600">100%</option>
+                        <option value="3000">500%</option>
+                    </select>
+                </div>
+        -->
+		<div style="width: inherit" style="display:flex;">
+  		   <div id="envZoomDiv" style="overflow-x:auto; white-space: nowrap; position:relative; height:400px; width:600px">
+		      <canvas id="envChart" style="border:solid #666;"></canvas>
+		   </div>
+        </div>
 
 		<table id="envTable" class="valTable">
 			<thead>
