@@ -30,6 +30,12 @@ permalink: /docs/release-notes
   error message.
 * Fixes [issue #20](https://github.com/chinenual/synergize/issues/20):
   Mute and solo buttons did not transmit to control surface. 
+* Implements [issue #21](https://github.com/chinenual/synergize/issues/21):
+  The time scale on the envelope chart can now be toggled between
+  logarithmic and linear scales.
+* Fixes [issue #22](https://github.com/chinenual/synergize/issues/22):
+  The implicit start of the amplitude envelope is now displayed as
+  part of the amplitude curve on the Envelope graphs.
   
 ## 2.2.0
 
