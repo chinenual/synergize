@@ -1025,6 +1025,11 @@ let viewVCE_envs = {
 				viewVCE_voice.sendToCSurface(null, `envAmpUpTime[${i + 1}]`, 0);
 			}
 		}
+
+		// Amp envelopes have an implicit start point at time zero, value zero
+		datasets[ampLowIdx].data.push({ x: 0, y: 0 });
+		datasets[ampUpIdx].data.push({ x: 0, y: 0 });
+
 		for (i = 0; i < envelopes.AmpEnvelope.NPOINTS; i++) {
 			var tr = $('#envTable tbody tr:eq(' + i + ')');
 
