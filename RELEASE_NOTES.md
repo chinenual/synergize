@@ -9,7 +9,7 @@ permalink: /docs/release-notes
 
 # Release Notes
 
-## 2.2.1
+## 2.3.0
 
 * Synergize no longer uses Bonjour/Zeroconf to discover the Synergia
   virtual instrument. A much more reliable mechanism has been
