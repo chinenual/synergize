@@ -2,6 +2,8 @@ const { lookupService } = require("dns");
 const { env } = require("process");
 const { DH_CHECK_P_NOT_PRIME } = require("constants");
 
+var dragOldValue = {x: undefined, y: undefined};
+
 let viewVCE_envs = {
 
 	chart: null,
@@ -758,6 +760,10 @@ let viewVCE_envs = {
 		//this.chart.update();
 	},
 
+	// XREF: needs to match the dataset order inside envChangeUpdate()
+	valFieldNameByDatasetIdx : ["envFreqLowVal", "envFreqUpVal", "envAmpLowVal", "envAmpUpVal"],
+	timeFieldNameByDatasetIdx : ["envFreqLowTime", "envFreqUpTime", "envAmpLowTime", "envAmpUpTime"],
+
 	envChartUpdate: function (oscNum, envNum, animate) {
 		viewVCE_envs.supressOnchange = true;
 
@@ -793,6 +799,7 @@ let viewVCE_envs = {
 		var oscIndex = oscNum - 1;
 		var envelopes = vce.Envelopes[oscIndex];
 
+		// XREF: order needs to match the valFieldNameByDatasetIdx and timeFieldNameByDatasetIdx above
 		let freqLowIdx = 0;
 		let freqUpIdx = 1;
 		let ampLowIdx = 2;
@@ -1122,9 +1129,11 @@ let viewVCE_envs = {
 		if (viewVCE_envs.chart != null) {
 			viewVCE_envs.chart.destroy();
 		}
+		var timeAxisType = document.getElementById('timeScale').value;
+
 		viewVCE_envs.chart = new Chart(ctx, {
 
-			type: 'line',
+			type: 'scatter',
 			data: {
 				//		labels: ['','','','','','','','','','', '','','','','','','','','','', '','','','','','','','','','','',''],
 				datasets: filteredDatasets
@@ -1145,7 +1154,7 @@ let viewVCE_envs = {
 					xAxes: [{
 						position: 'bottom',
 						id: 'time-axis',
-						type: 'logarithmic',
+						type: timeAxisType,
 						gridLines: {
 							color: '#666',
 							display: true,
@@ -1209,11 +1218,148 @@ let viewVCE_envs = {
 					}],
 				},
 				responsive: true,
-				maintainAspectRatio: false
+				maintainAspectRatio: false,
+
+				dragData: viewVCE_voice.voicingMode,
+				dragDataRound: 0,
+				dragX: true,
+
+				dragOptions: {
+					showTooltip: true
+				},
+
+				onDragStart: function(e, element) {
+					//console.log('onDragStart: ', envNum, e, element)
+					// constrain amp curve:  first point fixed at 0,0
+					//
+					// HACK: also if only a single point in the dataset (common for freq envs), don't allow drag.
+					//This works around an as yet undiagnosed bug that cases vlaues to go to floating point numbers smaller than zero and cofuse the auto-scaling.
+					if (viewVCE_envs.chart.data.datasets[element._datasetIndex].data.length==1 ||
+						((envNum < 0 && element._datasetIndex >= 2)||(envNum>=2)) && element._index === 0) {
+						// can't move the first amp point
+						dragOldValue.x = viewVCE_envs.chart.data.datasets[element._datasetIndex].data[element._index].x;
+						dragOldValue.y = viewVCE_envs.chart.data.datasets[element._datasetIndex].data[element._index].y;
+						//console.log("ondragStart: freeze 0th amp",element._datasetIndex,element._index,dragOldValue)
+						viewVCE_envs.chart.update(0);
+					}
+				},
+				onDrag: function(e, datasetIndex, index, value) {
+					if (viewVCE_envs.chart.data.datasets[datasetIndex].data.length==1 ||
+						((envNum < 0 && datasetIndex >= 2)||(envNum>=2)) && index === 0) {
+						// can't move the first amp point
+						viewVCE_envs.chart.data.datasets[datasetIndex].data[index].x = dragOldValue.x;
+						viewVCE_envs.chart.data.datasets[datasetIndex].data[index].y = dragOldValue.y;
+						//console.log("ondrag: freeze 0th amp",datasetIndex,index,dragOldValue)
+						viewVCE_envs.chart.update(0);
+						return
+					}
+					e.target.style.cursor = 'grabbing'
+					// time must stay between neighboring points:
+					var min = index > 0 ? viewVCE_envs.chart.data.datasets[datasetIndex].data[index-1].x : 0;
+					// if the last point, use the scale max
+					var max = (index === (viewVCE_envs.chart.data.datasets[datasetIndex].data.length-1))
+					    ? (viewVCE_envs.chart.scales['time-axis'].max + 1)
+						: viewVCE_envs.chart.data.datasets[datasetIndex].data[index+1].x;
+					// if this is a freq env, then the 0th point's x value is fixed at 0
+					if (((envNum < 0 && datasetIndex < 2)||(envNum<2)) && index === 0) {
+						min = -1;
+						max = 2; // the clamping expression below subtracts or adds 1
+					}
+					//console.log('ondrag: ', envNum, datasetIndex, index, value, min, max)
+					if (value.x >= max) {
+						value.x = max-1;
+						//console.log('onDrag: CLAMP ', datasetIndex, index, value)
+						viewVCE_envs.chart.update();
+					} else if (value.x <= min) {
+						value.x = min+1;
+						//console.log('onDrag: CLAMP ', datasetIndex, index, value)
+						viewVCE_envs.chart.update();
+					}
+					viewVCE_envs.updateEnvFromGraphChange(datasetIndex, index, value, false)
+				},
+				onDragEnd: function(e, datasetIndex, index, value) {
+					e.target.style.cursor = 'default'
+					//console.log('onDragEnd: ', datasetIndex, index, value)
+
+					viewVCE_envs.updateEnvFromGraphChange(datasetIndex, index, value, true)
+				},
+
+				tooltips: {
+					mode: 'index',
+				},
+				hover: {
+					mode: 'index',
+					intersect: true,
+					onHover: function (e) {
+						const point = this.getElementAtEvent(e)
+						if (viewVCE_voice.voicingMode && point.length
+							&& !(((envNum < 0 && point[0]._datasetIndex >= 2) || (envNum >= 2)) && point[0]._index === 0)) {
+							e.target.style.cursor = 'grab';
+						} else {
+							e.target.style.cursor = 'default';
+						}
+					}
+				}
 			}
 		});
 		document.getElementById('tabTelltaleContent').value = `osc:${oscNum}`;
 		viewVCE_envs.supressOnchange = false;
+	},
+
+	updateEnvFromGraphChange: function (datasetIndex, index, value, fireOnChange) {
+		// now reverse engineer the changed env values and update the corresponding point value or time
+		// if x has changed, then the TIME value for both the point and the preceding point need to change
+		// (since the env values are the delta-t from the previous point, not the absolute t of the point)
+		// if y has changed, only its value needs to be updated.
+		var newV = value.y
+		var newT
+		var nextNewT = undefined
+		var fieldIndex = index + 1; // fields are 1-based
+
+		if (datasetIndex >= 2) {
+			// amp.  the first point in the env corresponds to the second point on the graph
+			fieldIndex = fieldIndex - 1;
+			if (index === 1) {
+				newT = value.x
+			} else {
+				newT = (value.x
+					- viewVCE_envs.chart.data.datasets[datasetIndex].data[index - 1].x);
+			}
+		} else {
+			// freq.  the first point in the env corresponds to the first point on the graph
+			if (index === 0) {
+				newT = undefined;
+			} else {
+				newT = (value.x
+					- viewVCE_envs.chart.data.datasets[datasetIndex].data[index - 1].x);
+			}
+		}
+// last point case is common to both types of env
+// if last point, there's no nextT
+		if (index != viewVCE_envs.chart.data.datasets[datasetIndex].data.length - 1) {
+			nextNewT = (viewVCE_envs.chart.data.datasets[datasetIndex].data[index + 1].x
+				- value.x);
+		}
+		console.log("UPDATE VALUES", fieldIndex, newV, newT, nextNewT)
+
+		function setValueAndFireOnchange(id, val) {
+			ele = document.getElementById(id);
+			ele.value = val;
+			// don't run onchange during the drag - since we redraw the graph after sending data to the Synergy
+			//(and that aborts the drag)
+			if (fireOnChange) {
+				// just call the function directly; faking the event in the browser is error prone
+				viewVCE_envs.onchange(ele);
+			}
+		}
+
+		setValueAndFireOnchange(`${viewVCE_envs.valFieldNameByDatasetIdx[datasetIndex]}[${fieldIndex}]`, newV);
+		if (newT != undefined) {
+			setValueAndFireOnchange(`${viewVCE_envs.timeFieldNameByDatasetIdx[datasetIndex]}[${fieldIndex}]`, newT);
+		}
+		if (nextNewT != undefined) {
+			setValueAndFireOnchange(`${viewVCE_envs.timeFieldNameByDatasetIdx[datasetIndex]}[${fieldIndex + 1}]`, nextNewT);
+		}
 	}
 
 };
