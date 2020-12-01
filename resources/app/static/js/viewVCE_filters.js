@@ -387,6 +387,7 @@ let viewVCE_filters = {
 				},
 				scales: {
 					xAxes: [{
+						id: 'x-axis',
 						gridLines: {
 							color: '#666',
 							display: true,
@@ -403,6 +404,7 @@ let viewVCE_filters = {
 						}
 					}],
 					yAxes: [{
+						id: 'y-axis',
 						gridLines: {
 							color: '#666',
 							display: true,
@@ -423,5 +425,9 @@ let viewVCE_filters = {
 				maintainAspectRatio: false
 			}
 		});
+		if (viewVCE_voice.voicingMode && filterIndex >= 0) {
+			viewVCE_chartdrag.init(viewVCE_filters.chart, viewVCE_filters.onchange, 'flt', 0, 31, -64, 63);
+		}
+
 	}
 };

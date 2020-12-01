@@ -120,9 +120,6 @@ let viewVCE_keyprop = {
 					duration: 0
 				},
 
-				onClick: function (e) {
-					console.log("onClick: " + JSON.stringify(e));
-				},
 				tooltips: {
 					mode: 'index',
 				},
@@ -131,6 +128,7 @@ let viewVCE_keyprop = {
 				},
 				scales: {
 					xAxes: [{
+						id: 'x-axis',
 						gridLines: {
 							color: '#666',
 							display: true,
@@ -149,6 +147,7 @@ let viewVCE_keyprop = {
 						}
 					}],
 					yAxes: [{
+						id: 'y-axis',
 						gridLines: {
 							color: '#666',
 							display: true,
@@ -172,6 +171,10 @@ let viewVCE_keyprop = {
 				maintainAspectRatio: false
 			}
 		});
+
+		if (viewVCE_voice.voicingMode) {
+			viewVCE_chartdrag.init(viewVCE_keyprop.chart, viewVCE_keyprop.onchange, 'keyprop', 0, 23, 0, 32);
+		}
 		//console.log('--- finish viewVCE_keyprop init');
 	}
 

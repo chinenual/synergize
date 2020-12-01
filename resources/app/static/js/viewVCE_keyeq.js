@@ -113,6 +113,7 @@ let viewVCE_keyeq = {
 				},
 				scales: {
 					xAxes: [{
+						id: 'x-axis',
 						gridLines: {
 							color: '#666',
 							display: true,
@@ -131,6 +132,7 @@ let viewVCE_keyeq = {
 						}
 					}],
 					yAxes: [{
+						id: 'y-axis',
 						grid: {
 							color: '#666'
 						},
@@ -155,8 +157,14 @@ let viewVCE_keyeq = {
 				},
 				responsive: false,
 				maintainAspectRatio: false
-			}
+			},
+
 		});
+
+		if (viewVCE_voice.voicingMode) {
+			viewVCE_chartdrag.init(viewVCE_keyeq.chart, viewVCE_keyeq.onchange, 'keyeq', 0, 23, -24, 8);
+		}
+
 		//console.log('--- finish viewVCE_keyeq init');
 	}
 };

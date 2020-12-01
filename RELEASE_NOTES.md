@@ -9,7 +9,7 @@ permalink: /docs/release-notes
 
 # Release Notes
 
-## 2.3.0
+## 2.3.0-beta1
 
 * Synergize no longer uses Bonjour/Zeroconf to discover the Synergia
   virtual instrument. A much more reliable mechanism has been
@@ -18,24 +18,31 @@ permalink: /docs/release-notes
       TouchOSC control surface, however this appears to not be
       particularly reliable on Windows - on Windows please manually
       configure your OSC connection.
-* Implements [issue #17](https://github.com/chinenual/synergize/issues/17):
-  Change in behavior: if a voice is being viewed when enabling Voice
-  Mode, it is loaded into the editor rather than the default empty voice.
-* Fixes [issue #15](https://github.com/chinenual/synergize/issues/15):
-  Tolerates TouchOSC configurations which have the optional
-  accelerometer, touch or ping messages enabled.
-* Fixes [issue #18](https://github.com/chinenual/synergize/issues/18):
-  Adds address validation for the control surface address. It was
-  possible to specify an invalid address without getting any sort of
-  error message.
-* Fixes [issue #20](https://github.com/chinenual/synergize/issues/20):
-  Mute and solo buttons did not transmit to control surface. 
-* Implements [issue #21](https://github.com/chinenual/synergize/issues/21):
-  The time scale on the envelope chart can now be toggled between
-  logarithmic and linear scales.
-* Fixes [issue #22](https://github.com/chinenual/synergize/issues/22):
-  The implicit start of the amplitude envelope is now displayed as
-  part of the amplitude curve on the Envelope graphs.
+* Change in behavior: Implements [issue #17](https://github.com/chinenual/synergize/issues/17):
+  If a voice is being viewed when enabling Voice Mode, it is loaded
+  into the editor rather than the default empty voice. 
+* Envelope Graph display and editing:
+    * Implements [issue #24](https://github.com/chinenual/synergize/issues/24):
+      Points on the Envelope graphs can be dragged directly with a mouse.
+      This can be a lot more intuitive than setting curves via time deltas.
+    * Implements [issue #21](https://github.com/chinenual/synergize/issues/21):
+      The time scale on the envelope chart can now be toggled between
+      logarithmic and linear scales.
+    * Fixes [issue #22](https://github.com/chinenual/synergize/issues/22):
+      The implicit start of the amplitude envelope is now displayed as
+      part of the amplitude curve on the Envelope graphs.
+* Similarly, the Filter, Key Proportion and Key EQ graphs are now
+  directly editable via mouse drag.
+* Control Surface issues:
+    * Fixes [issue #15](https://github.com/chinenual/synergize/issues/15):
+      Tolerates TouchOSC configurations which have the optional
+      accelerometer, touch or ping messages enabled.
+    * Fixes [issue #18](https://github.com/chinenual/synergize/issues/18):
+      Adds address validation for the control surface address. It was
+      possible to specify an invalid address without getting any sort of
+      error message.
+    * Fixes [issue #20](https://github.com/chinenual/synergize/issues/20):
+      Mute and solo buttons did not transmit to control surface. 
   
 ## 2.2.0
 
