@@ -194,12 +194,12 @@ func listenFor(timeout time.Duration, list *syncMap, serviceType string, validNa
 	logger.Debugf("ZEROCONF: ListenFor %s\n", serviceType)
 	type lookupFunc = func(context.Context, string, dnssd.AddServiceFunc, dnssd.RmvServiceFunc) error
 	var lookup lookupFunc
-	if timeout == 0 {
+//	if timeout == 0 {
 		lookup = dnssd.LookupType
-	} else {
-		// NOTE: requires forked dnssd (chinenual/dnssd) library
-		lookup = dnssd.LookupTypeUnicast
-	}
+//	} else {
+//		// NOTE: requires forked dnssd (chinenual/dnssd) library
+//		lookup = dnssd.LookupTypeUnicast
+//	}
 	if err = lookup(ctx, serviceType, addFn, rmvFn); err != nil {
 		if strings.Contains(err.Error(), "context deadline exceeded") {
 			logger.Debugf("ZEROCONF: ListenFor %s %v\n", serviceType, err)
