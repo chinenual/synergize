@@ -24,7 +24,8 @@ permalink: /docs/release-notes
 * Envelope Graph display and editing:
     * Implements [issue #24](https://github.com/chinenual/synergize/issues/24):
       Points on the Envelope graphs can be dragged directly with a mouse.
-      This can be a lot more intuitive than setting curves via time deltas.
+      This can be a lot more intuitive than setting curves via time
+      deltas.  
     * Implements [issue #21](https://github.com/chinenual/synergize/issues/21):
       The time scale on the envelope chart can now be toggled between
       logarithmic and linear scales.
@@ -42,7 +43,7 @@ permalink: /docs/release-notes
       possible to specify an invalid address without getting any sort of
       error message.
     * Fixes [issue #20](https://github.com/chinenual/synergize/issues/20):
-      Mute and solo buttons did not transmit to control surface. 
+      Mute and solo buttons did not transmit to control surface.
   
 ## 2.2.0
 
