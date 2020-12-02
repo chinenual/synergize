@@ -1,14 +1,14 @@
 let viewVCE_filters = {
 	chart: null,
 
-	onchange: function (ele) {
+	onchange: function (ele, updateChart) {
 		if (viewVCE.supressOnchange) { /*console.log("viewVCE.suppressOnChange");*/ return; }
-		viewVCE_filters.deb_onchange(ele);
+		viewVCE_filters.deb_onchange(ele, updateChart);
 	},
 
 	deb_onchange: null, // initialized during init()
 
-	raw_onchange: function (ele) {
+	raw_onchange: function (ele, updateChart) {
 		if (viewVCE.supressOnchange) { /*console.log("raw viewVCE.suppressOnChange");*/ return; }
 
 		var id = ele.id;
@@ -51,7 +51,9 @@ let viewVCE_filters = {
 				return false;
 			} else {
 				vce.Extra.uncompressedFilters[filterIndex][eleIndex - 1] = value;
-				viewVCE_filters.filtersChartUpdate(filterIndex, filterName, false);
+				if (updateChart) {
+					viewVCE_filters.filtersChartUpdate(filterIndex, filterName, false);
+				}
 				viewVCE_voice.sendToCSurface(ele, id, value);
 			}
 		});
@@ -422,7 +424,18 @@ let viewVCE_filters = {
 					}],
 				},
 				responsive: false,
-				maintainAspectRatio: false
+				maintainAspectRatio: false,
+				plugins: {
+					// zoom plugin is only used by the env graphs
+					zoom: {
+						zoom: {
+							enabled: false
+						},
+						pan: {
+							enabled: false
+						}
+					}
+				}
 			}
 		});
 		if (viewVCE_voice.voicingMode && filterIndex >= 0) {

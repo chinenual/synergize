@@ -1354,14 +1354,22 @@ let viewVCE_envs = {
 						}
 					}
 				},
-				pan: {
-					enabled: true,
-					mode: function({ chart }) {
-						if(viewVCE_envs.dragging) {
-							return '';
+				plugins: {
+					// zoom plugin is only used by the env graphs
+					zoom: {
+						zoom: {
+							enabled: false
+						},
+						pan: {
+							enabled: true,
+							mode: function ({chart}) {
+								if (viewVCE_envs.dragging) {
+									return '';
+								}
+								return 'xy';
+							},
 						}
-						return 'xy';
-					},
+					}
 				}
 			}
 		});

@@ -11,14 +11,14 @@ let viewVCE_keyeq = {
 		return result;
 	},
 
-	onchange: function (ele) {
+	onchange: function (ele, updateChart) {
 		if (viewVCE.supressOnchange) { /*console.log("viewVCE.suppressOnChange");*/ return; }
-		viewVCE_keyeq.deb_onchange(ele);
+		viewVCE_keyeq.deb_onchange(ele, updateChart);
 	},
 
 	deb_onchange: null, // initialized during init()
 
-	raw_onchange: function (ele) {
+	raw_onchange: function (ele, updateChart) {
 		if (viewVCE.supressOnchange) { /*console.log("raw viewVCE.suppressOnChange");*/ return; }
 		var value = index.checkInputElementValue(ele);
 		if (value == undefined) {
@@ -49,7 +49,9 @@ let viewVCE_keyeq = {
 				return false;
 			} else {
 				vce.Head.VEQ[eleIndex - 1] = value;
-				viewVCE_keyeq.init(true);
+				if (updateChart) {
+					viewVCE_keyeq.init(true);
+				}
 				viewVCE_voice.sendToCSurface(ele, id, value);
 			}
 		});
@@ -156,7 +158,18 @@ let viewVCE_keyeq = {
 					}],
 				},
 				responsive: false,
-				maintainAspectRatio: false
+				maintainAspectRatio: false,
+				plugins: {
+					// zoom plugin is only used by the env graphs
+					zoom: {
+						zoom: {
+							enabled: false
+						},
+						pan: {
+							enabled: false
+						}
+					}
+				}
 			},
 
 		});

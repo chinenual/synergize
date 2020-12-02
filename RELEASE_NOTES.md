@@ -25,7 +25,10 @@ permalink: /docs/release-notes
     * Implements [issue #24](https://github.com/chinenual/synergize/issues/24):
       Points on the Envelope graphs can be dragged directly with a mouse.
       This can be a lot more intuitive than setting curves via time
-      deltas.
+      deltas.  You can scroll the graph by dragging the graph
+      background, after which you can then drag a point up into the
+      newly exposed area of the graph.  Values can still also be edited via
+      their numeric input control or by the GDS-like OSC control surface.
     * Implements [issue #21](https://github.com/chinenual/synergize/issues/21):
       The time scale on the envelope chart can now be toggled between
       logarithmic and linear scales.
