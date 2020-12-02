@@ -86,7 +86,7 @@ func EnableVoicingMode(useVce *data.VCE) (vce data.VCE, err error) {
 	}
 	if useVce != nil {
 		vce = *useVce
-		if err = LoadVceVoicingMode(vce); err != nil {
+		if err = loadVceVoicingMode(vce); err != nil {
 			return
 		}
 	} else {
@@ -365,12 +365,10 @@ func SetNumOscillators(newNumOsc int, patchType int) (patchBytes [16]byte, err e
 	return
 }
 
-func LoadVceVoicingMode(vce data.VCE) (err error) {
+func loadVceVoicingMode(vce data.VCE) (err error) {
 	if mock {
 		return
 	}
-	c.Lock()
-	defer c.Unlock()
 	if synioVerbose {
 		logger.Infof("SYNIO: ** LoadVCEVoicingMode\n")
 	}
@@ -381,6 +379,15 @@ func LoadVceVoicingMode(vce data.VCE) (err error) {
 		return
 	}
 	return
+}
+
+func LoadVceVoicingMode(vce data.VCE) (err error) {
+	if mock {
+		return
+	}
+	c.Lock()
+	defer c.Unlock()
+	return loadVceVoicingMode(vce)
 }
 
 func recalcEq() (err error) {
