@@ -25,7 +25,7 @@ permalink: /docs/release-notes
     * Implements [issue #24](https://github.com/chinenual/synergize/issues/24):
       Points on the Envelope graphs can be dragged directly with a mouse.
       This can be a lot more intuitive than setting curves via time
-      deltas.  
+      deltas.
     * Implements [issue #21](https://github.com/chinenual/synergize/issues/21):
       The time scale on the envelope chart can now be toggled between
       logarithmic and linear scales.
@@ -33,7 +33,11 @@ permalink: /docs/release-notes
       The implicit start of the amplitude envelope is now displayed as
       part of the amplitude curve on the Envelope graphs.
 * Similarly, the Filter, Key Proportion and Key EQ graphs are now
-  directly editable via mouse drag.
+  directly editable via mouse drag.  NOTE: if you drag your mouse too
+  quickly, Synergize may not get a mouse event for some indexes in the
+  curve (causing some index values to not be changed as you drag the
+  mouse across the screen).  If you see that happen, just drag a
+  little slower...
 * Control Surface issues:
     * Fixes [issue #15](https://github.com/chinenual/synergize/issues/15):
       Tolerates TouchOSC configurations which have the optional

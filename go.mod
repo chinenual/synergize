@@ -2,6 +2,8 @@ module github.com/chinenual/synergize
 
 go 1.14
 
+replace github.com/brutella/dnssd => ../dnssd
+
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/akavel/rsrc v0.9.0 // indirect
