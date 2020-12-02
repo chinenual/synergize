@@ -1165,10 +1165,29 @@ let viewVCE_envs = {
 							display: true,
 							labelString: "Time (ms)"
 						},
+
+						// after a pan, the graph sometimes shows poorly formatted values for min and max (apparently bypasses the tick callback?)
+						//Workaround by just not displaying them
+						afterTickToLabelConversion: function(scaleInstance) {
+							// set the first and last tick to null so it does not display
+							// note, ticks[0] is the last tick and ticks[length - 1] is the first
+							scaleInstance.ticks[0] = null;
+							scaleInstance.ticks[scaleInstance.ticks.length - 1] = null;
+
+							// need to do the same thing for this similiar array which is used internally
+							//scaleInstance.ticksAsNumbers[0] = null;
+							//scaleInstance.ticksAsNumbers[scaleInstance.ticksAsNumbers.length - 1] = null;
+						},
+
 						ticks: {
+							precision: 2,
 							callback: function (value, index, values) {
 								// don't use scientific notation
-								return value;
+								if (value >= 1.0) {
+									return value;
+								} else {
+									return value.toFixed(2);
+								}
 							},
 							color: '#666',
 							display: true
@@ -1188,10 +1207,29 @@ let viewVCE_envs = {
 							display: true,
 							labelString: "Frequency (Hz)"
 						},
+
+						// after a pan, the graph sometimes shows poorly formatted values for min and max (apparently bypasses the tick callback?)
+						//Workaround by just not displaying them
+						afterTickToLabelConversion: function(scaleInstance) {
+							// set the first and last tick to null so it does not display
+							// note, ticks[0] is the last tick and ticks[length - 1] is the first
+							scaleInstance.ticks[0] = null;
+							scaleInstance.ticks[scaleInstance.ticks.length - 1] = null;
+
+							// need to do the same thing for this similiar array which is used internally
+							//scaleInstance.ticksAsNumbers[0] = null;
+							//scaleInstance.ticksAsNumbers[scaleInstance.ticksAsNumbers.length - 1] = null;
+						},
+
 						ticks: {
+							precision: 2,
 							callback: function (value, index, values) {
 								// don't use scientific notation
-								return value;
+								if (value >= 1.0) {
+									return value;
+								} else {
+									return value.toFixed(2);
+								}
 							},
 							color: '#eee',
 							display: true
@@ -1211,6 +1249,20 @@ let viewVCE_envs = {
 							display: true,
 							labelString: "Amplitude dB"
 						},
+
+						// after a pan, the graph sometimes shows poorly formatted values for min and max (apparently bypasses the tick callback?)
+						//Workaround by just not displaying them
+						afterTickToLabelConversion: function(scaleInstance) {
+							// set the first and last tick to null so it does not display
+							// note, ticks[0] is the last tick and ticks[length - 1] is the first
+							scaleInstance.ticks[0] = null;
+							scaleInstance.ticks[scaleInstance.ticks.length - 1] = null;
+
+							// need to do the same thing for this similiar array which is used internally
+							//scaleInstance.ticksAsNumbers[0] = null;
+							//scaleInstance.ticksAsNumbers[scaleInstance.ticksAsNumbers.length - 1] = null;
+						},
+
 						ticks: {
 							color: '#eee',
 							display: true
@@ -1229,6 +1281,7 @@ let viewVCE_envs = {
 				},
 
 				onDragStart: function(e, element) {
+					viewVCE_envs.dragging = true;
 					//console.log('onDragStart: ', envNum, e, element)
 					// constrain amp curve:  first point fixed at 0,0
 					//
@@ -1278,6 +1331,7 @@ let viewVCE_envs = {
 					viewVCE_envs.updateEnvFromGraphChange(datasetIndex, index, value, false)
 				},
 				onDragEnd: function(e, datasetIndex, index, value) {
+					viewVCE_envs.dragging = false;
 					e.target.style.cursor = 'default'
 					//console.log('onDragEnd: ', datasetIndex, index, value)
 
@@ -1299,6 +1353,15 @@ let viewVCE_envs = {
 							e.target.style.cursor = 'default';
 						}
 					}
+				},
+				pan: {
+					enabled: true,
+					mode: function({ chart }) {
+						if(viewVCE_envs.dragging) {
+							return '';
+						}
+						return 'xy';
+					},
 				}
 			}
 		});
