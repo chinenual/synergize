@@ -462,6 +462,16 @@ let index = {
 		})
 	},
 	disconnectSynergy: function () {
+		if (viewVCE_voice.voicingMode) {
+			index.confirmDialog("Disconnecting the Synergy will will discard any pending edits. Are you sure?", function () {
+				viewVCE_voice.raw_voicingModeOff(true);
+			});
+		} else {
+			index.raw_disconnectSynergy();
+		}
+	},
+
+	raw_disconnectSynergy: function() {
 		let message = { "name": "disconnectSynergy" };
 		index.spinnerOn();
 		astilectron.sendMessage(message, function (message) {
@@ -476,6 +486,7 @@ let index = {
 			}
 		});
 	},
+
 	disconnectControlSurface: function () {
 		let message = { "name": "disconnectControlSurface" };
 		index.spinnerOn();

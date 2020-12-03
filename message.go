@@ -795,6 +795,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 	case "toggleVoicingMode":
 		var args struct {
 			Mode            bool
+			Disconnect      bool
 			Vce             *data.VCE
 			ZeroconfSynergy *zeroconf.Service
 			ZeroconfCs      *zeroconf.Service
@@ -856,6 +857,12 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			if err = synio.DisableVoicingMode(); err != nil {
 				payload = err.Error()
 				return
+			}
+			if args.Disconnect {
+				if err = DisconnectSynergy(); err != nil {
+					payload = err.Error()
+					return
+				}
 			}
 			response := connectionStatusResponse{io.SynergyName(), osc.ControlSurfaceName()}
 			payload = response

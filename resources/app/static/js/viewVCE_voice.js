@@ -852,20 +852,21 @@ ${freqDAG}
 	toggleVoicingMode: function (mode) {
 		if (!mode) {
 			index.confirmDialog("Disabling Voicing Mode will discard any pending edits. Are you sure?", function () {
-				viewVCE_voice.raw_voicingModeOff();
+				viewVCE_voice.raw_voicingModeOff(false);
 			});
 		} else {
 			viewVCE_voice.voicingModeOn();
 		}
 	},
 
-	raw_voicingModeOff: function () {
+	raw_voicingModeOff: function (disconnect) {
 		console.log(`VoicingMode off`);
 		let message = {
 			"name": "toggleVoicingMode",
 			"payload": {
 				"Mode": false,
 				"Vce" : null,
+				"Disconnect" : disconnect,
 				"ZeroconfSynergy": null, // optional param - null unless user just selected from a menu
 				"ZeroconfCs": null, // optional param - null unless user just selected from a menu
 			}
@@ -882,7 +883,11 @@ ${freqDAG}
 			}
 			vce = null;
 			viewVCE_voice.voicingModeVisuals();
-			index.infoNotification(`Voicing mode disabled.`);
+			var msg = 'Voicing mode disabled.';
+			if (disconnect) {
+				msg = msg + " Synergy Disconnected.";
+			}
+			index.infoNotification(msg);
 			index.refreshConnectionStatus();
 		});
 	},
