@@ -54,6 +54,7 @@ If you are a user or are thinking of becoming a user, please join our Slack work
 
 ## Screenshots
 
+<img title="Graphical Editors" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/env-editor-animated.gif?raw=true" width="45%"/>
 <img title="Control Surface view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/cs-animated.gif?raw=true" width="45%"/>
 <img title="Control Surface view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/cs-voice-tab.png?raw=true" width="45%"/>
 <img title="Control Surface view" src="https://github.com/chinenual/synergize/raw/master/docs/screenshots/cs-freq-envs-tab.png?raw=true" width="45%"/>

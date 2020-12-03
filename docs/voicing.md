@@ -22,6 +22,8 @@ using Synergize.
 * [Key Equalization](voicing-keyeq.md)
 * [Key Proportion](voicing-keyprop.md)
 
+![screenshot](/synergize/docs/screenshots/env-editor-animated.gif)
+
 A main difference is that SYNHCS relied on using buttons and knobs on
 the Synergy front panel to adjust each value while in Synergize all
 values are edited directly in the application. Instead of the Synergy
