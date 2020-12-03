@@ -52,7 +52,8 @@ permalink: /docs/release-notes
     * Fixes [issue #20](https://github.com/chinenual/synergize/issues/20):
       Mute and solo buttons did not transmit to control surface.
 * Fixes [issue #27](https://github.com/chinenual/synergize/issues/27):
-  When in Voicing Mode, disconnecting the Synergy left the Synergize
+  When in Voicing Mode, disconnecting the Synergy via
+  `Connect->Disconnect Synergy` left the Synergize
   side editor in voicing mode.  Now disconnecting the Synergy
   implicitly turns off voicing mode.
   
