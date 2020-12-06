@@ -799,6 +799,46 @@ let viewVCE_envs = {
 		var oscIndex = oscNum - 1;
 		var envelopes = vce.Envelopes[oscIndex];
 
+		var pointStyleMetadata = [
+			// order needs to match the dataset array
+			{color: 2,
+				loopPt : -1,
+				repeatPt : -1,
+				sustainPt : -1
+			},
+			{color: 3,
+				loopPt : -1,
+				repeatPt : -1,
+				sustainPt : -1
+			},
+			{color: 0,
+				loopPt : -1,
+				repeatPt : -1,
+				sustainPt : -1
+			},
+			{color: 1,
+				loopPt : -1,
+				repeatPt : -1,
+				sustainPt : -1
+			},
+		];
+		function annotatePointStyle(ctx) {
+			var styleMeta = filteredPointStyleMetadata[ctx.datasetIndex]
+			console.log("annotate point ctx ",ctx)
+			var img = new Image(14,14);
+			if (styleMeta.sustainPt == ctx.dataIndex) {
+				img.src  = `static/images/loopS-${styleMeta.color}.png`;
+				return img;
+			} else if (styleMeta.loopPt == ctx.dataIndex) {
+				img.src  = `static/images/loopL-${styleMeta.color}.png`;
+				return img;
+			} else if (styleMeta.repeatPt == ctx.dataIndex) {
+				img.src  = `static/images/loopR-${styleMeta.color}.png`;
+				return img;
+			}
+			return 'circle'
+		};
+
 		// XREF: order needs to match the valFieldNameByDatasetIdx and timeFieldNameByDatasetIdx above
 		let freqLowIdx = 0;
 		let freqUpIdx = 1;
@@ -813,6 +853,7 @@ let viewVCE_envs = {
 				lineTension: 0,
 				pointRadius: 2,
 				pointHitRadius: 5,
+				pointStyle: annotatePointStyle,
 				showLine: true,
 				borderWidth: 3,
 				backgroundColor: chartColors[2],
@@ -827,6 +868,7 @@ let viewVCE_envs = {
 				lineTension: 0,
 				pointRadius: 2,
 				pointHitRadius: 5,
+				pointStyle: annotatePointStyle,
 				showLine: true,
 				borderWidth: 3,
 				backgroundColor: chartColors[3],
@@ -841,6 +883,7 @@ let viewVCE_envs = {
 				lineTension: 0,
 				pointRadius: 2,
 				pointHitRadius: 5,
+				pointStyle: annotatePointStyle,
 				showLine: true,
 				borderWidth: 3,
 				backgroundColor: chartColors[0],
@@ -855,6 +898,7 @@ let viewVCE_envs = {
 				lineTension: 0,
 				pointRadius: 2,
 				pointHitRadius: 5,
+				pointStyle: annotatePointStyle,
 				showLine: true,
 				borderWidth: 3,
 				backgroundColor: chartColors[1],
@@ -1003,10 +1047,19 @@ let viewVCE_envs = {
 			if (envelopes.FreqEnvelope.ENVTYPE != 1) {
 				if (envelopes.FreqEnvelope.SUSTAINPT == (i + 1)) {
 					$(`#envFreqLoop\\[${i + 1}\\] option[value='S']`).prop('selected', true);
+					pointStyleMetadata[freqLowIdx].sustainPt = i;
+					pointStyleMetadata[freqUpIdx].sustainPt = i;
 				}
 				if (envelopes.FreqEnvelope.LOOPPT == (i + 1)) {
 					var v = envelopes.FreqEnvelope.ENVTYPE == 3 ? 'L' : 'R'
 					$(`#envFreqLoop\\[${i + 1}\\] option[value='${v}']`).prop('selected', true);
+					if (v === 'L') {
+						pointStyleMetadata[freqLowIdx].loopPt = i;
+						pointStyleMetadata[freqUpIdx].loopPt = i;
+					} else {
+						pointStyleMetadata[freqLowIdx].repeatPt = i;
+						pointStyleMetadata[freqUpIdx].repeatPt = i;
+					}
 				}
 			}
 		}
@@ -1094,10 +1147,21 @@ let viewVCE_envs = {
 			if (envelopes.AmpEnvelope.ENVTYPE != 1) {
 				if (envelopes.AmpEnvelope.SUSTAINPT == (i + 1)) {
 					$(`#envAmpLoop\\[${i + 1}\\] option[value='S']`).prop('selected', true);
+					// we draw an extra point for amp curve - so the index of the loop point is i+1
+					pointStyleMetadata[ampLowIdx].sustainPt = i+1;
+					pointStyleMetadata[ampUpIdx].sustainPt = i+1;
 				}
 				if (envelopes.AmpEnvelope.LOOPPT == (i + 1)) {
 					var v = envelopes.AmpEnvelope.ENVTYPE == 3 ? 'L' : 'R'
 					$(`#envAmpLoop\\[${i + 1}\\] option[value='${v}']`).prop('selected', true);
+					if (v === 'L') {
+						// we draw an extra point for amp curve - so the index of the loop point is i+1
+						pointStyleMetadata[ampLowIdx].loopPt = i+1;
+						pointStyleMetadata[ampUpIdx].loopPt = i+1;
+					} else {
+						pointStyleMetadata[ampLowIdx].repeatPt = i+1;
+						pointStyleMetadata[ampUpIdx].repeatPt = i+1;
+					}
 				}
 			}
 		}
@@ -1118,12 +1182,15 @@ let viewVCE_envs = {
 
 		var animation_duration = animate ? 1000 : 0;
 
+		var filteredPointStyleMetadata = [];
 		var filteredDatasets = [];
 		if (envNum < 0) {
 			// all of them:
 			filteredDatasets = datasets;
+			filteredPointStyleMetadata = pointStyleMetadata;
 		} else {
 			filteredDatasets.push(datasets[envNum])
+			filteredPointStyleMetadata.push(pointStyleMetadata[envNum])
 		}
 		var ctx = document.getElementById('envChart').getContext('2d');
 		if (viewVCE_envs.chart != null) {
