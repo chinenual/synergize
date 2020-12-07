@@ -23,7 +23,7 @@ another oscillator into this one. See [below](#copying-envelopes).
 6. The table at the bottom are numeric values of each data point. Adjust these up or
    down to change the behavior of the envelopes.  Changes are transmitted in real time to
    the Synergy, so you can hear the affect of the change immediately.
-   1. Loop point - use this to set/clear Loop/Sustain/Repeat points (see [below](#envelope-types)).
+   1. Loop point - use this to set/clear Loop/Sustain/Retrigger points (see [below](#envelope-types)).
    1. Amplitude Value (low and up). The Amplitide value for this point
   in each of the low and up envelopes.
    1. Amplitude Time (low and up).  The time when this point occurs.
@@ -112,7 +112,7 @@ until the key is released. Oscillators with LOOP points
 signified with the L are independently looping.
 
 * TYPE 4: The same as TYPE 3, but the "L" is replaced with an "R"
-which stands for repeat. In this envelope all oscillators
+which stands for retrigger. In this envelope all oscillators
 having the "R" wait for each other so as to be "together".
 
 TYPE 1 is used for pianos, bass, harpsichords, plucked sounds,
