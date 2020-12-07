@@ -754,6 +754,11 @@ let viewVCE_envs = {
 		this.chart.update();
 	},
 
+	changeFreqScale: function(val) {
+		this.chart.options.scales.yAxes [0].type = val;
+		this.chart.update();
+	},
+
 	changeTimeZoom: function(val) {
 		var div = document.getElementById('envZoomDiv');
 		div.style.width = val;
@@ -1197,6 +1202,7 @@ let viewVCE_envs = {
 			viewVCE_envs.chart.destroy();
 		}
 		var timeAxisType = document.getElementById('timeScale').value;
+		var freqAxisType = document.getElementById('freqScale').value;
 
 		viewVCE_envs.chart = new Chart(ctx, {
 
@@ -1249,11 +1255,15 @@ let viewVCE_envs = {
 						ticks: {
 							precision: 2,
 							callback: function (value, index, values) {
-								// don't use scientific notation
 								if (value >= 1.0) {
-									return value;
+									return value.toFixed(0);
 								} else {
-									return value.toFixed(2);
+									v = value.toFixed(2);
+									if (v.endsWith('.00')) {
+										return value.toFixed(0);
+									} else {
+										return v;
+									}
 								}
 							},
 							color: '#666',
@@ -1263,7 +1273,7 @@ let viewVCE_envs = {
 					yAxes: [{
 						position: 'left',
 						id: 'freq-axis',
-						type: 'logarithmic',
+						type: freqAxisType,
 						gridLines: {
 							color: '#666',
 							display: true,
@@ -1293,9 +1303,14 @@ let viewVCE_envs = {
 							callback: function (value, index, values) {
 								// don't use scientific notation
 								if (value >= 1.0) {
-									return value;
+									return value.toFixed(0);
 								} else {
-									return value.toFixed(2);
+									v = value.toFixed(2);
+									if (v.endsWith('.00')) {
+										return value.toFixed(0);
+									} else {
+										return v;
+									}
 								}
 							},
 							color: '#eee',
