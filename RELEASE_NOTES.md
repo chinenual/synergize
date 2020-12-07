@@ -11,10 +11,11 @@ permalink: /docs/release-notes
 
 ## 2.3.1
 
-* Change in behavior on the Envelopes editor: The scale of the
-  Frequency axis is now Linear so that negative frequency offsets can be
-  displayed.  The Logarithmic view is still available via the Freq Scale
-  toggle to match older behavior.
+* Change in behavior on the Envelopes editor: 
+  Fixes [issue #25](https://github.com/chinenual/synergize/issues/25):
+  The scale of the Frequency axis is now Linear so that negative
+  frequency offsets can be displayed.  The Logarithmic view is still
+  available via the Freq Scale toggle to match older behavior. 
 * Envelope Loop, Retrigger and Sustain points are annotated
   directly on the envelope graph, making it easier to visualize their
   effect on the envelope.
