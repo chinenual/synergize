@@ -99,10 +99,10 @@ let viewVCE_voice = {
 	OHARMToText: function (str) {
 		var newStr;
 		var val = parseInt(str, 10);
-		if (val < 0) {
-			newStr = "s" + (-val);
-		} else if (val == 31) {
+		if (val == -12) {
 			newStr = "dc";
+		} else if (val < 0) {
+			newStr = "s" + (-val);
 		} else {
 			newStr = str;
 		}
@@ -113,7 +113,7 @@ let viewVCE_voice = {
 	TextToOHARM: function (str) {
 		var newStr;
 		if (str === "dc") {
-			newStr = '31';
+			newStr = '-12';
 		} else if (ret = str.match(/s(\d+)/)) {
 			val = parseInt(ret[1], 10);
 			newStr = '' + (-val);
@@ -214,7 +214,7 @@ let viewVCE_voice = {
 				console.log("ERROR: PatchReg " + i + " totext: " + str + " reversed to " + reverseStr)
 			}
 		}
-		for (var i = -11; i <= 31; i++) {
+		for (var i = -12; i <= 30; i++) {
 			var str = viewVCE_voice.OHARMToText('' + i);
 			var reverseStr = viewVCE_voice.TextToOHARM(str);
 			if (('' + i) != reverseStr) {
@@ -541,7 +541,7 @@ let viewVCE_voice = {
 			td = document.createElement("td");
 			td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinOHARM" id="OHARM[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToOHARM)" value="${viewVCE_voice.OHARMToText(vce.Envelopes[osc].FreqEnvelope.OHARM)}" 
-			min="-11" max="31"
+			min="-12" max="30"
 			disabled/></div>`;
 			tr.appendChild(td);
 			viewVCE_voice.sendToCSurface(null, `OHARM[${osc + 1}]`, vce.Envelopes[osc].FreqEnvelope.OHARM)

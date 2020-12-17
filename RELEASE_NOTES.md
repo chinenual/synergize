@@ -19,7 +19,14 @@ permalink: /docs/release-notes
 * Envelope Loop, Retrigger and Sustain points are annotated
   directly on the envelope graph, making it easier to visualize their
   effect on the envelope.
-
+* Fixes [issue #28](https://github.com/chinenual/synergize/issues/28):
+  Synergize represented the 'dc' Harmonic offset value incorrectly,
+  resulting in sending partial "31" to the Synergy rather than the
+  proper "dc" code.  The UI changes in that "dc" is now placed
+  "before" "s11" instead of "after" "30" (so you need to decrement the
+  Harmonic all the way to the minimum value get "dc" -- in prior versions you would
+  increment the Harmonic to its max value to get "dc".
+  
 ## 2.3.0
 
 * Synergize no longer uses Bonjour/Zeroconf to discover the Synergia
