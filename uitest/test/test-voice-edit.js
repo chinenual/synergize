@@ -186,10 +186,10 @@ describe('Test voice page edits', () => {
             .click(cssQuoteId('#OHARM[1]')) // click in a different input to force onchange (FIXME! Enter should be enough)
             .waitForValue(cssQuoteId('#OHARM[3]'), 'dc')
             .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#OHARM[3]')).keys('ArrowDown')
-            .waitForValue(cssQuoteId('#OHARM[3]'), '31')
-            .pause(TYPING_PAUSE)
             .click(cssQuoteId('#OHARM[3]')).keys('ArrowUp')
+            .waitForValue(cssQuoteId('#OHARM[3]'), 's11')
+            .pause(TYPING_PAUSE)
+            .click(cssQuoteId('#OHARM[3]')).keys('ArrowDown')
             .waitForValue(cssQuoteId('#OHARM[3]'), 'dc')
 
     });
