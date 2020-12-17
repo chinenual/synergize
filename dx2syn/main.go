@@ -29,7 +29,7 @@ func main() {
 	if *allFlag && (*indexFlag >= 0 || *nameFlag != "") {
 		usage("must specify only one of -all, -index or -name option")
 	}
-	if (*indexFlag >= 0 && *nameFlag != "") {
+	if *indexFlag >= 0 && *nameFlag != "" {
 		usage("must specify only one of -all, -index or -name option")
 	}
 

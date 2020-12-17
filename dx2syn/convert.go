@@ -1,10 +1,19 @@
 package main
+
 import (
-	"github.com/pkg/errors"
 	"github.com/chinenual/synergize/data"
 )
 
 func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
-	err = errors.New("Not yet implemented")
+	for i := 0; i < 8; i++ {
+		vce.Head.VNAME[i] = dx7Voice.VoiceName[i]
+	}
+
+	// ... everything else ...
+
+	// if you need to abort, use:
+	//	err = errors.New("an error message")
+	//  return
+
 	return
 }

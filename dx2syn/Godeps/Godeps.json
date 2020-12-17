@@ -1,0 +1,36 @@
+{
+	"ImportPath": "dx7-to-synergy",
+	"GoVersion": "go1.14",
+	"GodepVersion": "v80",
+	"Deps": [
+		{
+			"ImportPath": "github.com/asticode/go-astikit",
+			"Comment": "v0.8.0-1-g2ab9fd0",
+			"Rev": "2ab9fd07f25d70defca6dd0ef6f14b87e6c1ae51"
+		},
+		{
+			"ImportPath": "github.com/chinenual/synergize/data",
+			"Comment": "v2.3.1",
+			"Rev": "cd5e739e1bddd7b28a930ac1124a9c0a1a3f0db7"
+		},
+		{
+			"ImportPath": "github.com/chinenual/synergize/logger",
+			"Comment": "v2.3.1",
+			"Rev": "cd5e739e1bddd7b28a930ac1124a9c0a1a3f0db7"
+		},
+		{
+			"ImportPath": "github.com/orcaman/writerseeker",
+			"Rev": "1d3f536ff85e22cb6225ccc454728facfcb70531"
+		},
+		{
+			"ImportPath": "github.com/pkg/errors",
+			"Comment": "v0.9.1",
+			"Rev": "614d223910a179a466c1767a985424175c39b465"
+		},
+		{
+			"ImportPath": "gopkg.in/natefinch/lumberjack.v2",
+			"Comment": "v2.1",
+			"Rev": "a96e63847dc3c67d17befa69c303767e2f84e54f"
+		}
+	]
+}
