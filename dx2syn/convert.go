@@ -5,6 +5,10 @@ import (
 )
 
 func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
+	if vce, err = BlankVce(); err != nil {
+		return
+	}
+
 	for i := 0; i < 8; i++ {
 		vce.Head.VNAME[i] = dx7Voice.VoiceName[i]
 	}
