@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/json"
 	"github.com/pkg/errors"
 	"io/ioutil"
 )
@@ -182,5 +183,11 @@ func ReadDx7Sysex(pathname string) (sysex Dx7Sysex, err error) {
 		}
 		sysex.Voices = append(sysex.Voices, v)
 	}
+	return
+}
+
+func Dx7VoiceToJSON(v Dx7Voice) (result string) {
+	b, _ := json.MarshalIndent(v, "", "\t")
+	result = string(b)
 	return
 }

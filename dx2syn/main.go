@@ -62,7 +62,7 @@ func main() {
 	for _,v := range selectedVoices {
 		var vce data.VCE
 		if *verboseFlag {
-			log.Printf("Translating %#v...\n", v)
+			log.Printf("Translating %s %s...\n", v.VoiceName, Dx7VoiceToJSON(v))
 		} else {
 			log.Printf("Translating %s...\n", v.VoiceName)
 		}
