@@ -25,7 +25,7 @@ type Dx7Osc struct {
 	KeyVelocitySensitivity    byte
 	OperatorOutputLevel       byte
 	OscMode                   bool // true == fixed, false == ratio
-	OscFreqCoarse             byte
+	OscFreqCoarse             int8
 	OscFreqFine               byte
 	OscDetune                 byte
 }
@@ -72,19 +72,19 @@ func readDx7Osc(reader *bytes.Reader) (osc Dx7Osc, err error) {
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
 		return
 	}
-	osc.KeyLevelScalingLeftCurve = (v & 0x03)
+	osc.KeyLevelScalingLeftCurve = v & 0x03
 	osc.KeyLevelScalingRightCurve = (v & 0x0C)  >> 2
 
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
 		return
 	}
 	osc.OscDetune = (v & 0x78) >> 3
-	osc.KeyRateScaling = (v & 0x07)
+	osc.KeyRateScaling = v & 0x07
 
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
 		return
 	}
-	osc.AmpModSensitivity= (v & 0x03)
+	osc.AmpModSensitivity= v & 0x03
 	osc.KeyVelocitySensitivity= (v & 0x1C) >> 3
 
 	if err = binary.Read(reader, binary.LittleEndian, &osc.OperatorOutputLevel); err != nil {
@@ -94,7 +94,7 @@ func readDx7Osc(reader *bytes.Reader) (osc Dx7Osc, err error) {
 		return
 	}
 	osc.OscMode= (v & 0x01) != 0
-	osc.OscFreqCoarse= (v & 0x7E) >> 1
+	osc.OscFreqCoarse= int8((v & 0x7E) >> 1)
 
 	if err = binary.Read(reader, binary.LittleEndian, &osc.OscFreqFine); err != nil {
 		return
@@ -123,8 +123,8 @@ func readDx7Voice(reader *bytes.Reader) (voice Dx7Voice, err error) {
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
 		return
 	}
-	voice.OscSync  = (v & 0x08) != 0;
-	voice.Feedback = v & 0x07;
+	voice.OscSync  = (v & 0x08) != 0
+	voice.Feedback = v & 0x07
 
 	if err = binary.Read(reader, binary.LittleEndian, &voice.LfoSpeed); err != nil {
 		return
