@@ -32,7 +32,7 @@ var prefsUserPreferences = Preferences{
 	OscCSurfacePort:   9000,
 	OscPort:           8000,
 	SerialBaud:        9600,
-	SerialFlowControl: false,
+	SerialFlowControl: true,
 	UseOsc:            false,
 	UseSerial:         true,
 }
