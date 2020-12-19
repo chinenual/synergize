@@ -9,6 +9,16 @@ permalink: /docs/release-notes
 
 # Release Notes
 
+## 2.3.2
+
+* Adds a new configuration option to enable or disable hardware flow
+  control (RTS/CTS) for serial connections.  The default was "on", but is now
+  "off".  While the Synergy does use flow control, several users have
+  told me that they run their Kaypro/Synergy connections with 3-wire (no flow control)
+  serial cables. USB serial adapters sometimes fail to work with
+  strict flow control.  You can re-enable flow control on the
+  `Help->Preferences` menu.
+
 ## 2.3.1
 
 * Change in behavior on the Envelopes editor: 
