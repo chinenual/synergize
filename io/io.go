@@ -68,10 +68,10 @@ func SetSynergyMock() (conn Conn, err error) {
 	return
 }
 
-func SetSynergySerialPort(name string, device string, baud uint, serialVerbose bool) (conn Conn, err error) {
+func SetSynergySerialPort(name string, device string, baud uint, flowControl bool, serialVerbose bool) (conn Conn, err error) {
 	var impl IoImpl
 	_ = impl
-	if impl, err = SerialInit(device, baud); err != nil {
+	if impl, err = SerialInit(device, baud, flowControl); err != nil {
 		return
 	}
 	if conn, err = initConnection(name, impl, serialVerbose); err != nil {

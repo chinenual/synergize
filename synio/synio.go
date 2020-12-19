@@ -70,7 +70,7 @@ func Close() (err error) {
 	return
 }
 
-func SetSynergySerialPort(device string, baud uint, synVerbose bool, serialVerbose bool, mockflag bool) (err error) {
+func SetSynergySerialPort(device string, baud uint, flowControl bool, synVerbose bool, serialVerbose bool, mockflag bool) (err error) {
 	synioVerbose = synVerbose
 	mock = mockflag
 	if mock {
@@ -81,7 +81,7 @@ func SetSynergySerialPort(device string, baud uint, synVerbose bool, serialVerbo
 		return
 	}
 	initializeCRC()
-	if c.conn, err = io.SetSynergySerialPort(fmt.Sprintf("serial-port @ %d", baud), device, baud, serialVerbose); err != nil {
+	if c.conn, err = io.SetSynergySerialPort(fmt.Sprintf("serial-port @ %d", baud), device, baud, flowControl, serialVerbose); err != nil {
 		return errors.Wrap(err, "Could not initialize synergy connection")
 	}
 	return

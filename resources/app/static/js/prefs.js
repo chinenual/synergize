@@ -24,6 +24,7 @@ let prefs = {
                     document.getElementById("useSerial").checked = preferences.UseSerial ? "checked" : "";
                     document.getElementById("serialPort").value = preferences.SerialPort;
                     document.getElementById("serialBaud").value = preferences.SerialBaud;
+                    document.getElementById("flowControl").checked = preferences.SerialFlowControl;
 
                     document.getElementById("libraryPath").value = preferences.LibraryPath;
 
@@ -67,6 +68,7 @@ let prefs = {
 
             document.getElementById("serialPort").disabled = (!useSerialChecked);
             document.getElementById("serialBaud").disabled = (!useSerialChecked);
+            document.getElementById("flowControl").disabled = (!useSerialChecked);
 
             document.getElementById("oscPort").disabled = (!useOscChecked);
             document.getElementById("oscAutoConfig").disabled = (!useOscChecked);
@@ -127,6 +129,7 @@ let prefs = {
                     "UseSerial": document.getElementById("useSerial").checked,
                     "SerialPort": document.getElementById("serialPort").value,
                     "SerialBaud": parseInt(document.getElementById("serialBaud").value, 10),
+                    "SerialFlowControl": document.getElementById("flowControl").checked,
                     "LibraryPath": document.getElementById("libraryPath").value,
                     "UseOsc": document.getElementById("useOsc").checked,
                     "OscAutoConfig": document.getElementById("oscAutoConfig").checked,

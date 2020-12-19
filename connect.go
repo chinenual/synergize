@@ -82,7 +82,7 @@ func GetSynergyConfig() (hasDevice bool, alreadyConfigured bool, name string, ch
 			// Serial port command line option
 			logger.Infof("ZEROCONF: using -port and -baud commnd line config %s at %d\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
 			if err = synio.SetSynergySerialPort(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud,
-				true, *serialVerboseFlag, *mockSynio); err != nil {
+				prefsUserPreferences.SerialFlowControl, true, *serialVerboseFlag, *mockSynio); err != nil {
 				return
 			}
 		} else if *vst != 0 {
@@ -165,7 +165,7 @@ func ConnectSynergy(zeroconfConfig zeroconf.Service) (err error) {
 	if zeroconfConfig.InstanceName == "serial-port" {
 		logger.Infof("ZEROCONF: using Synergy preferences config %s at %d\n", prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud)
 		if err = synio.SetSynergySerialPort(prefsUserPreferences.SerialPort, prefsUserPreferences.SerialBaud,
-			true, *serialVerboseFlag, *mockSynio); err != nil {
+			prefsUserPreferences.SerialFlowControl, true, *serialVerboseFlag, *mockSynio); err != nil {
 			return
 		}
 	} else {
@@ -183,7 +183,8 @@ func ConnectToSynergy(choice *zeroconf.Service) (err error) {
 		firmwareVersion = ""
 		if choice == nil || choice.InstanceName == "serial-port" {
 			if err = synio.SetSynergySerialPort(prefsUserPreferences.SerialPort,
-				prefsUserPreferences.SerialBaud, true, *serialVerboseFlag, *mockSynio); err != nil {
+				prefsUserPreferences.SerialBaud, prefsUserPreferences.SerialFlowControl,
+				true, *serialVerboseFlag, *mockSynio); err != nil {
 				err = errors.Wrapf(err, "Cannot connect to synergy on port %s at %d baud\n",
 					prefsUserPreferences.SerialPort,
 					prefsUserPreferences.SerialBaud)
