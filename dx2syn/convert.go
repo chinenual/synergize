@@ -58,31 +58,31 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		vce.Envelopes[i].AmpEnvelope.Table[3] = o.EgRate[0] - 99
 
 		//point2
-		vce.Envelopes[i].AmpEnvelope.Table[4] = (o.EgRate[0] - 99) +
+		vce.Envelopes[i].AmpEnvelope.Table[4] = (o.EgLevel[1] - 99)
+		vce.Envelopes[i].AmpEnvelope.Table[5] = (o.EgLevel[1] - 99)
+		vce.Envelopes[i].AmpEnvelope.Table[6] = (o.EgRate[0] - 99) +
 			(o.EgRate[1] - 99)
-		vce.Envelopes[i].AmpEnvelope.Table[5] = (o.EgRate[0] - 99) +
+		vce.Envelopes[i].AmpEnvelope.Table[7] = (o.EgRate[0] - 99) +
 			(o.EgRate[1] - 99)
-		vce.Envelopes[i].AmpEnvelope.Table[6] = (o.EgLevel[1] - 99)
-		vce.Envelopes[i].AmpEnvelope.Table[7] = (o.EgLevel[1] - 99)
 
 		//point3
-		vce.Envelopes[i].AmpEnvelope.Table[8] = (o.EgRate[0] - 99) +
+		vce.Envelopes[i].AmpEnvelope.Table[8] = (o.EgLevel[2] - 99)
+		vce.Envelopes[i].AmpEnvelope.Table[9] = (o.EgLevel[2] - 99)
+		vce.Envelopes[i].AmpEnvelope.Table[10] = (o.EgRate[0] - 99) +
 			(o.EgRate[1] - 99) + (o.EgRate[2] - 99)
-		vce.Envelopes[i].AmpEnvelope.Table[9] = (o.EgRate[0] - 99) +
+		vce.Envelopes[i].AmpEnvelope.Table[11] = (o.EgRate[0] - 99) +
 			(o.EgRate[1] - 99) + (o.EgRate[2] - 99)
-		vce.Envelopes[i].AmpEnvelope.Table[10] = (o.EgLevel[2] - 99)
-		vce.Envelopes[i].AmpEnvelope.Table[11] = (o.EgLevel[2] - 99)
 
 		//point4
-		vce.Envelopes[i].AmpEnvelope.Table[12] = (o.EgRate[0] - 99) +
+		vce.Envelopes[i].AmpEnvelope.Table[12] = (o.EgLevel[3] - 99)
+		vce.Envelopes[i].AmpEnvelope.Table[13] = (o.EgLevel[3] - 99)
+		vce.Envelopes[i].AmpEnvelope.Table[14] = (o.EgRate[0] - 99) +
 			(o.EgRate[1] - 99) + (o.EgRate[2] - 99)+ (o.EgRate[3] - 99)
-		vce.Envelopes[i].AmpEnvelope.Table[13] = (o.EgRate[0] - 99) +
+		vce.Envelopes[i].AmpEnvelope.Table[15] = (o.EgRate[0] - 99) +
 			(o.EgRate[1] - 99) + (o.EgRate[2] - 99)+ (o.EgRate[3] - 99)
-		vce.Envelopes[i].AmpEnvelope.Table[14] = (o.EgLevel[3] - 99)
-		vce.Envelopes[i].AmpEnvelope.Table[15] = (o.EgLevel[3] - 99)
 
 		// DX only has a single frequency envelope - replicate it on each Synergy osc:
-		// NOTE the first point in the Synergy freq table is "special" - it stores a "freq.scale and wavetype" instad of rates
+		// NOTE the first point in the Synergy freq table is "special" - it stores a "freq.scale and wavetype" instead of rates
 		// Like the amp table, the values are stored in quads, two values, two rates per point
 
 		// envelopes: DX freq envelopes always have 4 points
