@@ -69,6 +69,9 @@ func main() {
 		if vce, err = TranslateDx7ToVce(v); err != nil {
 			log.Printf("ERROR: could not translate Dx7 voice %s: %v",v.VoiceName,err)
 		} else {
+			if *verboseFlag {
+				log.Printf("Result VCE: %s %s\n", v.VoiceName, helperVCEToJSON(vce))
+			}
 			vcePathname := v.VoiceName + ".VCE"
 			if err = data.WriteVceFile(vcePathname, vce); err != nil {
 				log.Printf("ERROR: could not write VCEfile %s: %v", vcePathname, err)
