@@ -36,7 +36,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	for i, o := range dx7Voice.Osc {
 
 		vce.Envelopes[i].FreqEnvelope.FDETUN = int8(o.OscDetune)
-		//  **
+
 		vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
 
 		// envelopes: DX amp envelopes always have 4 points
