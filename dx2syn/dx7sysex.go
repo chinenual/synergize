@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
-	"github.com/pkg/errors"
 	"io/ioutil"
+
+	"github.com/pkg/errors"
 )
 
 type Dx7Sysex struct {
@@ -30,6 +31,7 @@ type Dx7Osc struct {
 	OscDetune                 byte
 }
 
+//
 // Nicely documented at https://github.com/asb2m10/dexed/blob/master/Documentation/sysex-format.txt
 // NOTE: the file structure is "packed" - we represent each param as a byte even if they are packed
 // several params per byte in the file
@@ -50,7 +52,6 @@ type Dx7Voice struct {
 	Transpose           byte
 	VoiceName           string
 }
-
 
 func readDx7Osc(reader *bytes.Reader) (osc Dx7Osc, err error) {
 	if err = binary.Read(reader, binary.LittleEndian, &osc.EgRate); err != nil {
@@ -73,7 +74,7 @@ func readDx7Osc(reader *bytes.Reader) (osc Dx7Osc, err error) {
 		return
 	}
 	osc.KeyLevelScalingLeftCurve = v & 0x03
-	osc.KeyLevelScalingRightCurve = (v & 0x0C)  >> 2
+	osc.KeyLevelScalingRightCurve = (v & 0x0C) >> 2
 
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
 		return
@@ -84,8 +85,8 @@ func readDx7Osc(reader *bytes.Reader) (osc Dx7Osc, err error) {
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
 		return
 	}
-	osc.AmpModSensitivity= v & 0x03
-	osc.KeyVelocitySensitivity= (v & 0x1C) >> 3
+	osc.AmpModSensitivity = v & 0x03
+	osc.KeyVelocitySensitivity = (v & 0x1C) >> 3
 
 	if err = binary.Read(reader, binary.LittleEndian, &osc.OperatorOutputLevel); err != nil {
 		return
@@ -93,8 +94,8 @@ func readDx7Osc(reader *bytes.Reader) (osc Dx7Osc, err error) {
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
 		return
 	}
-	osc.OscMode= (v & 0x01) != 0
-	osc.OscFreqCoarse= int8((v & 0x7E) >> 1)
+	osc.OscMode = (v & 0x01) != 0
+	osc.OscFreqCoarse = int8((v & 0x7E) >> 1)
 
 	if err = binary.Read(reader, binary.LittleEndian, &osc.OscFreqFine); err != nil {
 		return
@@ -105,7 +106,7 @@ func readDx7Osc(reader *bytes.Reader) (osc Dx7Osc, err error) {
 func readDx7Voice(reader *bytes.Reader) (voice Dx7Voice, err error) {
 	for i := 5; i >= 0; i-- {
 		var osc Dx7Osc
-		if osc,err = readDx7Osc(reader); err != nil {
+		if osc, err = readDx7Osc(reader); err != nil {
 			return
 		}
 		voice.Osc[i] = osc
@@ -123,7 +124,7 @@ func readDx7Voice(reader *bytes.Reader) (voice Dx7Voice, err error) {
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
 		return
 	}
-	voice.OscSync  = (v & 0x08) != 0
+	voice.OscSync = (v & 0x08) != 0
 	voice.Feedback = v & 0x07
 
 	if err = binary.Read(reader, binary.LittleEndian, &voice.LfoSpeed); err != nil {
