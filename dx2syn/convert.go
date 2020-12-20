@@ -12,7 +12,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		return
 	}
 
-	for i := 0; i < 8; i++ {
+	for i := 0; i < 7; i++ {
 		vce.Head.VNAME[i] = dx7Voice.VoiceName[i]
 	}
 
@@ -33,20 +33,11 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	// May be modified if Coarse < 1
 	vce.Head.VTRANS = int8(dx7Voice.Transpose - 24)
 
-	// harmonics:
-	transposedDown := false
-	for _, o := range dx7Voice.Osc {
-		if o.OscFreqCoarse < 0 {
-			transposedDown = true
-			vce.Head.VTRANS = -12
-			break
-		}
-	}
 	for i, o := range dx7Voice.Osc {
+
+		vce.Envelopes[i].FreqEnvelope.FDETUN = int8(o.OscDetune)
+
 		vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
-		if transposedDown {
-			vce.Envelopes[i].FreqEnvelope.OHARM += 1
-		}
 
 		// envelopes: DX amp envelopes always have 4 points
 		vce.Envelopes[i].AmpEnvelope.NPOINTS = 4
