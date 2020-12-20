@@ -38,7 +38,6 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		vce.Envelopes[i].FreqEnvelope.FDETUN = int8(o.OscDetune)
 
 		vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
-
 		// envelopes: DX amp envelopes always have 4 points
 		vce.Envelopes[i].AmpEnvelope.NPOINTS = 4
 		// Each Synergy oscillator is voice twice - for low and high key velocity response
