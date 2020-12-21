@@ -30,7 +30,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	vce.Head.VIBDEP = dx7Voice.LfoPitchModDepth
 
 	// Transpose
-	// May be modified if Coarse < 1
+
 	vce.Head.VTRANS = int8(dx7Voice.Transpose - 24)
 
 	for i, o := range dx7Voice.Osc {
@@ -46,37 +46,38 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		// point1
 		vce.Envelopes[i].AmpEnvelope.Table[0] = byte((math.Round(float64(o.EgLevel[0]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[1] = byte((math.Round(float64(o.EgLevel[0]) * 0.727)) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[2] = 99 - o.EgRate[0]
-		vce.Envelopes[i].AmpEnvelope.Table[3] = 99 - o.EgRate[0]
-
+		vce.Envelopes[i].AmpEnvelope.Table[2] = helperUnscaleAmpTimeValue(int(99 - o.EgRate[0]))
+		vce.Envelopes[i].AmpEnvelope.Table[3] = helperUnscaleAmpTimeValue(int(99 - o.EgRate[0]))
 		//point2
 		vce.Envelopes[i].AmpEnvelope.Table[4] = byte((math.Round(float64(o.EgLevel[1]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[5] = byte((math.Round(float64(o.EgLevel[1]) * 0.727)) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[6] = (99 - o.EgRate[0]) +
-			(99 - o.EgRate[1])
-		vce.Envelopes[i].AmpEnvelope.Table[7] = (99 - o.EgRate[0]) +
-			(99 - o.EgRate[1])
+		vce.Envelopes[i].AmpEnvelope.Table[6] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
+			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1])))
+		vce.Envelopes[i].AmpEnvelope.Table[7] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
+			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1])))
 
 		//point3
 		vce.Envelopes[i].AmpEnvelope.Table[8] = byte((math.Round(float64(o.EgLevel[2]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[9] = byte((math.Round(float64(o.EgLevel[2]) * 0.727)) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[10] = (99 - o.EgRate[0]) +
-			(99 - o.EgRate[1]) + (99 - o.EgRate[2])
-		vce.Envelopes[i].AmpEnvelope.Table[11] = (99 - o.EgRate[0]) +
-			(99 - o.EgRate[1]) + (99 - o.EgRate[2])
+		vce.Envelopes[i].AmpEnvelope.Table[10] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
+			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1]))) + (helperUnscaleAmpTimeValue(int(99 - o.EgRate[2])))
+		vce.Envelopes[i].AmpEnvelope.Table[11] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
+			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1]))) + (helperUnscaleAmpTimeValue(int(99 - o.EgRate[2])))
 
 		//point4
 		vce.Envelopes[i].AmpEnvelope.Table[12] = byte((math.Round(float64(o.EgLevel[3]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[13] = byte((math.Round(float64(o.EgLevel[3]) * 0.727)) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[14] = (99 - o.EgRate[0]) +
-			(99 - o.EgRate[1]) + (99 - o.EgRate[2]) + (99 - o.EgRate[3])
-		vce.Envelopes[i].AmpEnvelope.Table[15] = (99 - o.EgRate[0]) +
-			(99 - o.EgRate[1]) + (99 - o.EgRate[2]) + (99 - o.EgRate[3])
+		vce.Envelopes[i].AmpEnvelope.Table[14] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
+			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1]))) + (helperUnscaleAmpTimeValue(int(99 - o.EgRate[2]))) +
+			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[3])))
+		vce.Envelopes[i].AmpEnvelope.Table[15] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
+			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1]))) + (helperUnscaleAmpTimeValue(int(99 - o.EgRate[2]))) +
+			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[3])))
 
 		// DX only has a single frequency envelope - replicate it on each Synergy osc:
 		// NOTE the first point in the Synergy freq table is "special" - it stores a "freq.scale and wavetype" instead of rates
 		// Like the amp table, the values are stored in quads, two values, two rates per point
-
+		/* ****************************************
 		// envelopes: DX freq envelopes always have 4 points
 		vce.Envelopes[i].FreqEnvelope.NPOINTS = 4
 
@@ -110,6 +111,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 			(99 - dx7Voice.PitchEgRate[1]) + (99 - dx7Voice.PitchEgRate[2]) + (99 - dx7Voice.PitchEgRate[3])
 		vce.Envelopes[i].FreqEnvelope.Table[15] = (99 - dx7Voice.PitchEgRate[0]) +
 			(99 - dx7Voice.PitchEgRate[1]) + (99 - dx7Voice.PitchEgRate[2]) + (99 - dx7Voice.PitchEgRate[3])
+		*/
 	}
 	// ... everything else ...
 
