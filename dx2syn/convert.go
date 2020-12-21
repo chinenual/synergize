@@ -30,7 +30,6 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	vce.Head.VIBDEP = dx7Voice.LfoPitchModDepth
 
 	// Transpose
-
 	vce.Head.VTRANS = int8(dx7Voice.Transpose - 24)
 
 	for i, o := range dx7Voice.Osc {
