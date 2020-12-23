@@ -36,9 +36,13 @@ type Dx7Osc struct {
 // NOTE: the file structure is "packed" - we represent each param as a byte even if they are packed
 // several params per byte in the file
 type Dx7Voice struct {
-	Osc                 [6]Dx7Osc // in logic order (not as in the file) - "Osc 1" is Osc[0], "Osc 6" is Osc[5]
-	PitchEgRate         [4]byte   // PitchEgRate[0] = rate1, [1] = rate2, etc.
-	PitchEgLevel        [4]byte   // PitchEgLevel[0] = level1, [1] = level2, etc
+	Osc [6]Dx7Osc // in file order (not logical order) - "Osc 6" is Osc[0], "Osc 1" is Osc[5]
+	// This simplifies mapping to Synergy oscillators since Synergy patches are reversed from DX conventions
+	// DX has higher numbered ops modulating lower numbered ones; Synergy has the opposite convention
+	// Lower numbered syn osc modulates higher numbered oscs.
+
+	PitchEgRate         [4]byte // PitchEgRate[0] = rate1, [1] = rate2, etc.
+	PitchEgLevel        [4]byte // PitchEgLevel[0] = level1, [1] = level2, etc
 	Algorithm           byte
 	Feedback            byte
 	OscSync             bool
@@ -104,7 +108,7 @@ func readDx7Osc(reader *bytes.Reader) (osc Dx7Osc, err error) {
 }
 
 func readDx7Voice(reader *bytes.Reader) (voice Dx7Voice, err error) {
-	for i := 5; i >= 0; i-- {
+	for i := 0; i < 6; i++ {
 		var osc Dx7Osc
 		if osc, err = readDx7Osc(reader); err != nil {
 			return
