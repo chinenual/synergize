@@ -7,6 +7,7 @@ import (
 	"github.com/chinenual/synergize/data"
 	"github.com/orcaman/writerseeker"
 	"io/ioutil"
+	"log"
 )
 
 // Helper routines that may find their way back into the synergize/data module.
@@ -34,6 +35,56 @@ func helperSetPatchType(vce *data.VCE, patchType int) {
 	for i := range data.PatchTypePerOscTable[patchType-1] {
 		vce.Envelopes[i].FreqEnvelope.OPTCH = data.PatchTypePerOscTable[patchType-1][i]
 	}
+}
+
+var dxAlgoNoFeedbackPatchTypePerOscTable = [32][16]byte{
+	{100, 97, 97, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},   // DX 1
+	{100, 97, 97, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},   // DX 2
+	{100, 97, 33, 100, 97, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},  // DX 3
+	{100, 97, 33, 100, 97, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},  // DX 4
+	{100, 76, 76, 1, 100, 76, 76, 1, 4, 4, 4, 4, 4, 4, 4, 4}, // DX 5
+	{100, 76, 76, 1, 100, 76, 76, 1, 4, 4, 4, 4, 4, 4, 4, 4}, // DX 6
+	{100, 97, 76, 33, 100, 33, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}, // DX 7
+	{100, 97, 76, 33, 100, 33, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}, // DX 8
+	{100, 97, 76, 33, 100, 33, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}, // DX 9
+	{}, // DX 10
+	{}, // DX 11
+	{}, // DX 12
+	{}, // DX 13
+	{}, // DX 14
+	{}, // DX 15
+	{}, // DX 16
+	{}, // DX 17
+	{}, // DX 18
+	{}, // DX 19
+	{}, // DX 20
+	{}, // DX 21
+	{}, // DX 22
+	{}, // DX 23
+	{}, // DX 24
+	{}, // DX 25
+	{}, // DX 26
+	{}, // DX 27
+	{}, // DX 28
+	{}, // DX 29
+	{}, // DX 30
+	{}, // DX 31
+	{4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}, // DX 32
+}
+
+func helperSetAlgorithmPatchType(vce *data.VCE, dxAlgo byte, dxFeedback byte) (err error) {
+	if dxFeedback != 0 {
+		log.Printf("WARNING: Limitation: unhandled DX feedback: %d", dxFeedback)
+	}
+	if len(dxAlgoNoFeedbackPatchTypePerOscTable[dxAlgo]) < 16 {
+		log.Printf("ERROR: Limitation: unhandled DX algorithm: %d", dxAlgo)
+	}
+
+	for i := range dxAlgoNoFeedbackPatchTypePerOscTable[dxAlgo] {
+		vce.Envelopes[i].FreqEnvelope.OPTCH = dxAlgoNoFeedbackPatchTypePerOscTable[dxAlgo][i]
+	}
+
+	return
 }
 
 func helperCompactVCE(vce data.VCE) (compacted data.VCE, err error) {

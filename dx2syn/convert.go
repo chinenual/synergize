@@ -4,7 +4,6 @@ import (
 	"math"
 
 	"github.com/chinenual/synergize/data"
-	"github.com/pkg/errors"
 )
 
 func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
@@ -16,11 +15,8 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		vce.Head.VNAME[i] = dx7Voice.VoiceName[i]
 	}
 
-	if dx7Voice.Algorithm == 4 {
-		helperSetPatchType(&vce, 2)
-	} else {
-		err = errors.New("Limitation: currently only handle DX algorithm #4")
-		return
+	if err = helperSetAlgorithmPatchType(&vce, dx7Voice.Algorithm, dx7Voice.Feedback); err != nil {
+return
 	}
 	// DX7 always uses 6 oscillators
 	vce.Head.VOITAB = 5
