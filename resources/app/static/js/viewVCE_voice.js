@@ -438,6 +438,7 @@ let viewVCE_voice = {
 			viewVCE_voice.sendToCSurface(null, `osc-enabled[${osc + 1}]`, 0);
 		}*/
 
+                var debug_patchBytes = "";
 		// populate new ones:
 		for (osc = 0; osc <= vce.Head.VOITAB; osc++) {
 			viewVCE_voice.sendToCSurface(null, `osc-enabled[${osc + 1}]`, 1);
@@ -477,6 +478,8 @@ let viewVCE_voice = {
 			//				" patchAdderInDSR  : " + patchAdderInDSR + "\n" +
 			//				" patchFOInputDSR  : " + patchFOInputDSR + "\n");
 
+                        debug_patchBytes += ", " + patchByte;
+                    
 			// compute the DAG based on current register usage:
 			if (!patchInhibitF0) {
 				var modulatingOscs = outRegisters[patchFOInputDSR];
@@ -616,6 +619,7 @@ let viewVCE_voice = {
 			tbody.appendChild(temp.content.firstChild);
 		}
 
+            console.log("patchBytes: " + debug_patchBytes);
 		console.log("freqDAG: " + freqDAG);
 		// Generate the patch diagram:
 		var patchDiagramCanvas = document.getElementById('patchDiagram');
