@@ -16,7 +16,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	}
 
 	if err = helperSetAlgorithmPatchType(&vce, dx7Voice.Algorithm, dx7Voice.Feedback); err != nil {
-return
+		return
 	}
 	// DX7 always uses 6 oscillators
 	vce.Head.VOITAB = 5
@@ -33,6 +33,15 @@ return
 		vce.Envelopes[i].FreqEnvelope.FDETUN = int8(o.OscDetune)
 
 		vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
+		// type = 1  : no loop (and LOOPPT and SUSTAINPT are accelleration rates not point positions)
+		// type = 2  : S only
+		// type = 3  : L and S - L must be before S
+		// type = 4  : R and S - R must be before S
+		// WARNING: when type1, the LOOPPT and SUSTAINPT values are _acceleration_ rates, not point positions. What a pain.
+		// Set for Sustain poiint only.
+		vce.Envelopes[i].AmpEnvelope.ENVTYPE = 2
+		//  Always DX7 Sustain Point
+		vce.Envelopes[i].AmpEnvelope.SUSTAINPT = 3
 		// envelopes: DX amp envelopes always have 4 points
 		vce.Envelopes[i].AmpEnvelope.NPOINTS = 4
 		// Each Synergy oscillator is voice twice - for low and high key velocity response
@@ -41,30 +50,35 @@ return
 		// point1
 		vce.Envelopes[i].AmpEnvelope.Table[0] = byte((math.Round(float64(o.EgLevel[0]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[1] = byte((math.Round(float64(o.EgLevel[0]) * 0.727)) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[2] = helperUnscaleAmpTimeValue(int(99 - o.EgRate[0]))
+		vce.Envelopes[i].AmpEnvelope.Table[2] = DXRiseDur[o.EgRate[0]]
 		vce.Envelopes[i].AmpEnvelope.Table[3] = helperUnscaleAmpTimeValue(int(99 - o.EgRate[0]))
+
 		//point2
 		vce.Envelopes[i].AmpEnvelope.Table[4] = byte((math.Round(float64(o.EgLevel[1]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[5] = byte((math.Round(float64(o.EgLevel[1]) * 0.727)) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[6] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
-			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1])))
+		vce.Envelopes[i].AmpEnvelope.Table[6] = DXRiseDur[o.EgRate[0]] + DXDecayDur[o.EgRate[1]]
+		// vce.Envelopes[i].AmpEnvelope.Table[6] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
+		//	(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1])))
 		vce.Envelopes[i].AmpEnvelope.Table[7] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
 			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1])))
 
 		//point3
 		vce.Envelopes[i].AmpEnvelope.Table[8] = byte((math.Round(float64(o.EgLevel[2]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[9] = byte((math.Round(float64(o.EgLevel[2]) * 0.727)) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[10] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
-			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1]))) + (helperUnscaleAmpTimeValue(int(99 - o.EgRate[2])))
+		//vce.Envelopes[i].AmpEnvelope.Table[10] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
+		//	(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1]))) + (helperUnscaleAmpTimeValue(int(99 - o.EgRate[2])))
+		vce.Envelopes[i].AmpEnvelope.Table[10] = DXRiseDur[o.EgRate[0]] + DXDecayDur[o.EgRate[1]] + DXDecayDur[o.EgRate[2]]
 		vce.Envelopes[i].AmpEnvelope.Table[11] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
 			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1]))) + (helperUnscaleAmpTimeValue(int(99 - o.EgRate[2])))
 
 		//point4
 		vce.Envelopes[i].AmpEnvelope.Table[12] = byte((math.Round(float64(o.EgLevel[3]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[13] = byte((math.Round(float64(o.EgLevel[3]) * 0.727)) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[14] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
-			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1]))) + (helperUnscaleAmpTimeValue(int(99 - o.EgRate[2]))) +
-			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[3])))
+		//vce.Envelopes[i].AmpEnvelope.Table[14] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
+		//	(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1]))) + (helperUnscaleAmpTimeValue(int(99 - o.EgRate[2]))) +
+		//	(helperUnscaleAmpTimeValue(int(99 - o.EgRate[3])))
+		vce.Envelopes[i].AmpEnvelope.Table[10] = DXRiseDur[o.EgRate[0]] + DXDecayDur[o.EgRate[1]] + DXDecayDur[o.EgRate[2]] +
+			DXDecayDur[o.EgRate[3]]
 		vce.Envelopes[i].AmpEnvelope.Table[15] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
 			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1]))) + (helperUnscaleAmpTimeValue(int(99 - o.EgRate[2]))) +
 			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[3])))
@@ -117,3 +131,14 @@ return
 	return
 
 }
+
+var DXRiseDur = []byte{53, 50, 47, 44, 41, 38, 36, 34, 31, 29, 27, 26, 25, 24, 23, 22, 22,
+	21, 21, 20, 20, 19, 19, 18, 18, 18, 17, 17, 17, 17, 17, 17, 16, 16, 16, 16, 16, 16, 16, 16,
+	16, 16, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+
+var DXDecayDur = []byte{73, 72, 71, 70, 68, 67, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 57,
+	56, 54, 50, 46, 42, 39, 35, 33, 31, 30, 28, 26, 25, 24, 23, 23, 22, 22, 21, 21, 21, 21, 21,
+	20, 20, 20, 20, 19, 19, 18, 18, 17, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+	16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0}
