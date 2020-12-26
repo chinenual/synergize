@@ -73,30 +73,26 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		// point1
 		vce.Envelopes[i].AmpEnvelope.Table[0] = byte((math.Round(float64(o.EgLevel[0]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[1] = byte((math.Round(float64(o.EgLevel[0]) * 0.727)) + 55)
-		//  has to find nearest in DXRisetoSYN
-		vce.Envelopes[i].AmpEnvelope.Table[2] = byte(attkR)
-		vce.Envelopes[i].AmpEnvelope.Table[3] = byte(attkR)
+		vce.Envelopes[i].AmpEnvelope.Table[2] = byte(helperNearestAmpTimeIndex(attkR))
+		vce.Envelopes[i].AmpEnvelope.Table[3] = byte(helperNearestAmpTimeIndex(attkR))
 
 		//point2
 		vce.Envelopes[i].AmpEnvelope.Table[4] = byte((math.Round(float64(o.EgLevel[1]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[5] = byte((math.Round(float64(o.EgLevel[1]) * 0.727)) + 55)
-		//  has to find nearest in DXDecaytoSYN
-		vce.Envelopes[i].AmpEnvelope.Table[6] = byte(attkR + decyR)
-		vce.Envelopes[i].AmpEnvelope.Table[7] = byte(attkR + decyR)
+		vce.Envelopes[i].AmpEnvelope.Table[6] = byte(helperNearestAmpTimeIndex(attkR + decyR))
+		vce.Envelopes[i].AmpEnvelope.Table[7] = byte(helperNearestAmpTimeIndex(attkR + decyR))
 
 		//point3
 		vce.Envelopes[i].AmpEnvelope.Table[8] = byte((math.Round(float64(o.EgLevel[2]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[9] = byte((math.Round(float64(o.EgLevel[2]) * 0.727)) + 55)
-		//  has to find nearest in DXDecaytoSYN
-		vce.Envelopes[i].AmpEnvelope.Table[10] = byte(attkR + decyR + sustR)
-		vce.Envelopes[i].AmpEnvelope.Table[11] = byte(attkR + decyR + sustR)
+		vce.Envelopes[i].AmpEnvelope.Table[10] = byte(helperNearestAmpTimeIndex(attkR + decyR + sustR))
+		vce.Envelopes[i].AmpEnvelope.Table[11] = byte(helperNearestAmpTimeIndex(attkR + decyR + sustR))
 
 		//point4
 		vce.Envelopes[i].AmpEnvelope.Table[12] = byte((math.Round(float64(o.EgLevel[3]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[13] = byte((math.Round(float64(o.EgLevel[3]) * 0.727)) + 55)
-		//  has to find nearest in DXDecaytoSYN
-		vce.Envelopes[i].AmpEnvelope.Table[14] = byte(attkR + decyR + sustR + relsR)
-		vce.Envelopes[i].AmpEnvelope.Table[15] = byte(attkR + decyR + sustR + relsR)
+		vce.Envelopes[i].AmpEnvelope.Table[14] = byte(helperNearestAmpTimeIndex(attkR + decyR + sustR + relsR))
+		vce.Envelopes[i].AmpEnvelope.Table[15] = byte(helperNearestAmpTimeIndex(attkR + decyR + sustR + relsR))
 
 		// DX only has a single frequency envelope - replicate it on each Synergy osc:
 		// NOTE the first point in the Synergy freq table is "special" - it stores a "freq.scale and wavetype" instead of rates
