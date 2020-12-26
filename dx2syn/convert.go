@@ -73,25 +73,28 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		// point1
 		vce.Envelopes[i].AmpEnvelope.Table[0] = byte((math.Round(float64(o.EgLevel[0]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[1] = byte((math.Round(float64(o.EgLevel[0]) * 0.727)) + 55)
+		//  has to find nearest in DXRisetoSYN
 		vce.Envelopes[i].AmpEnvelope.Table[2] = byte(attkR)
-		vce.Envelopes[i].AmpEnvelope.Table[3] = byte(EGrateRise[o.EgRate[0]])
+		vce.Envelopes[i].AmpEnvelope.Table[3] = byte(attkR)
 
 		//point2
 		vce.Envelopes[i].AmpEnvelope.Table[4] = byte((math.Round(float64(o.EgLevel[1]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[5] = byte((math.Round(float64(o.EgLevel[1]) * 0.727)) + 55)
-
+		//  has to find nearest in DXDecaytoSYN
 		vce.Envelopes[i].AmpEnvelope.Table[6] = byte(attkR + decyR)
 		vce.Envelopes[i].AmpEnvelope.Table[7] = byte(attkR + decyR)
 
 		//point3
 		vce.Envelopes[i].AmpEnvelope.Table[8] = byte((math.Round(float64(o.EgLevel[2]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[9] = byte((math.Round(float64(o.EgLevel[2]) * 0.727)) + 55)
+		//  has to find nearest in DXDecaytoSYN
 		vce.Envelopes[i].AmpEnvelope.Table[10] = byte(attkR + decyR + sustR)
 		vce.Envelopes[i].AmpEnvelope.Table[11] = byte(attkR + decyR + sustR)
 
 		//point4
 		vce.Envelopes[i].AmpEnvelope.Table[12] = byte((math.Round(float64(o.EgLevel[3]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[13] = byte((math.Round(float64(o.EgLevel[3]) * 0.727)) + 55)
+		//  has to find nearest in DXDecaytoSYN
 		vce.Envelopes[i].AmpEnvelope.Table[14] = byte(attkR + decyR + sustR + relsR)
 		vce.Envelopes[i].AmpEnvelope.Table[15] = byte(attkR + decyR + sustR + relsR)
 
