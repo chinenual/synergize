@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math"
 
 	"github.com/chinenual/synergize/data"
 	"github.com/orcaman/writerseeker"
@@ -141,6 +142,33 @@ var _ampTimeScale = []int{0, 1, 2, 3, 4, 5, 6, 7,
 	652, 732, 822, 922, 1035, 1162, 1304, 1464,
 	1644, 1845, 2071, 2325, 2609, 2929, 3288, 3691,
 	4143, 4650, 5219, 5859, 6576}
+
+
+func _indexOfNearestValue(val int, array []int) (index int) {
+	bestDiff := math.MaxInt64
+	index = -1;
+	// brute force - we look at the whole array rather than return as soon as we find a minima
+	// this is fine since the array is known to be short.
+	for i,v := range array {
+		diff := val - v;
+		if diff < 0 {
+			// diffs are absolute values
+			diff *= -1
+		}
+		if diff < bestDiff {
+			bestDiff = diff;
+			index = i
+		}
+	}
+	return
+}
+
+func helperNearestFreqTimeIndex(val int) (index int) {
+	return _indexOfNearestValue(val, _freqTimeScale)
+}
+func helperNearestAmpTimeIndex(val int) (index int) {
+	return _indexOfNearestValue(val, _ampTimeScale)
+}
 
 // translate a frequency time "as displayed" to "byte value as stored"
 func helperUnscaleFreqTimeValue(time int) byte {
