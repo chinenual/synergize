@@ -26,13 +26,28 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	vce.Head.VIBDEP = dx7Voice.LfoPitchModDepth
 
 	// Transpose
+	// Set for OHARM +1 of any of the OPs OscFreqCoarse are 0 (1/2 octave)
+
 	vce.Head.VTRANS = int8(dx7Voice.Transpose - 24)
 
-	for i, o := range dx7Voice.Osc {
+	transposedDown := false
+	for _, o := range dx7Voice.Osc {
+		if o.OscFreqCoarse == 0 {
+			transposedDown = true
+			vce.Head.VTRANS = -12
+			break
+		}
+	}
 
+	for i, o := range dx7Voice.Osc {
+		vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
+		//At least one OSC Marh = 0
+		if transposedDown {
+			vce.Envelopes[i].FreqEnvelope.OHARM++
+		}
+		// Set OSC detune
 		vce.Envelopes[i].FreqEnvelope.FDETUN = int8(o.OscDetune)
 
-		vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
 		// type = 1  : no loop (and LOOPPT and SUSTAINPT are accelleration rates not point positions)
 		// type = 2  : S only
 		// type = 3  : L and S - L must be before S
@@ -51,37 +66,25 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		vce.Envelopes[i].AmpEnvelope.Table[0] = byte((math.Round(float64(o.EgLevel[0]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[1] = byte((math.Round(float64(o.EgLevel[0]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[2] = DXRiseDur[o.EgRate[0]]
-		vce.Envelopes[i].AmpEnvelope.Table[3] = helperUnscaleAmpTimeValue(int(99 - o.EgRate[0]))
+		vce.Envelopes[i].AmpEnvelope.Table[3] = DXRiseDur[o.EgRate[0]]
 
 		//point2
 		vce.Envelopes[i].AmpEnvelope.Table[4] = byte((math.Round(float64(o.EgLevel[1]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[5] = byte((math.Round(float64(o.EgLevel[1]) * 0.727)) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[6] = DXRiseDur[o.EgRate[0]] + DXDecayDur[o.EgRate[1]]
-		// vce.Envelopes[i].AmpEnvelope.Table[6] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
-		//	(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1])))
-		vce.Envelopes[i].AmpEnvelope.Table[7] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
-			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1])))
+		vce.Envelopes[i].AmpEnvelope.Table[6] = DXDecayDur[o.EgRate[1]]
+		vce.Envelopes[i].AmpEnvelope.Table[7] = DXDecayDur[o.EgRate[1]]
 
 		//point3
 		vce.Envelopes[i].AmpEnvelope.Table[8] = byte((math.Round(float64(o.EgLevel[2]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[9] = byte((math.Round(float64(o.EgLevel[2]) * 0.727)) + 55)
-		//vce.Envelopes[i].AmpEnvelope.Table[10] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
-		//	(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1]))) + (helperUnscaleAmpTimeValue(int(99 - o.EgRate[2])))
-		vce.Envelopes[i].AmpEnvelope.Table[10] = DXRiseDur[o.EgRate[0]] + DXDecayDur[o.EgRate[1]] + DXDecayDur[o.EgRate[2]]
-		vce.Envelopes[i].AmpEnvelope.Table[11] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
-			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1]))) + (helperUnscaleAmpTimeValue(int(99 - o.EgRate[2])))
+		vce.Envelopes[i].AmpEnvelope.Table[10] = DXDecayDur[o.EgRate[2]]
+		vce.Envelopes[i].AmpEnvelope.Table[11] = DXDecayDur[o.EgRate[2]]
 
 		//point4
 		vce.Envelopes[i].AmpEnvelope.Table[12] = byte((math.Round(float64(o.EgLevel[3]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[13] = byte((math.Round(float64(o.EgLevel[3]) * 0.727)) + 55)
-		//vce.Envelopes[i].AmpEnvelope.Table[14] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
-		//	(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1]))) + (helperUnscaleAmpTimeValue(int(99 - o.EgRate[2]))) +
-		//	(helperUnscaleAmpTimeValue(int(99 - o.EgRate[3])))
-		vce.Envelopes[i].AmpEnvelope.Table[10] = DXRiseDur[o.EgRate[0]] + DXDecayDur[o.EgRate[1]] + DXDecayDur[o.EgRate[2]] +
-			DXDecayDur[o.EgRate[3]]
-		vce.Envelopes[i].AmpEnvelope.Table[15] = helperUnscaleAmpTimeValue(int(99-o.EgRate[0])) +
-			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[1]))) + (helperUnscaleAmpTimeValue(int(99 - o.EgRate[2]))) +
-			(helperUnscaleAmpTimeValue(int(99 - o.EgRate[3])))
+		vce.Envelopes[i].AmpEnvelope.Table[14] = DXDecayDur[o.EgRate[3]]
+		vce.Envelopes[i].AmpEnvelope.Table[15] = DXDecayDur[o.EgRate[3]]
 
 		// DX only has a single frequency envelope - replicate it on each Synergy osc:
 		// NOTE the first point in the Synergy freq table is "special" - it stores a "freq.scale and wavetype" instead of rates
@@ -129,16 +132,15 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	//  return
 
 	return
-
 }
 
-var DXRiseDur = []byte{53, 50, 47, 44, 41, 38, 36, 34, 31, 29, 27, 26, 25, 24, 23, 22, 22,
+var DXRiseDur = [100]byte{53, 50, 47, 44, 41, 38, 36, 34, 31, 29, 27, 26, 25, 24, 23, 22, 22,
 	21, 21, 20, 20, 19, 19, 18, 18, 18, 17, 17, 17, 17, 17, 17, 16, 16, 16, 16, 16, 16, 16, 16,
 	16, 16, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
-var DXDecayDur = []byte{73, 72, 71, 70, 68, 67, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 57,
+var DXDecayDur = [100]byte{73, 72, 71, 70, 68, 67, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 57,
 	56, 54, 50, 46, 42, 39, 35, 33, 31, 30, 28, 26, 25, 24, 23, 23, 22, 22, 21, 21, 21, 21, 21,
-	20, 20, 20, 20, 19, 19, 18, 18, 17, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+	20, 20, 20, 20, 19, 19, 18, 18, 17, 17, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
 	16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0}
+	0, 0, 0, 0, 0, 0, 0}
