@@ -33,6 +33,20 @@ func helperBlankVce() (vce data.VCE, err error) {
 	return
 }
 
+func min(x, y int) int {
+	if x < y {
+		return x
+	}
+	return y
+}
+
+func max(x, y int) int {
+	if x > y {
+		return x
+	}
+	return y
+}
+
 func helperSetPatchType(vce *data.VCE, patchType int) {
 	for i := range data.PatchTypePerOscTable[patchType-1] {
 		vce.Envelopes[i].FreqEnvelope.OPTCH = data.PatchTypePerOscTable[patchType-1][i]
