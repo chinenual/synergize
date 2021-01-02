@@ -40,23 +40,23 @@ func _egEnabled(shift int, qr int, sampleCounter *int) bool {
 }
 
 // returns duration of isegment in samples
-func _computeDurationSamples(isegment int, levels [4]int, rates [4]int, sampleCounter *int) (nsamples int) {
+func _computeDurationSamples(isegment int, levels [4]byte, rates [4]byte, sampleCounter *int) (nsamples int) {
 	// -- level
 	var startLevel int
 	var targetLevel int
 	if isegment == 0 {
-		startLevel = levels[3]
-		targetLevel = levels[0]
+		startLevel = int(levels[3])
+		targetLevel = int(levels[0])
 	} else {
-		startLevel = levels[isegment-1]
-		targetLevel = levels[isegment]
+		startLevel = int(levels[isegment-1])
+		targetLevel = int(levels[isegment])
 	}
 	startLevel = max(0, (_outputLevel[startLevel]<<5)-224)
 	targetLevel = max(0, (_outputLevel[targetLevel]<<5)-224)
 	rising := targetLevel > startLevel
 	// -- rate
 	rateScaling := 0
-	qr := min(63, rateScaling+((rates[isegment]*41)>>6))
+	qr := min(63, rateScaling+((int(rates[isegment])*41)>>6))
 	shift := (qr >> 2) - 11
 	// -- loop
 	level := startLevel
@@ -82,7 +82,7 @@ func _computeDurationSamples(isegment int, levels [4]int, rates [4]int, sampleCo
 }
 
 // computes envelope duration and returns each segment duration in msecs
-func computeDurationsMs(levels [4]int, rates [4]int) (ms [4]int) {
+func computeDurationsMs(levels [4]byte, rates [4]byte) (ms [4]int) {
 	var sampleCounter int
 	sampleCounter = 0
 
