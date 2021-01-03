@@ -43,7 +43,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	for _, o := range dx7Voice.Osc {
 		if o.OscFreqCoarse == 0 {
 			transposedDown = true
-			vce.Head.VTRANS = -12
+			//vce.Head.VTRANS = -12
 			break
 		}
 	}
