@@ -70,7 +70,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		// envelopes: DX amp envelopes always have 4 points
 		vce.Envelopes[i].AmpEnvelope.NPOINTS = 4
 
-		OSClevelPercent = float64((o.OperatorOutputLevel) / 99.00)
+		OSClevelPercent = float64(float64(o.OperatorOutputLevel) / 99.00)
 		for k := 0; k < 4; k++ {
 			o.EgLevel[k] = byte(float64(o.EgLevel[k]) * OSClevelPercent)
 		}
