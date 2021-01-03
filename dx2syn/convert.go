@@ -36,6 +36,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	decyR := 0
 	sustR := 0
 	relsR := 0
+	var OSClevelPercent float64
 
 	var ms [4]int
 
@@ -65,9 +66,15 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		// Set for Sustain poiint only.
 		vce.Envelopes[i].AmpEnvelope.ENVTYPE = 2
 		//  Always DX7 Sustain Point
-		vce.Envelopes[i].AmpEnvelope.SUSTAINPT = 3
+		vce.Envelopes[i].AmpEnvelope.SUSTAINPT = 2
 		// envelopes: DX amp envelopes always have 4 points
 		vce.Envelopes[i].AmpEnvelope.NPOINTS = 4
+
+		OSClevelPercent = float64((o.OperatorOutputLevel) / 99.00)
+		for k := 0; k < 4; k++ {
+			o.EgLevel[k] = byte(float64(o.EgLevel[k]) * OSClevelPercent)
+		}
+
 		// Each Synergy oscillator is voice twice - for low and high key velocity response
 		// Synergy envelopes are represented as quads of ValLow, ValHi, RateLow and RateHi
 		// set both upper and lower envs the same
@@ -79,6 +86,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		sustR = ms[2]
 		relsR = ms[3]
 
+		fmt.Printf(" %s %f \n", " OSC % = ", OSClevelPercent)
 		fmt.Printf(" %s %d \n", " attkR = ", attkR)
 		fmt.Printf(" %s %d \n", " decyR = ", decyR)
 		fmt.Printf(" %s %d \n", " sustR = ", sustR)
