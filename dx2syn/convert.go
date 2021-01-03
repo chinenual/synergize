@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/chinenual/synergize/data"
@@ -35,6 +36,9 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	decyR := 0
 	sustR := 0
 	relsR := 0
+
+	var ms [4]int
+
 	for _, o := range dx7Voice.Osc {
 		if o.OscFreqCoarse == 0 {
 			transposedDown = true
@@ -50,7 +54,8 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 			vce.Envelopes[i].FreqEnvelope.OHARM++
 		}
 		// Set OSC detune
-		vce.Envelopes[i].FreqEnvelope.FDETUN = int8(o.OscDetune)
+
+		//vce.Envelopes[i].FreqEnvelope.FDETUN = int8(o.OscDetune)
 
 		// type = 1  : no loop (and LOOPPT and SUSTAINPT are accelleration rates not point positions)
 		// type = 2  : S only
@@ -66,10 +71,19 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		// Each Synergy oscillator is voice twice - for low and high key velocity response
 		// Synergy envelopes are represented as quads of ValLow, ValHi, RateLow and RateHi
 		// set both upper and lower envs the same
-		attkR = EGrateRise[o.EgRate[0]]
-		decyR = EGrateDecay[o.EgRate[1]]
-		sustR = EGrateDecay[o.EgRate[2]]
-		relsR = EGrateDecay[o.EgRate[3]]
+
+		ms = computeDurationsMs(o.EgLevel, o.EgRate)
+
+		attkR = ms[0]
+		decyR = ms[1]
+		sustR = ms[2]
+		relsR = ms[3]
+
+		fmt.Printf(" %s %d \n", " attkR = ", attkR)
+		fmt.Printf(" %s %d \n", " decyR = ", decyR)
+		fmt.Printf(" %s %d \n", " sustR = ", sustR)
+		fmt.Printf(" %s %d \n \n", " relsR = ", relsR)
+
 		// point1
 		vce.Envelopes[i].AmpEnvelope.Table[0] = byte((math.Round(float64(o.EgLevel[0]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[1] = byte((math.Round(float64(o.EgLevel[0]) * 0.727)) + 55)
