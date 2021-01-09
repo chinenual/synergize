@@ -80,7 +80,6 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		// set both upper and lower envs the same
 
 		ms = computeDurationsMs(o.EgLevel, o.EgRate)
-
 		attkR = ms[0]
 		decyR = ms[1]
 		sustR = ms[2]
