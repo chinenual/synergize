@@ -31,7 +31,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 
 	vce.Head.VTRANS = int8(dx7Voice.Transpose - 24)
 
-	transposedDown := false
+	// transposedDown := false
 	attkR := 0
 	decyR := 0
 	sustR := 0
@@ -39,24 +39,24 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	var OSClevelPercent float64
 
 	var ms [4]int
-
-	for _, o := range dx7Voice.Osc {
-		if o.OscFreqCoarse == 0 {
-			transposedDown = true
-			//vce.Head.VTRANS = -12
-			break
+	/*
+		for _, o := range dx7Voice.Osc {
+			if o.OscFreqCoarse == 0 {
+				transposedDown = true
+				//vce.Head.VTRANS = -12
+				break
+			}
 		}
-	}
-
+	*/
 	for i, o := range dx7Voice.Osc {
 		vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
-		//At least one OSC Marh = 0
-		if transposedDown {
-			vce.Envelopes[i].FreqEnvelope.OHARM++
+		//At least one OSC Oharm = 0
+		if o.OscFreqCoarse == 0 {
+			vce.Envelopes[i].FreqEnvelope.OHARM = 1
 		}
 		// Set OSC detune
 
-		//vce.Envelopes[i].FreqEnvelope.FDETUN = int8(o.OscDetune)
+		vce.Envelopes[i].FreqEnvelope.FDETUN = int8(o.OscDetune - 7)
 
 		// type = 1  : no loop (and LOOPPT and SUSTAINPT are accelleration rates not point positions)
 		// type = 2  : S only
@@ -66,7 +66,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		// Set for Sustain poiint only.
 		vce.Envelopes[i].AmpEnvelope.ENVTYPE = 2
 		//  Always DX7 Sustain Point
-		vce.Envelopes[i].AmpEnvelope.SUSTAINPT = 2
+		vce.Envelopes[i].AmpEnvelope.SUSTAINPT = 3
 		// envelopes: DX amp envelopes always have 4 points
 		vce.Envelopes[i].AmpEnvelope.NPOINTS = 4
 
