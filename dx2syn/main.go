@@ -12,6 +12,8 @@ var nameFlag = flag.String("name", "","Name of the patch to extract")
 var indexFlag = flag.Int("index", -1,"Index of the patch to extract")
 var sysexFlag = flag.String("sysex", "", "Pathname of the sysex file to parse")
 var verboseFlag = flag.Bool("verbose", false, "Verbose debugging")
+var statsFlag= flag.Bool("stats", false, "print statistics about the sysex - dont generate vce")
+
 
 func usage(msg string) {
 	log.Printf("ERROR: %s\n", msg)
@@ -58,23 +60,29 @@ func main() {
 	}
 
 //	fmt.Printf("Selected: %v\n", selectedVoices)
-
+	if *statsFlag {
+		log.Printf("sysex: %s\n", *sysexFlag)
+	}
 	for _,v := range selectedVoices {
-		var vce data.VCE
-		if *verboseFlag {
-			log.Printf("Translating %s %s...\n", v.VoiceName, Dx7VoiceToJSON(v))
+		if *statsFlag {
+			log.Printf("feedback: %s %d\n", v.VoiceName, v.Feedback)
 		} else {
-			log.Printf("Translating %s...\n", v.VoiceName)
-		}
-		if vce, err = TranslateDx7ToVce(v); err != nil {
-			log.Printf("ERROR: could not translate Dx7 voice %s: %v",v.VoiceName,err)
-		} else {
+			var vce data.VCE
 			if *verboseFlag {
-				log.Printf("Result VCE: %s %s\n", v.VoiceName, helperVCEToJSON(vce))
+				log.Printf("Translating %s %s...\n", v.VoiceName, Dx7VoiceToJSON(v))
+			} else {
+				log.Printf("Translating %s...\n", v.VoiceName)
 			}
-			vcePathname := v.VoiceName + ".VCE"
-			if err = data.WriteVceFile(vcePathname, vce); err != nil {
-				log.Printf("ERROR: could not write VCEfile %s: %v", vcePathname, err)
+			if vce, err = TranslateDx7ToVce(v); err != nil {
+				log.Printf("ERROR: could not translate Dx7 voice %s: %v", v.VoiceName, err)
+			} else {
+				if *verboseFlag {
+					log.Printf("Result VCE: %s %s\n", v.VoiceName, helperVCEToJSON(vce))
+				}
+				vcePathname := v.VoiceName + ".VCE"
+				if err = data.WriteVceFile(vcePathname, vce); err != nil {
+					log.Printf("ERROR: could not write VCEfile %s: %v", vcePathname, err)
+				}
 			}
 		}
 	}
