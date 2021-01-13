@@ -33,7 +33,7 @@
 |11  | KLS Left Curve 0-3, KLS Right Curve 0-3| x000LCrc  0=-LIN, 1=-EXP, 2=+EXP, 3-+LIN
 |12  | OSC DETUNE, 0-14  OSC RATE SCALE 0-7| xDETUors    Detune 1:1  *3      
 |13  | Key Velocity Sensitivity 0-7, Amplitude Mod Sensitivity 0-3| x00KVSam   temp ignore, will add later
-|14  | OP6 Operator Output Level  | 0-99  Maybe all 4 ENV Levels x .727 since Syn has no OSC Levels 
+|14  | OP6 Operator Output Level  | 0-99  
 |15  | OSC Freq Coarse 0-31, Oscillator Mode 0-1|  xxCOARSm  Coarse=1:1 *,   0=Car  1=Mod
 |16  | OP6 OSC Freq Fine  | 0-99  will be added to Harmonic...
 
