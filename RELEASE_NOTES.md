@@ -18,7 +18,9 @@ permalink: /docs/release-notes
   told me that they run their Kaypro/Synergy connections with 3-wire (no flow control)
   serial cables. USB serial adapters sometimes fail to work with
   strict flow control.
-
+* Fixes [issue #34](https://github.com/chinenual/synergize/issues/34):
+  Filter index #4 was mislabeled with the wrong frequency.
+  
 ## 2.3.1
 
 * Change in behavior on the Envelopes editor: 
