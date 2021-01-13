@@ -49,6 +49,75 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		}
 	*/
 	for i, o := range dx7Voice.Osc {
+
+		// Set OSC mode 
+		if o.OscMode == true {
+			vce.Envelopes[i].FreqEnvelope.OHARM = 1
+		}
+		else
+		{
+			vce.Envelopes[i].FreqEnvelope.OHARM = 0
+		}
+
+		// ******************************************************************************************
+		// *************** put key scaling in filter B  filter B[0 - 31] for each OSC  **************
+		// ******************************************************************************************
+
+		//Activate FILTER B above per voice above (in Header)
+		
+		vce.Head.FILTER[i] = 1    //set filter B on for voice, whatever "+"" means    - =AFILT, 0=NONE, + =BFILT 
+
+		// set "0" freq to match Synergy freq. 
+
+		FilterB[KeyLevelScalingBreakPoint]=0  // Have to set up a KEY to FREQ Array....
+
+		// Scale from DX7 0 to 99 to Syn -1 to 1
+		
+		Lmax=KeyLevelScalingLeftDepth    
+		Rmax=KeyLevelScalingRightDepth 
+
+		//  set Key Scaling curve blow and above break point
+
+		switch KeyLevelScalingLeftCurve{    //0=-LIN, -EXP, +EXP, +LIN
+		case 0:
+			for k := 0; KeyLevelScalingBreakPoint-1; i++ {
+			    //-linear from -LMax to 0	
+			}
+		case 1:
+			for k := 0; KeyLevelScalingBreakPoint-1; i++ {
+			    //-EXP from -LMax to 0	
+			}
+		case 2:
+			for k := 0; KeyLevelScalingBreakPoint-1; i++ {
+			    //EXP from LMax to 0	
+			}
+		case 3:
+			for k := 0; KeyLevelScalingBreakPoint-1; i++ {
+			    //linear from Lmax to 0	
+			}
+		}
+
+		switch KeyLevelScalingRightCurve{    //0=-LIN, -EXP, +EXP, +LIN
+		case 0:
+			for k := KeyLevelScalingBreakPoint+1; i < 32; i++ {
+				// -Linear from 0 to -Rmax
+			}
+		case 1:
+			for k := KeyLevelScalingBreakPoint+1; i < 32; i++ {
+				// -EXP from 0 to -Rmax
+			}
+		case 2:
+			for k := KeyLevelScalingBreakPoint+1; i < 32; i++ {
+				// EXP from 0 to Rmax
+			}
+		case 3:
+			for k := KeyLevelScalingBreakPoint+1; i < 32; i++ {
+				// Linear from 0 to Rmax
+			}
+		}
+
+		// *****************************************************************
+
 		vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
 		//At least one OSC Oharm = 0
 		if o.OscFreqCoarse == 0 {

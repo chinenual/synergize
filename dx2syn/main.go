@@ -67,14 +67,15 @@ func main() {
 		if *statsFlag {
 			//log.Printf("feedback: %s %d\n", v.VoiceName, v.Feedback)
 			//log.Printf("OSCMode: %s %t %t %t %t %t %t \n", v.VoiceName, v.Osc[0].OscMode, v.Osc[1].OscMode, v.Osc[2].OscMode, v.Osc[3].OscMode, v.Osc[4].OscMode, v.Osc[5].OscMode)
-			for i := 0; i < 6; i++ {
-				log.Printf("KeyScale Break-LeftD-Rightd-LC-RC OP%d %s %d %d %d %d %d \n", i, v.VoiceName, v.Osc[i].KeyLevelScalingBreakPoint,
-					v.Osc[i].KeyLevelScalingLeftDepth,
-					v.Osc[i].KeyLevelScalingRightDepth,
-					v.Osc[i].KeyLevelScalingLeftCurve,
-					v.Osc[i].KeyLevelScalingRightCurve)
-			}
-
+			/*
+				for i := 0; i < 6; i++ {
+					log.Printf("KeyScale Break-LeftD-Rightd-LC-RC OP%d %s %d %d %d %d %d \n", i, v.VoiceName, v.Osc[i].KeyLevelScalingBreakPoint,
+						v.Osc[i].KeyLevelScalingLeftDepth,
+						v.Osc[i].KeyLevelScalingRightDepth,
+						v.Osc[i].KeyLevelScalingLeftCurve,
+						v.Osc[i].KeyLevelScalingRightCurve)
+				}
+			*/
 		} else {
 			var vce data.VCE
 			if *verboseFlag {
