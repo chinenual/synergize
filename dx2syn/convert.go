@@ -49,69 +49,69 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		}
 	*/
 	for i, o := range dx7Voice.Osc {
-
-		// Set OSC mode 
-		if o.OscMode == true {
-			vce.Envelopes[i].FreqEnvelope.OHARM = 1
-		}
-		else
-		{
-			vce.Envelopes[i].FreqEnvelope.OHARM = 0
-		}
-
+		/*
+			// Set OSC mode
+			if o.OscMode == true {
+				vce.Envelopes[i].FreqEnvelope.OHARM = 1
+			}
+			else
+			{
+				vce.Envelopes[i].FreqEnvelope.OHARM = 0
+			}
+		*/
 		// ******************************************************************************************
 		// *************** put key scaling in filter B  filter B[0 - 31] for each OSC  **************
 		// ******************************************************************************************
 
 		//Activate FILTER B above per voice above (in Header)
-		
-		vce.Head.FILTER[i] = 1    //set filter B on for voice, whatever "+"" means    - =AFILT, 0=NONE, + =BFILT 
 
-		// set "0" freq to match Synergy freq. 
+		vce.Head.FILTER[i] = 1 //set filter B on for voice, do what works    - =AFILT, 0=NONE, + =BFILT
 
-		FilterB[KeyLevelScalingBreakPoint]=0  // Have to set up a KEY to FREQ Array....
+		// set "0" freq to match Synergy freq.
 
-		// Scale from DX7 0 to 99 to Syn -1 to 1
-		
-		Lmax=KeyLevelScalingLeftDepth    
-		Rmax=KeyLevelScalingRightDepth 
+		vce.Filters[filterNum][(BreakPoint[KeyLevelScalingBreakPoint])] = 0 //KEY to FREQ Array is BreakPoint[] (below)
 
-		//  set Key Scaling curve blow and above break point
+		// Scale from DX7 0 to 99 to Syn -64 to 63    //using DX 50 = 0
 
-		switch KeyLevelScalingLeftCurve{    //0=-LIN, -EXP, +EXP, +LIN
+		Lmax = KeyLevelScalingLeftDepth * 0.63 //Trusting the DX7 is in Db also)
+		Rmax = KeyLevelScalingRightDepth * 0.63
+
+		//  set Key Scaling curve below and above break point
+
+		switch KeyLevelScalingLeftCurve { //0=-LIN, -EXP, +EXP, +LIN
 		case 0:
-			for k := 0; KeyLevelScalingBreakPoint-1; i++ {
-			    //-linear from -LMax to 0	
+			for k := 0; BreakPoint[KeyLevelScalingBreakPoint] - 1; i++ {
+				//-linear from -LMax to 0
 			}
 		case 1:
-			for k := 0; KeyLevelScalingBreakPoint-1; i++ {
-			    //-EXP from -LMax to 0	
+			for k := 0; BreakPoint[KeyLevelScalingBreakPoint] - 1; i++ {
+				//-EXP from -LMax to 0
 			}
 		case 2:
-			for k := 0; KeyLevelScalingBreakPoint-1; i++ {
-			    //EXP from LMax to 0	
+			for k := 0; BreakPoint[KeyLevelScalingBreakPoint] - 1; i++ {
+				//EXP from LMax to 0
 			}
 		case 3:
-			for k := 0; KeyLevelScalingBreakPoint-1; i++ {
-			    //linear from Lmax to 0	
+			for k := 0; BreakPoint[KeyLevelScalingBreakPoint] - 1; i++ {
+				//linear from Lmax to 0
 			}
 		}
 
-		switch KeyLevelScalingRightCurve{    //0=-LIN, -EXP, +EXP, +LIN
+		switch KeyLevelScalingRightCurve { //0=-LIN, -EXP, +EXP, +LIN
 		case 0:
-			for k := KeyLevelScalingBreakPoint+1; i < 32; i++ {
+			for k := BreakPoint[KeyLevelScalingBreakPoint] + 1; i < 32; i++ {
 				// -Linear from 0 to -Rmax
 			}
 		case 1:
-			for k := KeyLevelScalingBreakPoint+1; i < 32; i++ {
+			for k := BreakPoint[KeyLevelScalingBreakPoint] + 1; i < 32; i++ {
 				// -EXP from 0 to -Rmax
 			}
 		case 2:
-			for k := KeyLevelScalingBreakPoint+1; i < 32; i++ {
+			for k := BreakPoint[KeyLevelScalingBreakPoint] + 1; i < 32; i++ {
 				// EXP from 0 to Rmax
 			}
 		case 3:
-			for k := KeyLevelScalingBreakPoint+1; i < 32; i++ {
+			for k := BreakPoint[KeyLevelScalingBreakPoint] + 1; i < 32; i++ {
 				// Linear from 0 to Rmax
 			}
 		}
@@ -231,6 +231,11 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 
 	return
 }
+
+var BreakPoint = [100]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 9, 9,
+	9, 9, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 15, 15, 15, 15,
+	16, 16, 16, 16, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22,
+	23, 23, 23, 23, 24, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27}
 
 var DXRisetoSYN = [100]byte{53, 50, 47, 44, 41, 38, 36, 34, 31, 29, 27, 26, 25, 24, 23, 22, 22,
 	21, 21, 20, 20, 19, 19, 18, 18, 18, 17, 17, 17, 17, 17, 17, 16, 16, 16, 16, 16, 16, 16, 16,
