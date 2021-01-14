@@ -79,7 +79,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 
 		//  set Key Scaling curve below and above break point
 
-		// for linear, we create a compute via linear function y = slope*x + b
+		// for linear, we compute via linear function y = slope*x + b
 		// b is the y value at "0" where "0" is the breakpoint, -- where y is by definition 0. So b is always 0
 		//
 		// for exponential,
