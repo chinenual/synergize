@@ -25,6 +25,7 @@ func helperBlankVce() (vce data.VCE, err error) {
 		// make a copy of the first osc:
 		vce.Envelopes = append(vce.Envelopes, vce.Envelopes[0])
 	}
+	vce.Filters = make([][32]int8, 16)
 	for i := 0; i < 16; i++ {
 		// now re-allocate each envelope to their max possible length:
 		vce.Envelopes[i].AmpEnvelope.Table = make([]byte, 4*16)

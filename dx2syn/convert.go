@@ -65,54 +65,67 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 
 		//Activate FILTER B above per voice above (in Header)
 
-		vce.Head.FILTER[i] = 1 //set filter B on for voice, do what works    - =AFILT, 0=NONE, + =BFILT
+		vce.Head.FILTER[i] = int8(i+1) //set filter B on for voice, b-filters are indicated by the 1-based osc index
 
 		// set "0" freq to match Synergy freq.
 
-		vce.Filters[filterNum][(BreakPoint[KeyLevelScalingBreakPoint])] = 0 //KEY to FREQ Array is BreakPoint[] (below)
+		// Assumes no A-filter - so B filter for osc 1 (index 0) is always stored at 0:
+		vce.Filters[i][(BreakPoint[o.KeyLevelScalingBreakPoint])] = 0 //KEY to FREQ Array is BreakPoint[] (below)
 
 		// Scale from DX7 0 to 99 to Syn -64 to 63    //using DX 50 = 0
 
-		Lmax = KeyLevelScalingLeftDepth * 0.63 //Trusting the DX7 is in Db also)
-		Rmax = KeyLevelScalingRightDepth * 0.63
+		lMax := float64(o.KeyLevelScalingLeftDepth) * 0.63 //Trusting the DX7 is in Db also)
+		rMax := float64(o.KeyLevelScalingRightDepth) * 0.63
 
 		//  set Key Scaling curve below and above break point
 
-		switch KeyLevelScalingLeftCurve { //0=-LIN, -EXP, +EXP, +LIN
+		// for linear, we create a compute via linear function y = slope*x + b
+		// b is the y value at "0" where "0" is the breakpoint, -- where y is by definition 0. So b is always 0
+		//
+		// for exponential,
+		switch o.KeyLevelScalingLeftCurve { //0=-LIN, -EXP, +EXP, +LIN
 		case 0:
-			for k := 0; BreakPoint[KeyLevelScalingBreakPoint] - 1; i++ {
-				//-linear from -LMax to 0
+			//-linear from -lMax to 0
+			slope := -lMax / float64(BreakPoint[o.KeyLevelScalingBreakPoint]-0)
+			for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
+				vce.Filters[i][k] = int8(math.Round(slope*float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])))
 			}
 		case 1:
-			for k := 0; BreakPoint[KeyLevelScalingBreakPoint] - 1; i++ {
-				//-EXP from -LMax to 0
+			for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
+				//-EXP from -lMax to 0
 			}
 		case 2:
-			for k := 0; BreakPoint[KeyLevelScalingBreakPoint] - 1; i++ {
-				//EXP from LMax to 0
+			for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
+				//EXP from lMax to 0
 			}
 		case 3:
-			for k := 0; BreakPoint[KeyLevelScalingBreakPoint] - 1; i++ {
-				//linear from Lmax to 0
+			//linear from lMax to 0
+			slope := lMax / float64(BreakPoint[o.KeyLevelScalingBreakPoint]-0)
+			for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
+				vce.Filters[i][k] = int8(math.Round(slope*float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])))
 			}
 		}
 
-		switch KeyLevelScalingRightCurve { //0=-LIN, -EXP, +EXP, +LIN
+		switch o.KeyLevelScalingRightCurve { //0=-LIN, -EXP, +EXP, +LIN
 		case 0:
-			for k := BreakPoint[KeyLevelScalingBreakPoint] + 1; i < 32; i++ {
-				// -Linear from 0 to -Rmax
+			// -Linear from 0 to -rMax
+			slope := -rMax / float64(32-BreakPoint[o.KeyLevelScalingBreakPoint])
+			for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
+				vce.Filters[i][k] = int8(math.Round(slope*float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])))
 			}
 		case 1:
-			for k := BreakPoint[KeyLevelScalingBreakPoint] + 1; i < 32; i++ {
-				// -EXP from 0 to -Rmax
+			for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
+				// -EXP from 0 to -rMax
 			}
 		case 2:
-			for k := BreakPoint[KeyLevelScalingBreakPoint] + 1; i < 32; i++ {
-				// EXP from 0 to Rmax
+			for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
+				// EXP from 0 to rMax
 			}
 		case 3:
-			for k := BreakPoint[KeyLevelScalingBreakPoint] + 1; i < 32; i++ {
-				// Linear from 0 to Rmax
+			// Linear from 0 to rMax
+			slope := rMax / float64(32-BreakPoint[o.KeyLevelScalingBreakPoint])
+			for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
+				vce.Filters[i][k] = int8(math.Round(slope*float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])))
 			}
 		}
 
