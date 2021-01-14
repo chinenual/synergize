@@ -108,8 +108,6 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 			for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
 				x := float64(BreakPoint[o.KeyLevelScalingBreakPoint]-k)
 				vce.Filters[i][k] = int8(math.Pow(expBase, x / expDivisor) / expScale * -lMax)
-				xxx:= math.Pow(expBase, x / expDivisor)
-				fmt.Printf(" O%d L 1 : bp:%d   lmax:%f   k:%d   x:%f   xxx:%f  -> %d\n", i, BreakPoint[o.KeyLevelScalingBreakPoint], lMax, k, x, xxx, vce.Filters[i][k])
 			}
 		case 2:
 			//EXP from lMax to 0
@@ -137,8 +135,6 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 			for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
 				x := float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])
 				vce.Filters[i][k] = int8(math.Pow(expBase, x / expDivisor) / expScale * -rMax)
-				xxx:= math.Pow(expBase, x / expDivisor)
-				fmt.Printf(" O%d L 1 : bp:%d   rmax:%f   k:%d   x:%f   -> %d\n", i, BreakPoint[o.KeyLevelScalingBreakPoint], rMax, k, x, xxx, vce.Filters[i][k])
 			}
 		case 2:
 			// EXP from 0 to rMax
