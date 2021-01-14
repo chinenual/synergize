@@ -55,6 +55,13 @@ func main() {
 				break
 			}
 		}
+		if selectedVoices == nil {
+			log.Printf("ERROR: no such voice name '%s'. Valid names:\n", *nameFlag);
+			for _, v := range sysex.Voices {
+				log.Printf("'%s'\n", v.VoiceName)
+			}
+			os.Exit(1)
+		}
 	} else {
 		usage("Must specify at least one of -all, -index or -name option")
 	}
@@ -75,7 +82,7 @@ func main() {
 						v.Osc[i].KeyLevelScalingLeftCurve,
 						v.Osc[i].KeyLevelScalingRightCurve)
 				}
-			
+
 		} else {
 			var vce data.VCE
 			if *verboseFlag {

@@ -99,9 +99,9 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		switch o.KeyLevelScalingLeftCurve { //0=-LIN, -EXP, +EXP, +LIN
 		case 0:
 			//-linear from -lMax to 0
-			slope := -lMax / float64(BreakPoint[o.KeyLevelScalingBreakPoint]-0)
+			slope := lMax / float64(BreakPoint[o.KeyLevelScalingBreakPoint]-0)
 			for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
-				vce.Filters[i][k] = int8(math.Round(slope*float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])))
+				vce.Filters[i][k] = int8(math.Round(-lMax + slope*float64(k)))
 			}
 		case 1:
 			//-EXP from -lMax to 0
@@ -117,9 +117,9 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 			}
 		case 3:
 			//linear from lMax to 0
-			slope := lMax / float64(BreakPoint[o.KeyLevelScalingBreakPoint]-0)
+			slope := -lMax / float64(BreakPoint[o.KeyLevelScalingBreakPoint]-0)
 			for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
-				vce.Filters[i][k] = int8(math.Round(slope*float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])))
+				vce.Filters[i][k] = int8(math.Round(lMax + slope*float64(k)))
 			}
 		}
 
