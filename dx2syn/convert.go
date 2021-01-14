@@ -82,7 +82,20 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		// for linear, we compute via linear function y = slope*x + b
 		// b is the y value at "0" where "0" is the breakpoint, -- where y is by definition 0. So b is always 0
 		//
-		// for exponential,
+		// for exponential, we base the curve on the array from the Dexed soft synth:
+		// const uint8_t exp_scale_data[] = {
+		//    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 14, 16, 19, 23, 27, 33, 39, 47, 56, 66,
+		//    80, 94, 110, 126, 142, 158, 174, 190, 206, 222, 238, 250
+		//};
+		// this can be modeled with the following equation:
+		//   y = pow(2.0, x / 3.5) * scale
+		//   where
+		//    x = abs(offset from the breakpoint)
+		//    scale = lMax / 256.0  (or rMax)
+		const expBase = 2.0
+		const expDivisor = 3.5
+		const expScale = 256.0
+
 		switch o.KeyLevelScalingLeftCurve { //0=-LIN, -EXP, +EXP, +LIN
 		case 0:
 			//-linear from -lMax to 0
@@ -91,12 +104,18 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 				vce.Filters[i][k] = int8(math.Round(slope*float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])))
 			}
 		case 1:
+			//-EXP from -lMax to 0
 			for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
-				//-EXP from -lMax to 0
+				x := float64(BreakPoint[o.KeyLevelScalingBreakPoint]-k)
+				vce.Filters[i][k] = int8(math.Pow(expBase, x / expDivisor) / expScale * -lMax)
+				xxx:= math.Pow(expBase, x / expDivisor)
+				fmt.Printf(" O%d L 1 : bp:%d   lmax:%f   k:%d   x:%f   xxx:%f  -> %d\n", i, BreakPoint[o.KeyLevelScalingBreakPoint], lMax, k, x, xxx, vce.Filters[i][k])
 			}
 		case 2:
+			//EXP from lMax to 0
 			for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
-				//EXP from lMax to 0
+				x := float64(BreakPoint[o.KeyLevelScalingBreakPoint]-k)
+				vce.Filters[i][k] = int8(math.Pow(expBase, x / expDivisor) / expScale * lMax)
 			}
 		case 3:
 			//linear from lMax to 0
@@ -114,12 +133,18 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 				vce.Filters[i][k] = int8(math.Round(slope*float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])))
 			}
 		case 1:
+			// -EXP from 0 to -rMax
 			for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
-				// -EXP from 0 to -rMax
+				x := float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])
+				vce.Filters[i][k] = int8(math.Pow(expBase, x / expDivisor) / expScale * -rMax)
+				xxx:= math.Pow(expBase, x / expDivisor)
+				fmt.Printf(" O%d L 1 : bp:%d   rmax:%f   k:%d   x:%f   -> %d\n", i, BreakPoint[o.KeyLevelScalingBreakPoint], rMax, k, x, xxx, vce.Filters[i][k])
 			}
 		case 2:
+			// EXP from 0 to rMax
 			for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
-				// EXP from 0 to rMax
+				x := float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])
+				vce.Filters[i][k] = int8(math.Pow(expBase, x / expDivisor) / expScale * rMax)
 			}
 		case 3:
 			// Linear from 0 to rMax
