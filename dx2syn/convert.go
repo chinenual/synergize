@@ -218,6 +218,18 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		vce.Envelopes[i].AmpEnvelope.Table[14] = byte(helperNearestAmpTimeIndex(relsR))
 		vce.Envelopes[i].AmpEnvelope.Table[15] = byte(helperNearestAmpTimeIndex(relsR))
 
+
+		//TEMPORARY
+		// Freq envelope is commented out for now -- but we need the two control bytes at very minimum: adding that here
+		// point1
+		vce.Envelopes[i].FreqEnvelope.Table[0] = 0
+		vce.Envelopes[i].FreqEnvelope.Table[1] = 0
+		// special case for point1
+		vce.Envelopes[i].FreqEnvelope.Table[2] = 0x80 // matches default from EDATA
+		vce.Envelopes[i].FreqEnvelope.Table[3] = 0 // 0 == Sine, octave 0, freq int and amp int disabled
+
+		// END TEMPORARY
+
 		// DX only has a single frequency envelope - replicate it on each Synergy osc:
 		// NOTE the first point in the Synergy freq table is "special" - it stores a "freq.scale and wavetype" instead of rates
 		// Like the amp table, the values are stored in quads, two values, two rates per point
