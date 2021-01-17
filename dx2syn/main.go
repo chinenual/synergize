@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 
@@ -14,6 +15,7 @@ var indexFlag = flag.Int("index", -1, "Index of the patch to extract")
 var sysexFlag = flag.String("sysex", "", "Pathname of the sysex file to parse")
 var verboseFlag = flag.Bool("verbose", false, "Verbose debugging")
 var statsFlag = flag.Bool("stats", false, "print statistics about the sysex - dont generate vce")
+var stevealgoFlag = flag.Bool("stevealgo", false, "create 32 different vce's - one for each algo")
 
 func usage(msg string) {
 	log.Printf("ERROR: %s\n", msg)
@@ -24,6 +26,27 @@ func usage(msg string) {
 
 func main() {
 	flag.Parse()
+
+	if *stevealgoFlag {
+		for a := 0; a < 32; a++ {
+			var vce data.VCE
+			var err error
+			if vce, err = helperBlankVce(); err != nil {
+				return
+			}
+			// DX7 always uses 6 oscillators
+			vce.Head.VOITAB = 5
+			if err = helperSetAlgorithmPatchType(&vce, byte(a), 0); err != nil {
+				log.Printf("ERROR: could not set algo %d: %v", a, err)
+			} else {
+				vcePathname := fmt.Sprintf("algo%d.VCE", a)
+				if err = data.WriteVceFile(vcePathname, vce); err != nil {
+					log.Printf("ERROR: could not write VCEfile %s: %v", vcePathname, err)
+				}
+			}
+		}
+		return
+	}
 
 	if *sysexFlag == "" {
 		usage("must specify a SYSEX file pathname")
