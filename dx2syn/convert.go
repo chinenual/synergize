@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/chinenual/synergize/data"
@@ -37,6 +36,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	sustR := 0
 	relsR := 0
 	var OSClevelPercent float64
+	var VeloctiyPercent float64
 
 	var ms [4]int
 	/*
@@ -65,7 +65,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 
 		//Activate FILTER B above per voice above (in Header)
 
-		vce.Head.FILTER[i] = int8(i+1) //set filter B on for voice, b-filters are indicated by the 1-based osc index
+		vce.Head.FILTER[i] = int8(i + 1) //set filter B on for voice, b-filters are indicated by the 1-based osc index
 
 		// set "0" freq to match Synergy freq.
 
@@ -106,14 +106,14 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		case 1:
 			//-EXP from -lMax to 0
 			for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
-				x := float64(BreakPoint[o.KeyLevelScalingBreakPoint]-k)
-				vce.Filters[i][k] = int8(math.Pow(expBase, x / expDivisor) / expScale * -lMax)
+				x := float64(BreakPoint[o.KeyLevelScalingBreakPoint] - k)
+				vce.Filters[i][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * -lMax)
 			}
 		case 2:
 			//EXP from lMax to 0
 			for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
-				x := float64(BreakPoint[o.KeyLevelScalingBreakPoint]-k)
-				vce.Filters[i][k] = int8(math.Pow(expBase, x / expDivisor) / expScale * lMax)
+				x := float64(BreakPoint[o.KeyLevelScalingBreakPoint] - k)
+				vce.Filters[i][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * lMax)
 			}
 		case 3:
 			//linear from lMax to 0
@@ -128,25 +128,25 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 			// -Linear from 0 to -rMax
 			slope := -rMax / float64(32-BreakPoint[o.KeyLevelScalingBreakPoint])
 			for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
-				vce.Filters[i][k] = int8(math.Round(slope*float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])))
+				vce.Filters[i][k] = int8(math.Round(slope * float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])))
 			}
 		case 1:
 			// -EXP from 0 to -rMax
 			for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
-				x := float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])
-				vce.Filters[i][k] = int8(math.Pow(expBase, x / expDivisor) / expScale * -rMax)
+				x := float64(k - BreakPoint[o.KeyLevelScalingBreakPoint])
+				vce.Filters[i][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * -rMax)
 			}
 		case 2:
 			// EXP from 0 to rMax
 			for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
-				x := float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])
-				vce.Filters[i][k] = int8(math.Pow(expBase, x / expDivisor) / expScale * rMax)
+				x := float64(k - BreakPoint[o.KeyLevelScalingBreakPoint])
+				vce.Filters[i][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * rMax)
 			}
 		case 3:
 			// Linear from 0 to rMax
 			slope := rMax / float64(32-BreakPoint[o.KeyLevelScalingBreakPoint])
 			for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
-				vce.Filters[i][k] = int8(math.Round(slope*float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])))
+				vce.Filters[i][k] = int8(math.Round(slope * float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])))
 			}
 		}
 
@@ -173,6 +173,42 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		// envelopes: DX amp envelopes always have 4 points
 		vce.Envelopes[i].AmpEnvelope.NPOINTS = 4
 
+		// set lower Env levels for velocity sensitivity
+		switch o.KeyVelocitySensitivity {
+		case 0:
+			{
+				VeloctiyPercent = 1.0
+			}
+		case 1:
+			{
+				VeloctiyPercent = .90
+			}
+		case 2:
+			{
+				VeloctiyPercent = .80
+			}
+		case 3:
+			{
+				VeloctiyPercent = .70
+			}
+		case 4:
+			{
+				VeloctiyPercent = .60
+			}
+		case 5:
+			{
+				VeloctiyPercent = .50
+			}
+		case 6:
+			{
+				VeloctiyPercent = .40
+			}
+		case 7:
+			{
+				VeloctiyPercent = .30
+			}
+		}
+
 		OSClevelPercent = float64(float64(o.OperatorOutputLevel) / 99.00)
 		for k := 0; k < 4; k++ {
 			o.EgLevel[k] = byte(float64(o.EgLevel[k]) * OSClevelPercent)
@@ -187,37 +223,37 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		decyR = ms[1]
 		sustR = ms[2]
 		relsR = ms[3]
-
-		fmt.Printf(" %s %f \n", " OSC % = ", OSClevelPercent)
-		fmt.Printf(" %s %d \n", " attkR = ", attkR)
-		fmt.Printf(" %s %d \n", " decyR = ", decyR)
-		fmt.Printf(" %s %d \n", " sustR = ", sustR)
-		fmt.Printf(" %s %d \n \n", " relsR = ", relsR)
+		/*
+			fmt.Printf(" %s %f \n", " OSC % = ", OSClevelPercent)
+			fmt.Printf(" %s %d \n", " attkR = ", attkR)
+			fmt.Printf(" %s %d \n", " decyR = ", decyR)
+			fmt.Printf(" %s %d \n", " sustR = ", sustR)
+			fmt.Printf(" %s %d \n \n", " relsR = ", relsR)
+		*/
 
 		// point1
-		vce.Envelopes[i].AmpEnvelope.Table[0] = byte((math.Round(float64(o.EgLevel[0]) * 0.727)) + 55)
+		vce.Envelopes[i].AmpEnvelope.Table[0] = byte((math.Round(float64(o.EgLevel[0]) * 0.727 * VeloctiyPercent)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[1] = byte((math.Round(float64(o.EgLevel[0]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[2] = byte(helperNearestAmpTimeIndex(attkR))
 		vce.Envelopes[i].AmpEnvelope.Table[3] = byte(helperNearestAmpTimeIndex(attkR))
 
 		//point2
-		vce.Envelopes[i].AmpEnvelope.Table[4] = byte((math.Round(float64(o.EgLevel[1]) * 0.727)) + 55)
+		vce.Envelopes[i].AmpEnvelope.Table[4] = byte((math.Round(float64(o.EgLevel[1]) * 0.727 * VeloctiyPercent)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[5] = byte((math.Round(float64(o.EgLevel[1]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[6] = byte(helperNearestAmpTimeIndex(decyR))
 		vce.Envelopes[i].AmpEnvelope.Table[7] = byte(helperNearestAmpTimeIndex(decyR))
 
 		//point3
-		vce.Envelopes[i].AmpEnvelope.Table[8] = byte((math.Round(float64(o.EgLevel[2]) * 0.727)) + 55)
+		vce.Envelopes[i].AmpEnvelope.Table[8] = byte((math.Round(float64(o.EgLevel[2]) * 0.727 * VeloctiyPercent)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[9] = byte((math.Round(float64(o.EgLevel[2]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[10] = byte(helperNearestAmpTimeIndex(sustR))
 		vce.Envelopes[i].AmpEnvelope.Table[11] = byte(helperNearestAmpTimeIndex(sustR))
 
 		//point4
-		vce.Envelopes[i].AmpEnvelope.Table[12] = byte((math.Round(float64(o.EgLevel[3]) * 0.727)) + 55)
+		vce.Envelopes[i].AmpEnvelope.Table[12] = byte((math.Round(float64(o.EgLevel[3]) * 0.727 * VeloctiyPercent)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[13] = byte((math.Round(float64(o.EgLevel[3]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[14] = byte(helperNearestAmpTimeIndex(relsR))
 		vce.Envelopes[i].AmpEnvelope.Table[15] = byte(helperNearestAmpTimeIndex(relsR))
-
 
 		//TEMPORARY
 		// Freq envelope is commented out for now -- but we need the two control bytes at very minimum: adding that here
@@ -226,7 +262,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		vce.Envelopes[i].FreqEnvelope.Table[1] = 0
 		// special case for point1
 		vce.Envelopes[i].FreqEnvelope.Table[2] = 0x80 // matches default from EDATA
-		vce.Envelopes[i].FreqEnvelope.Table[3] = 0 // 0 == Sine, octave 0, freq int and amp int disabled
+		vce.Envelopes[i].FreqEnvelope.Table[3] = 0    // 0 == Sine, octave 0, freq int and amp int disabled
 
 		// END TEMPORARY
 
