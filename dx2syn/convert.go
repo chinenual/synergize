@@ -22,6 +22,8 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	vce.Head.VOITAB = 5
 
 	vce.Head.VASENS = 31
+	vce.Head.VTSENS = 31
+	vce.Head.VTCENT = 24
 
 	vce.Head.VIBRAT = dx7Voice.LfoSpeed
 	vce.Head.VIBDEL = dx7Voice.LfoDelay
