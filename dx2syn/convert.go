@@ -21,6 +21,8 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	// DX7 always uses 6 oscillators
 	vce.Head.VOITAB = 5
 
+	vce.Head.VASENS = 31
+
 	vce.Head.VIBRAT = dx7Voice.LfoSpeed
 	vce.Head.VIBDEL = dx7Voice.LfoDelay
 	vce.Head.VIBDEP = dx7Voice.LfoPitchModDepth
