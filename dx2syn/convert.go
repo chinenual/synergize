@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/chinenual/synergize/data"
@@ -28,22 +29,21 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	vce.Head.VIBRAT = dx7Voice.LfoSpeed
 	vce.Head.VIBDEL = dx7Voice.LfoDelay
 	vce.Head.VIBDEP = dx7Voice.LfoPitchModDepth
-
-	// Transpose
-	// Set for OHARM +1 of any of the OPs OscFreqCoarse are 0 (1/2 octave)
-
 	vce.Head.VTRANS = int8(dx7Voice.Transpose - 24)
 
-	// transposedDown := false
 	attkR := 0
 	decyR := 0
 	sustR := 0
 	relsR := 0
 	var OSClevelPercent float64
 	var VeloctiyPercent float64
+	var PMfix float64
+	var patchOutputDSR byte
 
 	var ms [4]int
 	/*
+		// old transferdown code
+		transposedDown := false
 		for _, o := range dx7Voice.Osc {
 			if o.OscFreqCoarse == 0 {
 				transposedDown = true
@@ -53,6 +53,25 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		}
 	*/
 	for i, o := range dx7Voice.Osc {
+
+		//  ********************  Check if OSC is MODULATOR
+		//  ********************  If yes, lower "OSClevelPercent" by ?? %
+
+		//OPTCH
+		//patchOutputDSR = ((patchByte & 0xc0) >> 6)
+		patchOutputDSR = ((vce.Envelopes[i].FreqEnvelope.OPTCH & 0xc0) >> 6)
+		fmt.Printf(" %s %d \n", " OSC = ", i+1)
+		fmt.Printf(" %s %d \n", " patchOutputDSR = ", patchOutputDSR)
+
+		if patchOutputDSR > 0 {
+			PMfix = .75
+			fmt.Printf(" %s %f \n", " PMfix = ", PMfix)
+		} else {
+			PMfix = 1.0
+			fmt.Printf(" %s %f \n", " PMfix = ", PMfix)
+		}
+		//register 1 == 0     // after that mask and shift
+
 		/*
 			// Set OSC mode
 			if o.OscMode == true {
@@ -78,7 +97,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 
 		// Scale from DX7 0 to 99 to Syn -64 to 63    //using DX 50 = 0
 
-		lMax := float64(o.KeyLevelScalingLeftDepth) * 0.63 //Trusting the DX7 is in Db also)
+		lMax := float64(o.KeyLevelScalingLeftDepth) * 0.63 //Assuming the DX7 is in Db also)
 		rMax := float64(o.KeyLevelScalingRightDepth) * 0.63
 
 		//  set Key Scaling curve below and above break point
@@ -157,12 +176,11 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		// *****************************************************************
 
 		vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
-		//At least one OSC Oharm = 0
+		//DX7 OP OscFreqCoarse == 0 means .5 1 octave below 1, which synergy does not have
 		if o.OscFreqCoarse == 0 {
 			vce.Envelopes[i].FreqEnvelope.OHARM = 1
 		}
 		// Set OSC detune
-
 		vce.Envelopes[i].FreqEnvelope.FDETUN = int8(o.OscDetune - 7)
 
 		// type = 1  : no loop (and LOOPPT and SUSTAINPT are accelleration rates not point positions)
@@ -215,7 +233,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 
 		OSClevelPercent = float64(float64(o.OperatorOutputLevel) / 99.00)
 		for k := 0; k < 4; k++ {
-			o.EgLevel[k] = byte(float64(o.EgLevel[k]) * OSClevelPercent)
+			o.EgLevel[k] = byte(float64(o.EgLevel[k]) * OSClevelPercent * PMfix)
 		}
 
 		// Each Synergy oscillator is voice twice - for low and high key velocity response
@@ -309,7 +327,6 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 			(99 - dx7Voice.PitchEgRate[1]) + (99 - dx7Voice.PitchEgRate[2]) + (99 - dx7Voice.PitchEgRate[3])
 		*/
 	}
-	// ... everything else ...
 
 	// if you need to abort, use:
 	//	err = errors.New("an error message")
