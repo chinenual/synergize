@@ -12,8 +12,9 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		return
 	}
 
-	for i := 0; i < 7; i++ {
+	for i := 0; i < 8; i++ {
 		vce.Head.VNAME[i] = dx7Voice.VoiceName[i]
+		//fmt.Printf(" %s %d %d %d \n", " name= ", i, dx7Voice.VoiceName[i], vce.Head.VNAME[i])
 	}
 
 	if err = helperSetAlgorithmPatchType(&vce, dx7Voice.Algorithm, dx7Voice.Feedback); err != nil {
