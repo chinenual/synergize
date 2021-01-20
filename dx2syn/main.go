@@ -101,6 +101,7 @@ func main() {
 	if *statsFlag {
 		log.Printf("sysex: %s\n", *sysexFlag)
 	}
+	hasError := false
 	for _, v := range selectedVoices {
 		if *statsFlag {
 			//log.Printf("feedback: %s %d\n", v.VoiceName, v.Feedback)
@@ -123,16 +124,28 @@ func main() {
 			}
 			if vce, err = TranslateDx7ToVce(v); err != nil {
 				log.Printf("ERROR: could not translate Dx7 voice %s: %v", v.VoiceName, err)
+				hasError = true
 			} else {
 				if *verboseFlag {
 					log.Printf("Result VCE: %s %s\n", v.VoiceName, helperVCEToJSON(vce))
 				}
-				vcePathname := v.VoiceName + ".VCE"
-				if err = data.WriteVceFile(vcePathname, vce); err != nil {
-					log.Printf("ERROR: could not write VCEfile %s: %v", vcePathname, err)
+				if err = data.VceValidate(vce); err != nil {
+					log.Printf("ERROR: validation error on translate Dx7 voice %s: %v", v.VoiceName, err)
+					hasError = true
+				} else {
+					vcePathname := v.VoiceName + ".VCE"
+					if err = data.WriteVceFile(vcePathname, vce); err != nil {
+						log.Printf("ERROR: could not write VCEfile %s: %v", vcePathname, err)
+						hasError = true
+					}
 				}
 			}
 		}
 	}
-	os.Exit(0)
+	code := 0
+	if hasError {
+		log.Printf("ERROR: error during translation\n")
+		code = 1
+	}
+	os.Exit(code)
 }

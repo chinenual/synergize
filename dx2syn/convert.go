@@ -28,7 +28,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 
 	vce.Head.VIBRAT = dx7Voice.LfoSpeed
 	vce.Head.VIBDEL = dx7Voice.LfoDelay
-	vce.Head.VIBDEP = dx7Voice.LfoPitchModDepth
+	vce.Head.VIBDEP = int8(dx7Voice.LfoPitchModDepth)
 	vce.Head.VTRANS = int8(dx7Voice.Transpose - 24)
 
 	attkR := 0
