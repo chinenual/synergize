@@ -4,13 +4,16 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/chinenual/synergize/logger"
 	"github.com/pkg/errors"
+	"gopkg.in/go-playground/validator.v9"
 )
 
 var PatchTypeNames = []string{
@@ -80,10 +83,10 @@ type VCEExtra struct {
 
 type FreqEnvelopeTable struct {
 	OPTCH     byte
-	OHARM     int8
-	FDETUN    int8
+	OHARM     int8 `validate:"min=-12,max=30"`
+	FDETUN    int8 `validate:"min=-63,max=63"`
 	FENVL     byte
-	ENVTYPE   byte
+	ENVTYPE   byte `validate:"min=1,max=4"`
 	NPOINTS   byte
 	SUSTAINPT byte
 	LOOPPT    byte
@@ -91,7 +94,7 @@ type FreqEnvelopeTable struct {
 }
 
 type AmpEnvelopeTable struct {
-	ENVTYPE   byte
+	ENVTYPE   byte `validate:"min=1,max=4"`
 	NPOINTS   byte
 	SUSTAINPT byte
 	LOOPPT    byte
@@ -106,27 +109,85 @@ type Envelope struct {
 type VCE struct {
 	Head      VCEHead
 	Envelopes []Envelope
-	Filters   [][32]int8
+	Filters   [][32]int8 // values are -64..63 - validated by the extraValidation function rather than the tag
 	Extra     VCEExtra
 }
 
 type VCEHead struct {
 	VOITAB byte
 	OSCPTR [16]uint16
-	VTRANS int8
-	VTCENT byte
-	VTSENS byte
-	UNUSED byte
-	VEQ    [24]int8
+	VTRANS int8               `validate:"min=-127,max=128"`
+	VTCENT byte               `validate:"min=0,max=32"`
+	VTSENS byte               `validate:"min=0,max=31"`
+	UNUSED byte               //
+	VEQ    [24]int8           `validate:"dive,min=-24,max=7"`
 	VNAME  SpaceEncodedString // force string encoding for the name
-	VACENT byte
-	VASENS byte
-	VIBRAT byte
-	VIBDEL byte
-	VIBDEP byte
-	KPROP  [24]byte
-	APVIB  byte
+	VACENT byte               `validate:"min=0,max=32"`
+	VASENS byte               `validate:"min=0,max=31"`
+	VIBRAT byte               `validate:"min=0,max=127"`
+	VIBDEL byte               `validate:"min=0,max=127"`
+	VIBDEP int8               `validate:"min=-128,max=128"`
+	KPROP  [24]byte           `validate:"dive,min=0,max=32"`
+	APVIB  int8               `validate:"min=-128,max=128"`
 	FILTER [16]int8
+}
+
+func extraVceValidation(sl validator.StructLevel) {
+
+	vce := sl.Current().Interface().(VCE)
+	hasAFilter := false
+	for osc := byte(0); osc <= vce.Head.VOITAB; osc++ {
+		flt := vce.Head.FILTER[osc]
+		if flt < 0 {
+			hasAFilter = true
+		}
+	}
+	for osc := byte(0); osc <= vce.Head.VOITAB; osc++ {
+		flt := vce.Head.FILTER[osc]
+		if flt < -1 || flt > int8(vce.Head.VOITAB+1) {
+			sl.ReportError(vce.Head, fmt.Sprintf("FILTER[%d]", osc), "filterId", "", "")
+		} else {
+			// if this osc has a filter, determine its index into the Filters array and then check all the values
+			findex := -1
+			if flt == 0 {
+				// skip
+			} else if flt < 0 {
+				findex = 0
+			} else if hasAFilter {
+				findex = int(flt)
+			} else {
+				findex = int(flt) - 1
+			}
+			if findex >= 0 {
+				// validate all the entries:
+				for i, f := range vce.Filters[findex] {
+					if f < -64 || f > 63 {
+						sl.ReportError(vce, fmt.Sprintf("Filter[%d][%d]", findex, i), "filterValue", "", strconv.Itoa(int(f)))
+					}
+				}
+			}
+		}
+		// now check the osc's envelopes:
+		if vce.Envelopes[osc].AmpEnvelope.ENVTYPE == 1 {
+			if vce.Envelopes[osc].AmpEnvelope.LOOPPT > 127 {
+				sl.ReportError(vce.Envelopes[osc].AmpEnvelope, "LOOPPT", "typeOneAccel", "", strconv.Itoa(int(vce.Envelopes[osc].AmpEnvelope.LOOPPT)))
+			}
+			if vce.Envelopes[osc].AmpEnvelope.SUSTAINPT > 127 {
+				sl.ReportError(vce.Envelopes[osc].AmpEnvelope, "SUSTAINPT", "typeOneAccel", "", strconv.Itoa(int(vce.Envelopes[osc].AmpEnvelope.SUSTAINPT)))
+			}
+		} else {
+			// TODO: add checks that REPEAT and SUSTAIN and LOOP points are in the right order
+		}
+	}
+}
+
+func VceValidate(vce VCE) (err error) {
+	// simple field level validation first:
+	v := validator.New()
+	v.RegisterStructValidation(extraVceValidation, VCE{})
+
+	err = v.Struct(vce)
+	return
 }
 
 func VceName(vceHead VCEHead) (name string) {
