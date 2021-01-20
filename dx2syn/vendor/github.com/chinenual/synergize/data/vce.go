@@ -91,6 +91,10 @@ type FreqEnvelopeTable struct {
 	SUSTAINPT byte
 	LOOPPT    byte
 	Table     ArrayOfByte // force proper JSON encoding
+	// entries are quads:  valLow, valUp, timeLow, timeUp
+	// valid ranges for val: -61 .. 63
+	// valid ranges for time: 0 .. 84
+	// the first quad is an exception: timeLow and timeUp are used for keyprop/waveform
 }
 
 type AmpEnvelopeTable struct {
@@ -99,6 +103,9 @@ type AmpEnvelopeTable struct {
 	SUSTAINPT byte
 	LOOPPT    byte
 	Table     ArrayOfByte // force proper JSON encoding
+	// entries are quads:  valLow, valUp, timeLow, timeUp
+	// valid ranges for val: 55 .. 127
+	// valid ranges for time: 0 .. 84
 }
 
 type Envelope struct {
@@ -177,6 +184,55 @@ func extraVceValidation(sl validator.StructLevel) {
 			}
 		} else {
 			// TODO: add checks that REPEAT and SUSTAIN and LOOP points are in the right order
+		}
+		for i := byte(0); i < vce.Envelopes[osc].AmpEnvelope.NPOINTS; i++ {
+			valLow := vce.Envelopes[osc].AmpEnvelope.Table[(4*i)+0]
+			valUp := vce.Envelopes[osc].AmpEnvelope.Table[(4*i)+1]
+			timeLow := vce.Envelopes[osc].AmpEnvelope.Table[(4*i)+2]
+			timeUp := vce.Envelopes[osc].AmpEnvelope.Table[(4*i)+3]
+			if valLow < 55 || valLow > 127 {
+				sl.ReportError(vce.Envelopes[osc].AmpEnvelope.Table[(4*i)+0], fmt.Sprintf("vce.Envelopes[%d].AmpEnvelope.<point>[%d].valLow", osc, i), "ampvalue", "", strconv.Itoa(int(valLow)))
+			}
+			if valUp < 55 || valUp > 127 {
+				sl.ReportError(vce.Envelopes[osc].AmpEnvelope.Table[(4*i)+0], fmt.Sprintf("vce.Envelopes[%d].AmpEnvelope.<point>[%d].valUp", osc, i), "ampvalue", "", strconv.Itoa(int(valUp)))
+			}
+			if timeLow > 84 {
+				sl.ReportError(vce.Envelopes[osc].AmpEnvelope.Table[(4*i)+2], fmt.Sprintf("vce.Envelopes[%d].AmpEnvelope.<point>[%d].timeLow", osc, i), "amptime", "", strconv.Itoa(int(timeLow)))
+			}
+			if timeUp > 84 {
+				sl.ReportError(vce.Envelopes[osc].AmpEnvelope.Table[(4*i)+3], fmt.Sprintf("vce.Envelopes[%d].AmpEnvelope.<point>[%d].timeUp", osc, i), "amptime", "", strconv.Itoa(int(timeUp)))
+			}
+		}
+		if vce.Envelopes[osc].FreqEnvelope.ENVTYPE == 1 {
+			if vce.Envelopes[osc].FreqEnvelope.LOOPPT > 127 {
+				sl.ReportError(vce.Envelopes[osc].FreqEnvelope, "LOOPPT", "typeOneAccel", "", strconv.Itoa(int(vce.Envelopes[osc].FreqEnvelope.LOOPPT)))
+			}
+			if vce.Envelopes[osc].FreqEnvelope.SUSTAINPT > 127 {
+				sl.ReportError(vce.Envelopes[osc].FreqEnvelope, "SUSTAINPT", "typeOneAccel", "", strconv.Itoa(int(vce.Envelopes[osc].FreqEnvelope.SUSTAINPT)))
+			}
+		} else {
+			// TODO: add checks that REPEAT and SUSTAIN and LOOP points are in the right order
+		}
+		for i := byte(0); i < vce.Envelopes[osc].FreqEnvelope.NPOINTS; i++ {
+			valLow := int8(vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+0])
+			valUp := int8(vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+1])
+			timeLow := vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+2]
+			timeUp := vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+3]
+			if valLow < -61 || valLow > 63 {
+				sl.ReportError(vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+0], fmt.Sprintf("vce.Envelopes[%d].FreqEnvelope.<point>[%d].valLow", osc, i), "freqvalue", "", strconv.Itoa(int(valLow)))
+			}
+			if valUp < -61 || valUp > 63 {
+				sl.ReportError(vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+1], fmt.Sprintf("vce.Envelopes[%d].FreqEnvelope.<point>[%d].valUp", osc, i), "freqvalue", "", strconv.Itoa(int(valUp)))
+			}
+			if i != 0 {
+				// TODO: add validation for the wave/keyprop bytes?
+				if timeLow > 84 {
+					sl.ReportError(vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+2], fmt.Sprintf("vce.Envelopes[%d].FreqEnvelope.<point>[%d].timeLow", osc, i), "freqtime", "", strconv.Itoa(int(timeLow)))
+				}
+				if timeUp > 84 {
+					sl.ReportError(vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+3], fmt.Sprintf("vce.Envelopes[%d].FreqEnvelope.<point>[%d].timeUp", osc, i), "freqtime", "", strconv.Itoa(int(timeUp)))
+				}
+			}
 		}
 	}
 }
