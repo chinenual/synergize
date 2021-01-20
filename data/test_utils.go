@@ -87,9 +87,9 @@ func diffVCE(vce1, vce2 VCE) (same bool) {
 	same = diffByte(vce1.Head.VASENS, vce2.Head.VASENS, "Head.VASENS") && same
 	same = diffByte(vce1.Head.VIBRAT, vce2.Head.VIBRAT, "Head.VIBRAT") && same
 	same = diffByte(vce1.Head.VIBDEL, vce2.Head.VIBDEL, "Head.VIBDEL") && same
-	same = diffByte(vce1.Head.VIBDEP, vce2.Head.VIBDEP, "Head.VIBDEP") && same
+	same = diffInt8(vce1.Head.VIBDEP, vce2.Head.VIBDEP, "Head.VIBDEP") && same
 	same = diffObject(vce1.Head.KPROP, vce2.Head.KPROP, "Head.KPROP") && same
-	same = diffByte(vce1.Head.APVIB, vce2.Head.APVIB, "Head.APVIB") && same
+	same = diffInt8(vce1.Head.APVIB, vce2.Head.APVIB, "Head.APVIB") && same
 	for i := byte(0); i <= vce1.Head.VOITAB; i++ {
 		same = diffInt8(vce1.Head.FILTER[i], vce2.Head.FILTER[i],
 			fmt.Sprintf("Head.FILTER[%d]", i)) && same
