@@ -52,6 +52,9 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 			}
 		}
 	*/
+
+	filterIndex := int8(-1) // increment as we allocate each filter
+
 	for i, o := range dx7Voice.Osc {
 
 		//  ********************  Check if OSC is MODULATOR
@@ -88,91 +91,97 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 
 		//Activate FILTER B above per voice above (in Header)
 
-		vce.Head.FILTER[i] = int8(i + 1) //set filter B on for voice, b-filters are indicated by the 1-based osc index
+		if o.KeyLevelScalingLeftDepth == 0 && o.KeyLevelScalingRightDepth == 0 {
+			// optimization: if key scaling depths are zero, don't waste space for a filter
+			vce.Head.FILTER[i] = 0
+		} else {
+			filterIndex += 1
+			//set filter B on for voice, b-filters are indicated by the 1-based osc index
+			vce.Head.FILTER[i] = filterIndex+1
 
-		// set "0" freq to match Synergy freq.
+			// set "0" freq to match Synergy freq.
 
-		// Assumes no A-filter - so B filter for osc 1 (index 0) is always stored at 0:
-		vce.Filters[i][(BreakPoint[o.KeyLevelScalingBreakPoint])] = 0 //KEY to FREQ Array is BreakPoint[] (below)
+			// Assumes no A-filter - so B filter for osc 1 (index 0) is always stored at 0:
+			vce.Filters[filterIndex][(BreakPoint[o.KeyLevelScalingBreakPoint])] = 0 //KEY to FREQ Array is BreakPoint[] (below)
 
-		// Scale from DX7 0 to 99 to Syn -64 to 63    //using DX 50 = 0
+			// Scale from DX7 0 to 99 to Syn -64 to 63    //using DX 50 = 0
 
-		lMax := float64(o.KeyLevelScalingLeftDepth) * 0.63 //Assuming the DX7 is in Db also)
-		rMax := float64(o.KeyLevelScalingRightDepth) * 0.63
+			lMax := float64(o.KeyLevelScalingLeftDepth) * 0.63 //Assuming the DX7 is in Db also)
+			rMax := float64(o.KeyLevelScalingRightDepth) * 0.63
 
-		//  set Key Scaling curve below and above break point
+			//  set Key Scaling curve below and above break point
 
-		// for linear, we compute via linear function y = slope*x + b
-		// b is the y value at "0" where "0" is the breakpoint, -- where y is by definition 0. So b is always 0
-		//
-		// for exponential, we base the curve on the array from the Dexed soft synth:
-		// const uint8_t exp_scale_data[] = {
-		//    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 14, 16, 19, 23, 27, 33, 39, 47, 56, 66,
-		//    80, 94, 110, 126, 142, 158, 174, 190, 206, 222, 238, 250
-		//};
-		// this can be modeled with the following equation:
-		//   y = pow(2.0, x / 3.5) * scale
-		//   where
-		//    x = abs(offset from the breakpoint)
-		//    scale = lMax / 256.0  (or rMax)
-		const expBase = 2.0
-		const expDivisor = 3.5
-		const expScale = 256.0
+			// for linear, we compute via linear function y = slope*x + b
+			// b is the y value at "0" where "0" is the breakpoint, -- where y is by definition 0. So b is always 0
+			//
+			// for exponential, we base the curve on the array from the Dexed soft synth:
+			// const uint8_t exp_scale_data[] = {
+			//    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 14, 16, 19, 23, 27, 33, 39, 47, 56, 66,
+			//    80, 94, 110, 126, 142, 158, 174, 190, 206, 222, 238, 250
+			//};
+			// this can be modeled with the following equation:
+			//   y = pow(2.0, x / 3.5) * scale
+			//   where
+			//    x = abs(offset from the breakpoint)
+			//    scale = lMax / 256.0  (or rMax)
+			const expBase = 2.0
+			const expDivisor = 3.5
+			const expScale = 256.0
 
-		switch o.KeyLevelScalingLeftCurve { //0=-LIN, -EXP, +EXP, +LIN
-		case 0:
-			//-linear from -lMax to 0
-			slope := lMax / float64(BreakPoint[o.KeyLevelScalingBreakPoint]-0)
-			for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
-				vce.Filters[i][k] = int8(math.Round(-lMax + slope*float64(k)))
+			switch o.KeyLevelScalingLeftCurve { //0=-LIN, -EXP, +EXP, +LIN
+			case 0:
+				//-linear from -lMax to 0
+				slope := lMax / float64(BreakPoint[o.KeyLevelScalingBreakPoint]-0)
+				for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
+					vce.Filters[filterIndex][k] = int8(math.Round(-lMax + slope*float64(k)))
+				}
+			case 1:
+				//-EXP from -lMax to 0
+				for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
+					x := float64(BreakPoint[o.KeyLevelScalingBreakPoint] - k)
+					vce.Filters[filterIndex][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * -lMax)
+				}
+			case 2:
+				//EXP from lMax to 0
+				for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
+					x := float64(BreakPoint[o.KeyLevelScalingBreakPoint] - k)
+					vce.Filters[filterIndex][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * lMax)
+				}
+			case 3:
+				//linear from lMax to 0
+				slope := -lMax / float64(BreakPoint[o.KeyLevelScalingBreakPoint]-0)
+				for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
+					vce.Filters[filterIndex][k] = int8(math.Round(lMax + slope*float64(k)))
+				}
 			}
-		case 1:
-			//-EXP from -lMax to 0
-			for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
-				x := float64(BreakPoint[o.KeyLevelScalingBreakPoint] - k)
-				vce.Filters[i][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * -lMax)
-			}
-		case 2:
-			//EXP from lMax to 0
-			for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
-				x := float64(BreakPoint[o.KeyLevelScalingBreakPoint] - k)
-				vce.Filters[i][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * lMax)
-			}
-		case 3:
-			//linear from lMax to 0
-			slope := -lMax / float64(BreakPoint[o.KeyLevelScalingBreakPoint]-0)
-			for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
-				vce.Filters[i][k] = int8(math.Round(lMax + slope*float64(k)))
+
+			switch o.KeyLevelScalingRightCurve { //0=-LIN, -EXP, +EXP, +LIN
+			case 0:
+				// -Linear from 0 to -rMax
+				slope := -rMax / float64(32-BreakPoint[o.KeyLevelScalingBreakPoint])
+				for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
+					vce.Filters[filterIndex][k] = int8(math.Round(slope * float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])))
+				}
+			case 1:
+				// -EXP from 0 to -rMax
+				for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
+					x := float64(k - BreakPoint[o.KeyLevelScalingBreakPoint])
+					vce.Filters[filterIndex][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * -rMax)
+				}
+			case 2:
+				// EXP from 0 to rMax
+				for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
+					x := float64(k - BreakPoint[o.KeyLevelScalingBreakPoint])
+					vce.Filters[filterIndex][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * rMax)
+				}
+			case 3:
+				// Linear from 0 to rMax
+				slope := rMax / float64(32-BreakPoint[o.KeyLevelScalingBreakPoint])
+				for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
+					vce.Filters[filterIndex][k] = int8(math.Round(slope * float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])))
+				}
 			}
 		}
-
-		switch o.KeyLevelScalingRightCurve { //0=-LIN, -EXP, +EXP, +LIN
-		case 0:
-			// -Linear from 0 to -rMax
-			slope := -rMax / float64(32-BreakPoint[o.KeyLevelScalingBreakPoint])
-			for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
-				vce.Filters[i][k] = int8(math.Round(slope * float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])))
-			}
-		case 1:
-			// -EXP from 0 to -rMax
-			for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
-				x := float64(k - BreakPoint[o.KeyLevelScalingBreakPoint])
-				vce.Filters[i][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * -rMax)
-			}
-		case 2:
-			// EXP from 0 to rMax
-			for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
-				x := float64(k - BreakPoint[o.KeyLevelScalingBreakPoint])
-				vce.Filters[i][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * rMax)
-			}
-		case 3:
-			// Linear from 0 to rMax
-			slope := rMax / float64(32-BreakPoint[o.KeyLevelScalingBreakPoint])
-			for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
-				vce.Filters[i][k] = int8(math.Round(slope * float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])))
-			}
-		}
-
 		// *****************************************************************
 
 		vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
