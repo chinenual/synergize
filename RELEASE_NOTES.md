@@ -20,6 +20,9 @@ permalink: /docs/release-notes
   strict flow control.
 * Fixes [issue #34](https://github.com/chinenual/synergize/issues/34):
   Filter index #4 was mislabeled with the wrong frequency.
+* Fixes [issue #35](https://github.com/chinenual/synergize/issues/35):
+  Attempts to create CRT's that exceed the max size supported by the
+  Synergy will throw an error.
   
 ## 2.3.1
 
