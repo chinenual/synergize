@@ -11,10 +11,6 @@ import (
 func makeCrt(dirPath string) (err error) {
 
 	crtPath := filepath.Join(dirPath, filepath.Base(dirPath) + ".CRT")
-	var f *os.File
-	if f, err = os.OpenFile(crtPath, os.O_RDWR|os.O_CREATE, 0755); err != nil {
-		return
-	}
 	var vces []*data.VCE
 	filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -35,7 +31,7 @@ func makeCrt(dirPath string) (err error) {
 		}
 		return nil
 	})
-	if err = data.WriteCrt(f, vces); err != nil {
+	if err = data.WriteCrtFileFromVCEArray(crtPath, vces); err != nil {
 		return
 	}
 	return
