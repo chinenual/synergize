@@ -209,7 +209,7 @@ func addVce(buf io.WriteSeeker, slot /*one-based*/ int, cursor *crtCursor, vce V
 
 	if cursor.VoiceOffset > VRAM_Max_length {
 		err = errors.Errorf("Error adding voice #%d (%s) to CRT - requires %d bytes, which exceeds maximum of %d",
-			slot+1, VceName(vce.Head), cursor.VoiceOffset, VRAM_Max_length)
+			slot, VceName(vce.Head), cursor.VoiceOffset, VRAM_Max_length)
 		return
 	}
 
