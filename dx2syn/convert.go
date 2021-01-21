@@ -12,8 +12,9 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		return
 	}
 
-	for i := 0; i < 7; i++ {
-		vce.Head.VNAME[i] = dx7Voice.VoiceName[i]
+	for i := 0; i < 8; i++ {
+		vce.Head.VNAME[i] = dx7Voice.VoiceName[i+2]
+		fmt.Printf(" %d '%s' \n", vce.Head.VNAME[i], vce.Head.VNAME)
 	}
 
 	if err = helperSetAlgorithmPatchType(&vce, dx7Voice.Algorithm, dx7Voice.Feedback); err != nil {
@@ -25,7 +26,6 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	vce.Head.VASENS = 31
 	vce.Head.VTSENS = 31
 	vce.Head.VTCENT = 24
-
 	vce.Head.VIBRAT = dx7Voice.LfoSpeed
 	vce.Head.VIBDEL = dx7Voice.LfoDelay
 	vce.Head.VIBDEP = int8(dx7Voice.LfoPitchModDepth)
