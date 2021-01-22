@@ -217,3 +217,22 @@ func helperUnscaleFreqEnvValue(val byte) byte {
 func UnscaleAmpEnvValue(val byte) byte {
 	return val + 55
 }
+
+// translate -- does not handle the "RAND" values, only the numeric ones
+func helperUnscaleDetune(val int) byte {
+	// XREF: original source in TextToFDETUN() - javascript in viewVCE_voice.js
+
+	// See FDETUNToText.  This "reverses" that attrocity
+
+	if val >= (-32*3) && val <= (32*3) {
+		// CASE B
+		val /= 3
+	} else if val > 0 {
+		// CASE C
+		val = ((val / 3) + 32) / 2
+	} else {
+		// CASE D
+		val = ((val / 3) - 32) / 2
+	}
+	return byte(val)
+}
