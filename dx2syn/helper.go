@@ -93,9 +93,6 @@ func helperSetAlgorithmPatchType(vce *data.VCE, dxAlgo byte, dxFeedback byte) (e
 	if dxFeedback != 0 {
 		log.Printf("WARNING: Limitation: unhandled DX feedback: %d", dxFeedback)
 	}
-	if len(dxAlgoNoFeedbackPatchTypePerOscTable[dxAlgo]) < 16 {
-		log.Printf("ERROR: Limitation: unhandled DX algorithm: %d", dxAlgo)
-	}
 
 	for i := range dxAlgoNoFeedbackPatchTypePerOscTable[dxAlgo] {
 		vce.Envelopes[i].FreqEnvelope.OPTCH = dxAlgoNoFeedbackPatchTypePerOscTable[dxAlgo][i]
