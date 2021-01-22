@@ -249,11 +249,9 @@ func VceValidate(vce VCE) (err error) {
 func VceName(vceHead VCEHead) (name string) {
 	name = ""
 	for i := 0; i < 8; i++ {
-		if vceHead.VNAME[i] == ' ' {
-			break
-		}
 		name = name + string(vceHead.VNAME[i])
 	}
+	name = strings.Trim(name, " ")
 	return
 }
 
