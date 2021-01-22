@@ -41,17 +41,16 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	var patchOutputDSR byte
 
 	var ms [4]int
-	/*
-		// old transferdown code
-		transposedDown := false
-		for _, o := range dx7Voice.Osc {
-			if o.OscFreqCoarse == 0 {
-				transposedDown = true
-				//vce.Head.VTRANS = -12
-				break
-			}
+
+	// transferdown code
+	transposedDown := false
+	for _, o := range dx7Voice.Osc {
+		if o.OscFreqCoarse == 0 {
+			transposedDown = true
+			vce.Head.VTRANS = vce.Head.VTRANS - 12
+			break
 		}
-	*/
+	}
 
 	filterIndex := int8(-1) // increment as we allocate each filter
 
@@ -97,7 +96,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		} else {
 			filterIndex += 1
 			//set filter B on for voice, b-filters are indicated by the 1-based osc index
-			vce.Head.FILTER[i] = filterIndex+1
+			vce.Head.FILTER[i] = filterIndex + 1
 
 			// set "0" freq to match Synergy freq.
 
@@ -186,11 +185,13 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 
 		vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
 		//DX7 OP OscFreqCoarse == 0 means .5 1 octave below 1, which synergy does not have
-		if o.OscFreqCoarse == 0 {
-			vce.Envelopes[i].FreqEnvelope.OHARM = 1
+		//if o.OscFreqCoarse == 0 {
+		if transposedDown == true {
+			vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse + 1
 		}
 		// Set OSC detune
-		vce.Envelopes[i].FreqEnvelope.FDETUN = int8(o.OscDetune - 7)
+		vce.Envelopes[i].FreqEnvelope.FDETUN = dTune[int8(o.OscDetune)]
+		fmt.Printf(" %s %d %d \n", " Detune = ", o.OscDetune, vce.Envelopes[i].FreqEnvelope.FDETUN)
 
 		// type = 1  : no loop (and LOOPPT and SUSTAINPT are accelleration rates not point positions)
 		// type = 2  : S only
@@ -343,6 +344,8 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 
 	return
 }
+
+var dTune = [15]int8{-81, -75, -69, -60, -42, -30, -24, 0, 9, 21, 24, 33, 45, 66, 72}
 
 var BreakPoint = [100]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 9, 9,
 	9, 9, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 15, 15, 15, 15,
