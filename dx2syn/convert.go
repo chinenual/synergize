@@ -190,7 +190,8 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 			vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse + 1
 		}
 		// Set OSC detune
-		vce.Envelopes[i].FreqEnvelope.FDETUN = dTune[int8(o.OscDetune)]
+		vce.Envelopes[i].FreqEnvelope.FDETUN = helperUnscaleDetune(int(dTune[int(o.OscDetune)]))
+
 		fmt.Printf(" %s %d %d \n", " Detune = ", o.OscDetune, vce.Envelopes[i].FreqEnvelope.FDETUN)
 
 		// type = 1  : no loop (and LOOPPT and SUSTAINPT are accelleration rates not point positions)
