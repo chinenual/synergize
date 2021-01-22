@@ -3,19 +3,61 @@ package main
 import (
 	"fmt"
 	"math"
+	"strings"
 
 	"github.com/chinenual/synergize/data"
 )
+
+// compress the DX7 10-character name to something that fits in the 8-character VNAME
+func convertName(dxName string, vce *data.VCE) {
+	newName := dxName
+	// remove leading or trailing spaces:
+	newName = strings.Trim(newName, " ")
+	//	fmt.Printf("AFTER TRIM: '%s'\n", newName)
+
+	for len(newName) > 8 && strings.Contains(newName, "  ") {
+		// compress internal spaces:
+		newName = strings.ReplaceAll(newName, "  ", " ")
+	}
+	//	fmt.Printf("AFTER COMPRESS SPACE: '%s'\n", newName)
+	for len(newName) > 8 && strings.Contains(newName, " ") {
+		// remove spaces - starting with the last one:
+		i := strings.LastIndex(newName, " ")
+		newName = newName[:i] + newName[i+1:]
+	}
+	//	fmt.Printf("AFTER INTERNAL SPACE: '%s'\n", newName)
+	const punctuation = "_-\\/:;,.<>?!@#$%^&*()=[]{}'\""
+	for len(newName) > 8 && strings.ContainsAny(newName, punctuation) {
+		// remove punctuation - starting with the last one:
+		i := strings.LastIndexAny(newName, punctuation)
+		newName = newName[:i] + newName[i+1:]
+	}
+	//	fmt.Printf("AFTER PUNCTUATION: '%s'\n", newName)
+	const vowels = "aeiouAEIOU"
+	for len(newName) > 8 && strings.ContainsAny(newName, vowels) {
+		// remove vowels - starting with the last one:
+		i := strings.LastIndexAny(newName, vowels)
+		fmt.Printf("last idx: '%s' %d\n", newName, i)
+		newName = newName[:i] + newName[i+1:]
+	}
+	//	fmt.Printf("AFTER VOWELS: '%s'\n", newName)
+
+	// finally, truncate and pad with spaces:
+	newName = data.VcePaddedName(newName)
+	//	fmt.Printf("truncated: '%s'\n", newName)
+
+	for i := 0; i < 8; i++ {
+		vce.Head.VNAME[i] = newName[i]
+	}
+	//	fmt.Printf("VNAME: '%s'\n", data.VceName(vce.Head))
+}
 
 func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	if vce, err = helperBlankVce(); err != nil {
 		return
 	}
 
-	for i := 0; i < 8; i++ {
-		vce.Head.VNAME[i] = dx7Voice.VoiceName[i+2]
-		fmt.Printf(" %d '%s' \n", vce.Head.VNAME[i], vce.Head.VNAME)
-	}
+	convertName(dx7Voice.VoiceName, &vce)
 
 	if err = helperSetAlgorithmPatchType(&vce, dx7Voice.Algorithm, dx7Voice.Feedback); err != nil {
 		return

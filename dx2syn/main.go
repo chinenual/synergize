@@ -128,6 +128,8 @@ func main() {
 			} else {
 				if *verboseFlag {
 					log.Printf("Result VCE: %s %s\n", v.VoiceName, helperVCEToJSON(vce))
+				} else {
+					log.Printf("Translated '%s' -> '%s'\n", v.VoiceName, data.VceName(vce.Head))
 				}
 				if err = data.VceValidate(vce); err != nil {
 					log.Printf("ERROR: validation error on translate Dx7 voice %s: %v", v.VoiceName, err)
