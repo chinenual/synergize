@@ -23,6 +23,9 @@ permalink: /docs/release-notes
 * Fixes [issue #35](https://github.com/chinenual/synergize/issues/35):
   Attempts to create CRT's that exceed the max size supported by the
   Synergy will throw an error.
+* Fixes [issue #37](https://github.com/chinenual/synergize/issues/37):
+  Negative frequency offsets in the envelope table were display with
+  incorrect numeric values, making them appear positive.
   
 ## 2.3.1
 

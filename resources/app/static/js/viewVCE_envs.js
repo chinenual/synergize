@@ -45,16 +45,28 @@ let viewVCE_envs = {
 	//   byte range:   0xc3 .. 0x3f (-61 .. 63)
 	scaleFreqEnvValue: function (v) {
 		// See OSCDSP.Z80 DISVAL: DVAL10:
+		// bytes are store as unsigned values in the file, but displayed as "signed" int8's -- do the 2's complement change here
+		if (v > 127) {
+			v = v - 255;
+		}
 		return v;
 	},
 	unscaleFreqEnvValue: function (v) {
+		// bytes are store as unsigned values in the file, but displayed as "signed" int8's -- do the 2's complement change here
+		if (v < 0) {
+			v = 255 - v;
+		}
 		return v;
 	},
 	FreqEnvValueToText(v) {
-		return v;
+		return '' + viewVCE_envs.scaleFreqEnvValue(v);
 	},
 	TextToFreqEnvValue(v) {
-		return v;
+		if (v == null || v === '') {
+			return 0;
+		}
+		var val = parseInt(v, 10);
+		return '' + viewVCE_envs.unscaleFreqEnvValue(val);
 	},
 
 	// Amp values:
