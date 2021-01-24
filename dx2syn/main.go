@@ -28,7 +28,6 @@ func usage(msg string) {
 func main() {
 	flag.Parse()
 
-
 	if *makecrtFlag != "" {
 		if err := makeCrt(*makecrtFlag); err != nil {
 			log.Printf("ERROR: could not create CRT from %s: %v", *makecrtFlag, err)
@@ -87,7 +86,7 @@ func main() {
 			}
 		}
 		if selectedVoices == nil {
-			log.Printf("ERROR: no such voice name '%s'. Valid names:\n", *nameFlag);
+			log.Printf("ERROR: no such voice name '%s'. Valid names:\n", *nameFlag)
 			for _, v := range sysex.Voices {
 				log.Printf("'%s'\n", v.VoiceName)
 			}
@@ -101,12 +100,11 @@ func main() {
 	if *statsFlag {
 		log.Printf("sysex: %s\n", *sysexFlag)
 	}
-	hasError := false
 	for _, v := range selectedVoices {
 		if *statsFlag {
-			//log.Printf("feedback: %s %d\n", v.VoiceName, v.Feedback)
-			//log.Printf("OSCMode: %s %t %t %t %t %t %t \n", v.VoiceName, v.Osc[0].OscMode, v.Osc[1].OscMode, v.Osc[2].OscMode, v.Osc[3].OscMode, v.Osc[4].OscMode, v.Osc[5].OscMode)
-
+			log.Printf("feedback: %s %d\n", v.VoiceName, v.Feedback)
+			log.Printf("OSCMode: %s %t %t %t %t %t %t \n", v.VoiceName, v.Osc[0].OscMode, v.Osc[1].OscMode, v.Osc[2].OscMode, v.Osc[3].OscMode, v.Osc[4].OscMode, v.Osc[5].OscMode)
+			/*
 				for i := 0; i < 6; i++ {
 					log.Printf("KeyScale Break-LeftD-Rightd-LC-RC OP%d %s %d %d %d %d %d \n", i, v.VoiceName, v.Osc[i].KeyLevelScalingBreakPoint,
 						v.Osc[i].KeyLevelScalingLeftDepth,
@@ -114,8 +112,9 @@ func main() {
 						v.Osc[i].KeyLevelScalingLeftCurve,
 						v.Osc[i].KeyLevelScalingRightCurve)
 				}
-
+			*/
 		} else {
+			hasError := false
 			var vce data.VCE
 			if *verboseFlag {
 				log.Printf("Translating %s %s...\n", v.VoiceName, Dx7VoiceToJSON(v))
@@ -124,30 +123,26 @@ func main() {
 			}
 			if vce, err = TranslateDx7ToVce(v); err != nil {
 				log.Printf("ERROR: could not translate Dx7 voice %s: %v", v.VoiceName, err)
-				hasError = true
 			} else {
 				if *verboseFlag {
 					log.Printf("Result VCE: %s %s\n", v.VoiceName, helperVCEToJSON(vce))
-				} else {
-					log.Printf("Translated '%s' -> '%s'\n", v.VoiceName, data.VceName(vce.Head))
 				}
-				if err = data.VceValidate(vce); err != nil {
-					log.Printf("ERROR: validation error on translate Dx7 voice %s: %v", v.VoiceName, err)
+				const IGNORE_VALIDATION = true
+				if err = data.VceValidate(vce); (err != nil) && (!IGNORE_VALIDATION) {
+					log.Printf("ERROR: validation error on translate Dx7 voice %s: %v\n", v.VoiceName, err)
 					hasError = true
 				} else {
 					vcePathname := v.VoiceName + ".VCE"
 					if err = data.WriteVceFile(vcePathname, vce, false); err != nil {
-						log.Printf("ERROR: could not write VCEfile %s: %v", vcePathname, err)
+						log.Printf("ERROR: could not write VCEfile %s: %v\n", vcePathname, err)
 						hasError = true
 					}
 				}
 			}
+			if hasError {
+				log.Printf("ERROR: Error during conversion\n")
+			}
 		}
 	}
-	code := 0
-	if hasError {
-		log.Printf("ERROR: error during translation\n")
-		code = 1
-	}
-	os.Exit(code)
+	os.Exit(0)
 }

@@ -19,10 +19,10 @@
 
 | Count  | Name   | Description 
 |-------|-------|--------
-|0   | OP6 EG Rate 1  | 0-99   =  (99-R1) 
-|1   | OP6 EG Rate 2  | 0-99   =  (99-R1) + (99-R2)
-|2   | OP6 EG Rate 3  | 0-99   =  (99-R1) + (99-R2) + (99-R3)
-|3   | OP6 EG Rate 4  | 0-99   =  (99-R1) + (99-R2) + (99-R3) + (99-R4)
+|0   | OP6 EG Rate 1  | 0-99      
+|1   | OP6 EG Rate 2  | 0-99   
+|2   | OP6 EG Rate 3  | 0-99   
+|3   | OP6 EG Rate 4  | 0-99   
 |4   | OP6 EG Level 1  | 0-99    x .727
 |5   | OP6 EG Level 2  | 0-99    x .727
 |6   | OP6 EG Level 3  | 0-99    x .727
@@ -34,7 +34,7 @@
 |12  | OSC DETUNE, 0-14  OSC RATE SCALE 0-7| xDETUors    Detune 1:1  *3      
 |13  | Key Velocity Sensitivity 0-7, Amplitude Mod Sensitivity 0-3| x00KVSam   temp ignore, will add later
 |14  | OP6 Operator Output Level  | 0-99  
-|15  | OSC Freq Coarse 0-31, Oscillator Mode 0-1|  xxCOARSm  Coarse=1:1 *,   0=Car  1=Mod
+|15  | OSC Freq Coarse 0-31, Oscillator Mode 0-1|  xxCOARSm  Coarse=1:1 *,  Mode: 0=Ratio  1=Fixed
 |16  | OP6 OSC Freq Fine  | 0-99  will be added to Harmonic...
 
 ## 17  thru 33 = OP5
@@ -45,10 +45,10 @@
 
 | Count  | Name   | Description 
 |-------|-------|--------
-|102 | Pitch EG Rate 1  | 0-99 = (99-R1)
-|103 | Pitch EG Rate 2  | 0-99 = (99-R1) + (99-R2)
-|104 | Pitch EG Rate 3  | 0-99 = (99-R1) + (99-R2) + (99-R3)
-|105 | Pitch EG Rate 4  | 0-99 = (99-R1) + (99-R2) + (99-R3) + (99-R4)
+|102 | Pitch EG Rate 1  | 0-99 = 
+|103 | Pitch EG Rate 2  | 0-99 = 
+|104 | Pitch EG Rate 3  | 0-99 = 
+|105 | Pitch EG Rate 4  | 0-99 = 
 |106 | Pitch EG Level 1  | 0-99 = 0-72   x .727
 |107 | Pitch EG Level 2  | 0-99 = 0-72   x .727
 |108 | Pitch EG Level 3  | 0-99 = 0-72   x .727

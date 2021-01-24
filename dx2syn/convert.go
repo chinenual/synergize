@@ -13,26 +13,26 @@ func convertName(dxName string, vce *data.VCE) {
 	newName := dxName
 	// remove leading or trailing spaces:
 	newName = strings.Trim(newName, " ")
-	//	fmt.Printf("AFTER TRIM: '%s'\n", newName)
+	fmt.Printf("AFTER TRIM: '%s'\n", newName)
 
 	for len(newName) > 8 && strings.Contains(newName, "  ") {
 		// compress internal spaces:
 		newName = strings.ReplaceAll(newName, "  ", " ")
 	}
-	//	fmt.Printf("AFTER COMPRESS SPACE: '%s'\n", newName)
+	fmt.Printf("AFTER COMPRESS SPACE: '%s'\n", newName)
 	for len(newName) > 8 && strings.Contains(newName, " ") {
 		// remove spaces - starting with the last one:
 		i := strings.LastIndex(newName, " ")
 		newName = newName[:i] + newName[i+1:]
 	}
-	//	fmt.Printf("AFTER INTERNAL SPACE: '%s'\n", newName)
+	fmt.Printf("AFTER INTERNAL SPACE: '%s'\n", newName)
 	const punctuation = "_-\\/:;,.<>?!@#$%^&*()=[]{}'\""
 	for len(newName) > 8 && strings.ContainsAny(newName, punctuation) {
 		// remove punctuation - starting with the last one:
 		i := strings.LastIndexAny(newName, punctuation)
 		newName = newName[:i] + newName[i+1:]
 	}
-	//	fmt.Printf("AFTER PUNCTUATION: '%s'\n", newName)
+	fmt.Printf("AFTER PUNCTUATION: '%s'\n", newName)
 	const vowels = "aeiouAEIOU"
 	for len(newName) > 8 && strings.ContainsAny(newName, vowels) {
 		// remove vowels - starting with the last one:
@@ -40,16 +40,16 @@ func convertName(dxName string, vce *data.VCE) {
 		fmt.Printf("last idx: '%s' %d\n", newName, i)
 		newName = newName[:i] + newName[i+1:]
 	}
-	//	fmt.Printf("AFTER VOWELS: '%s'\n", newName)
+	fmt.Printf("AFTER VOWELS: '%s'\n", newName)
 
-	// finally, truncate and pad with spaces:
+	//finally, truncate and pad with spaces:
 	newName = data.VcePaddedName(newName)
-	//	fmt.Printf("truncated: '%s'\n", newName)
+	fmt.Printf("truncated: '%s'\n", newName)
 
 	for i := 0; i < 8; i++ {
 		vce.Head.VNAME[i] = newName[i]
 	}
-	//	fmt.Printf("VNAME: '%s'\n", data.VceName(vce.Head))
+	fmt.Printf("VNAME: '%s'\n", data.VceName(vce.Head))
 }
 
 func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
@@ -78,21 +78,11 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	sustR := 0
 	relsR := 0
 	var OSClevelPercent float64
-	var VeloctiyPercent float64
+	var VelocityPercent float64
 	var PMfix float64
 	var patchOutputDSR byte
 
 	var ms [4]int
-
-	// transferdown code
-	transposedDown := false
-	for _, o := range dx7Voice.Osc {
-		if o.OscFreqCoarse == 0 {
-			transposedDown = true
-			vce.Head.VTRANS = vce.Head.VTRANS - 12
-			break
-		}
-	}
 
 	filterIndex := int8(-1) // increment as we allocate each filter
 
@@ -104,32 +94,21 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		//OPTCH
 		//patchOutputDSR = ((patchByte & 0xc0) >> 6)
 		patchOutputDSR = ((vce.Envelopes[i].FreqEnvelope.OPTCH & 0xc0) >> 6)
-		fmt.Printf(" %s %d \n", " OSC = ", i+1)
-		fmt.Printf(" %s %d \n", " patchOutputDSR = ", patchOutputDSR)
+		//fmt.Printf(" %s %d \n", " OSC = ", i+1)
+		//fmt.Printf(" %s %d \n", " patchOutputDSR = ", patchOutputDSR)
 
 		if patchOutputDSR > 0 {
 			PMfix = .75
-			fmt.Printf(" %s %f \n", " PMfix = ", PMfix)
+			//fmt.Printf(" %s %f \n", " PMfix = ", PMfix)
 		} else {
 			PMfix = 1.0
-			fmt.Printf(" %s %f \n", " PMfix = ", PMfix)
+			//fmt.Printf(" %s %f \n", " PMfix = ", PMfix)
 		}
 		//register 1 == 0     // after that mask and shift
 
-		/*
-			// Set OSC mode
-			if o.OscMode == true {
-				vce.Envelopes[i].FreqEnvelope.OHARM = 1
-			}
-			else
-			{
-				vce.Envelopes[i].FreqEnvelope.OHARM = 0
-			}
-		*/
 		// ******************************************************************************************
 		// *************** put key scaling in filter B  filter B[0 - 31] for each OSC  **************
 		// ******************************************************************************************
-
 		//Activate FILTER B above per voice above (in Header)
 
 		if o.KeyLevelScalingLeftDepth == 0 && o.KeyLevelScalingRightDepth == 0 {
@@ -223,18 +202,40 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 				}
 			}
 		}
-		// *****************************************************************
 
-		vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
-		//DX7 OP OscFreqCoarse == 0 means .5 1 octave below 1, which synergy does not have
-		//if o.OscFreqCoarse == 0 {
-		if transposedDown == true {
-			vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse + 1
+		// Set OSC mode     false = ratio   true = Fixed
+		if o.OscMode == false {
+			vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
+
+			// transposedown code
+			transposedDown := false
+			for _, o := range dx7Voice.Osc {
+				if o.OscFreqCoarse == 0 {
+					transposedDown = true
+					vce.Head.VTRANS = vce.Head.VTRANS - 12
+					break
+				}
+			}
+			vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
+			// ***************************************************************
+			// TO DO  :::::  Add more code to take DX7 Fine into consideration
+			// ***************************************************************
+			//DX7 OP OscFreqCoarse == 0 means .5 1 octave below 1, which synergy does not have
+			if transposedDown == true {
+				if o.OscFreqCoarse == 0 {
+					vce.Envelopes[i].FreqEnvelope.OHARM = 1
+				} else {
+					vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse * 2
+				}
+			}
+
+		} else {
+			vce.Envelopes[i].FreqEnvelope.OHARM = -12
 		}
+		fmt.Printf(" %s %d \n", " HARM = ", vce.Envelopes[i].FreqEnvelope.OHARM)
 		// Set OSC detune
 		vce.Envelopes[i].FreqEnvelope.FDETUN = helperUnscaleDetune(int(dTune[int(o.OscDetune)]))
-
-		fmt.Printf(" %s %d %d \n", " Detune = ", o.OscDetune, vce.Envelopes[i].FreqEnvelope.FDETUN)
+		//fmt.Printf(" %s %d %d \n", " Detune = ", o.OscDetune, vce.Envelopes[i].FreqEnvelope.FDETUN)
 
 		// type = 1  : no loop (and LOOPPT and SUSTAINPT are accelleration rates not point positions)
 		// type = 2  : S only
@@ -249,40 +250,43 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		vce.Envelopes[i].AmpEnvelope.NPOINTS = 4
 
 		// set lower Env levels for velocity sensitivity
+		//VelocityPercent = 1 - float64(o.KeyVelocitySensitivity/10)
+
 		switch o.KeyVelocitySensitivity {
 		case 0:
 			{
-				VeloctiyPercent = 1.0
+				VelocityPercent = 1.0
 			}
 		case 1:
 			{
-				VeloctiyPercent = .90
+				VelocityPercent = .90
 			}
 		case 2:
 			{
-				VeloctiyPercent = .80
+				VelocityPercent = .80
 			}
 		case 3:
 			{
-				VeloctiyPercent = .70
+				VelocityPercent = .70
 			}
 		case 4:
 			{
-				VeloctiyPercent = .60
+				VelocityPercent = .60
 			}
 		case 5:
 			{
-				VeloctiyPercent = .50
+				VelocityPercent = .50
 			}
 		case 6:
 			{
-				VeloctiyPercent = .40
+				VelocityPercent = .40
 			}
 		case 7:
 			{
-				VeloctiyPercent = .30
+				VelocityPercent = .30
 			}
 		}
+		fmt.Printf(" %s %f \n", " Vel% = ", VelocityPercent)
 
 		OSClevelPercent = float64(float64(o.OperatorOutputLevel) / 99.00)
 		for k := 0; k < 4; k++ {
@@ -307,25 +311,25 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		*/
 
 		// point1
-		vce.Envelopes[i].AmpEnvelope.Table[0] = byte((math.Round(float64(o.EgLevel[0]) * 0.727 * VeloctiyPercent)) + 55)
+		vce.Envelopes[i].AmpEnvelope.Table[0] = byte((math.Round(float64(o.EgLevel[0]) * 0.727 * VelocityPercent)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[1] = byte((math.Round(float64(o.EgLevel[0]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[2] = byte(helperNearestAmpTimeIndex(attkR))
 		vce.Envelopes[i].AmpEnvelope.Table[3] = byte(helperNearestAmpTimeIndex(attkR))
 
 		//point2
-		vce.Envelopes[i].AmpEnvelope.Table[4] = byte((math.Round(float64(o.EgLevel[1]) * 0.727 * VeloctiyPercent)) + 55)
+		vce.Envelopes[i].AmpEnvelope.Table[4] = byte((math.Round(float64(o.EgLevel[1]) * 0.727 * VelocityPercent)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[5] = byte((math.Round(float64(o.EgLevel[1]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[6] = byte(helperNearestAmpTimeIndex(decyR))
 		vce.Envelopes[i].AmpEnvelope.Table[7] = byte(helperNearestAmpTimeIndex(decyR))
 
 		//point3
-		vce.Envelopes[i].AmpEnvelope.Table[8] = byte((math.Round(float64(o.EgLevel[2]) * 0.727 * VeloctiyPercent)) + 55)
+		vce.Envelopes[i].AmpEnvelope.Table[8] = byte((math.Round(float64(o.EgLevel[2]) * 0.727 * VelocityPercent)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[9] = byte((math.Round(float64(o.EgLevel[2]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[10] = byte(helperNearestAmpTimeIndex(sustR))
 		vce.Envelopes[i].AmpEnvelope.Table[11] = byte(helperNearestAmpTimeIndex(sustR))
 
 		//point4
-		vce.Envelopes[i].AmpEnvelope.Table[12] = byte((math.Round(float64(o.EgLevel[3]) * 0.727 * VeloctiyPercent)) + 55)
+		vce.Envelopes[i].AmpEnvelope.Table[12] = byte((math.Round(float64(o.EgLevel[3]) * 0.727 * VelocityPercent)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[13] = byte((math.Round(float64(o.EgLevel[3]) * 0.727)) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[14] = byte(helperNearestAmpTimeIndex(relsR))
 		vce.Envelopes[i].AmpEnvelope.Table[15] = byte(helperNearestAmpTimeIndex(relsR))
