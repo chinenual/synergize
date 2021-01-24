@@ -48,7 +48,7 @@ func main() {
 				log.Printf("ERROR: could not set algo %d: %v", a, err)
 			} else {
 				vcePathname := fmt.Sprintf("algo%d.VCE", a)
-				if err = data.WriteVceFile(vcePathname, vce); err != nil {
+				if err = data.WriteVceFile(vcePathname, vce, true); err != nil {
 					log.Printf("ERROR: could not write VCEfile %s: %v", vcePathname, err)
 				}
 			}
@@ -136,7 +136,7 @@ func main() {
 					hasError = true
 				} else {
 					vcePathname := v.VoiceName + ".VCE"
-					if err = data.WriteVceFile(vcePathname, vce); err != nil {
+					if err = data.WriteVceFile(vcePathname, vce, false); err != nil {
 						log.Printf("ERROR: could not write VCEfile %s: %v", vcePathname, err)
 						hasError = true
 					}

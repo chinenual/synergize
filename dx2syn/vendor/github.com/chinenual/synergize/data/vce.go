@@ -320,14 +320,18 @@ func VcePaddedName(name string) (padded string) {
 	return padded
 }
 
-func WriteVceFile(filename string, vce VCE) (err error) {
+func WriteVceFile(filename string, vce VCE, overrideVNAME bool) (err error) {
 	var file *os.File
 	if file, err = os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0755); err != nil {
 		return
 	}
 	defer file.Close()
 
-	name := vceNameFromPathname(filename)
+	name := VceName(vce.Head)
+	if overrideVNAME {
+		name = vceNameFromPathname(filename)
+	}
+	
 	if err = WriteVce(file, vce, name, false); err != nil {
 		return
 	}
