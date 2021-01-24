@@ -128,7 +128,7 @@ func testVceValidate(t *testing.T, path string) {
 	}
 }
 
-func disable_TestVceValidate(t *testing.T) {
+func TestVceValidate(t *testing.T) {
 	fileList := []string{}
 
 	_ = filepath.Walk(*testfilepath,

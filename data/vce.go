@@ -191,16 +191,16 @@ func extraVceValidation(sl validator.StructLevel) {
 			timeLow := vce.Envelopes[osc].AmpEnvelope.Table[(4*i)+2]
 			timeUp := vce.Envelopes[osc].AmpEnvelope.Table[(4*i)+3]
 			if valLow < 55 || valLow > 127 {
-				sl.ReportError(vce.Envelopes[osc].AmpEnvelope.Table[(4*i)+0], fmt.Sprintf("vce.Envelopes[%d].AmpEnvelope.<point>[%d].valLow", osc, i), "ampvalue", "", strconv.Itoa(int(valLow)))
+				sl.ReportError(vce.Envelopes[osc].AmpEnvelope.Table[(4*i)+0], fmt.Sprintf("vce.Envelopes[%d].AmpEnvelope.<point>[%d].valLow", osc, i), "ampvalue", strconv.Itoa(int(valLow)), "")
 			}
 			if valUp < 55 || valUp > 127 {
-				sl.ReportError(vce.Envelopes[osc].AmpEnvelope.Table[(4*i)+0], fmt.Sprintf("vce.Envelopes[%d].AmpEnvelope.<point>[%d].valUp", osc, i), "ampvalue", "", strconv.Itoa(int(valUp)))
+				sl.ReportError(vce.Envelopes[osc].AmpEnvelope.Table[(4*i)+0], fmt.Sprintf("vce.Envelopes[%d].AmpEnvelope.<point>[%d].valUp", osc, i), "ampvalue", strconv.Itoa(int(valUp)), "")
 			}
 			if timeLow > 84 {
-				sl.ReportError(vce.Envelopes[osc].AmpEnvelope.Table[(4*i)+2], fmt.Sprintf("vce.Envelopes[%d].AmpEnvelope.<point>[%d].timeLow", osc, i), "amptime", "", strconv.Itoa(int(timeLow)))
+				sl.ReportError(vce.Envelopes[osc].AmpEnvelope.Table[(4*i)+2], fmt.Sprintf("vce.Envelopes[%d].AmpEnvelope.<point>[%d].timeLow", osc, i), "amptime", strconv.Itoa(int(timeLow)), "")
 			}
 			if timeUp > 84 {
-				sl.ReportError(vce.Envelopes[osc].AmpEnvelope.Table[(4*i)+3], fmt.Sprintf("vce.Envelopes[%d].AmpEnvelope.<point>[%d].timeUp", osc, i), "amptime", "", strconv.Itoa(int(timeUp)))
+				sl.ReportError(vce.Envelopes[osc].AmpEnvelope.Table[(4*i)+3], fmt.Sprintf("vce.Envelopes[%d].AmpEnvelope.<point>[%d].timeUp", osc, i), "amptime", strconv.Itoa(int(timeUp)), "")
 			}
 		}
 		if vce.Envelopes[osc].FreqEnvelope.ENVTYPE == 1 {
@@ -219,18 +219,18 @@ func extraVceValidation(sl validator.StructLevel) {
 			timeLow := vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+2]
 			timeUp := vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+3]
 			if valLow < -61 || valLow > 63 {
-				sl.ReportError(vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+0], fmt.Sprintf("vce.Envelopes[%d].FreqEnvelope.<point>[%d].valLow", osc, i), "freqvalue", "", strconv.Itoa(int(valLow)))
+				sl.ReportError(vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+0], fmt.Sprintf("vce.Envelopes[%d].FreqEnvelope.<point>[%d].valLow", osc, i), "freqvalue", strconv.Itoa(int(valLow)), "")
 			}
 			if valUp < -61 || valUp > 63 {
-				sl.ReportError(vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+1], fmt.Sprintf("vce.Envelopes[%d].FreqEnvelope.<point>[%d].valUp", osc, i), "freqvalue", "", strconv.Itoa(int(valUp)))
+				sl.ReportError(vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+1], fmt.Sprintf("vce.Envelopes[%d].FreqEnvelope.<point>[%d].valUp", osc, i), "freqvalue", strconv.Itoa(int(valUp)), "")
 			}
 			if i != 0 {
 				// TODO: add validation for the wave/keyprop bytes?
 				if timeLow > 84 {
-					sl.ReportError(vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+2], fmt.Sprintf("vce.Envelopes[%d].FreqEnvelope.<point>[%d].timeLow", osc, i), "freqtime", "", strconv.Itoa(int(timeLow)))
+					sl.ReportError(vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+2], fmt.Sprintf("vce.Envelopes[%d].FreqEnvelope.<point>[%d].timeLow", osc, i), "freqtime", strconv.Itoa(int(timeLow)), "")
 				}
 				if timeUp > 84 {
-					sl.ReportError(vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+3], fmt.Sprintf("vce.Envelopes[%d].FreqEnvelope.<point>[%d].timeUp", osc, i), "freqtime", "", strconv.Itoa(int(timeUp)))
+					sl.ReportError(vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+3], fmt.Sprintf("vce.Envelopes[%d].FreqEnvelope.<point>[%d].timeUp", osc, i), "freqtime", strconv.Itoa(int(timeUp)), "")
 				}
 			}
 		}
@@ -320,14 +320,18 @@ func VcePaddedName(name string) (padded string) {
 	return padded
 }
 
-func WriteVceFile(filename string, vce VCE) (err error) {
+func WriteVceFile(filename string, vce VCE, overrideVNAME bool) (err error) {
 	var file *os.File
 	if file, err = os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0755); err != nil {
 		return
 	}
 	defer file.Close()
 
-	name := vceNameFromPathname(filename)
+	name := VceName(vce.Head)
+	if overrideVNAME {
+		name = vceNameFromPathname(filename)
+	}
+
 	if err = WriteVce(file, vce, name, false); err != nil {
 		return
 	}

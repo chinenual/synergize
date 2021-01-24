@@ -24,8 +24,13 @@ permalink: /docs/release-notes
   Attempts to create CRT's that exceed the max size supported by the
   Synergy will throw an error.
 * Fixes [issue #37](https://github.com/chinenual/synergize/issues/37):
-  Negative frequency offsets in the envelope table were display with
+  Negative frequency offsets in the envelope table were displayed with
   incorrect numeric values, making them appear positive.
+* Change of behavior: saving a VCE from the voice editor used to
+  override the Voice Name set in the editor with the first 8
+  characters of the filename being saved.  The editor no longer
+  overrides the Voice Name - use the Voice Name field on the Voice tab
+  to set a new name if you need one.
   
 ## 2.3.1
 
