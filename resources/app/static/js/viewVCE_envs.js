@@ -41,8 +41,8 @@ let viewVCE_envs = {
 
 
 	// Freq values:
-	//   as displayed: -61 .. 63
-	//   byte range:   0xc3 .. 0x3f (-61 .. 63)
+	//   as displayed: -127 .. 127 TODO
+	//   byte range:   0x00 .. 0xff  -- -127 .. 127
 	scaleFreqEnvValue: function (v) {
 		// See OSCDSP.Z80 DISVAL: DVAL10:
 		// bytes are store as unsigned values in the file, but displayed as "signed" int8's -- do the 2's complement change here
@@ -54,7 +54,7 @@ let viewVCE_envs = {
 	unscaleFreqEnvValue: function (v) {
 		// bytes are store as unsigned values in the file, but displayed as "signed" int8's -- do the 2's complement change here
 		if (v < 0) {
-			v = 255 - v;
+			v = 255 + v;
 		}
 		return v;
 	},

@@ -214,16 +214,9 @@ func extraVceValidation(sl validator.StructLevel) {
 			// TODO: add checks that REPEAT and SUSTAIN and LOOP points are in the right order
 		}
 		for i := byte(0); i < vce.Envelopes[osc].FreqEnvelope.NPOINTS; i++ {
-			valLow := int8(vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+0])
-			valUp := int8(vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+1])
 			timeLow := vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+2]
 			timeUp := vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+3]
-			if valLow < -61 || valLow > 63 {
-				sl.ReportError(vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+0], fmt.Sprintf("vce.Envelopes[%d].FreqEnvelope.<point>[%d].valLow", osc, i), "freqvalue", strconv.Itoa(int(valLow)), "")
-			}
-			if valUp < -61 || valUp > 63 {
-				sl.ReportError(vce.Envelopes[osc].FreqEnvelope.Table[(4*i)+1], fmt.Sprintf("vce.Envelopes[%d].FreqEnvelope.<point>[%d].valUp", osc, i), "freqvalue", strconv.Itoa(int(valUp)), "")
-			}
+			// freq vals use the full range -127..127 so nothing to validate
 			if i != 0 {
 				// TODO: add validation for the wave/keyprop bytes?
 				if timeLow > 84 {

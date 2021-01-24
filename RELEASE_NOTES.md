@@ -13,17 +13,17 @@ permalink: /docs/release-notes
 
 * Adds a new configuration option to enable or disable hardware flow
   control (RTS/CTS) for serial connections.  The default remains "on",
-  but can be turned off via the `Help->Preferences` menu.
-  While the Synergy does use flow control, several users have
-  told me that they run their Kaypro/Synergy connections with 3-wire (no flow control)
+  but can be turned off via the `Help->Preferences` menu. While the
+  Synergy does use flow control, several users have told me that they
+  run their Kaypro/Synergy connections with 3-wire (no flow control)
   serial cables. USB serial adapters sometimes fail to work with
-  strict flow control.
+  strict flow control. 
 * Fixes [issue #34](https://github.com/chinenual/synergize/issues/34):
   Filter index #4 was mislabeled with the wrong frequency.
 * Fixes [issue #35](https://github.com/chinenual/synergize/issues/35):
   Attempts to create CRT's that exceed the max size supported by the
   Synergy will throw an error.
-* Fixes [issue #37](https://github.com/chinenual/synergize/issues/37):
+* Fixes [issue #36](https://github.com/chinenual/synergize/issues/36):
   Negative frequency offsets in the envelope table were displayed with
   incorrect numeric values, making them appear positive.
 * Change of behavior: saving a VCE from the voice editor used to
@@ -31,7 +31,9 @@ permalink: /docs/release-notes
   characters of the filename being saved.  The editor no longer
   overrides the Voice Name - use the Voice Name field on the Voice tab
   to set a new name if you need one.
-  
+* Fixes [issue #37](https://github.com/chinenual/synergize/issues/37):
+  Support frequency envelope values in range -127 .. 127
+
 ## 2.3.1
 
 * Change in behavior on the Envelopes editor: 
