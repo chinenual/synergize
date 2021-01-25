@@ -47,14 +47,14 @@ let viewVCE_envs = {
 		// See OSCDSP.Z80 DISVAL: DVAL10:
 		// bytes are store as unsigned values in the file, but displayed as "signed" int8's -- do the 2's complement change here
 		if (v > 127) {
-			v = v - 255;
+			v = v - 256;
 		}
 		return v;
 	},
 	unscaleFreqEnvValue: function (v) {
 		// bytes are store as unsigned values in the file, but displayed as "signed" int8's -- do the 2's complement change here
 		if (v < 0) {
-			v = 255 + v;
+			v = 256 + v;
 		}
 		return v;
 	},
@@ -210,7 +210,7 @@ let viewVCE_envs = {
 
 	testConversionFunctions: function () {
 		var ok = true;
-		for (var i = -61; i <= 63; i++) {
+		for (var i = 0; i <= 255; i++) {
 			var scaled = viewVCE_envs.scaleFreqEnvValue(i);
 			var unscaled = viewVCE_envs.unscaleFreqEnvValue(scaled);
 			if (i != unscaled) {

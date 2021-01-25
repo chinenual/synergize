@@ -201,37 +201,37 @@ describe('Test envs page edits', () => {
 
     // test that all the spinner text conversions work at the right ranges
     describe('freq values', () => {
-        it('type to envFreqLowVal[1] to and past -61', async () => {
+        it('type to envFreqLowVal[1] to and past -127', async () => {
             await app.client
                 .pause(TYPING_PAUSE)
                 .clearElement(cssQuoteId('#envFreqLowVal[1]'))
-                .setValue(cssQuoteId('#envFreqLowVal[1]'), '-60')
+                .setValue(cssQuoteId('#envFreqLowVal[1]'), '-126')
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqUpVal[1]')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#envFreqLowVal[1]')).should.eventually.equal('-60')
+                .getValue(cssQuoteId('#envFreqLowVal[1]')).should.eventually.equal('-126')
                 // should not be able to go below min
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqLowVal[1]')).keys('ArrowDown')
-                .getValue(cssQuoteId('#envFreqLowVal[1]')).should.eventually.equal('-61')
+                .getValue(cssQuoteId('#envFreqLowVal[1]')).should.eventually.equal('-127')
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqLowVal[1]')).keys('ArrowDown')
-                .getValue(cssQuoteId('#envFreqLowVal[1]')).should.eventually.equal('-61')
+                .getValue(cssQuoteId('#envFreqLowVal[1]')).should.eventually.equal('-127')
         });
-        it('type to envFreqUpVal[1] to and past 63', async () => {
+        it('type to envFreqUpVal[1] to and past 127', async () => {
             await app.client
                 .pause(TYPING_PAUSE)
                 .clearElement(cssQuoteId('#envFreqUpVal[1]'))
-                .setValue(cssQuoteId('#envFreqUpVal[1]'), '62')
+                .setValue(cssQuoteId('#envFreqUpVal[1]'), '126')
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqLowVal[1]')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#envFreqUpVal[1]')).should.eventually.equal('62')
+                .getValue(cssQuoteId('#envFreqUpVal[1]')).should.eventually.equal('126')
                 // should not be able to go above max
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqUpVal[1]')).keys('ArrowUp')
-                .getValue(cssQuoteId('#envFreqUpVal[1]')).should.eventually.equal('63')
+                .getValue(cssQuoteId('#envFreqUpVal[1]')).should.eventually.equal('127')
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqUpVal[1]')).keys('ArrowUp')
-                .getValue(cssQuoteId('#envFreqUpVal[1]')).should.eventually.equal('63')
+                .getValue(cssQuoteId('#envFreqUpVal[1]')).should.eventually.equal('127')
 
         });
     });
