@@ -32,7 +32,11 @@ permalink: /docs/release-notes
   overrides the Voice Name - use the Voice Name field on the Voice tab
   to set a new name if you need one.
 * Fixes [issue #37](https://github.com/chinenual/synergize/issues/37):
-  Support frequency envelope values in range -127 .. 127
+  Support frequency envelope values in range -127 .. 127.
+  Note: the [Synergize.touchosc](https://github.com/chinenual/synergize/releases/latest/Synergize-v2.touchosc)
+  control surface file has changed to support the new range.  Install
+  the new version in order to use the new frequency envelope range.
+
 
 ## 2.3.1
 
