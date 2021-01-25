@@ -77,6 +77,9 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	decyR := 0
 	sustR := 0
 	relsR := 0
+	freqValue := 0
+	freqFine := 0
+
 	var OSClevelPercent float64
 	var VelocityPercent float64
 	var PMfix float64
@@ -203,6 +206,15 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 			}
 		}
 
+		// Get DX FINE value, and convert to Freq.
+		if o.OscFreqCoarse == 0 {
+			addFine = o.OscFreqFine
+
+		} else {
+
+			addFine = o.OscFreqFine / 100
+		}
+
 		// Set OSC mode     false = ratio   true = Fixed
 		if o.OscMode == false {
 			vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
@@ -212,13 +224,20 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 			for _, o := range dx7Voice.Osc {
 				if o.OscFreqCoarse == 0 {
 					transposedDown = true
-					vce.Head.VTRANS = vce.Head.VTRANS - 12
+					vce.Head.VTRANS = -12
 					break
 				}
 			}
 			vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
 			// ***************************************************************
 			// TO DO  :::::  Add more code to take DX7 Fine into consideration
+			// Fine is 100 steps, including first 0 step.
+			// Each sep is defined by DX7 OscFreqCoarse number.
+			//      DX OscFreqCoarse 0 = 1/2 octave below 1 so each step is 1/2 cent.
+			//      DX OscFreqCoarse 1 means each is 1 cent,
+			//      Dx OscFreqCoarse 2 means each is 2 steps, and so on
+			//
+			// FINE is a frequency that is added to OscFreqCoarse Freq in Fixed Mode
 			// ***************************************************************
 			//DX7 OP OscFreqCoarse == 0 means .5 1 octave below 1, which synergy does not have
 			if transposedDown == true {
@@ -228,11 +247,31 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 					vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse * 2
 				}
 			}
-
+			//freqValue = 125
 		} else {
 			vce.Envelopes[i].FreqEnvelope.OHARM = -12
+			switch o.OscFreqCoarse {
+			case 0, 4, 8, 12, 16, 20, 24, 28:
+				{
+					freqValue = 25 // Gives 19.5  DX7 expexts 10
+				}
+			case 1, 5, 9, 13, 17, 21, 25, 29:
+				{
+					freqValue = 25 // Gives 19.5  DX7 expexts 10
+				}
+			case 2, 6, 10, 14, 18, 22, 26, 30:
+				{
+					freqValue = 53 // Gives 100 Hz
+				}
+			case 3, 7, 11, 15, 19, 23, 27, 31:
+				{
+					freqValue = 93 // Gives 1011 Hz
+				}
+			}
+
 		}
 		fmt.Printf(" %s %d \n", " HARM = ", vce.Envelopes[i].FreqEnvelope.OHARM)
+
 		// Set OSC detune
 		vce.Envelopes[i].FreqEnvelope.FDETUN = helperUnscaleDetune(int(dTune[int(o.OscDetune)]))
 		//fmt.Printf(" %s %d %d \n", " Detune = ", o.OscDetune, vce.Envelopes[i].FreqEnvelope.FDETUN)
@@ -337,8 +376,12 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		//TEMPORARY
 		// Freq envelope is commented out for now -- but we need the two control bytes at very minimum: adding that here
 		// point1
-		vce.Envelopes[i].FreqEnvelope.Table[0] = 0
-		vce.Envelopes[i].FreqEnvelope.Table[1] = 0
+
+		//vce.Envelopes[i].FreqEnvelope.Table[0] = 93
+		//vce.Envelopes[i].FreqEnvelope.Table[1] = 93
+		vce.Envelopes[i].FreqEnvelope.Table[0] = byte(freqValue)
+		vce.Envelopes[i].FreqEnvelope.Table[1] = byte(freqValue)
+
 		// special case for point1
 		vce.Envelopes[i].FreqEnvelope.Table[2] = 0x80 // matches default from EDATA
 		vce.Envelopes[i].FreqEnvelope.Table[3] = 0    // 0 == Sine, octave 0, freq int and amp int disabled
@@ -353,31 +396,31 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		vce.Envelopes[i].FreqEnvelope.NPOINTS = 4
 
 		// point1
-		vce.Envelopes[i].FreqEnvelope.Table[0] = byte((math.Round(float64(dx7Voice.PitchEgLevel[0]) * .727)) + 55)
-		vce.Envelopes[i].FreqEnvelope.Table[1] = byte((math.Round(float64(dx7Voice.PitchEgLevel[0]) * .727)) + 55)
+		vce.Envelopes[i].FreqEnvelope.Table[0] = byte((math.Round(float64(dx7Voice.PitchEgLevel[0]))) + 55)
+		vce.Envelopes[i].FreqEnvelope.Table[1] = byte((math.Round(float64(dx7Voice.PitchEgLevel[0]))) + 55)
 		// special case for point1
 		vce.Envelopes[i].FreqEnvelope.Table[2] = 0x80 // matches default from EDATA
 		vce.Envelopes[i].FreqEnvelope.Table[3] = 0 // 0 == Sine, octave 0, freq int and amp int disabled
 
 		// point2
-		vce.Envelopes[i].FreqEnvelope.Table[4] = byte((math.Round(float64(dx7Voice.PitchEgLevel[1]) * .727)) + 55)
-		vce.Envelopes[i].FreqEnvelope.Table[5] = byte((math.Round(float64(dx7Voice.PitchEgLevel[1]) * .727)) + 55)
+		vce.Envelopes[i].FreqEnvelope.Table[4] = byte((math.Round(float64(dx7Voice.PitchEgLevel[1]))) + 55)
+		vce.Envelopes[i].FreqEnvelope.Table[5] = byte((math.Round(float64(dx7Voice.PitchEgLevel[1]))) + 55)
 		vce.Envelopes[i].FreqEnvelope.Table[6] = (99 - dx7Voice.PitchEgRate[0]) +
 			(99 - dx7Voice.PitchEgRate[1])
 		vce.Envelopes[i].FreqEnvelope.Table[7] = (99 - dx7Voice.PitchEgRate[0]) +
 			(99 - dx7Voice.PitchEgRate[1])
 
 		// point3
-		vce.Envelopes[i].FreqEnvelope.Table[8] = byte((math.Round(float64(dx7Voice.PitchEgLevel[2]) * .727)) + 55)
-		vce.Envelopes[i].FreqEnvelope.Table[9] = byte((math.Round(float64(dx7Voice.PitchEgLevel[2]) * .727)) + 55)
+		vce.Envelopes[i].FreqEnvelope.Table[8] = byte((math.Round(float64(dx7Voice.PitchEgLevel[2]))) + 55)
+		vce.Envelopes[i].FreqEnvelope.Table[9] = byte((math.Round(float64(dx7Voice.PitchEgLevel[2]))) + 55)
 		vce.Envelopes[i].FreqEnvelope.Table[10] = (99 - dx7Voice.PitchEgRate[0]) +
 			(99 - dx7Voice.PitchEgRate[1]) + (99 - dx7Voice.PitchEgRate[2])
 		vce.Envelopes[i].FreqEnvelope.Table[11] = (99 - dx7Voice.PitchEgRate[0]) +
 			(99 - dx7Voice.PitchEgRate[1]) + (99 - dx7Voice.PitchEgRate[2])
 
 		// point4
-		vce.Envelopes[i].FreqEnvelope.Table[12] = byte((math.Round(float64(dx7Voice.PitchEgLevel[3]) * .727)) + 55)
-		vce.Envelopes[i].FreqEnvelope.Table[13] = byte((math.Round(float64(dx7Voice.PitchEgLevel[3]) * .727)) + 55)
+		vce.Envelopes[i].FreqEnvelope.Table[12] = byte((math.Round(float64(dx7Voice.PitchEgLevel[3]))) + 55)
+		vce.Envelopes[i].FreqEnvelope.Table[13] = byte((math.Round(float64(dx7Voice.PitchEgLevel[3]))) + 55)
 		vce.Envelopes[i].FreqEnvelope.Table[14] = (99 - dx7Voice.PitchEgRate[0]) +
 			(99 - dx7Voice.PitchEgRate[1]) + (99 - dx7Voice.PitchEgRate[2]) + (99 - dx7Voice.PitchEgRate[3])
 		vce.Envelopes[i].FreqEnvelope.Table[15] = (99 - dx7Voice.PitchEgRate[0]) +
