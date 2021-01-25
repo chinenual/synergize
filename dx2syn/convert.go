@@ -77,7 +77,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	decyR := 0
 	sustR := 0
 	relsR := 0
-	var freqValue float64
+	var freqValueByte byte // Synergy byte encoding for freq value
 	//freqFine := 0
 
 	var OSClevelPercent float64
@@ -252,42 +252,33 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 
 		} else { //Fixed Mode
 			vce.Envelopes[i].FreqEnvelope.OHARM = -12
+			var freqValueInt int // scaled freq value
 			switch o.OscFreqCoarse {
 			case 0, 4, 8, 12, 16, 20, 24, 28:
-				{
-
-					{ // fixed mode
-						//freqValue = math.pow(10, o.OscFreqCoarse&3)
-						freqValue = 1 + float64(o.OscFreqFine/100)
-						freqValue = helperNearestFreqValueIndex(freqValue)
-						fmt.Printf(" %s %f \n", " Fixed freq = ", freqValue)
-						//freqValue = 1 + (o.OscFreqFine / 100))
-
-					}
+				{ // fixed mode
+					//freqValue = math.pow(10, o.OscFreqCoarse&3)
+					freqValueInt = int(math.Round(1 + float64(o.OscFreqFine/100)))
+					//freqValue = 1 + (o.OscFreqFine / 100))
 
 				}
 			case 1, 5, 9, 13, 17, 21, 25, 29:
 				{
 					//freqValue = 14 // Gives 10
-					freqValue = 10 + float64(o.OscFreqFine/10)
-					freqValue = helperNearestFreqValueIndex(freqValue)
-					fmt.Printf(" %s %f \n", " Fixed freq = ", freqValue)
+					freqValueInt = int(math.Round(10 + float64(o.OscFreqFine/10)))
 				}
 			case 2, 6, 10, 14, 18, 22, 26, 30:
 				{
 					//freqValue = 100 // Gives 100 Hz
-					freqValue = 100 + float64(o.OscFreqFine/1)
-					freqValue = helperNearestFreqValueIndex(freqValue)
-					fmt.Printf(" %s %f \n", " Fixed freq = ", freqValue)
+					freqValueInt = int(math.Round(100 + float64(o.OscFreqFine/1)))
 				}
 			case 3, 7, 11, 15, 19, 23, 27, 31:
 				{
 					//freqValue = 93 // Gives 1011 Hz
-					freqValue = 1000 + float64(o.OscFreqFine*10)
-					freqValue = helperNearestFreqValueIndex(freqValue)
-					fmt.Printf(" %s %f \n", " Fixed freq = ", freqValue)
+					freqValueInt = int(math.Round(1000 + float64(o.OscFreqFine*10)))
 				}
 			}
+			freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
+			fmt.Printf(" %s %f \n", " Fixed freq = ", freqValueByte)
 			fmt.Printf(" %s %d \n", " Fixed HARM = ", vce.Envelopes[i].FreqEnvelope.OHARM)
 		}
 
@@ -398,8 +389,8 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 
 		//vce.Envelopes[i].FreqEnvelope.Table[0] = 93
 		//vce.Envelopes[i].FreqEnvelope.Table[1] = 93
-		vce.Envelopes[i].FreqEnvelope.Table[0] = byte(freqValue)
-		vce.Envelopes[i].FreqEnvelope.Table[1] = byte(freqValue)
+		vce.Envelopes[i].FreqEnvelope.Table[0] = freqValueByte
+		vce.Envelopes[i].FreqEnvelope.Table[1] = freqValueByte
 
 		// special case for point1
 		vce.Envelopes[i].FreqEnvelope.Table[2] = 0x80 // matches default from EDATA

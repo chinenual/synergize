@@ -155,7 +155,7 @@ var _ampTimeScale = []int{0, 1, 2, 3, 4, 5, 6, 7,
 	1644, 1845, 2071, 2325, 2609, 2929, 3288, 3691,
 	4143, 4650, 5219, 5859, 6576}
 
-var _freqValues = [127]uint16{0, 1, 1, 1, 2, 2, 3, 3, 4, 6, 7, 8, 9, 10, 10, 11, 11, 12,
+var _freqValues = []int{0, 1, 1, 1, 2, 2, 3, 3, 4, 6, 7, 8, 9, 10, 10, 11, 11, 12,
 	12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24, 26, 28, 30, 31, 33, 35, 37, 40,
 	42, 44, 47, 50, 53, 56, 60, 63, 67, 71, 75, 80, 84, 89, 94, 100, 106, 112, 119,
 	126, 134, 142, 150, 159, 169, 179, 189, 201, 212, 225, 238, 253, 268, 284, 300,
@@ -190,7 +190,7 @@ func helperNearestAmpTimeIndex(val int) (index int) {
 	return _indexOfNearestValue(val, _ampTimeScale)
 }
 
-func helperNearestFreqValueIndex(val uint16) (index uint16) {
+func helperNearestFreqValueIndex(val int) (index int) {
 	return _indexOfNearestValue(val, _freqValues)
 }
 
