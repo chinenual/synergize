@@ -155,6 +155,15 @@ var _ampTimeScale = []int{0, 1, 2, 3, 4, 5, 6, 7,
 	1644, 1845, 2071, 2325, 2609, 2929, 3288, 3691,
 	4143, 4650, 5219, 5859, 6576}
 
+var _freqValues = [127]uint16{0, 1, 1, 1, 2, 2, 3, 3, 4, 6, 7, 8, 9, 10, 10, 11, 11, 12,
+	12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24, 26, 28, 30, 31, 33, 35, 37, 40,
+	42, 44, 47, 50, 53, 56, 60, 63, 67, 71, 75, 80, 84, 89, 94, 100, 106, 112, 119,
+	126, 134, 142, 150, 159, 169, 179, 189, 201, 212, 225, 238, 253, 268, 284, 300,
+	318, 337, 357, 378, 401, 425, 450, 477, 505, 536, 568, 601, 637, 675, 715, 757,
+	803, 850, 901, 955, 1011, 1072, 1135, 1203, 1274, 1350, 1430, 1515, 1605,
+	1701, 1802, 1909, 2023, 2143, 2271, 2405, 2548, 2700, 2861, 3031, 3211,
+	3402, 3605, 3818, 4046, 4286, 4541, 4811, 5097, 5400, 5722, 6061, 6422, 6804}
+
 func _indexOfNearestValue(val int, array []int) (index int) {
 	bestDiff := math.MaxInt64
 	index = -1
@@ -179,6 +188,10 @@ func helperNearestFreqTimeIndex(val int) (index int) {
 }
 func helperNearestAmpTimeIndex(val int) (index int) {
 	return _indexOfNearestValue(val, _ampTimeScale)
+}
+
+func helperNearestFreqValueIndex(val uint16) (index uint16) {
+	return _indexOfNearestValue(val, _freqValues)
 }
 
 // translate a frequency time "as displayed" to "byte value as stored"

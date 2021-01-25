@@ -77,8 +77,8 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	decyR := 0
 	sustR := 0
 	relsR := 0
-	freqValue := 0
-	freqFine := 0
+	var freqValue float64
+	//freqFine := 0
 
 	var OSClevelPercent float64
 	var VelocityPercent float64
@@ -205,18 +205,18 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 				}
 			}
 		}
+		/*
+			// Get DX FINE value, and convert to Freq.
+			if o.OscFreqCoarse == 0 {
+				//addFine = o.OscFreqFine
 
-		// Get DX FINE value, and convert to Freq.
-		if o.OscFreqCoarse == 0 {
-			addFine = o.OscFreqFine
+			} else {
 
-		} else {
-
-			addFine = o.OscFreqFine / 100
-		}
-
+				//addFine = o.OscFreqFine / 100
+			}
+		*/
 		// Set OSC mode     false = ratio   true = Fixed
-		if o.OscMode == false {
+		if o.OscMode == false { //Ratio Mode
 			vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
 
 			// transposedown code
@@ -232,45 +232,64 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 			// ***************************************************************
 			// TO DO  :::::  Add more code to take DX7 Fine into consideration
 			// Fine is 100 steps, including first 0 step.
-			// Each sep is defined by DX7 OscFreqCoarse number.
+			// Each step is defined by DX7 OscFreqCoarse number.
 			//      DX OscFreqCoarse 0 = 1/2 octave below 1 so each step is 1/2 cent.
 			//      DX OscFreqCoarse 1 means each is 1 cent,
 			//      Dx OscFreqCoarse 2 means each is 2 steps, and so on
+			//       Each goes up an Octave
 			//
 			// FINE is a frequency that is added to OscFreqCoarse Freq in Fixed Mode
 			// ***************************************************************
 			//DX7 OP OscFreqCoarse == 0 means .5 1 octave below 1, which synergy does not have
 			if transposedDown == true {
 				if o.OscFreqCoarse == 0 {
+					//byte(helperNearestAmpTimeIndex(1))
 					vce.Envelopes[i].FreqEnvelope.OHARM = 1
 				} else {
 					vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse * 2
 				}
 			}
-			//freqValue = 125
-		} else {
+
+		} else { //Fixed Mode
 			vce.Envelopes[i].FreqEnvelope.OHARM = -12
 			switch o.OscFreqCoarse {
 			case 0, 4, 8, 12, 16, 20, 24, 28:
 				{
-					freqValue = 25 // Gives 19.5  DX7 expexts 10
+
+					{ // fixed mode
+						//freqValue = math.pow(10, o.OscFreqCoarse&3)
+						freqValue = 1 + float64(o.OscFreqFine/100)
+						freqValue = helperNearestFreqValueIndex(freqValue)
+						fmt.Printf(" %s %f \n", " Fixed freq = ", freqValue)
+						//freqValue = 1 + (o.OscFreqFine / 100))
+
+					}
+
 				}
 			case 1, 5, 9, 13, 17, 21, 25, 29:
 				{
-					freqValue = 25 // Gives 19.5  DX7 expexts 10
+					//freqValue = 14 // Gives 10
+					freqValue = 10 + float64(o.OscFreqFine/10)
+					freqValue = helperNearestFreqValueIndex(freqValue)
+					fmt.Printf(" %s %f \n", " Fixed freq = ", freqValue)
 				}
 			case 2, 6, 10, 14, 18, 22, 26, 30:
 				{
-					freqValue = 53 // Gives 100 Hz
+					//freqValue = 100 // Gives 100 Hz
+					freqValue = 100 + float64(o.OscFreqFine/1)
+					freqValue = helperNearestFreqValueIndex(freqValue)
+					fmt.Printf(" %s %f \n", " Fixed freq = ", freqValue)
 				}
 			case 3, 7, 11, 15, 19, 23, 27, 31:
 				{
-					freqValue = 93 // Gives 1011 Hz
+					//freqValue = 93 // Gives 1011 Hz
+					freqValue = 1000 + float64(o.OscFreqFine*10)
+					freqValue = helperNearestFreqValueIndex(freqValue)
+					fmt.Printf(" %s %f \n", " Fixed freq = ", freqValue)
 				}
 			}
-
+			fmt.Printf(" %s %d \n", " Fixed HARM = ", vce.Envelopes[i].FreqEnvelope.OHARM)
 		}
-		fmt.Printf(" %s %d \n", " HARM = ", vce.Envelopes[i].FreqEnvelope.OHARM)
 
 		// Set OSC detune
 		vce.Envelopes[i].FreqEnvelope.FDETUN = helperUnscaleDetune(int(dTune[int(o.OscDetune)]))
