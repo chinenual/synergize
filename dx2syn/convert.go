@@ -78,8 +78,8 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	sustR := 0
 	relsR := 0
 	var freqValueByte byte // Synergy byte encoding for freq value
-	//freqFine := 0
-
+	var freqValueInt int   // scaled freq value
+	var freqValueInt2 int  // scaled freq value
 	var OSClevelPercent float64
 	var VelocityPercent float64
 	var PMfix float64
@@ -252,34 +252,46 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 
 		} else { //Fixed Mode
 			vce.Envelopes[i].FreqEnvelope.OHARM = -12
-			var freqValueInt int // scaled freq value
+
+			//var fineFreq float64
+
 			switch o.OscFreqCoarse {
 			case 0, 4, 8, 12, 16, 20, 24, 28:
-				{ // fixed mode
-					//freqValue = math.pow(10, o.OscFreqCoarse&3)
-					freqValueInt = int(math.Round(1 + float64(o.OscFreqFine/100)))
-					//freqValue = 1 + (o.OscFreqFine / 100))
+				// freq = 1
+				{
+					freqValueInt = int(math.Round(1 + (10 * float64(o.OscFreqFine/100))))
+					freqValueInt2 = int(math.Round(1 * (1 + float64(o.OscFreqFine/99)*8.772)))
+					fmt.Printf(" %s %d %d \n", " Fixed freq = ", freqValueInt, freqValueInt2)
+				}
+
+			case 1, 5, 9, 13, 17, 21, 25, 29:
+				// freq = 10
+				{
+					freqValueInt = int(math.Round(10 + (100 * float64(o.OscFreqFine/100))))
+					freqValueInt2 = int(math.Round(10 * (1 + float64(o.OscFreqFine/99)*8.772)))
+					fmt.Printf(" %s %d %d \n", " Fixed freq = ", freqValueInt, freqValueInt2)
 
 				}
-			case 1, 5, 9, 13, 17, 21, 25, 29:
-				{
-					//freqValue = 14 // Gives 10
-					freqValueInt = int(math.Round(10 + float64(o.OscFreqFine/10)))
-				}
 			case 2, 6, 10, 14, 18, 22, 26, 30:
+				// freq = 100
 				{
-					//freqValue = 100 // Gives 100 Hz
-					freqValueInt = int(math.Round(100 + float64(o.OscFreqFine/1)))
+					freqValueInt = int(math.Round(100 + (1000 * float64(o.OscFreqFine/100))))
+					freqValueInt2 = int(math.Round(100 * (1 + float64(o.OscFreqFine/99)*8.772)))
+					fmt.Printf(" %s %d %d \n", " Fixed freq = ", freqValueInt, freqValueInt2)
+
 				}
 			case 3, 7, 11, 15, 19, 23, 27, 31:
+				// freq = 1000
 				{
-					//freqValue = 93 // Gives 1011 Hz
-					freqValueInt = int(math.Round(1000 + float64(o.OscFreqFine*10)))
+					freqValueInt = int(math.Round(1000) + (10000 * float64(o.OscFreqFine/100)))
+					freqValueInt2 = int(math.Round(1000 * (1 + float64(o.OscFreqFine/99)*8.772)))
+					fmt.Printf(" %s %d %d \n", " Fixed freq = ", freqValueInt, freqValueInt2)
+
 				}
 			}
-			freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
-			fmt.Printf(" %s %f \n", " Fixed freq = ", freqValueByte)
-			fmt.Printf(" %s %d \n", " Fixed HARM = ", vce.Envelopes[i].FreqEnvelope.OHARM)
+			//freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
+			//fmt.Printf(" %d %s %d %d %d  \n \n", i, "  Fixed freq = ", o.OscFreqFine, freqValueInt, freqValueByte)
+
 		}
 
 		// Set OSC detune
@@ -335,7 +347,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 				VelocityPercent = .30
 			}
 		}
-		fmt.Printf(" %s %f \n", " Vel% = ", VelocityPercent)
+		//fmt.Printf(" %s %f \n", " Vel% = ", VelocityPercent)
 
 		OSClevelPercent = float64(float64(o.OperatorOutputLevel) / 99.00)
 		for k := 0; k < 4; k++ {
