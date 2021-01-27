@@ -79,7 +79,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	relsR := 0
 	var freqValueByte byte // Synergy byte encoding for freq value
 	var freqValueInt int   // scaled freq value
-	var freqValueInt2 int  // scaled freq value
+
 	var OSClevelPercent float64
 	var VelocityPercent float64
 	var PMfix float64
@@ -254,43 +254,47 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 			vce.Envelopes[i].FreqEnvelope.OHARM = -12
 
 			//var fineFreq float64
+			// 3 versions of FIXED FREQ code...
+			//freqValueInt = 4458616 * ((coarse&3)*100 + o.OscFreqFine)) >> 3
 
+			//freqValueInt = math.Pow(10, coarse & 3) * (1 + (fine / 99) * 8.772)
+
+			//freqValueInt = (4458616 * ((coarse & 3) * 100 + fine)) >> 3;
 			switch o.OscFreqCoarse {
 			case 0, 4, 8, 12, 16, 20, 24, 28:
-				// freq = 1
+				// base freq = 1
 				{
-					freqValueInt = int(math.Round(1 + (10 * float64(o.OscFreqFine/100))))
-					freqValueInt2 = int(math.Round(1 * (1 + float64(o.OscFreqFine/99)*8.772)))
-					fmt.Printf(" %s %d %d \n", " Fixed freq = ", freqValueInt, freqValueInt2)
+					freqValueInt = 0
+					freqValueInt = int(math.Round(1 + fineValues[o.OscFreqFine]))
+					fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 				}
 
 			case 1, 5, 9, 13, 17, 21, 25, 29:
 				// freq = 10
 				{
-					freqValueInt = int(math.Round(10 + (100 * float64(o.OscFreqFine/100))))
-					freqValueInt2 = int(math.Round(10 * (1 + float64(o.OscFreqFine/99)*8.772)))
-					fmt.Printf(" %s %d %d \n", " Fixed freq = ", freqValueInt, freqValueInt2)
-
+					freqValueInt = 0
+					freqValueInt = int(math.Round(10 + (fineValues[o.OscFreqFine] * 10)))
+					fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 				}
 			case 2, 6, 10, 14, 18, 22, 26, 30:
 				// freq = 100
 				{
-					freqValueInt = int(math.Round(100 + (1000 * float64(o.OscFreqFine/100))))
-					freqValueInt2 = int(math.Round(100 * (1 + float64(o.OscFreqFine/99)*8.772)))
-					fmt.Printf(" %s %d %d \n", " Fixed freq = ", freqValueInt, freqValueInt2)
+					freqValueInt = 0
+					freqValueInt = int(math.Round(100 + (fineValues[o.OscFreqFine] * 100)))
+					fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 
 				}
 			case 3, 7, 11, 15, 19, 23, 27, 31:
 				// freq = 1000
 				{
-					freqValueInt = int(math.Round(1000) + (10000 * float64(o.OscFreqFine/100)))
-					freqValueInt2 = int(math.Round(1000 * (1 + float64(o.OscFreqFine/99)*8.772)))
-					fmt.Printf(" %s %d %d \n", " Fixed freq = ", freqValueInt, freqValueInt2)
+					freqValueInt = 0
+					freqValueInt = int(math.Round(1000 + (fineValues[o.OscFreqFine] * 1000)))
+					fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 
 				}
 			}
-			//freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
-			//fmt.Printf(" %d %s %d %d %d  \n \n", i, "  Fixed freq = ", o.OscFreqFine, freqValueInt, freqValueByte)
+			freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
+			fmt.Printf(" %d %s %d %d %d  \n \n", i, "  Fixed freq = ", o.OscFreqFine, freqValueInt, freqValueByte)
 
 		}
 
@@ -456,6 +460,22 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 
 	return
 }
+
+var fineValues = [100]float64{0.00000, 0.02329, 0.04713, 0.07152, 0.09648, 0.12202, 0.14815,
+	0.17490, 0.20226, 0.23027, 0.25893, 0.28825, 0.31826, 0.34896,
+	0.38038, 0.41254, 0.44544, 0.47911, 0.51356, 0.54882, 0.58489,
+	0.62181, 0.65959, 0.69824, 0.73780, 0.77828, 0.81970, 0.86209,
+	0.90546, 0.94984, 0.99526, 1.04174, 1.08930, 1.13796, 1.18776,
+	1.23872, 1.29087, 1.34423, 1.39882, 1.45471, 1.51189, 1.57040,
+	1.63027, 1.69153, 1.75423, 1.81838, 1.88403, 1.95121, 2.01995,
+	2.09030, 2.16228, 2.23594, 2.31131, 2.38844, 2.46737, 2.54813,
+	2.63078, 2.71536, 2.80189, 2.89045, 2.88107, 3.07380, 3.16869,
+	3.26580, 3.36516, 3.46684, 3.57088, 3.67735, 3.78630, 3.89779,
+	4.01187, 4.12861, 4.24808, 4.37032, 4.49541, 4.62341, 4.75440,
+	4.88844, 5.02560, 5.16595, 5.30957, 5.45654, 5.60693, 5.76083,
+	5.91831, 6.07946, 6.24436, 6.41310, 6.58578, 6.76247, 6.94328,
+	7.12831, 7.31764, 7.51138, 7.70964, 7.91251, 8.12011, 8.33254,
+	8.54993, 8.77237}
 
 var dTune = [15]int8{-81, -75, -69, -60, -42, -30, -24, 0, 9, 21, 24, 33, 45, 66, 72}
 
