@@ -297,6 +297,33 @@ let viewVCE_envs = {
 		return ok;
 	},
 
+	onchangeGain: function(ele) {
+		if (ele.id.match(/Low/)) {
+			stub = 'envAmpLowVal'
+		} else {
+			stub = 'envAmpUpVal'
+		}
+		if (ele.id.match(/Plus/)) {
+			gain = 0.10; // 10% up
+		} else {
+			gain = -0.10; // 10% down
+		}
+		console.log(" gain " + gain + " " + stub);
+
+		for (i = 1; i <= 16; i++) {
+			var input = document.getElementById(`${stub}[${i}]`)
+
+			if (input && (window.getComputedStyle(input).display != "none")) {
+				var oldval = parseInt(input.value,10)
+				var delta = oldval * gain;
+				var newval = Math.round(oldval + delta);
+				console.log(" gain " + gain + " " + stub + " " + input.id + " " + oldval + " " + delta + " " + newval);
+				input.value = "" + newval;
+				viewVCE_envs.onchange(input);
+			}
+		}
+	},
+
 	supressOnChange: false,
 
 	onchangeLoop: function (ele) {
@@ -841,7 +868,7 @@ let viewVCE_envs = {
 		];
 		function annotatePointStyle(ctx) {
 			var styleMeta = filteredPointStyleMetadata[ctx.datasetIndex]
-			console.log("annotate point ctx ",ctx)
+			//console.log("annotate point ctx ",ctx)
 			var img = new Image(14,14);
 			if (styleMeta.sustainPt == ctx.dataIndex) {
 				img.src  = `static/images/loopS-${styleMeta.color}.png`;
@@ -958,8 +985,10 @@ let viewVCE_envs = {
 		}
 		if (viewVCE_voice.voicingMode) {
 			$(".listplusminus div").show();
+			$(".gain div").show();
 		} else {
 			$(".listplusminus div").hide();
+			$(".gain div").hide();
 		}
 		viewVCE_voice.sendToCSurface(null, `num-freq-env-points`, envelopes.FreqEnvelope.NPOINTS);
 		viewVCE_voice.sendToCSurface(null, `num-amp-env-points`, envelopes.AmpEnvelope.NPOINTS);
