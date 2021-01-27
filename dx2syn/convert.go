@@ -229,6 +229,9 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 				}
 			}
 			vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
+			freqValueInt = int(math.Round(fineValues[o.OscFreqFine]))
+			freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
+
 			// ***************************************************************
 			// TO DO  :::::  Add more code to take DX7 Fine into consideration
 			// Fine is 100 steps, including first 0 step.
@@ -253,13 +256,6 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		} else { //Fixed Mode
 			vce.Envelopes[i].FreqEnvelope.OHARM = -12
 
-			//var fineFreq float64
-			// 3 versions of FIXED FREQ code...
-			//freqValueInt = 4458616 * ((coarse&3)*100 + o.OscFreqFine)) >> 3
-
-			//freqValueInt = math.Pow(10, coarse & 3) * (1 + (fine / 99) * 8.772)
-
-			//freqValueInt = (4458616 * ((coarse & 3) * 100 + fine)) >> 3;
 			switch o.OscFreqCoarse {
 			case 0, 4, 8, 12, 16, 20, 24, 28:
 				// base freq = 1
