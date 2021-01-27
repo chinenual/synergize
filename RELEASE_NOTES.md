@@ -9,7 +9,7 @@ permalink: /docs/release-notes
 
 # Release Notes
 
-## 2.3.2
+## 2.4.0
 
 * Adds a new configuration option to enable or disable hardware flow
   control (RTS/CTS) for serial connections.  The default remains "on",
@@ -18,6 +18,15 @@ permalink: /docs/release-notes
   run their Kaypro/Synergy connections with 3-wire (no flow control)
   serial cables. USB serial adapters sometimes fail to work with
   strict flow control. 
+* Implements [issue #37](https://github.com/chinenual/synergize/issues/37):
+  Support frequency envelope values in range -127 .. 127.
+  Note: the [Synergize.touchosc](https://github.com/chinenual/synergize/releases/latest/Synergize-v2.touchosc)
+  control surface file has changed to support the new range.  Install
+  the new version in order to use the new frequency envelope range.
+* Implements [issue #38](https://github.com/chinenual/synergize/issues/38):
+  New "Gain" control for the amplitude envelopes.  Clicking `+` or `-`
+  adjusts all of the points on the corresponding envelope plus or
+  minus 10% of the current values.
 * Fixes [issue #34](https://github.com/chinenual/synergize/issues/34):
   Filter index #4 was mislabeled with the wrong frequency.
 * Fixes [issue #35](https://github.com/chinenual/synergize/issues/35):
@@ -31,12 +40,6 @@ permalink: /docs/release-notes
   characters of the filename being saved.  The editor no longer
   overrides the Voice Name - use the Voice Name field on the Voice tab
   to set a new name if you need one.
-* Fixes [issue #37](https://github.com/chinenual/synergize/issues/37):
-  Support frequency envelope values in range -127 .. 127.
-  Note: the [Synergize.touchosc](https://github.com/chinenual/synergize/releases/latest/Synergize-v2.touchosc)
-  control surface file has changed to support the new range.  Install
-  the new version in order to use the new frequency envelope range.
-
 
 ## 2.3.1
 
