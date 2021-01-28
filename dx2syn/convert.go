@@ -94,7 +94,8 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	for _, o := range dx7Voice.Osc {
 		if o.OscFreqCoarse == 0 {
 			transposedDown = true
-			vce.Head.VTRANS = -12
+			vce.Head.VTRANS = vce.Head.VTRANS - 12
+
 			break
 		}
 
@@ -286,7 +287,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 			} else if transposedDown == true && o.OscFreqCoarse != 0 && o.OscFreqFine != 50 {
 				fmt.Printf(" %d %s  \n", i, " in true !0 !50")
 				vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse * 2
-				/  have to add in FINE
+				//  have to add in FINE
 			} else {
 				fmt.Printf(" %d %s  \n", i, " in else")
 				vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse * 2
