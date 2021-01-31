@@ -64,6 +64,7 @@ var (
 	a       *astilectron.Astilectron
 	//l          logger.Logger //*log.Logger
 	AppVersion string
+	OsVersion  string
 )
 
 func getDefaultBaud() uint {
@@ -156,6 +157,7 @@ func init() {
 	// for linux, it reports the kernel
 	//    Core:"5.4.0-52-generic"
 	gi := goInfo.GetInfo()
+	OsVersion = gi.Core
 	logger.Infof("Operating environment: %#v\n", gi)
 }
 
