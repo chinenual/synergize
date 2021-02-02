@@ -303,10 +303,10 @@ let viewVCE_envs = {
 		} else {
 			stub = 'envAmpUpVal'
 		}
-		if (ele.id.match(/Plus/)) {
-			gain = 0.10; // 10% up
-		} else {
-			gain = -0.10; // 10% down
+		var gainPercentSelectEle = document.getElementById("gainPercentage");
+		var gain = parseInt(gainPercentSelectEle.value, 10) / 100.0;
+		if (! ele.id.match(/Plus/)) {
+			gain = -1.0 * gain; // down
 		}
 		console.log(" gain " + gain + " " + stub);
 
