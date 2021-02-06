@@ -89,7 +89,7 @@ func computeDurationsMs(levels [4]byte, rates [4]byte) (ms [4]int) {
 	sampleRate := 49096
 	for isegment := 0; isegment < 4; isegment++ {
 		nsamples := _computeDurationSamples(isegment, levels, rates, &sampleCounter)
-		ms[isegment]  = int(math.Round(float64(nsamples) / float64(sampleRate) * 1000))
+		ms[isegment] = int(math.Round(float64(nsamples) / float64(sampleRate) * 1000))
 	}
 	return
 }

@@ -83,6 +83,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	var OSClevelPercent float64
 	var VelocityPercent float64
 	var PMfix float64
+	var LevComp float64
 	var patchOutputDSR byte
 
 	var ms [4]int
@@ -100,27 +101,46 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		}
 
 	}
+	LevComp = 1.0
+	/*
+		//Find # of carriers  ---  patchOutputDSR = 0
+		//Lower carriers for volume compnstaon. 1 - 0% or 2 -10% 3 04 15%  5 or 6 20%
+		//Find # of carriers  ---  patchOutputDSR = 0
+		Carrier := 0
+		for i, _ := range dx7Voice.Osc {
+			patchOutputDSR = ((vce.Envelopes[i].FreqEnvelope.OPTCH & 0xc0) >> 6)
+			if patchOutputDSR == 0 {
+				Carrier++
+				fmt.Printf(" %s %d \n", " # Carriers = ", Carrier)
+			}
 
+		}
+	*/
 	for i, o := range dx7Voice.Osc {
 
 		////  fm: y = sin(phase); phase += phaseInc + mod;
 		////  pm: y = sin(phase + mod); phase += phaseInc;
-
-		//  ********************  Check if OSC is MODULATOR
-		//  ********************  If yes, lower "OSClevelPercent" by ?? %  Trying to fake FM/PM difference
 		//OPTCH
 		//patchOutputDSR = ((patchByte & 0xc0) >> 6)
 		patchOutputDSR = ((vce.Envelopes[i].FreqEnvelope.OPTCH & 0xc0) >> 6)
-		//fmt.Printf(" %s %d \n", " OSC = ", i+1)
-		//fmt.Printf(" %s %d \n", " patchOutputDSR = ", patchOutputDSR)
+
+		//
+		//  ********************  Check if OSC is MODULATOR
+		//  ********************  If yes, raise "OSClevelPercent" by 5 %  Trying to fake FM/PM difference
 
 		if patchOutputDSR > 0 {
-			PMfix = 1.0 //
+			PMfix = 1.05 //
 			//fmt.Printf(" %s %f \n", " PMfix = ", PMfix)
 		} else {
 			PMfix = 1.0
 			//fmt.Printf(" %s %f \n", " PMfix = ", PMfix)
 		}
+		fmt.Printf(" %s %d %d %f \n", " OSC - POdsr= ", i+1, patchOutputDSR, PMfix)
+		//OPTCH
+		//patchOutputDSR = ((patchByte & 0xc0) >> 6)
+		patchOutputDSR = ((vce.Envelopes[i].FreqEnvelope.OPTCH & 0xc0) >> 6)
+		//fmt.Printf(" %s %d \n", " OSC = ", i+1)
+		//fmt.Printf(" %s %d \n", " patchOutputDSR = ", patchOutputDSR)
 
 		// ******************************************************************************************
 		// *************** put key scaling in filter B  filter B[0 - 31] for each OSC  **************
@@ -349,9 +369,10 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		VelocityPercent = 1.0 - (float64(o.KeyVelocitySensitivity) / 10.0)
 		//fmt.Printf(" %s %f %d \n", " Vel% = ", VelocityPercent, o.KeyVelocitySensitivity)
 
+		//  change levels for velocity sensitivity, PM Fix, and level comp
 		OSClevelPercent = float64(float64(o.OperatorOutputLevel) / 99.00)
 		for k := 0; k < 4; k++ {
-			o.EgLevel[k] = byte(float64(o.EgLevel[k]) * OSClevelPercent * PMfix)
+			o.EgLevel[k] = byte(float64(o.EgLevel[k]) * OSClevelPercent * PMfix * LevComp)
 		}
 
 		// Each Synergy oscillator is voice twice - for low and high key velocity response
