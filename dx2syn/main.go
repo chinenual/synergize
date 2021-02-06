@@ -102,9 +102,11 @@ func main() {
 	}
 	for _, v := range selectedVoices {
 		if *statsFlag {
-			//log.Printf("feedback: %s %d\n", v.VoiceName, v.Feedback)
-			log.Printf("COARSE:%s,  %d,  %d,  %d,  %d,  %d,  %d  \n", v.VoiceName, v.Osc[0].OscFreqCoarse, v.Osc[1].OscFreqCoarse, v.Osc[2].OscFreqCoarse, v.Osc[3].OscFreqCoarse, v.Osc[4].OscFreqCoarse, v.Osc[5].OscFreqCoarse)
-			log.Printf("FINE:  %s,  %d,  %d,  %d,  %d,  %d, %d  \n", v.VoiceName, v.Osc[0].OscFreqFine, v.Osc[1].OscFreqFine, v.Osc[2].OscFreqFine, v.Osc[3].OscFreqFine, v.Osc[4].OscFreqFine, v.Osc[5].OscFreqFine)
+			//log.Printf("feedback: %s %d\n", v.VoiceName, v.Feedback
+			log.Printf("Trans:ALG:FB: %d,  %d,  %d  \n", v.Transpose, v.Algorithm, v.Feedback)
+			log.Printf("COARSE:  %d,  %d,  %d,  %d,  %d,  %d  \n", v.Osc[0].OscFreqCoarse, v.Osc[1].OscFreqCoarse, v.Osc[2].OscFreqCoarse, v.Osc[3].OscFreqCoarse, v.Osc[4].OscFreqCoarse, v.Osc[5].OscFreqCoarse)
+			log.Printf("FINE:    %d,  %d,  %d,  %d,  %d, %d  \n", v.Osc[0].OscFreqFine, v.Osc[1].OscFreqFine, v.Osc[2].OscFreqFine, v.Osc[3].OscFreqFine, v.Osc[4].OscFreqFine, v.Osc[5].OscFreqFine)
+			log.Printf("Volume:  %d,  %d,  %d,  %d,  %d, %d  \n", v.Osc[0].OperatorOutputLevel, v.Osc[1].OperatorOutputLevel, v.Osc[2].OperatorOutputLevel, v.Osc[3].OperatorOutputLevel, v.Osc[4].OperatorOutputLevel, v.Osc[5].OperatorOutputLevel)
 			log.Printf(" \n")
 
 			//log.Printf("OSCMode: %s %t %t %t %t %t %t \n", v.VoiceName, v.Osc[0].OscMode, v.Osc[1].OscMode, v.Osc[2].OscMode, v.Osc[3].OscMode, v.Osc[4].OscMode, v.Osc[5].OscMode)

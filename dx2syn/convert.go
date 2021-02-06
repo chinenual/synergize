@@ -103,9 +103,11 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 
 	for i, o := range dx7Voice.Osc {
 
-		//  ********************  Check if OSC is MODULATOR
-		//  ********************  If yes, lower "OSClevelPercent" by ?? %
+		////  fm: y = sin(phase); phase += phaseInc + mod;
+		////  pm: y = sin(phase + mod); phase += phaseInc;
 
+		//  ********************  Check if OSC is MODULATOR
+		//  ********************  If yes, lower "OSClevelPercent" by ?? %  Trying to fake FM/PM difference
 		//OPTCH
 		//patchOutputDSR = ((patchByte & 0xc0) >> 6)
 		patchOutputDSR = ((vce.Envelopes[i].FreqEnvelope.OPTCH & 0xc0) >> 6)
@@ -113,16 +115,16 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		//fmt.Printf(" %s %d \n", " patchOutputDSR = ", patchOutputDSR)
 
 		if patchOutputDSR > 0 {
-			PMfix = .75
+			PMfix = 1.0 //
 			//fmt.Printf(" %s %f \n", " PMfix = ", PMfix)
 		} else {
 			PMfix = 1.0
 			//fmt.Printf(" %s %f \n", " PMfix = ", PMfix)
 		}
-		//register 1 == 0     // after that mask and shift
 
 		// ******************************************************************************************
 		// *************** put key scaling in filter B  filter B[0 - 31] for each OSC  **************
+		// ********************* pretty low res but better than nothing  ****************************
 		// ******************************************************************************************
 		//Activate FILTER B above per voice above (in Header)
 
@@ -133,8 +135,6 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 			filterIndex += 1
 			//set filter B on for voice, b-filters are indicated by the 1-based osc index
 			vce.Head.FILTER[i] = filterIndex + 1
-
-			// set "0" freq to match Synergy freq.
 
 			// Assumes no A-filter - so B filter for osc 1 (index 0) is always stored at 0:
 			vce.Filters[filterIndex][(BreakPoint[o.KeyLevelScalingBreakPoint])] = 0 //KEY to FREQ Array is BreakPoint[] (below)
@@ -217,16 +217,6 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 				}
 			}
 		}
-		/*
-			// Get DX FINE value, and convert to Freq.
-			if o.OscFreqCoarse == 0 {
-				//addFine = o.OscFreqFine
-
-			} else {
-
-				//addFine = o.OscFreqFine / 100
-			}
-		*/
 
 		// Set OSC mode     false = ratio   true = Fixed
 		if o.OscMode == false { //Ratio Mode
@@ -239,30 +229,31 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 			// Each step is defined by DX7 OscFreqCoarse number.
 			//      DX OscFreqCoarse 0 = 1/2 octave below 1 so each step is 1/2 cent.
 			//      DX OscFreqCoarse 1 means each is 1 cent,
-			//      Dx OscFreqCoarse 2 means each is 2 steps, and so on
+			//      Dx OscFreqCoarse 2 means each is 2 cents, and so on
 			//       Each goes up an Octave
 			//
 			// FINE is a frequency that is added to OscFreqCoarse Freq in Fixed Mode
 			// ***************************************************************
 			//DX7 OP OscFreqCoarse == 0 means .5 1 octave below 1, which synergy does not have
 
-			if transposedDown == false { //No harmonic changes
-				fmt.Printf(" %d %s  \n", i, " in down false")
+			if transposedDown == false && o.OscFreqFine == 0 { //No harmonic changes
+				//fmt.Printf(" %d %s  \n", i, " in down false ==0")
 				vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
 				freqValueInt = int(math.Round(fineValues[o.OscFreqFine]))
 				freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
 
-			} else if transposedDown == true && o.OscFreqCoarse == 0 && o.OscFreqFine == 0 {
-				//fmt.Printf(" %d %s %d  \n", i, " FINE in else = ", o.OscFreqFine)
+			} else if transposedDown == false && o.OscFreqFine != 0 {
+				//fmt.Printf(" %d %s  \n", i, " in down false !=0")
 
-				fmt.Printf(" %d %s  \n", i, " in true 0 0")
-				//fmt.Printf(" %d %s %d  \n", i, " FINE in if = ", o.OscFreqFine)
-				//fmt.Printf(" %d %s %d \n", i, " got to case 0", o.OscFreqFine)
+				freqValueInt = int(math.Round(fineValues[o.OscFreqFine]))
+
+				freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
+
+			} else if transposedDown == true && o.OscFreqCoarse == 0 && o.OscFreqFine == 0 {
 				vce.Envelopes[i].FreqEnvelope.OHARM = 1
 				//fmt.Printf(" %d %s  \n", i, " Coarse = 0  Fine 0 Harm = 1")
 			} else if transposedDown == true && o.OscFreqCoarse == 0 && o.OscFreqFine == 50 {
-
-				fmt.Printf(" %d %s  \n", i, " in true 0 50")
+				//fmt.Printf(" %d %s  \n", i, " in true 0 50")
 				harmonic = float64(o.OscFreqCoarse)
 				harmonic = harmonic + .5
 				harmonic = harmonic * 2
@@ -270,28 +261,35 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 
 			} else if transposedDown == true && o.OscFreqCoarse == 0 && o.OscFreqFine != 50 {
 
-				fmt.Printf(" %d %s  \n", i, " in true 0 !50")
-
+				// TO DO
 				// Calculate combined freq of coarse and fine, then double for octave.
 				// Find closest harm to the OCT freq, then find remainder,
 				// and add the (remainder * 2) in as freqValueInt
+				if o.OscFreqFine < 50 {
+					fmt.Printf(" %d %s  \n", i, " in true 0 <50 TO DO")
+					vce.Envelopes[i].FreqEnvelope.OHARM = 1
+					freqValueInt = 0
+					freqValueInt = int(math.Round(1 + fineValues[o.OscFreqFine]*2))
+					freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
+				} else {
+					fmt.Printf(" %d %s  \n", i, " in true 0 >50 TO DO")
+				}
 
-				vce.Envelopes[i].FreqEnvelope.OHARM = 1
 			} else if transposedDown == true && o.OscFreqCoarse != 0 && o.OscFreqFine == 50 {
-				fmt.Printf(" %d %s  \n", i, " in true !0 50")
+				//fmt.Printf(" %d %s  \n", i, " in true !0 = 50")
 				harmonic = float64(o.OscFreqCoarse)
 				harmonic = harmonic + .5
 				harmonic = harmonic * 2
 				vce.Envelopes[i].FreqEnvelope.OHARM = int8(harmonic)
 
 			} else if transposedDown == true && o.OscFreqCoarse != 0 && o.OscFreqFine != 50 {
-				fmt.Printf(" %d %s  \n", i, " in true !0 !50")
+				fmt.Printf(" %d %s  \n", i, " in true !0 !50 TO DO ")
 				vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse * 2
 				//  have to add in FINE
 			} else {
-				fmt.Printf(" %d %s  \n", i, " in else")
+				//fmt.Printf(" %d %s  \n", i, " in else")
 				vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse * 2
-			} // Add Coarse <>0  tune = 50
+			} // Add Coarse <>0  fine = 50
 
 		} else { //Fixed Mode
 			vce.Envelopes[i].FreqEnvelope.OHARM = -12
@@ -302,7 +300,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 				{
 					freqValueInt = 0
 					freqValueInt = int(math.Round(1 + fineValues[o.OscFreqFine]))
-					fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
+					//fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 				}
 
 			case 1, 5, 9, 13, 17, 21, 25, 29:
@@ -310,25 +308,25 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 				{
 					freqValueInt = 0
 					freqValueInt = int(math.Round(10 + (fineValues[o.OscFreqFine] * 10)))
-					fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
+					//fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 				}
 			case 2, 6, 10, 14, 18, 22, 26, 30:
 				// freq = 100
 				{
 					freqValueInt = 0
 					freqValueInt = int(math.Round(100 + (fineValues[o.OscFreqFine] * 100)))
-					fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
+					//fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 				}
 			case 3, 7, 11, 15, 19, 23, 27, 31:
 				// freq = 1000
 				{
 					freqValueInt = 0
 					freqValueInt = int(math.Round(1000 + (fineValues[o.OscFreqFine] * 1000)))
-					fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
+					//fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 				}
 			}
 			freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
-			fmt.Printf(" %d %s %d %d %d  \n \n", i, "  Fixed freq = ", o.OscFreqFine, freqValueInt, freqValueByte)
+			//fmt.Printf(" %d %s %d %d %d  \n \n", i, "  Fixed freq = ", o.OscFreqFine, freqValueInt, freqValueByte)
 		}
 
 		// Set OSC detune
@@ -340,7 +338,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		// type = 3  : L and S - L must be before S
 		// type = 4  : R and S - R must be before S
 		// WARNING: when type1, the LOOPPT and SUSTAINPT values are _acceleration_ rates, not point positions. What a pain.
-		// Set for Sustain poiint only.
+		// Set for Sustain point only.
 		vce.Envelopes[i].AmpEnvelope.ENVTYPE = 2
 		//  Always DX7 Sustain Point
 		vce.Envelopes[i].AmpEnvelope.SUSTAINPT = 3
@@ -348,43 +346,8 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		vce.Envelopes[i].AmpEnvelope.NPOINTS = 4
 
 		// set lower Env levels for velocity sensitivity
-		//VelocityPercent = 1 - float64(o.KeyVelocitySensitivity/10)
-
-		switch o.KeyVelocitySensitivity {
-		case 0:
-			{
-				VelocityPercent = 1.0
-			}
-		case 1:
-			{
-				VelocityPercent = .90
-			}
-		case 2:
-			{
-				VelocityPercent = .80
-			}
-		case 3:
-			{
-				VelocityPercent = .70
-			}
-		case 4:
-			{
-				VelocityPercent = .60
-			}
-		case 5:
-			{
-				VelocityPercent = .50
-			}
-		case 6:
-			{
-				VelocityPercent = .40
-			}
-		case 7:
-			{
-				VelocityPercent = .30
-			}
-		}
-		//fmt.Printf(" %s %f \n", " Vel% = ", VelocityPercent)
+		VelocityPercent = 1.0 - (float64(o.KeyVelocitySensitivity) / 10.0)
+		//fmt.Printf(" %s %f %d \n", " Vel% = ", VelocityPercent, o.KeyVelocitySensitivity)
 
 		OSClevelPercent = float64(float64(o.OperatorOutputLevel) / 99.00)
 		for k := 0; k < 4; k++ {
