@@ -101,21 +101,21 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		}
 
 	}
-	LevComp = 1.0
-	/*
-		//Find # of carriers  ---  patchOutputDSR = 0
-		//Lower carriers for volume compnstaon. 1 - 0% or 2 -10% 3 04 15%  5 or 6 20%
-		//Find # of carriers  ---  patchOutputDSR = 0
-		Carrier := 0
-		for i, _ := range dx7Voice.Osc {
-			patchOutputDSR = ((vce.Envelopes[i].FreqEnvelope.OPTCH & 0xc0) >> 6)
-			if patchOutputDSR == 0 {
-				Carrier++
-				fmt.Printf(" %s %d \n", " # Carriers = ", Carrier)
-			}
 
+	//Lower carriers for volume compnstaon.
+	//Find # of carriers  ---  patchOutputDSR = 0
+	carrier := 0
+	LevComp = 1.0
+	for i, _ := range dx7Voice.Osc {
+		patchOutputDSR = ((vce.Envelopes[i].FreqEnvelope.OPTCH & 0xc0) >> 6)
+		if patchOutputDSR == 0 {
+			carrier++
+			fmt.Printf(" %s %d \n", " # Carriers = ", carrier)
 		}
-	*/
+	}
+
+	//***************************************************************************
+
 	for i, o := range dx7Voice.Osc {
 
 		////  fm: y = sin(phase); phase += phaseInc + mod;
@@ -138,9 +138,24 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		fmt.Printf(" %s %d %d %f \n", " OSC - POdsr= ", i+1, patchOutputDSR, PMfix)
 		//OPTCH
 		//patchOutputDSR = ((patchByte & 0xc0) >> 6)
-		patchOutputDSR = ((vce.Envelopes[i].FreqEnvelope.OPTCH & 0xc0) >> 6)
-		//fmt.Printf(" %s %d \n", " OSC = ", i+1)
-		//fmt.Printf(" %s %d \n", " patchOutputDSR = ", patchOutputDSR)
+		if patchOutputDSR == 0 {
+			switch carrier {
+			case 6:
+				LevComp = .70
+			case 5:
+				LevComp = .75
+			case 4:
+				LevComp = .80
+			case 3:
+				LevComp = .85
+			case 2:
+				LevComp = .90
+			case 1:
+				LevComp = 1.0
+			}
+			fmt.Printf(" %s %f \n", " Levcomp =  ", LevComp)
+
+		}
 
 		// ******************************************************************************************
 		// *************** put key scaling in filter B  filter B[0 - 31] for each OSC  **************
