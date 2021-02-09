@@ -444,8 +444,6 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 		vce.Envelopes[i].FreqEnvelope.Table[2] = 0x80 // matches default from EDATA
 		vce.Envelopes[i].FreqEnvelope.Table[3] = 0    // 0 == Sine, octave 0, freq int and amp int disabled
 
-		// END TEMPORARY
-
 		// DX only has a single frequency envelope - replicate it on each Synergy osc:
 		// NOTE the first point in the Synergy freq table is "special" - it stores a "freq.scale and wavetype" instead of rates
 		// Like the amp table, the values are stored in quads, two values, two rates per point
@@ -509,7 +507,7 @@ var fineValues = [100]float64{0.00000, 0.02329, 0.04713, 0.07152, 0.09648, 0.122
 	7.12831, 7.31764, 7.51138, 7.70964, 7.91251, 8.12011, 8.33254,
 	8.54993, 8.77237}
 
-var dTune = [15]int8{-81, -75, -69, -60, -42, -30, -24, 0, 9, 21, 24, 33, 45, 66, 72}
+var dTune = [16]int8{-81, -75, -69, -60, -42, -30, -24, 0, 9, 21, 24, 33, 45, 66, 72, 81}
 
 var BreakPoint = [100]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 9, 9,
 	9, 9, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 15, 15, 15, 15,
