@@ -106,7 +106,7 @@ func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	//Find # of carriers  ---  patchOutputDSR = 0
 	carrier := 0
 	LevComp = 1.0
-	for i, _ := range dx7Voice.Osc {
+	for i := range dx7Voice.Osc {
 		patchOutputDSR = ((vce.Envelopes[i].FreqEnvelope.OPTCH & 0xc0) >> 6)
 		if patchOutputDSR == 0 {
 			carrier++
