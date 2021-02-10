@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path"
 
 	"github.com/chinenual/synergize/data"
 )
@@ -138,7 +139,13 @@ func main() {
 					log.Printf("ERROR: validation error on translate Dx7 voice %s: %v\n", v.VoiceName, err)
 					hasError = true
 				} else {
-					vcePathname := v.VoiceName + ".VCE"
+					sysexExt := path.Ext(*sysexFlag)
+					sysexDir := (*sysexFlag)[0:len(*sysexFlag)-len(sysexExt)]
+					if err = os.MkdirAll(sysexDir, 0777); err !=nil {
+						log.Printf("ERROR: could not create output directory %s: %v\n", sysexDir, err)
+						hasError = true
+					}
+					vcePathname := path.Join(sysexDir, v.VoiceName + ".VCE")
 					if err = data.WriteVceFile(vcePathname, vce, false); err != nil {
 						log.Printf("ERROR: could not write VCEfile %s: %v\n", vcePathname, err)
 						hasError = true
