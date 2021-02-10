@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"log"
 	"math"
@@ -92,6 +93,9 @@ var dxAlgoNoFeedbackPatchTypePerOscTable = [32][16]byte{
 func helperSetAlgorithmPatchType(vce *data.VCE, dxAlgo byte, dxFeedback byte) (err error) {
 	if dxFeedback != 0 {
 		log.Printf("WARNING: Limitation: unhandled DX feedback: %d", dxFeedback)
+	}
+	if dxAlgo < 0 || dxAlgo > byte(len(dxAlgoNoFeedbackPatchTypePerOscTable)) {
+		return errors.Errorf("Invalid Algorithm value %d - expected 0 .. 31", dxAlgo)
 	}
 
 	for i := range dxAlgoNoFeedbackPatchTypePerOscTable[dxAlgo] {
