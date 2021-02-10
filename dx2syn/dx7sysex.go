@@ -186,7 +186,9 @@ func ReadDx7Sysex(pathname string) (sysex Dx7Sysex, err error) {
 			err = errors.Wrapf(err, "Error reading voice[%d]", i)
 			return
 		}
-		sysex.Voices = append(sysex.Voices, v)
+		if v.VoiceName[0] != '\000' {
+			sysex.Voices = append(sysex.Voices, v)
+		}
 	}
 	return
 }
