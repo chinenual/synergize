@@ -43,6 +43,10 @@ permalink: /docs/release-notes
 * Fixes [issue #39](https://github.com/chinenual/synergize/issues/39):
   After adding an oscillator, the UI displayed incorrect values for 
   Harmonic, Detune, Wave Type and Keyprop for the exiting oscillators.
+* Fixes [issue #30](https://github.com/chinenual/synergize/issues/30):
+  The up/down cursor images used for the up/down buttons on numeric 
+  input controls was difficult to see on Windows. Now use the same 
+  cursor on all platforms.
 
 ## 2.3.1
 
