@@ -40,6 +40,9 @@ permalink: /docs/release-notes
   characters of the filename being saved.  The editor no longer
   overrides the Voice Name - use the Voice Name field on the Voice tab
   to set a new name if you need one.
+* Fixes [issue #39](https://github.com/chinenual/synergize/issues/39):
+  After adding an oscillator, the UI displayed incorrect values for 
+  Harmonic, Detune, Wave Type and Keyprop for the exiting oscillators.
 
 ## 2.3.1
 

@@ -361,10 +361,12 @@ let viewVCE_voice = {
 				funcname = "setOscWAVE"
 				value = ele.value == "Sin" ? 0 : 1;
 				args = [osc, value];
+				vce.Envelopes[osc-1].FreqEnvelope.Table[3] |= value;
 			} else {
 				funcname = "setOscKEYPROP"
 				value = ele.checked ? 1 : 0;
 				args = [osc, value];
+				vce.Envelopes[osc-1].FreqEnvelope.Table[3] |= (value ? 0x10 : 0);
 			}
 		} else if (ret = id.match(oscPattern)) {
 			param = ret[1];
@@ -373,7 +375,7 @@ let viewVCE_voice = {
 			args = [osc, value]
 
 			//console.log("changed: " + id + " param: " + param + " osc: " + osc);
-			vce.Envelopes[osc - 1][param] = valueConverter(ele.value);
+			vce.Envelopes[osc - 1].FreqEnvelope[param] = valueConverter(ele.value);
 			funcname = "setVoiceByte"
 
 		} else if (ret = id.match(headPattern)) {
@@ -717,9 +719,12 @@ ${freqDAG}
 					for (i = oldLength; i < newNum; i++) {
 						// copy the envelope template into the vce:
 						// abuse JSON to do a deep copy:
-						vce.Envelopes[i] = JSON.parse(JSON.stringify(message.payload.EnvelopeTemplate))
-						// overwrite the default patch type 
-						vce.Envelopes[i].OPTCH = message.payload.PatchBytes[i]
+						vce.Envelopes[i] = JSON.parse(JSON.stringify(message.payload.EnvelopeTemplate));
+						// overwrite the default patch type
+						console.log("before copy", vce.Envelopes);
+						vce.Envelopes[i].OPTCH = message.payload.PatchBytes[i];
+						console.log(i, "copy env - now ", vce.Envelopes[i]);
+						console.log("AFTER copy", vce.Envelopes);
 					}
 				}
 				viewVCE.init();
