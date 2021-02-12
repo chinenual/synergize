@@ -12,7 +12,7 @@ import (
 // Use the supplied map to keep track of names we've already used so we can ensure they are all unique
 func convertName(nameMap *map[string]bool, dxName string, vce *data.VCE) {
 	newName := _convertName(dxName,8)
-	_, exists := (*nameMap)[newName]
+	_, exists := (*nameMap)[strings.ToUpper(newName)]
 	if exists {
 		prefix := _convertName(dxName,7)
 		suffixes := []byte {'1','2','3','4','5','6','7','8','9',
@@ -20,15 +20,14 @@ func convertName(nameMap *map[string]bool, dxName string, vce *data.VCE) {
 			'K','L','M','N','O','P','Q','R','S','T','U','V','W'}
 		for _,v := range suffixes {
 			candidate := prefix + string(v)
-			_, exists = (*nameMap)[candidate]
+			_, exists = (*nameMap)[strings.ToUpper(candidate)]
 			if !exists {
 				newName = candidate
 				break
 			}
 		}
 	}
-
-	(*nameMap)[newName] = true
+	(*nameMap)[strings.ToUpper(newName)] = true
 	for i := 0; i < 8; i++ {
 		vce.Head.VNAME[i] = newName[i]
 	}
