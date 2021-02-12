@@ -27,11 +27,13 @@ func convertName(nameMap *map[string]bool, dxName string, vce *data.VCE) {
 			}
 		}
 	}
+
 	(*nameMap)[newName] = true
 	for i := 0; i < 8; i++ {
 		vce.Head.VNAME[i] = newName[i]
 	}
-	(*nameMap)[newName] = true
+	//finally, pad with spaces:
+	newName = data.VcePaddedName(newName)
 	fmt.Printf("DX7 VoiceName: '%s' Synergy VNAME: '%s'\n", dxName, newName)
 }
 
@@ -41,26 +43,26 @@ func _convertName(dxName string, length int) string {
 	newName = strings.Trim(newName, " ")
 	//fmt.Printf("AFTER TRIM: '%s'\n", newName)
 
-	for len(newName) > 8 && strings.Contains(newName, "  ") {
+	for len(newName) > length && strings.Contains(newName, "  ") {
 		// compress internal spaces:
 		newName = strings.ReplaceAll(newName, "  ", " ")
 	}
 	//fmt.Printf("AFTER COMPRESS SPACE: '%s'\n", newName)
-	for len(newName) > 8 && strings.Contains(newName, " ") {
+	for len(newName) > length && strings.Contains(newName, " ") {
 		// remove spaces - starting with the last one:
 		i := strings.LastIndex(newName, " ")
 		newName = newName[:i] + newName[i+1:]
 	}
 	//fmt.Printf("AFTER INTERNAL SPACE: '%s'\n", newName)
 	const punctuation = "_-\\/:;,.<>?!@#$%^&*()=[]{}'\""
-	for len(newName) > 8 && strings.ContainsAny(newName, punctuation) {
+	for len(newName) > length && strings.ContainsAny(newName, punctuation) {
 		// remove punctuation - starting with the last one:
 		i := strings.LastIndexAny(newName, punctuation)
 		newName = newName[:i] + newName[i+1:]
 	}
 	//fmt.Printf("AFTER PUNCTUATION: '%s'\n", newName)
 	const vowels = "aeiouAEIOU"
-	for len(newName) > 8 && strings.ContainsAny(newName, vowels) {
+	for len(newName) > length && strings.ContainsAny(newName, vowels) {
 		// remove vowels - starting with the last one:
 		i := strings.LastIndexAny(newName, vowels)
 		fmt.Printf("last idx: '%s' %d\n", newName, i)
@@ -68,8 +70,9 @@ func _convertName(dxName string, length int) string {
 	}
 	//fmt.Printf("AFTER VOWELS: '%s'\n", newName)
 
-	//finally, truncate and pad with spaces:
-	newName = data.VcePaddedName(newName)
+	if len(newName) > length {
+		newName = newName[0:length]
+	}
 
 	return newName
 }
