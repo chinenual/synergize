@@ -3,11 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/chinenual/synergize/data"
 	"log"
 	"os"
 	"path"
-
-	"github.com/chinenual/synergize/data"
+	"regexp"
 )
 
 var allFlag = flag.Bool("all", false, "extract all patches")
@@ -24,6 +24,24 @@ func usage(msg string) {
 	log.Printf("Usage: \n")
 	log.Printf("\tdx7-to-synergy ( -all | -index <n> | -name <name> ) <sysex-pathname>\n")
 	os.Exit(1)
+}
+
+func sanitizeFilename(v string) (result string) {
+	r, _ := regexp.Compile("[^A-Za-z0-9+!@# _-]")
+	result = r.ReplaceAllString(v, "_")
+	return
+}
+
+func makeVCEFilename(sysexPath string, synVoiceName string) (pathname string, err error) {
+	sysexExt := path.Ext(sysexPath)
+	sysexDir := (sysexPath)[0 : len(sysexPath)-len(sysexExt)]
+	if err = os.MkdirAll(sysexDir, 0777); err != nil {
+		log.Printf("ERROR: could not create output directory %s: %v\n", sysexDir, err)
+		return
+	}
+	base := path.Join(sysexDir, sanitizeFilename(synVoiceName))
+	pathname = base + ".VCE"
+	return
 }
 
 func main() {
@@ -101,6 +119,9 @@ func main() {
 	if *statsFlag {
 		log.Printf("sysex: %s\n", *sysexFlag)
 	}
+
+	nameMap := make(map[string]bool)
+
 	for _, v := range selectedVoices {
 		if *statsFlag {
 			//log.Printf("feedback: %s %d\n", v.VoiceName, v.Feedback
@@ -124,28 +145,25 @@ func main() {
 			hasError := false
 			var vce data.VCE
 			if *verboseFlag {
-				log.Printf("Translating %s %s...\n", v.VoiceName, Dx7VoiceToJSON(v))
+				log.Printf("Translating '%s' %s...\n", v.VoiceName, Dx7VoiceToJSON(v))
 			} else {
-				log.Printf("Translating %s...\n", v.VoiceName)
+				log.Printf("Translating '%s'...\n", v.VoiceName)
 			}
-			if vce, err = TranslateDx7ToVce(v); err != nil {
+			if vce, err = TranslateDx7ToVce(&nameMap, v); err != nil {
 				log.Printf("ERROR: could not translate Dx7 voice %s: %v", v.VoiceName, err)
 			} else {
 				if *verboseFlag {
-					log.Printf("Result VCE: %s %s\n", v.VoiceName, helperVCEToJSON(vce))
+					log.Printf("Result VCE: '%s' %s\n", v.VoiceName, helperVCEToJSON(vce))
 				}
 				const IGNORE_VALIDATION = true
 				if err = data.VceValidate(vce); (err != nil) && (!IGNORE_VALIDATION) {
 					log.Printf("ERROR: validation error on translate Dx7 voice %s: %v\n", v.VoiceName, err)
 					hasError = true
 				} else {
-					sysexExt := path.Ext(*sysexFlag)
-					sysexDir := (*sysexFlag)[0:len(*sysexFlag)-len(sysexExt)]
-					if err = os.MkdirAll(sysexDir, 0777); err !=nil {
-						log.Printf("ERROR: could not create output directory %s: %v\n", sysexDir, err)
-						hasError = true
+					vcePathname,err := makeVCEFilename(*sysexFlag, data.VceName(vce.Head))
+					if err != nil {
+						hasError = true;
 					}
-					vcePathname := path.Join(sysexDir, v.VoiceName + ".VCE")
 					if err = data.WriteVceFile(vcePathname, vce, false); err != nil {
 						log.Printf("ERROR: could not write VCEfile %s: %v\n", vcePathname, err)
 						hasError = true

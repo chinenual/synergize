@@ -8,31 +8,57 @@ import (
 	"github.com/chinenual/synergize/data"
 )
 
-// compress the DX7 10-character name to something that fits in the 8-character VNAME
-func convertName(dxName string, vce *data.VCE) {
+// compress the DX7 10-character name to something that fits in the 8-character VNAME.
+// Use the supplied map to keep track of names we've already used so we can ensure they are all unique
+func convertName(nameMap *map[string]bool, dxName string, vce *data.VCE) {
+	newName := _convertName(dxName,8)
+	_, exists := (*nameMap)[newName]
+	if exists {
+		prefix := _convertName(dxName,7)
+		suffixes := []byte {'1','2','3','4','5','6','7','8','9',
+			'A','B','C','D','E','F','G','H','I','J',
+			'K','L','M','N','O','P','Q','R','S','T','U','V','W'}
+		for _,v := range suffixes {
+			candidate := prefix + string(v)
+			_, exists = (*nameMap)[candidate]
+			if !exists {
+				newName = candidate
+				break
+			}
+		}
+	}
+	(*nameMap)[newName] = true
+	for i := 0; i < 8; i++ {
+		vce.Head.VNAME[i] = newName[i]
+	}
+	(*nameMap)[newName] = true
+	fmt.Printf("DX7 VoiceName: '%s' Synergy VNAME: '%s'\n", dxName, newName)
+}
+
+func _convertName(dxName string, length int) string {
 	newName := dxName
 	// remove leading or trailing spaces:
 	newName = strings.Trim(newName, " ")
-	fmt.Printf("AFTER TRIM: '%s'\n", newName)
+	//fmt.Printf("AFTER TRIM: '%s'\n", newName)
 
 	for len(newName) > 8 && strings.Contains(newName, "  ") {
 		// compress internal spaces:
 		newName = strings.ReplaceAll(newName, "  ", " ")
 	}
-	fmt.Printf("AFTER COMPRESS SPACE: '%s'\n", newName)
+	//fmt.Printf("AFTER COMPRESS SPACE: '%s'\n", newName)
 	for len(newName) > 8 && strings.Contains(newName, " ") {
 		// remove spaces - starting with the last one:
 		i := strings.LastIndex(newName, " ")
 		newName = newName[:i] + newName[i+1:]
 	}
-	fmt.Printf("AFTER INTERNAL SPACE: '%s'\n", newName)
+	//fmt.Printf("AFTER INTERNAL SPACE: '%s'\n", newName)
 	const punctuation = "_-\\/:;,.<>?!@#$%^&*()=[]{}'\""
 	for len(newName) > 8 && strings.ContainsAny(newName, punctuation) {
 		// remove punctuation - starting with the last one:
 		i := strings.LastIndexAny(newName, punctuation)
 		newName = newName[:i] + newName[i+1:]
 	}
-	fmt.Printf("AFTER PUNCTUATION: '%s'\n", newName)
+	//fmt.Printf("AFTER PUNCTUATION: '%s'\n", newName)
 	const vowels = "aeiouAEIOU"
 	for len(newName) > 8 && strings.ContainsAny(newName, vowels) {
 		// remove vowels - starting with the last one:
@@ -40,24 +66,20 @@ func convertName(dxName string, vce *data.VCE) {
 		fmt.Printf("last idx: '%s' %d\n", newName, i)
 		newName = newName[:i] + newName[i+1:]
 	}
-	fmt.Printf("AFTER VOWELS: '%s'\n", newName)
+	//fmt.Printf("AFTER VOWELS: '%s'\n", newName)
 
 	//finally, truncate and pad with spaces:
 	newName = data.VcePaddedName(newName)
-	fmt.Printf("truncated: '%s'\n", newName)
 
-	for i := 0; i < 8; i++ {
-		vce.Head.VNAME[i] = newName[i]
-	}
-	fmt.Printf("VNAME: '%s'\n", data.VceName(vce.Head))
+	return newName
 }
 
-func TranslateDx7ToVce(dx7Voice Dx7Voice) (vce data.VCE, err error) {
+func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	if vce, err = helperBlankVce(); err != nil {
 		return
 	}
 
-	convertName(dx7Voice.VoiceName, &vce)
+	convertName(nameMap, dx7Voice.VoiceName, &vce)
 
 	if err = helperSetAlgorithmPatchType(&vce, dx7Voice.Algorithm, dx7Voice.Feedback); err != nil {
 		return
