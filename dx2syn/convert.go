@@ -11,14 +11,14 @@ import (
 // compress the DX7 10-character name to something that fits in the 8-character VNAME.
 // Use the supplied map to keep track of names we've already used so we can ensure they are all unique
 func convertName(nameMap *map[string]bool, dxName string, vce *data.VCE) {
-	newName := _convertName(dxName,8)
+	newName := _convertName(dxName, 8)
 	_, exists := (*nameMap)[strings.ToUpper(newName)]
 	if exists {
-		prefix := _convertName(dxName,7)
-		suffixes := []byte {'1','2','3','4','5','6','7','8','9',
-			'A','B','C','D','E','F','G','H','I','J',
-			'K','L','M','N','O','P','Q','R','S','T','U','V','W'}
-		for _,v := range suffixes {
+		prefix := _convertName(dxName, 7)
+		suffixes := []byte{'1', '2', '3', '4', '5', '6', '7', '8', '9',
+			'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+			'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W'}
+		for _, v := range suffixes {
 			candidate := prefix + string(v)
 			_, exists = (*nameMap)[strings.ToUpper(candidate)]
 			if !exists {
@@ -411,7 +411,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		//  change levels for velocity sensitivity, PM Fix, and level comp
 		OSClevelPercent = float64(float64(o.OperatorOutputLevel) / 99.00)
 		for k := 0; k < 4; k++ {
-			o.EgLevel[k] = byte(float64(o.EgLevel[k]) * OSClevelPercent * PMfix * LevComp)
+			o.EgLevel[k] = byte(float64(o.EgLevel[k]) * OSClevelPercent * PMfix * LevComp * 0.727)
 		}
 
 		// Each Synergy oscillator is voice twice - for low and high key velocity response
@@ -432,26 +432,26 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		*/
 
 		// point1
-		vce.Envelopes[i].AmpEnvelope.Table[0] = byte((math.Round(float64(o.EgLevel[0]) * 0.727 * VelocityPercent)) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[1] = byte((math.Round(float64(o.EgLevel[0]) * 0.727)) + 55)
+		vce.Envelopes[i].AmpEnvelope.Table[0] = byte((math.Round(float64(o.EgLevel[0]) * VelocityPercent)) + 55)
+		vce.Envelopes[i].AmpEnvelope.Table[1] = byte((math.Round(float64(o.EgLevel[0]))) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[2] = byte(helperNearestAmpTimeIndex(attkR))
 		vce.Envelopes[i].AmpEnvelope.Table[3] = byte(helperNearestAmpTimeIndex(attkR))
 
 		//point2
-		vce.Envelopes[i].AmpEnvelope.Table[4] = byte((math.Round(float64(o.EgLevel[1]) * 0.727 * VelocityPercent)) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[5] = byte((math.Round(float64(o.EgLevel[1]) * 0.727)) + 55)
+		vce.Envelopes[i].AmpEnvelope.Table[4] = byte((math.Round(float64(o.EgLevel[1]) * VelocityPercent)) + 55)
+		vce.Envelopes[i].AmpEnvelope.Table[5] = byte((math.Round(float64(o.EgLevel[1]))) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[6] = byte(helperNearestAmpTimeIndex(decyR))
 		vce.Envelopes[i].AmpEnvelope.Table[7] = byte(helperNearestAmpTimeIndex(decyR))
 
 		//point3
-		vce.Envelopes[i].AmpEnvelope.Table[8] = byte((math.Round(float64(o.EgLevel[2]) * 0.727 * VelocityPercent)) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[9] = byte((math.Round(float64(o.EgLevel[2]) * 0.727)) + 55)
+		vce.Envelopes[i].AmpEnvelope.Table[8] = byte((math.Round(float64(o.EgLevel[2]) * VelocityPercent)) + 55)
+		vce.Envelopes[i].AmpEnvelope.Table[9] = byte((math.Round(float64(o.EgLevel[2]))) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[10] = byte(helperNearestAmpTimeIndex(sustR))
 		vce.Envelopes[i].AmpEnvelope.Table[11] = byte(helperNearestAmpTimeIndex(sustR))
 
 		//point4
-		vce.Envelopes[i].AmpEnvelope.Table[12] = byte((math.Round(float64(o.EgLevel[3]) * 0.727 * VelocityPercent)) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[13] = byte((math.Round(float64(o.EgLevel[3]) * 0.727)) + 55)
+		vce.Envelopes[i].AmpEnvelope.Table[12] = byte((math.Round(float64(o.EgLevel[3]) * VelocityPercent)) + 55)
+		vce.Envelopes[i].AmpEnvelope.Table[13] = byte((math.Round(float64(o.EgLevel[3]))) + 55)
 		vce.Envelopes[i].AmpEnvelope.Table[14] = byte(helperNearestAmpTimeIndex(relsR))
 		vce.Envelopes[i].AmpEnvelope.Table[15] = byte(helperNearestAmpTimeIndex(relsR))
 
