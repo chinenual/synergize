@@ -319,20 +319,16 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 				vce.Envelopes[i].FreqEnvelope.OHARM = int8(harmonic)
 
 			} else if transposedDown == true && o.OscFreqCoarse == 0 && o.OscFreqFine != 50 {
-
 				// TO DO
 				// Calculate combined freq of coarse and fine, then double for octave.
 				// Find closest harm to the OCT freq, then find remainder,
 				// and add the (remainder * 2) in as freqValueInt
-				if o.OscFreqFine < 50 {
-					fmt.Printf(" %d %s  \n", i, " in true 0 <50 TO DO")
-					vce.Envelopes[i].FreqEnvelope.OHARM = 1
-					freqValueInt = 0
-					freqValueInt = int(math.Round(1 + fineValues[o.OscFreqFine]*2))
-					freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
-				} else {
-					fmt.Printf(" %d %s  \n", i, " in true 0 >50 TO DO")
-				}
+				//if o.OscFreqFine < 50 {
+				fmt.Printf(" %d %s  \n", i, " in true 0 !=50")
+				vce.Envelopes[i].FreqEnvelope.OHARM = 1
+				freqValueInt = 0
+				freqValueInt = int(math.Round(1 + fineValues[o.OscFreqFine]*2))
+				freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
 
 			} else if transposedDown == true && o.OscFreqCoarse != 0 && o.OscFreqFine == 50 {
 				//fmt.Printf(" %d %s  \n", i, " in true !0 = 50")
@@ -410,6 +406,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 
 		//  change levels for velocity sensitivity, PM Fix, and level comp
 		OSClevelPercent = float64(float64(o.OperatorOutputLevel) / 99.00)
+
 		for k := 0; k < 4; k++ {
 			o.EgLevel[k] = byte(float64(o.EgLevel[k]) * OSClevelPercent * PMfix * LevComp * 0.727)
 		}
