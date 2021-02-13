@@ -28,11 +28,11 @@ func convertName(nameMap *map[string]bool, dxName string, vce *data.VCE) {
 		}
 	}
 	(*nameMap)[strings.ToUpper(newName)] = true
+	//finally, pad with spaces:
+	newName = data.VcePaddedName(newName)
 	for i := 0; i < 8; i++ {
 		vce.Head.VNAME[i] = newName[i]
 	}
-	//finally, pad with spaces:
-	newName = data.VcePaddedName(newName)
 	fmt.Printf("DX7 VoiceName: '%s' Synergy VNAME: '%s'\n", dxName, newName)
 }
 
