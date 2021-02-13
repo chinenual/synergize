@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/chinenual/synergize/data"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -10,12 +11,15 @@ import (
 
 func makeCrt(dirPath string) (err error) {
 
-	crtPath := filepath.Join(dirPath, filepath.Base(dirPath) + ".CRT")
+	crtPath := filepath.Join(dirPath, filepath.Base(dirPath)+".CRT")
 	var vces []*data.VCE
-	filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
+
+	var fileInfos []os.FileInfo
+	if fileInfos, err = ioutil.ReadDir(dirPath); err != nil {
+		return err
+	}
+	for _, f := range fileInfos {
+		path := filepath.Join(dirPath, f.Name())
 		if strings.EqualFold(filepath.Ext(path), ".vce") {
 			if len(vces) < 24 {
 				var vce data.VCE
@@ -29,8 +33,8 @@ func makeCrt(dirPath string) (err error) {
 				log.Printf("WARNING: ignore extra VCEs in folder: %s\n", path)
 			}
 		}
-		return nil
-	})
+	}
+
 	if err = data.WriteCrtFileFromVCEArray(crtPath, vces); err != nil {
 		return
 	}
