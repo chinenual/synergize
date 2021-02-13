@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"github.com/chinenual/synergize/data"
 	"github.com/orcaman/writerseeker"
 	"io/ioutil"
@@ -49,7 +48,6 @@ func makeCrt(dirPath string) (err error) {
 					}
 					// write the last set of vce's that fit:
 					if err = data.WriteCrtFileFromVCEArray(crtPath, vces); err != nil {
-						fmt.Printf("diag %v \n", vces)
 						return
 					}
 					// initialize the new list of vces to just this next voice
@@ -64,6 +62,12 @@ func makeCrt(dirPath string) (err error) {
 				}
 				vces = newVces
 			}
+		}
+	}
+	if len(vces) > 1 {
+		// write the last set of vce's that fit:
+		if err = data.WriteCrtFileFromVCEArray(crtPath, vces); err != nil {
+			return
 		}
 	}
 	return
