@@ -207,12 +207,6 @@ func addVce(buf io.WriteSeeker, slot /*one-based*/ int, cursor *crtCursor, vce V
 		logger.Infof(" WRITE voice #%d: at 0x%04x\n", slot, cursor.VoiceOffset)
 	}
 
-	if cursor.VoiceOffset > VRAM_Max_length {
-		err = errors.Errorf("Error adding voice #%d (%s) to CRT - requires %d bytes, which exceeds maximum of %d",
-			slot, VceName(vce.Head), cursor.VoiceOffset, VRAM_Max_length)
-		return
-	}
-
 	if _, err = buf.Seek(cursor.VoiceOffset, io.SeekStart); err != nil {
 		return
 	}
@@ -321,7 +315,14 @@ func WriteCrt(buf io.WriteSeeker, vces []*VCE) (err error) {
 				return
 			}
 		}
+		if cursor.VoiceOffset > VRAM_Max_length {
+			err = errors.Errorf("Error adding voice #%d (%s) to CRT - requires %d bytes, which exceeds maximum of %d",
+				i+1, VceName(vce.Head), cursor.VoiceOffset, VRAM_Max_length)
+			return
+		}
+
 	}
+
 	if verboseWriting {
 		logger.Infof(" WRITE cursors after last voice: a, b voice: 0x%04x 0x%04x 0x%04x\n", cursor.AfilterOffset, cursor.BfilterOffset, cursor.VoiceOffset)
 	}
