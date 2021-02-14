@@ -180,6 +180,27 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			fmt.Printf(" %s %f \n", " Levcomp =  ", LevComp)
 
 		}
+		// Fix Over Values where max is 99...
+		if o.KeyLevelScalingBreakPoint > 99 {
+			fmt.Printf(" %s %d \n", " BP before =  ", o.KeyLevelScalingBreakPoint)
+			o.KeyLevelScalingBreakPoint = 99
+			fmt.Printf(" %s %d \n", " BP after =  ", o.KeyLevelScalingBreakPoint)
+		}
+		if o.KeyLevelScalingRightDepth > 99 {
+			fmt.Printf(" %s %d \n", " RT before =  ", o.KeyLevelScalingRightDepth)
+			o.KeyLevelScalingRightDepth = 99
+			fmt.Printf(" %s %d \n", " RT after =  ", o.KeyLevelScalingRightDepth)
+		}
+		if o.KeyLevelScalingLeftDepth > 99 {
+			fmt.Printf(" %s %d \n", " LT before =  ", o.KeyLevelScalingLeftDepth)
+			o.KeyLevelScalingLeftDepth = 99
+			fmt.Printf(" %s %d \n", " LT after =  ", o.KeyLevelScalingLeftDepth)
+		}
+		if o.OscFreqFine > 99 {
+			fmt.Printf(" %s %d \n", " Fine before=  ", o.OscFreqFine)
+			o.OscFreqFine = 99
+			fmt.Printf(" %s %d \n", " Fine after =  ", o.OscFreqFine)
+		}
 
 		// ******************************************************************************************
 		// *************** put key scaling in filter B  filter B[0 - 31] for each OSC  **************
