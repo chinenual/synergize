@@ -2,14 +2,15 @@ package main
 
 import (
 	"errors"
-	"github.com/chinenual/synergize/data"
-	"github.com/orcaman/writerseeker"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/chinenual/synergize/data"
+	"github.com/orcaman/writerseeker"
 )
 
 func checkWriteCrtFromVCEArray(vces []*data.VCE) (err error) {
@@ -54,7 +55,7 @@ func makeCrt(dirPath string) (err error) {
 					newVces = nil
 					newVces = append(newVces, &vce)
 					// start a new file
-					crtCount += 1
+					crtCount++
 					crtPath = filepath.Join(dirPath, filepath.Base(dirPath)+"-"+strconv.Itoa(crtCount)+".CRT")
 					log.Printf("%s: Add %s ...\n", crtPath, path)
 				} else {

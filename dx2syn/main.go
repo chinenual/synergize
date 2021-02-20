@@ -3,11 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/chinenual/synergize/data"
 	"log"
 	"os"
 	"path"
 	"regexp"
+
+	"github.com/chinenual/synergize/data"
 )
 
 var allFlag = flag.Bool("all", false, "extract all patches")
@@ -155,14 +156,14 @@ func main() {
 				if *verboseFlag {
 					log.Printf("Result VCE: '%s' %s\n", v.VoiceName, helperVCEToJSON(vce))
 				}
-				const IGNORE_VALIDATION = true
-				if err = data.VceValidate(vce); (err != nil) && (!IGNORE_VALIDATION) {
+				const IgnoreValidation = true
+				if err = data.VceValidate(vce); (err != nil) && (!IgnoreValidation) {
 					log.Printf("ERROR: validation error on translate Dx7 voice %s: %v\n", v.VoiceName, err)
 					hasError = true
 				} else {
-					vcePathname,err := makeVCEFilename(*sysexFlag, data.VceName(vce.Head))
+					vcePathname, err := makeVCEFilename(*sysexFlag, data.VceName(vce.Head))
 					if err != nil {
-						hasError = true;
+						hasError = true
 					}
 					if err = data.WriteVceFile(vcePathname, vce, false); err != nil {
 						log.Printf("ERROR: could not write VCEfile %s: %v\n", vcePathname, err)

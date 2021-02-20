@@ -151,6 +151,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		//
 		//  ********************  Check if OSC is MODULATOR
 		//  ********************  If yes, raise "OSClevelPercent" by 5 %  Trying to fake FM/PM difference
+		PMfix = 1.0
 
 		if patchOutputDSR > 0 {
 			PMfix = 1.05 //
@@ -160,6 +161,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			//fmt.Printf(" %s %f \n", " PMfix = ", PMfix)
 		}
 		fmt.Printf(" %s %d %d %f \n", " OSC - POdsr= ", i+1, patchOutputDSR, PMfix)
+
 		//OPTCH
 		//patchOutputDSR = ((patchByte & 0xc0) >> 6)
 		if patchOutputDSR == 0 {
@@ -212,12 +214,12 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			// optimization: if key scaling depths are zero, don't waste space for a filter
 			vce.Head.FILTER[i] = 0
 		} else {
-			filterIndex += 1
+			filterIndex++
 			//set filter B on for voice, b-filters are indicated by the 1-based osc index
 			vce.Head.FILTER[i] = filterIndex + 1
 
 			// Assumes no A-filter - so B filter for osc 1 (index 0) is always stored at 0:
-			vce.Filters[filterIndex][(BreakPoint[o.KeyLevelScalingBreakPoint])] = 0 //KEY to FREQ Array is BreakPoint[] (below)
+			vce.Filters[filterIndex][(breakPoint[o.KeyLevelScalingBreakPoint])] = 0 //KEY to FREQ Array is breakPoint[] (below)
 
 			// Scale from DX7 0 to 99 to Syn -64 to 63    //using DX 50 = 0
 
@@ -246,26 +248,26 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			switch o.KeyLevelScalingLeftCurve { //0=-LIN, -EXP, +EXP, +LIN
 			case 0:
 				//-linear from -lMax to 0
-				slope := lMax / float64(BreakPoint[o.KeyLevelScalingBreakPoint]-0)
-				for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
+				slope := lMax / float64(breakPoint[o.KeyLevelScalingBreakPoint]-0)
+				for k := byte(0); k < breakPoint[o.KeyLevelScalingBreakPoint]; k++ {
 					vce.Filters[filterIndex][k] = int8(math.Round(-lMax + slope*float64(k)))
 				}
 			case 1:
 				//-EXP from -lMax to 0
-				for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
-					x := float64(BreakPoint[o.KeyLevelScalingBreakPoint] - k)
+				for k := byte(0); k < breakPoint[o.KeyLevelScalingBreakPoint]; k++ {
+					x := float64(breakPoint[o.KeyLevelScalingBreakPoint] - k)
 					vce.Filters[filterIndex][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * -lMax)
 				}
 			case 2:
 				//EXP from lMax to 0
-				for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
-					x := float64(BreakPoint[o.KeyLevelScalingBreakPoint] - k)
+				for k := byte(0); k < breakPoint[o.KeyLevelScalingBreakPoint]; k++ {
+					x := float64(breakPoint[o.KeyLevelScalingBreakPoint] - k)
 					vce.Filters[filterIndex][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * lMax)
 				}
 			case 3:
 				//linear from lMax to 0
-				slope := -lMax / float64(BreakPoint[o.KeyLevelScalingBreakPoint]-0)
-				for k := byte(0); k < BreakPoint[o.KeyLevelScalingBreakPoint]; k++ {
+				slope := -lMax / float64(breakPoint[o.KeyLevelScalingBreakPoint]-0)
+				for k := byte(0); k < breakPoint[o.KeyLevelScalingBreakPoint]; k++ {
 					vce.Filters[filterIndex][k] = int8(math.Round(lMax + slope*float64(k)))
 				}
 			}
@@ -273,27 +275,27 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			switch o.KeyLevelScalingRightCurve { //0=-LIN, -EXP, +EXP, +LIN
 			case 0:
 				// -Linear from 0 to -rMax
-				slope := -rMax / float64(32-BreakPoint[o.KeyLevelScalingBreakPoint])
-				for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
-					vce.Filters[filterIndex][k] = int8(math.Round(slope * float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])))
+				slope := -rMax / float64(32-breakPoint[o.KeyLevelScalingBreakPoint])
+				for k := breakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
+					vce.Filters[filterIndex][k] = int8(math.Round(slope * float64(k-breakPoint[o.KeyLevelScalingBreakPoint])))
 				}
 			case 1:
 				// -EXP from 0 to -rMax
-				for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
-					x := float64(k - BreakPoint[o.KeyLevelScalingBreakPoint])
+				for k := breakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
+					x := float64(k - breakPoint[o.KeyLevelScalingBreakPoint])
 					vce.Filters[filterIndex][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * -rMax)
 				}
 			case 2:
 				// EXP from 0 to rMax
-				for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
-					x := float64(k - BreakPoint[o.KeyLevelScalingBreakPoint])
+				for k := breakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
+					x := float64(k - breakPoint[o.KeyLevelScalingBreakPoint])
 					vce.Filters[filterIndex][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * rMax)
 				}
 			case 3:
 				// Linear from 0 to rMax
-				slope := rMax / float64(32-BreakPoint[o.KeyLevelScalingBreakPoint])
-				for k := BreakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
-					vce.Filters[filterIndex][k] = int8(math.Round(slope * float64(k-BreakPoint[o.KeyLevelScalingBreakPoint])))
+				slope := rMax / float64(32-breakPoint[o.KeyLevelScalingBreakPoint])
+				for k := breakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
+					vce.Filters[filterIndex][k] = int8(math.Round(slope * float64(k-breakPoint[o.KeyLevelScalingBreakPoint])))
 				}
 			}
 		}
@@ -369,6 +371,12 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 
 		} else { //Fixed Mode
 			vce.Envelopes[i].FreqEnvelope.OHARM = -12
+
+			//for k := -100; k >= -127; k-- {
+
+			//	freqValueInt = int(14764 * math.Pow(2, float64(k-127)/12))
+			//	fmt.Printf(" %s %d %d  \n", "******* m  FRQACC = ", k, freqValueInt)
+			//}
 
 			switch o.OscFreqCoarse {
 			case 0, 4, 8, 12, 16, 20, 24, 28:
@@ -551,28 +559,28 @@ var fineValues = [100]float64{0.00000, 0.02329, 0.04713, 0.07152, 0.09648, 0.122
 
 var dTune = [16]int8{-81, -75, -69, -60, -42, -30, -24, 0, 9, 21, 24, 33, 45, 66, 72, 81}
 
-var BreakPoint = [100]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 9, 9,
+var breakPoint = [100]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 9, 9,
 	9, 9, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 15, 15, 15, 15,
 	16, 16, 16, 16, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22,
 	23, 23, 23, 23, 24, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27}
 
-var DXRisetoSYN = [100]byte{53, 50, 47, 44, 41, 38, 36, 34, 31, 29, 27, 26, 25, 24, 23, 22, 22,
+var dxRisetoSYN = [100]byte{53, 50, 47, 44, 41, 38, 36, 34, 31, 29, 27, 26, 25, 24, 23, 22, 22,
 	21, 21, 20, 20, 19, 19, 18, 18, 18, 17, 17, 17, 17, 17, 17, 16, 16, 16, 16, 16, 16, 16, 16,
 	16, 16, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
-var DXDecaytoSYN = [100]byte{73, 72, 71, 70, 68, 67, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 57,
+var dxDecaytoSYN = [100]byte{73, 72, 71, 70, 68, 67, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 57,
 	56, 54, 50, 46, 42, 39, 35, 33, 31, 30, 28, 26, 25, 24, 23, 23, 22, 22, 21, 21, 21, 21, 21,
 	20, 20, 20, 20, 19, 19, 18, 18, 17, 17, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
 	16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0}
 
-var EGrateDecay = [100]int{318, 284, 249, 215, 181, 167, 155, 141, 128, 115, 105, 94, 84, 73, 63,
+var egRateDecay = [100]int{318, 284, 249, 215, 181, 167, 155, 141, 128, 115, 105, 94, 84, 73, 63,
 	58, 54, 50, 44, 4, 35, 32, 28, 24, 20, 18, 16, 15, 13, 11, 10, 9, 8, 7, 7, 7, 7, 67, 6, 6, 6,
 	6, 6, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
-var EGrateRise = [100]int{38, 35, 32, 29, 26, 23, 21, 18, 16, 14, 12, 11, 10, 9, 8,
+var egRateRise = [100]int{38, 35, 32, 29, 26, 23, 21, 18, 16, 14, 12, 11, 10, 9, 8,
 	8, 7, 6, 6, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1,
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

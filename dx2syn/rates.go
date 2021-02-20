@@ -30,7 +30,7 @@ var _envMask = [][]int{
 // EG is not ticked every sample:
 // this function returns false if computation should be skipped for current sample
 func _egEnabled(shift int, qr int, sampleCounter *int) bool {
-	*sampleCounter += 1
+	*sampleCounter++
 	istep := *sampleCounter
 	if shift < 0 {
 		sm := (1 << -shift) - 1
@@ -70,17 +70,17 @@ func _computeDurationSamples(isegment int, levels [4]byte, rates [4]byte, sample
 				slope := 17 - (level >> 8)
 				level += slope << max(shift, 0)
 			}
-			nsamples += 1
+			nsamples++
 		}
 	} else { // decaying
 		for level >= targetLevel {
 			if _egEnabled(shift, qr, sampleCounter) {
 				level -= 1 << max(shift, 0)
 			}
-			nsamples += 1
+			nsamples++
 		}
 	}
-	nsamples -= 1
+	nsamples--
 	return
 }
 

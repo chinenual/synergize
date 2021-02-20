@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/pkg/errors"
 	"io/ioutil"
 	"log"
 	"math"
+
+	"github.com/pkg/errors"
 
 	"github.com/chinenual/synergize/data"
 	"github.com/orcaman/writerseeker"
@@ -111,9 +112,9 @@ func helperCompactVCE(vce data.VCE) (compacted data.VCE, err error) {
 	if err = data.WriteVce(&writebuf, vce, data.VceName(vce.Head), false); err != nil {
 		return
 	}
-	write_bytes, _ := ioutil.ReadAll(writebuf.Reader())
+	writeBytes, _ := ioutil.ReadAll(writebuf.Reader())
 
-	var readbuf2 = bytes.NewReader(write_bytes)
+	var readbuf2 = bytes.NewReader(writeBytes)
 
 	if compacted, err = data.ReadVce(readbuf2, false); err != nil {
 		return
