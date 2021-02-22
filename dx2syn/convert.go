@@ -114,16 +114,16 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 
 	filterIndex := int8(-1) // increment as we allocate each filter
 
-	// transposedown code
+	// transposedown code -- test to be sure in 'ratio' mode
+	// Do not transpose if OP is in fixed Freq Mode.
 	transposedDown := false
 	for _, o := range dx7Voice.Osc {
-		if o.OscFreqCoarse == 0 {
+		if o.OscFreqCoarse == 0 && o.OscMode == false {
 			transposedDown = true
 			vce.Head.VTRANS = vce.Head.VTRANS - 12
-
+			fmt.Printf(" %s %d %d \n", " transpose - Ratio mode  ", o, o.OscMode)
 			break
 		}
-
 	}
 
 	//Lower carriers for volume compnstaon.
@@ -292,11 +292,11 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		} else { //Fixed Mode
 			vce.Envelopes[oscIndex].FreqEnvelope.OHARM = -12
 
-			//for k := -100; k >= -127; k-- {
-
-			//	freqValueInt = int(14764 * math.Pow(2, float64(k-127)/12))
-			//	fmt.Printf(" %s %d %d  \n", "******* m  FRQACC = ", k, freqValueInt)
-			//}
+			// test freq code
+			// for k := -100; k >= -127; k-- {
+			//	 freqValueInt = int(14764 * math.Pow(2, float64(k-127)/12))
+			//	 fmt.Printf(" %s %d %d  \n", "******* m  FRQACC = ", k, freqValueInt)
+			// }
 
 			switch dxOsc.OscFreqCoarse {
 			case 0, 4, 8, 12, 16, 20, 24, 28:
