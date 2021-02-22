@@ -47,7 +47,12 @@ permalink: /docs/release-notes
   The up/down cursor images used for the up/down buttons on numeric 
   input controls was difficult to see on Windows. Now use the same 
   cursor on all platforms.
-
+* Fixes [issue #40](https://github.com/chinenual/synergize/issues/40):
+  Previous versions of Synergize allowed the user to use registers 3
+  and 4 to specify patch routing. We have recently discovered that the
+  Synergy does not actually support patches defined with these extra
+  two registers, so they are not longer supported by the editor.
+  
 ## 2.3.1
 
 * Change in behavior on the Envelopes editor: 
