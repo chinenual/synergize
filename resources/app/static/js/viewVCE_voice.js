@@ -1016,7 +1016,7 @@ ${freqDAG}
 				},
 				callback_after_calculation: function (value) {
 					return viewVCE_envs.AmpEnvValueToText(value);
-				}
+				},
 			});
 			$('.vceNum.spinAmpTime').TouchSpin({
 				verticalbuttons: true,
