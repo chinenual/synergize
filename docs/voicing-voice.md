@@ -213,7 +213,8 @@ these  registers  is used for the  FM  input,  adder  input,  and
 output.
 
 <p class="callout">
-<b>NOTE:</b> SYNHCS allowed use of only 2 of the 4 registers. Synergize supports all 4.
+<b>NOTE:</b> Only 2 of the 4 registers are available for user-level
+patching; the Synergy reserves 2 of the 4 for internal use.
 </p>
 
 
