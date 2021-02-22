@@ -140,13 +140,13 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 
 	//***************************************************************************
 
-	for i, o := range dx7Voice.Osc {
+	for oscIndex, dxOsc := range dx7Voice.Osc {
 
 		////  fm: y = sin(phase); phase += phaseInc + mod;
 		////  pm: y = sin(phase + mod); phase += phaseInc;
 		//OPTCH
 		//patchOutputDSR = ((patchByte & 0xc0) >> 6)
-		patchOutputDSR = ((vce.Envelopes[i].FreqEnvelope.OPTCH & 0xc0) >> 6)
+		patchOutputDSR = ((vce.Envelopes[oscIndex].FreqEnvelope.OPTCH & 0xc0) >> 6)
 
 		//
 		//  ********************  Check if OSC is MODULATOR
@@ -160,7 +160,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			PMfix = 1.0
 			//fmt.Printf(" %s %f \n", " PMfix = ", PMfix)
 		}
-		fmt.Printf(" %s %d %d %f \n", " OSC - POdsr= ", i+1, patchOutputDSR, PMfix)
+		fmt.Printf(" %s %d %d %f \n", " OSC - POdsr= ", oscIndex+1, patchOutputDSR, PMfix)
 
 		//OPTCH
 		//patchOutputDSR = ((patchByte & 0xc0) >> 6)
@@ -183,25 +183,25 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 
 		}
 		// Fix Over Values where max is 99...
-		if o.KeyLevelScalingBreakPoint > 99 {
-			fmt.Printf(" %s %d \n", " BP before =  ", o.KeyLevelScalingBreakPoint)
-			o.KeyLevelScalingBreakPoint = 99
-			fmt.Printf(" %s %d \n", " BP after =  ", o.KeyLevelScalingBreakPoint)
+		if dxOsc.KeyLevelScalingBreakPoint > 99 {
+			fmt.Printf(" %s %d \n", " BP before =  ", dxOsc.KeyLevelScalingBreakPoint)
+			dxOsc.KeyLevelScalingBreakPoint = 99
+			fmt.Printf(" %s %d \n", " BP after =  ", dxOsc.KeyLevelScalingBreakPoint)
 		}
-		if o.KeyLevelScalingRightDepth > 99 {
-			fmt.Printf(" %s %d \n", " RT before =  ", o.KeyLevelScalingRightDepth)
-			o.KeyLevelScalingRightDepth = 99
-			fmt.Printf(" %s %d \n", " RT after =  ", o.KeyLevelScalingRightDepth)
+		if dxOsc.KeyLevelScalingRightDepth > 99 {
+			fmt.Printf(" %s %d \n", " RT before =  ", dxOsc.KeyLevelScalingRightDepth)
+			dxOsc.KeyLevelScalingRightDepth = 99
+			fmt.Printf(" %s %d \n", " RT after =  ", dxOsc.KeyLevelScalingRightDepth)
 		}
-		if o.KeyLevelScalingLeftDepth > 99 {
-			fmt.Printf(" %s %d \n", " LT before =  ", o.KeyLevelScalingLeftDepth)
-			o.KeyLevelScalingLeftDepth = 99
-			fmt.Printf(" %s %d \n", " LT after =  ", o.KeyLevelScalingLeftDepth)
+		if dxOsc.KeyLevelScalingLeftDepth > 99 {
+			fmt.Printf(" %s %d \n", " LT before =  ", dxOsc.KeyLevelScalingLeftDepth)
+			dxOsc.KeyLevelScalingLeftDepth = 99
+			fmt.Printf(" %s %d \n", " LT after =  ", dxOsc.KeyLevelScalingLeftDepth)
 		}
-		if o.OscFreqFine > 99 {
-			fmt.Printf(" %s %d \n", " Fine before=  ", o.OscFreqFine)
-			o.OscFreqFine = 99
-			fmt.Printf(" %s %d \n", " Fine after =  ", o.OscFreqFine)
+		if dxOsc.OscFreqFine > 99 {
+			fmt.Printf(" %s %d \n", " Fine before=  ", dxOsc.OscFreqFine)
+			dxOsc.OscFreqFine = 99
+			fmt.Printf(" %s %d \n", " Fine after =  ", dxOsc.OscFreqFine)
 		}
 
 		// ******************************************************************************************
@@ -210,99 +210,19 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		// ******************************************************************************************
 		//Activate FILTER B above per voice above (in Header)
 
-		if o.KeyLevelScalingLeftDepth == 0 && o.KeyLevelScalingRightDepth == 0 {
+		if dxOsc.KeyLevelScalingLeftDepth == 0 && dxOsc.KeyLevelScalingRightDepth == 0 {
 			// optimization: if key scaling depths are zero, don't waste space for a filter
-			vce.Head.FILTER[i] = 0
+			vce.Head.FILTER[oscIndex] = 0
 		} else {
 			filterIndex++
-			//set filter B on for voice, b-filters are indicated by the 1-based osc index
-			vce.Head.FILTER[i] = filterIndex + 1
-
-			// Assumes no A-filter - so B filter for osc 1 (index 0) is always stored at 0:
-			vce.Filters[filterIndex][(breakPoint[o.KeyLevelScalingBreakPoint])] = 0 //KEY to FREQ Array is breakPoint[] (below)
-
-			// Scale from DX7 0 to 99 to Syn -64 to 63    //using DX 50 = 0
-
-			lMax := float64(o.KeyLevelScalingLeftDepth) * 0.63 //Assuming the DX7 is in Db also)
-			rMax := float64(o.KeyLevelScalingRightDepth) * 0.63
-
-			//  set Key Scaling curve below and above break point
-
-			// for linear, we compute via linear function y = slope*x + b
-			// b is the y value at "0" where "0" is the breakpoint, -- where y is by definition 0. So b is always 0
-			//
-			// for exponential, we base the curve on the array from the Dexed soft synth:
-			// const uint8_t exp_scale_data[] = {
-			//    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 14, 16, 19, 23, 27, 33, 39, 47, 56, 66,
-			//    80, 94, 110, 126, 142, 158, 174, 190, 206, 222, 238, 250
-			//};
-			// this can be modeled with the following equation:
-			//   y = pow(2.0, x / 3.5) * scale
-			//   where
-			//    x = abs(offset from the breakpoint)
-			//    scale = lMax / 256.0  (or rMax)
-			const expBase = 2.0
-			const expDivisor = 3.5
-			const expScale = 256.0
-
-			switch o.KeyLevelScalingLeftCurve { //0=-LIN, -EXP, +EXP, +LIN
-			case 0:
-				//-linear from -lMax to 0
-				slope := lMax / float64(breakPoint[o.KeyLevelScalingBreakPoint]-0)
-				for k := byte(0); k < breakPoint[o.KeyLevelScalingBreakPoint]; k++ {
-					vce.Filters[filterIndex][k] = int8(math.Round(-lMax + slope*float64(k)))
-				}
-			case 1:
-				//-EXP from -lMax to 0
-				for k := byte(0); k < breakPoint[o.KeyLevelScalingBreakPoint]; k++ {
-					x := float64(breakPoint[o.KeyLevelScalingBreakPoint] - k)
-					vce.Filters[filterIndex][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * -lMax)
-				}
-			case 2:
-				//EXP from lMax to 0
-				for k := byte(0); k < breakPoint[o.KeyLevelScalingBreakPoint]; k++ {
-					x := float64(breakPoint[o.KeyLevelScalingBreakPoint] - k)
-					vce.Filters[filterIndex][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * lMax)
-				}
-			case 3:
-				//linear from lMax to 0
-				slope := -lMax / float64(breakPoint[o.KeyLevelScalingBreakPoint]-0)
-				for k := byte(0); k < breakPoint[o.KeyLevelScalingBreakPoint]; k++ {
-					vce.Filters[filterIndex][k] = int8(math.Round(lMax + slope*float64(k)))
-				}
-			}
-
-			switch o.KeyLevelScalingRightCurve { //0=-LIN, -EXP, +EXP, +LIN
-			case 0:
-				// -Linear from 0 to -rMax
-				slope := -rMax / float64(32-breakPoint[o.KeyLevelScalingBreakPoint])
-				for k := breakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
-					vce.Filters[filterIndex][k] = int8(math.Round(slope * float64(k-breakPoint[o.KeyLevelScalingBreakPoint])))
-				}
-			case 1:
-				// -EXP from 0 to -rMax
-				for k := breakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
-					x := float64(k - breakPoint[o.KeyLevelScalingBreakPoint])
-					vce.Filters[filterIndex][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * -rMax)
-				}
-			case 2:
-				// EXP from 0 to rMax
-				for k := breakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
-					x := float64(k - breakPoint[o.KeyLevelScalingBreakPoint])
-					vce.Filters[filterIndex][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * rMax)
-				}
-			case 3:
-				// Linear from 0 to rMax
-				slope := rMax / float64(32-breakPoint[o.KeyLevelScalingBreakPoint])
-				for k := breakPoint[o.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
-					vce.Filters[filterIndex][k] = int8(math.Round(slope * float64(k-breakPoint[o.KeyLevelScalingBreakPoint])))
-				}
+			if err = convertKeyLevelScalingToFilters(oscIndex, dxOsc, filterIndex, &vce); err != nil {
+				return
 			}
 		}
 
 		// Set OSC mode     false = ratio   true = Fixed
-		if o.OscMode == false { //Ratio Mode
-			vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
+		if dxOsc.OscMode == false { //Ratio Mode
+			vce.Envelopes[oscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse
 
 			//fmt.Printf("  %s %t \n", " first transdown = ", transposedDown)
 			// ***************************************************************
@@ -318,59 +238,59 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			// ***************************************************************
 			//DX7 OP OscFreqCoarse == 0 means .5 1 octave below 1, which synergy does not have
 
-			if transposedDown == false && o.OscFreqFine == 0 { //No harmonic changes
-				//fmt.Printf(" %d %s  \n", i, " in down false ==0")
-				vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse
-				freqValueInt = int(math.Round(fineValues[o.OscFreqFine]))
+			if transposedDown == false && dxOsc.OscFreqFine == 0 { //No harmonic changes
+				//fmt.Printf(" %d %s  \n", oscIndex, " in down false ==0")
+				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse
+				freqValueInt = int(math.Round(fineValues[dxOsc.OscFreqFine]))
 				freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
 
-			} else if transposedDown == false && o.OscFreqFine != 0 {
-				//fmt.Printf(" %d %s  \n", i, " in down false !=0")
+			} else if transposedDown == false && dxOsc.OscFreqFine != 0 {
+				//fmt.Printf(" %d %s  \n", oscIndex, " in down false !=0")
 
-				freqValueInt = int(math.Round(fineValues[o.OscFreqFine]))
+				freqValueInt = int(math.Round(fineValues[dxOsc.OscFreqFine]))
 
 				freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
 
-			} else if transposedDown == true && o.OscFreqCoarse == 0 && o.OscFreqFine == 0 {
-				vce.Envelopes[i].FreqEnvelope.OHARM = 1
-				//fmt.Printf(" %d %s  \n", i, " Coarse = 0  Fine 0 Harm = 1")
-			} else if transposedDown == true && o.OscFreqCoarse == 0 && o.OscFreqFine == 50 {
-				//fmt.Printf(" %d %s  \n", i, " in true 0 50")
-				harmonic = float64(o.OscFreqCoarse)
+			} else if transposedDown == true && dxOsc.OscFreqCoarse == 0 && dxOsc.OscFreqFine == 0 {
+				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = 1
+				//fmt.Printf(" %d %s  \n", oscIndex, " Coarse = 0  Fine 0 Harm = 1")
+			} else if transposedDown == true && dxOsc.OscFreqCoarse == 0 && dxOsc.OscFreqFine == 50 {
+				//fmt.Printf(" %d %s  \n", oscIndex, " in true 0 50")
+				harmonic = float64(dxOsc.OscFreqCoarse)
 				harmonic = harmonic + .5
 				harmonic = harmonic * 2
-				vce.Envelopes[i].FreqEnvelope.OHARM = int8(harmonic)
+				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = int8(harmonic)
 
-			} else if transposedDown == true && o.OscFreqCoarse == 0 && o.OscFreqFine != 50 {
+			} else if transposedDown == true && dxOsc.OscFreqCoarse == 0 && dxOsc.OscFreqFine != 50 {
 				// TO DO
 				// Calculate combined freq of coarse and fine, then double for octave.
 				// Find closest harm to the OCT freq, then find remainder,
 				// and add the (remainder * 2) in as freqValueInt
-				//if o.OscFreqFine < 50 {
-				fmt.Printf(" %d %s  \n", i, " in true 0 !=50")
-				vce.Envelopes[i].FreqEnvelope.OHARM = 1
+				//if dxOsc.OscFreqFine < 50 {
+				fmt.Printf(" %d %s  \n", oscIndex, " in true 0 !=50")
+				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = 1
 				freqValueInt = 0
-				freqValueInt = int(math.Round(1 + fineValues[o.OscFreqFine]*2))
+				freqValueInt = int(math.Round(1 + fineValues[dxOsc.OscFreqFine]*2))
 				freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
 
-			} else if transposedDown == true && o.OscFreqCoarse != 0 && o.OscFreqFine == 50 {
-				//fmt.Printf(" %d %s  \n", i, " in true !0 = 50")
-				harmonic = float64(o.OscFreqCoarse)
+			} else if transposedDown == true && dxOsc.OscFreqCoarse != 0 && dxOsc.OscFreqFine == 50 {
+				//fmt.Printf(" %d %s  \n", oscIndex, " in true !0 = 50")
+				harmonic = float64(dxOsc.OscFreqCoarse)
 				harmonic = harmonic + .5
 				harmonic = harmonic * 2
-				vce.Envelopes[i].FreqEnvelope.OHARM = int8(harmonic)
+				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = int8(harmonic)
 
-			} else if transposedDown == true && o.OscFreqCoarse != 0 && o.OscFreqFine != 50 {
-				fmt.Printf(" %d %s  \n", i, " in true !0 !50 TO DO ")
-				vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse * 2
+			} else if transposedDown == true && dxOsc.OscFreqCoarse != 0 && dxOsc.OscFreqFine != 50 {
+				fmt.Printf(" %d %s  \n", oscIndex, " in true !0 !50 TO DO ")
+				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse * 2
 				//  have to add in FINE
 			} else {
-				//fmt.Printf(" %d %s  \n", i, " in else")
-				vce.Envelopes[i].FreqEnvelope.OHARM = o.OscFreqCoarse * 2
+				//fmt.Printf(" %d %s  \n", oscIndex, " in else")
+				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse * 2
 			} // Add Coarse <>0  fine = 50
 
 		} else { //Fixed Mode
-			vce.Envelopes[i].FreqEnvelope.OHARM = -12
+			vce.Envelopes[oscIndex].FreqEnvelope.OHARM = -12
 
 			//for k := -100; k >= -127; k-- {
 
@@ -378,12 +298,12 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			//	fmt.Printf(" %s %d %d  \n", "******* m  FRQACC = ", k, freqValueInt)
 			//}
 
-			switch o.OscFreqCoarse {
+			switch dxOsc.OscFreqCoarse {
 			case 0, 4, 8, 12, 16, 20, 24, 28:
 				// base freq = 1
 				{
 					freqValueInt = 0
-					freqValueInt = int(math.Round(1 + fineValues[o.OscFreqFine]))
+					freqValueInt = int(math.Round(1 + fineValues[dxOsc.OscFreqFine]))
 					//fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 				}
 
@@ -391,31 +311,31 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 				// freq = 10
 				{
 					freqValueInt = 0
-					freqValueInt = int(math.Round(10 + (fineValues[o.OscFreqFine] * 10)))
+					freqValueInt = int(math.Round(10 + (fineValues[dxOsc.OscFreqFine] * 10)))
 					//fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 				}
 			case 2, 6, 10, 14, 18, 22, 26, 30:
 				// freq = 100
 				{
 					freqValueInt = 0
-					freqValueInt = int(math.Round(100 + (fineValues[o.OscFreqFine] * 100)))
+					freqValueInt = int(math.Round(100 + (fineValues[dxOsc.OscFreqFine] * 100)))
 					//fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 				}
 			case 3, 7, 11, 15, 19, 23, 27, 31:
 				// freq = 1000
 				{
 					freqValueInt = 0
-					freqValueInt = int(math.Round(1000 + (fineValues[o.OscFreqFine] * 1000)))
+					freqValueInt = int(math.Round(1000 + (fineValues[dxOsc.OscFreqFine] * 1000)))
 					//fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 				}
 			}
 			freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
-			//fmt.Printf(" %d %s %d %d %d  \n \n", i, "  Fixed freq = ", o.OscFreqFine, freqValueInt, freqValueByte)
+			//fmt.Printf(" %d %s %d %d %d  \n \n", oscIndex, "  Fixed freq = ", dxOsc.OscFreqFine, freqValueInt, freqValueByte)
 		}
 
 		// Set OSC detune
-		vce.Envelopes[i].FreqEnvelope.FDETUN = helperUnscaleDetune(int(dTune[int(o.OscDetune)]))
-		//fmt.Printf(" %s %d %d \n", " Detune = ", o.OscDetune, vce.Envelopes[i].FreqEnvelope.FDETUN)
+		vce.Envelopes[oscIndex].FreqEnvelope.FDETUN = helperUnscaleDetune(int(dTune[int(dxOsc.OscDetune)]))
+		//fmt.Printf(" %s %d %d \n", " Detune = ", dxOsc.OscDetune, vce.Envelopes[oscIndex].FreqEnvelope.FDETUN)
 
 		// type = 1  : no loop (and LOOPPT and SUSTAINPT are accelleration rates not point positions)
 		// type = 2  : S only
@@ -423,28 +343,28 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		// type = 4  : R and S - R must be before S
 		// WARNING: when type1, the LOOPPT and SUSTAINPT values are _acceleration_ rates, not point positions. What a pain.
 		// Set for Sustain point only.
-		vce.Envelopes[i].AmpEnvelope.ENVTYPE = 2
+		vce.Envelopes[oscIndex].AmpEnvelope.ENVTYPE = 2
 		//  Always DX7 Sustain Point
-		vce.Envelopes[i].AmpEnvelope.SUSTAINPT = 3
+		vce.Envelopes[oscIndex].AmpEnvelope.SUSTAINPT = 3
 		// envelopes: DX amp envelopes always have 4 points
-		vce.Envelopes[i].AmpEnvelope.NPOINTS = 4
+		vce.Envelopes[oscIndex].AmpEnvelope.NPOINTS = 4
 
 		// set lower Env levels for velocity sensitivity
-		VelocityPercent = 1.0 - (float64(o.KeyVelocitySensitivity) / 10.0)
-		//fmt.Printf(" %s %f %d \n", " Vel% = ", VelocityPercent, o.KeyVelocitySensitivity)
+		VelocityPercent = 1.0 - (float64(dxOsc.KeyVelocitySensitivity) / 10.0)
+		//fmt.Printf(" %s %f %d \n", " Vel% = ", VelocityPercent, dxOsc.KeyVelocitySensitivity)
 
 		//  change levels for velocity sensitivity, PM Fix, and level comp
-		OSClevelPercent = float64(float64(o.OperatorOutputLevel) / 99.00)
+		OSClevelPercent = float64(float64(dxOsc.OperatorOutputLevel) / 99.00)
 
 		for k := 0; k < 4; k++ {
-			o.EgLevel[k] = byte(float64(o.EgLevel[k]) * OSClevelPercent * PMfix * LevComp * 0.727)
+			dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * OSClevelPercent * PMfix * LevComp * 0.727)
 		}
 
 		// Each Synergy oscillator is voice twice - for low and high key velocity response
 		// Synergy envelopes are represented as quads of ValLow, ValHi, RateLow and RateHi
 		// set both upper and lower envs the same
 
-		ms = computeDurationsMs(o.EgLevel, o.EgRate)
+		ms = computeDurationsMs(dxOsc.EgLevel, dxOsc.EgRate)
 		attkR = ms[0]
 		decyR = ms[1]
 		sustR = ms[2]
@@ -458,78 +378,78 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		*/
 
 		// point1
-		vce.Envelopes[i].AmpEnvelope.Table[0] = byte((math.Round(float64(o.EgLevel[0]) * VelocityPercent)) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[1] = byte((math.Round(float64(o.EgLevel[0]))) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[2] = byte(helperNearestAmpTimeIndex(attkR))
-		vce.Envelopes[i].AmpEnvelope.Table[3] = byte(helperNearestAmpTimeIndex(attkR))
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[0] = byte((math.Round(float64(dxOsc.EgLevel[0]) * VelocityPercent)) + 55)
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[1] = byte((math.Round(float64(dxOsc.EgLevel[0]))) + 55)
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[2] = byte(helperNearestAmpTimeIndex(attkR))
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[3] = byte(helperNearestAmpTimeIndex(attkR))
 
 		//point2
-		vce.Envelopes[i].AmpEnvelope.Table[4] = byte((math.Round(float64(o.EgLevel[1]) * VelocityPercent)) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[5] = byte((math.Round(float64(o.EgLevel[1]))) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[6] = byte(helperNearestAmpTimeIndex(decyR))
-		vce.Envelopes[i].AmpEnvelope.Table[7] = byte(helperNearestAmpTimeIndex(decyR))
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[4] = byte((math.Round(float64(dxOsc.EgLevel[1]) * VelocityPercent)) + 55)
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[5] = byte((math.Round(float64(dxOsc.EgLevel[1]))) + 55)
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[6] = byte(helperNearestAmpTimeIndex(decyR))
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[7] = byte(helperNearestAmpTimeIndex(decyR))
 
 		//point3
-		vce.Envelopes[i].AmpEnvelope.Table[8] = byte((math.Round(float64(o.EgLevel[2]) * VelocityPercent)) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[9] = byte((math.Round(float64(o.EgLevel[2]))) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[10] = byte(helperNearestAmpTimeIndex(sustR))
-		vce.Envelopes[i].AmpEnvelope.Table[11] = byte(helperNearestAmpTimeIndex(sustR))
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[8] = byte((math.Round(float64(dxOsc.EgLevel[2]) * VelocityPercent)) + 55)
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[9] = byte((math.Round(float64(dxOsc.EgLevel[2]))) + 55)
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[10] = byte(helperNearestAmpTimeIndex(sustR))
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[11] = byte(helperNearestAmpTimeIndex(sustR))
 
 		//point4
-		vce.Envelopes[i].AmpEnvelope.Table[12] = byte((math.Round(float64(o.EgLevel[3]) * VelocityPercent)) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[13] = byte((math.Round(float64(o.EgLevel[3]))) + 55)
-		vce.Envelopes[i].AmpEnvelope.Table[14] = byte(helperNearestAmpTimeIndex(relsR))
-		vce.Envelopes[i].AmpEnvelope.Table[15] = byte(helperNearestAmpTimeIndex(relsR))
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[12] = byte((math.Round(float64(dxOsc.EgLevel[3]) * VelocityPercent)) + 55)
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[13] = byte((math.Round(float64(dxOsc.EgLevel[3]))) + 55)
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[14] = byte(helperNearestAmpTimeIndex(relsR))
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[15] = byte(helperNearestAmpTimeIndex(relsR))
 
 		//TEMPORARY
 		// Freq envelope is commented out for now -- but we need the two control bytes at very minimum: adding that here
 		// point1
 
-		//vce.Envelopes[i].FreqEnvelope.Table[0] = 93
-		//vce.Envelopes[i].FreqEnvelope.Table[1] = 93
-		vce.Envelopes[i].FreqEnvelope.Table[0] = freqValueByte
-		vce.Envelopes[i].FreqEnvelope.Table[1] = freqValueByte
+		//vce.Envelopes[oscIndex].FreqEnvelope.Table[0] = 93
+		//vce.Envelopes[oscIndex].FreqEnvelope.Table[1] = 93
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[0] = freqValueByte
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[1] = freqValueByte
 
 		// special case for point1
-		vce.Envelopes[i].FreqEnvelope.Table[2] = 0x80 // matches default from EDATA
-		vce.Envelopes[i].FreqEnvelope.Table[3] = 0    // 0 == Sine, octave 0, freq int and amp int disabled
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[2] = 0x80 // matches default from EDATA
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[3] = 0    // 0 == Sine, octave 0, freq int and amp int disabled
 
 		// DX only has a single frequency envelope - replicate it on each Synergy osc:
 		// NOTE the first point in the Synergy freq table is "special" - it stores a "freq.scale and wavetype" instead of rates
 		// Like the amp table, the values are stored in quads, two values, two rates per point
 		/* ****************************************
 		// envelopes: DX freq envelopes always have 4 points
-		vce.Envelopes[i].FreqEnvelope.NPOINTS = 4
+		vce.Envelopes[oscIndex].FreqEnvelope.NPOINTS = 4
 
 		// point1
-		vce.Envelopes[i].FreqEnvelope.Table[0] = byte((math.Round(float64(dx7Voice.PitchEgLevel[0]))) + 55)
-		vce.Envelopes[i].FreqEnvelope.Table[1] = byte((math.Round(float64(dx7Voice.PitchEgLevel[0]))) + 55)
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[0] = byte((math.Round(float64(dx7Voice.PitchEgLevel[0]))) + 55)
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[1] = byte((math.Round(float64(dx7Voice.PitchEgLevel[0]))) + 55)
 		// special case for point1
-		vce.Envelopes[i].FreqEnvelope.Table[2] = 0x80 // matches default from EDATA
-		vce.Envelopes[i].FreqEnvelope.Table[3] = 0 // 0 == Sine, octave 0, freq int and amp int disabled
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[2] = 0x80 // matches default from EDATA
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[3] = 0 // 0 == Sine, octave 0, freq int and amp int disabled
 
 		// point2
-		vce.Envelopes[i].FreqEnvelope.Table[4] = byte((math.Round(float64(dx7Voice.PitchEgLevel[1]))) + 55)
-		vce.Envelopes[i].FreqEnvelope.Table[5] = byte((math.Round(float64(dx7Voice.PitchEgLevel[1]))) + 55)
-		vce.Envelopes[i].FreqEnvelope.Table[6] = (99 - dx7Voice.PitchEgRate[0]) +
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[4] = byte((math.Round(float64(dx7Voice.PitchEgLevel[1]))) + 55)
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[5] = byte((math.Round(float64(dx7Voice.PitchEgLevel[1]))) + 55)
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[6] = (99 - dx7Voice.PitchEgRate[0]) +
 			(99 - dx7Voice.PitchEgRate[1])
-		vce.Envelopes[i].FreqEnvelope.Table[7] = (99 - dx7Voice.PitchEgRate[0]) +
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[7] = (99 - dx7Voice.PitchEgRate[0]) +
 			(99 - dx7Voice.PitchEgRate[1])
 
 		// point3
-		vce.Envelopes[i].FreqEnvelope.Table[8] = byte((math.Round(float64(dx7Voice.PitchEgLevel[2]))) + 55)
-		vce.Envelopes[i].FreqEnvelope.Table[9] = byte((math.Round(float64(dx7Voice.PitchEgLevel[2]))) + 55)
-		vce.Envelopes[i].FreqEnvelope.Table[10] = (99 - dx7Voice.PitchEgRate[0]) +
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[8] = byte((math.Round(float64(dx7Voice.PitchEgLevel[2]))) + 55)
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[9] = byte((math.Round(float64(dx7Voice.PitchEgLevel[2]))) + 55)
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[10] = (99 - dx7Voice.PitchEgRate[0]) +
 			(99 - dx7Voice.PitchEgRate[1]) + (99 - dx7Voice.PitchEgRate[2])
-		vce.Envelopes[i].FreqEnvelope.Table[11] = (99 - dx7Voice.PitchEgRate[0]) +
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[11] = (99 - dx7Voice.PitchEgRate[0]) +
 			(99 - dx7Voice.PitchEgRate[1]) + (99 - dx7Voice.PitchEgRate[2])
 
 		// point4
-		vce.Envelopes[i].FreqEnvelope.Table[12] = byte((math.Round(float64(dx7Voice.PitchEgLevel[3]))) + 55)
-		vce.Envelopes[i].FreqEnvelope.Table[13] = byte((math.Round(float64(dx7Voice.PitchEgLevel[3]))) + 55)
-		vce.Envelopes[i].FreqEnvelope.Table[14] = (99 - dx7Voice.PitchEgRate[0]) +
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[12] = byte((math.Round(float64(dx7Voice.PitchEgLevel[3]))) + 55)
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[13] = byte((math.Round(float64(dx7Voice.PitchEgLevel[3]))) + 55)
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[14] = (99 - dx7Voice.PitchEgRate[0]) +
 			(99 - dx7Voice.PitchEgRate[1]) + (99 - dx7Voice.PitchEgRate[2]) + (99 - dx7Voice.PitchEgRate[3])
-		vce.Envelopes[i].FreqEnvelope.Table[15] = (99 - dx7Voice.PitchEgRate[0]) +
+		vce.Envelopes[oscIndex].FreqEnvelope.Table[15] = (99 - dx7Voice.PitchEgRate[0]) +
 			(99 - dx7Voice.PitchEgRate[1]) + (99 - dx7Voice.PitchEgRate[2]) + (99 - dx7Voice.PitchEgRate[3])
 		*/
 	}
@@ -538,6 +458,93 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 	//	err = errors.New("an error message")
 	//  return
 
+	return
+}
+
+func convertKeyLevelScalingToFilters(oscIndex int, dxOsc Dx7Osc, filterIndex int8, vce *data.VCE) (err error) {
+	//set filter B on for voice, b-filters are indicated by the 1-based osc index
+	vce.Head.FILTER[oscIndex] = filterIndex + 1
+
+	// Assumes no A-filter - so B filter for osc 1 (index 0) is always stored at 0:
+	vce.Filters[filterIndex][(breakPoint[dxOsc.KeyLevelScalingBreakPoint])] = 0 //KEY to FREQ Array is breakPoint[] (below)
+
+	// Scale from DX7 0 to 99 to Syn -64 to 63    //using DX 50 = 0
+
+	lMax := float64(dxOsc.KeyLevelScalingLeftDepth) * 0.63 //Assuming the DX7 is in Db also)
+	rMax := float64(dxOsc.KeyLevelScalingRightDepth) * 0.63
+
+	//  set Key Scaling curve below and above break point
+
+	// for linear, we compute via linear function y = slope*x + b
+	// b is the y value at "0" where "0" is the breakpoint, -- where y is by definition 0. So b is always 0
+	//
+	// for exponential, we base the curve on the array from the Dexed soft synth:
+	// const uint8_t exp_scale_data[] = {
+	//    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 14, 16, 19, 23, 27, 33, 39, 47, 56, 66,
+	//    80, 94, 110, 126, 142, 158, 174, 190, 206, 222, 238, 250
+	//};
+	// this can be modeled with the following equation:
+	//   y = pow(2.0, x / 3.5) * scale
+	//   where
+	//    x = abs(offset from the breakpoint)
+	//    scale = lMax / 256.0  (or rMax)
+	const expBase = 2.0
+	const expDivisor = 3.5
+	const expScale = 256.0
+
+	switch dxOsc.KeyLevelScalingLeftCurve { //0=-LIN, -EXP, +EXP, +LIN
+	case 0:
+		//-linear from -lMax to 0
+		slope := lMax / float64(breakPoint[dxOsc.KeyLevelScalingBreakPoint]-0)
+		for k := byte(0); k < breakPoint[dxOsc.KeyLevelScalingBreakPoint]; k++ {
+			vce.Filters[filterIndex][k] = int8(math.Round(-lMax + slope*float64(k)))
+		}
+	case 1:
+		//-EXP from -lMax to 0
+		for k := byte(0); k < breakPoint[dxOsc.KeyLevelScalingBreakPoint]; k++ {
+			x := float64(breakPoint[dxOsc.KeyLevelScalingBreakPoint] - k)
+			vce.Filters[filterIndex][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * -lMax)
+		}
+	case 2:
+		//EXP from lMax to 0
+		for k := byte(0); k < breakPoint[dxOsc.KeyLevelScalingBreakPoint]; k++ {
+			x := float64(breakPoint[dxOsc.KeyLevelScalingBreakPoint] - k)
+			vce.Filters[filterIndex][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * lMax)
+		}
+	case 3:
+		//linear from lMax to 0
+		slope := -lMax / float64(breakPoint[dxOsc.KeyLevelScalingBreakPoint]-0)
+		for k := byte(0); k < breakPoint[dxOsc.KeyLevelScalingBreakPoint]; k++ {
+			vce.Filters[filterIndex][k] = int8(math.Round(lMax + slope*float64(k)))
+		}
+	}
+
+	switch dxOsc.KeyLevelScalingRightCurve { //0=-LIN, -EXP, +EXP, +LIN
+	case 0:
+		// -Linear from 0 to -rMax
+		slope := -rMax / float64(32-breakPoint[dxOsc.KeyLevelScalingBreakPoint])
+		for k := breakPoint[dxOsc.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
+			vce.Filters[filterIndex][k] = int8(math.Round(slope * float64(k-breakPoint[dxOsc.KeyLevelScalingBreakPoint])))
+		}
+	case 1:
+		// -EXP from 0 to -rMax
+		for k := breakPoint[dxOsc.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
+			x := float64(k - breakPoint[dxOsc.KeyLevelScalingBreakPoint])
+			vce.Filters[filterIndex][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * -rMax)
+		}
+	case 2:
+		// EXP from 0 to rMax
+		for k := breakPoint[dxOsc.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
+			x := float64(k - breakPoint[dxOsc.KeyLevelScalingBreakPoint])
+			vce.Filters[filterIndex][k] = int8(math.Pow(expBase, x/expDivisor) / expScale * rMax)
+		}
+	case 3:
+		// Linear from 0 to rMax
+		slope := rMax / float64(32-breakPoint[dxOsc.KeyLevelScalingBreakPoint])
+		for k := breakPoint[dxOsc.KeyLevelScalingBreakPoint] + 1; k < 32; k++ {
+			vce.Filters[filterIndex][k] = int8(math.Round(slope * float64(k-breakPoint[dxOsc.KeyLevelScalingBreakPoint])))
+		}
+	}
 	return
 }
 
