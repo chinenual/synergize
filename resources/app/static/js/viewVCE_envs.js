@@ -894,6 +894,11 @@ let viewVCE_envs = {
 
         console.log("#points changed: " + whichEnv + " increment: " + increment);
 
+        // reset the floating point backing arrays: FIXME: this may mean that someone who is in
+        // midst of twiddling gain, then adds/deletes a point, then expects gain to keep working
+        // may get a suprised distortion in the envelope shape.
+        viewVCE_envs.floatAmpVal = null;
+
         var changed = false;
         if (whichEnv === 'freq') {
             newlen = envs.FreqEnvelope.NPOINTS + increment;

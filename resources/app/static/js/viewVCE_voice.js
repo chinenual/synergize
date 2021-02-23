@@ -701,6 +701,11 @@ ${freqDAG}
 			return;
 		}
 
+		// reset the floating point backing arrays: FIXME: this may mean that someone who is in
+		// midst of twiddling gain, then adds/deletes a oscillator, then expects gain to keep working
+		// may get a suprised distortion in the envelope shape.
+		viewVCE_envs.floatAmpVal = null;
+
 		let message = {
 			"name": "setNumOscillators",
 			"payload": {
