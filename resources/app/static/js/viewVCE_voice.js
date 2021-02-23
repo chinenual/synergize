@@ -333,6 +333,7 @@ let viewVCE_voice = {
 		var value
 		var param
 		var args
+		var gainPattern = /OscGain\[(\d+)\]/;
 		var filterPattern = /FILTER\[(\d+)\]/;
 		var dsrPattern = /([0-9A-Za-z]+DSR)\[(\d+)\]/;
 		var waveKeyPattern = /wk([A-Z]+)\[(\d+)\]/;
@@ -342,6 +343,13 @@ let viewVCE_voice = {
 			param = "VNAME"
 			funcname = "setVNAME";
 			args = ele.value;
+		} else if (ret = id.match(gainPattern)) {
+			osc = parseInt(ret[1])
+			value = parseInt(ele.value, 10);
+			viewVCE_envs.setOscGain(osc-1,value);
+			viewVCE_voice.sendToCSurface(ele, ele.id, value);
+			return
+
 		} else if (ret = id.match(dsrPattern)) {
 			param = ret[1]
 			osc = ret[2]
@@ -463,6 +471,16 @@ let viewVCE_voice = {
 			viewVCE_voice.sendToCSurface(null, `SOLO[${osc + 1}]`, 0)
 
 			tr.appendChild(td);
+
+			// Gain
+			gain = viewVCE_envs.computeOscGain(osc, 2);
+			td = document.createElement("td");
+			td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinPLAIN" id="OscGain[${osc + 1}]" 
+			onchange="viewVCE_voice.onchange(this,undefined,undefined)" value="${gain}"
+			min="0" max="100"
+			disabled/></div>`;
+			tr.appendChild(td);
+			viewVCE_voice.sendToCSurface(null, `OscGain[${osc + 1}]`, gain)
 
 			// XREF: patch byte encode/decode
 			// FIXME: assumes envelopes are sorted in oscillator order
