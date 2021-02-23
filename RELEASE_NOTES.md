@@ -28,7 +28,8 @@ permalink: /docs/release-notes
   a gain control for each oscillator. Changing the value scales the
   oscillator's Amp envelopes by the corresponding proportion.  The
   Envelope tab has per-envelope gain, so you can control the Low and
-  Up envelopes individually.
+  Up envelopes individually.   The control surface interface has new
+  sliders to control these gain controls.
 * Fixes [issue #34](https://github.com/chinenual/synergize/issues/34):
   Filter index #4 was mislabeled with the wrong frequency.
 * Fixes [issue #35](https://github.com/chinenual/synergize/issues/35):

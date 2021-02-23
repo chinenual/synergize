@@ -318,7 +318,7 @@ let viewVCE_envs = {
         if (viewVCE_envs.floatAmpVal === null) {
             viewVCE_envs.floatAmpVal = []
             console.log("initFloatVals init: ",viewVCE_envs.floatAmpVal)
-            for (osc = 0; osc < vce.Head.VOITAB; osc++) {
+            for (osc = 0; osc <= vce.Head.VOITAB; osc++) {
                 viewVCE_envs.floatAmpVal.push({low: [], up: []})
                 console.log("initFloatVals top: " + osc,viewVCE_envs.floatAmpVal)
 
@@ -404,7 +404,7 @@ let viewVCE_envs = {
                 vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + lowup] =
                     viewVCE_envs.unscaleAmpEnvValue(newval);
                 let message = {
-                    "name": funcName,
+                    "name": lowup == 0 ? 'setEnvAmpLowVal' : 'setEnvAmpUpVal',
                     "payload": {
                         "Osc": osc + 1, // one-based
                         "Index": eleIndex + 1, // one-based
@@ -456,6 +456,7 @@ let viewVCE_envs = {
         } else {
             viewVCE_envs.setGain(osc, gain, 1);
         }
+        viewVCE_voice.sendToCSurface(null, ele.id, gain);
     },
 
     supressOnChange: false,
@@ -828,7 +829,6 @@ let viewVCE_envs = {
                 case "envAmpLowVal":
                     bytevalue = viewVCE_envs.unscaleAmpEnvValue(value);
                     vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 0] = bytevalue;
-                    console.log('extrarg', extraarg);
                     if (extraarg == undefined) {
                         // update the floatVal so gains work
                         viewVCE_envs.initFloatVals();
@@ -839,7 +839,6 @@ let viewVCE_envs = {
                 case "envAmpUpVal":
                     bytevalue = viewVCE_envs.unscaleAmpEnvValue(value);
                     vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 1] = bytevalue;
-                    console.log('extrarg', extraarg);
                     if (extraarg == undefined) {
                         // update the floatVal so gains work
                         viewVCE_envs.initFloatVals();
@@ -1010,7 +1009,7 @@ let viewVCE_envs = {
             option.innerHTML = "";
             envCopySelectEle.appendChild(option);
 
-            for (i = 0; i < vce.Head.VOITAB; i++) {
+            for (i = 0; i <= vce.Head.VOITAB; i++) {
                 if ((i + 1) != oscNum) {
                     var option = document.createElement("option");
                     option.value = i + 1;
@@ -1214,6 +1213,11 @@ let viewVCE_envs = {
         }
         $('#gainAmpLow').val(viewVCE_envs.computeOscGain(oscIndex,0));
         $('#gainAmpUp').val(viewVCE_envs.computeOscGain(oscIndex,1));
+        if (animate) {
+            console.log("GAIN TO CS: " + $('#gainAmpLow').val() +" and " + $('#gainAmpUp').val())
+            viewVCE_voice.sendToCSurface(null, `gainAmpLow`, $('#gainAmpLow').val());
+            viewVCE_voice.sendToCSurface(null, `gainAmpUp`, $('#gainAmpUp').val());
+        }
 
         for (i = envelopes.FreqEnvelope.NPOINTS; i < 16; i++) {
             // hide unused rows
