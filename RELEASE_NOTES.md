@@ -24,9 +24,11 @@ permalink: /docs/release-notes
   control surface file has changed to support the new range.  Install
   the new version in order to use the new frequency envelope range.
 * Implements [issue #38](https://github.com/chinenual/synergize/issues/38):
-  New "Gain" control for the amplitude envelopes.  Clicking `+` or `-`
-  adjusts all of the points on the corresponding envelope plus or
-  minus 10% of the current values.
+  New "Gain" controls for amplitude envelopes.  The Voice tab has
+  a gain control for each oscillator. Changing the value scales the
+  oscillator's Amp envelopes by the corresponding proportion.  The
+  Envelope tab has per-envelope gain, so you can control the Low and
+  Up envelopes individually.
 * Fixes [issue #34](https://github.com/chinenual/synergize/issues/34):
   Filter index #4 was mislabeled with the wrong frequency.
 * Fixes [issue #35](https://github.com/chinenual/synergize/issues/35):
