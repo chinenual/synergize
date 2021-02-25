@@ -383,7 +383,7 @@ let viewVCE_voice = {
 			args = [osc, value]
 
 			//console.log("changed: " + id + " param: " + param + " osc: " + osc);
-			vce.Envelopes[osc - 1].FreqEnvelope[param] = valueConverter(ele.value);
+			vce.Envelopes[osc - 1].FreqEnvelope[param] = value;
 			funcname = "setVoiceByte"
 
 		} else if (ret = id.match(headPattern)) {
