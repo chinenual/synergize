@@ -154,7 +154,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		PMfix = 1.0
 
 		if patchOutputDSR > 0 {
-			PMfix = 1.05 //
+			PMfix = 1.05
 			//fmt.Printf(" %s %f \n", " PMfix = ", PMfix)
 		} else {
 			PMfix = 1.0
@@ -224,7 +224,6 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		if dxOsc.OscMode == false { //Ratio Mode
 			vce.Envelopes[oscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse
 
-			//fmt.Printf("  %s %t \n", " first transdown = ", transposedDown)
 			// ***************************************************************
 			// TO DO  :::::  Add more code to take DX7 Fine into consideration
 			// Fine is 100 steps, including first 0 step.
@@ -304,7 +303,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 				{
 					freqValueInt = 0
 					freqValueInt = int(math.Round(1 + fineValues[dxOsc.OscFreqFine]))
-					//fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
+					fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 				}
 
 			case 1, 5, 9, 13, 17, 21, 25, 29:
@@ -312,25 +311,25 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 				{
 					freqValueInt = 0
 					freqValueInt = int(math.Round(10 + (fineValues[dxOsc.OscFreqFine] * 10)))
-					//fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
+					fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 				}
 			case 2, 6, 10, 14, 18, 22, 26, 30:
 				// freq = 100
 				{
 					freqValueInt = 0
 					freqValueInt = int(math.Round(100 + (fineValues[dxOsc.OscFreqFine] * 100)))
-					//fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
+					fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 				}
 			case 3, 7, 11, 15, 19, 23, 27, 31:
 				// freq = 1000
 				{
 					freqValueInt = 0
 					freqValueInt = int(math.Round(1000 + (fineValues[dxOsc.OscFreqFine] * 1000)))
-					//fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
+					fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 				}
 			}
 			freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
-			//fmt.Printf(" %d %s %d %d %d  \n \n", oscIndex, "  Fixed freq = ", dxOsc.OscFreqFine, freqValueInt, freqValueByte)
+			fmt.Printf(" %d %s %d %d %d  \n \n", oscIndex+1, "  Fixed freq = ", dxOsc.OscFreqFine, freqValueInt, freqValueByte)
 		}
 
 		// Set OSC detune
