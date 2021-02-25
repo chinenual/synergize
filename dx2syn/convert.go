@@ -92,7 +92,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 	vce.Head.VASENS = 31
 	vce.Head.VTSENS = 31
 	vce.Head.VTCENT = 24
-	vce.Head.VIBRAT = dx7Voice.LfoSpeed
+	vce.Head.VIBRAT = (dx7Voice.LfoSpeed + 1) / 3
 	vce.Head.VIBDEL = dx7Voice.LfoDelay
 	vce.Head.VIBDEP = int8(dx7Voice.LfoPitchModDepth)
 	vce.Head.VTRANS = int8(dx7Voice.Transpose - 24)
@@ -121,7 +121,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		if o.OscFreqCoarse == 0 && o.OscMode == false {
 			transposedDown = true
 			vce.Head.VTRANS = vce.Head.VTRANS - 12
-			fmt.Printf(" %s %d %d \n", " transpose - Ratio mode  ", o, o.OscMode)
+			//fmt.Printf(" %s %d %d \n", " transpose - Ratio mode  ", o, o.OscMode)
 			break
 		}
 	}
