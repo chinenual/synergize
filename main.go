@@ -455,7 +455,7 @@ func main() {
 			Options: &astilectron.WindowOptions{
 				BackgroundColor: astikit.StrPtr("black"),
 				Center:          astikit.BoolPtr(true),
-				Height:          astikit.IntPtr(800),
+				Height:          astikit.IntPtr(900),
 				Width:           astikit.IntPtr(990),
 			},
 		}, {
