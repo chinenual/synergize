@@ -122,7 +122,7 @@ describe('Test envs page edits', () => {
             .selectByValue(cssQuoteId('#envFreqLoop[2]'), 'L')
 
             .waitForVisible('#alertText')
-            .then(() => { return hooks.screenshotAndCompare(app, 'envs-LLoopAfterSustain-alert') })
+            .then(() => { return hooks.screenshotAndCompare(app, 'envs-freq-LLoopAfterSustain-alert') })
 
             .getText('#alertText').should.eventually.include('SUSTAIN point must be after')
 
@@ -133,7 +133,7 @@ describe('Test envs page edits', () => {
             .selectByValue(cssQuoteId('#envFreqLoop[2]'), 'R')
 
             .waitForVisible('#alertText')
-            .then(() => { return hooks.screenshotAndCompare(app, 'envs-RLoopAfterSustain-alert') })
+            .then(() => { return hooks.screenshotAndCompare(app, 'envs-freq-RLoopAfterSustain-alert') })
 
             .getText('#alertText').should.eventually.include('SUSTAIN point must be after')
 
@@ -149,7 +149,7 @@ describe('Test envs page edits', () => {
             .selectByValue(cssQuoteId('#envAmpLoop[2]'), 'L')
 
             .waitForVisible('#alertText')
-            .then(() => { return hooks.screenshotAndCompare(app, 'envs-LLoopAfterSustain-alert') })
+            .then(() => { return hooks.screenshotAndCompare(app, 'envs-amp-LLoopAfterSustain-alert') })
 
             .getText('#alertText').should.eventually.include('SUSTAIN point must be after')
 
@@ -160,7 +160,7 @@ describe('Test envs page edits', () => {
             .selectByValue(cssQuoteId('#envAmpLoop[2]'), 'R')
 
             .waitForVisible('#alertText')
-            .then(() => { return hooks.screenshotAndCompare(app, 'envs-RLoopAfterSustain-alert') })
+            .then(() => { return hooks.screenshotAndCompare(app, 'envs-amp-RLoopAfterSustain-alert') })
 
             .getText('#alertText').should.eventually.include('SUSTAIN point must be after')
 
@@ -248,7 +248,7 @@ describe('Test envs page edits', () => {
             .click('#del-freq-env-point')
 
             .waitForVisible('#alertText')
-            .then(() => { return hooks.screenshotAndCompare(app, 'envs-deleteLoopPoint-alert') })
+            .then(() => { return hooks.screenshotAndCompare(app, 'envs-freq-deleteLoopPoint-alert') })
 
             .getText('#alertText').should.eventually.include('Cannot remove envelope point')
 
@@ -263,7 +263,7 @@ describe('Test envs page edits', () => {
             .click('#del-amp-env-point')
 
             .waitForVisible('#alertText')
-            .then(() => { return hooks.screenshotAndCompare(app, 'envs-deleteLoopPoint-alert') })
+            .then(() => { return hooks.screenshotAndCompare(app, 'envs-amp-deleteLoopPoint-alert') })
 
             .getText('#alertText').should.eventually.include('Cannot remove envelope point')
 
@@ -278,7 +278,7 @@ describe('Test envs page edits', () => {
             .selectByValue(cssQuoteId('#envFreqLoop[4]'), '')
 
             .waitForVisible('#alertText')
-            .then(() => { return hooks.screenshotAndCompare(app, 'envs-deleteSustainPoint-alert') })
+            .then(() => { return hooks.screenshotAndCompare(app, 'envs-freq-deleteSustainPoint-alert') })
 
             .getText('#alertText').should.eventually.include('Cannot remove')
 
@@ -294,7 +294,7 @@ describe('Test envs page edits', () => {
             .selectByValue(cssQuoteId('#envAmpLoop[4]'), '')
 
             .waitForVisible('#alertText')
-            .then(() => { return hooks.screenshotAndCompare(app, 'envs-deleteSustainPoint-alert') })
+            .then(() => { return hooks.screenshotAndCompare(app, 'envs-amp-deleteSustainPoint-alert') })
 
             .getText('#alertText').should.eventually.include('Cannot remove')
 
