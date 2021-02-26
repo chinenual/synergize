@@ -357,6 +357,12 @@ let viewVCE_envs = {
         var gainLow = viewVCE_envs.computeOscGain(osc, 0);
         var gainUp  = viewVCE_envs.computeOscGain(osc, 1);
         var origOscGain = Math.max(gainLow, gainUp);
+        if (origOscGain <= 0.0) {
+            // avoid divide by zero!  when original gain was zero, may as well just set the new
+            // gain as requested
+            origOscGain = 1.0;
+        }
+
         // proportional change for each point
         var proportion = gain / origOscGain;
         console.log("setOscGain " + osc + " " + gain + " " + proportion);
@@ -370,6 +376,8 @@ let viewVCE_envs = {
         // updates to the csurface. If not visible, update the data structures and send
         // changes to the Synergy, but dont update any visible controls.
 
+        console.log("setGain: " + osc + " " + gain + " " + lowup);
+
         var envOscSelectEle = document.getElementById("envOscSelect");
         var visibleOsc = parseInt(envOscSelectEle.value, 10); // one-based osc index
         visibleOsc--; // convert to zero-base
@@ -380,6 +388,11 @@ let viewVCE_envs = {
         var origGain = viewVCE_envs.computeOscGain(osc, lowup);
         // proportional change for each point
         var proportion = gain / origGain;
+        if (origGain <= 0.0) {
+            // avoid divide by zero!  when original gain was zero, may as well just set the new
+            // gain as requested
+            origGain = 1.0;
+        }
 
         var floatVals = lowup == 0 ? viewVCE_envs.floatAmpVal[osc].low : viewVCE_envs.floatAmpVal[osc].up;
 
@@ -390,7 +403,7 @@ let viewVCE_envs = {
             floatNewVal = Math.min(72, Math.max(0, floatNewVal));
             var newval = Math.round(floatNewVal);
             floatVals[eleIndex] = floatNewVal;
-            console.log(" setGain " + gain + " " + stub + "[" + eleIndex + "] " + oldval + " " + proportion + " " + floatVals[eleIndex] + " " + newval);
+            console.log("  setGain (point) " + gain + " " + stub + "[" + eleIndex + "] " + oldval + " " + proportion + " " + floatVals[eleIndex] + " " + newval);
 
             if (visibleOsc == osc) {
                 var input = document.getElementById(`${stub}[${eleIndex + 1}]`)
@@ -447,6 +460,7 @@ let viewVCE_envs = {
     raw_onchangeGain: function (ele) { // low or up gain change
         var gain = parseInt(ele.value, 10);
 
+        console.log("onchangeGain: " + ele.id + " " + gain);
         var envOscSelectEle = document.getElementById("envOscSelect");
         var osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
         osc--; // convert to zero-base
@@ -834,6 +848,9 @@ let viewVCE_envs = {
                         viewVCE_envs.initFloatVals();
                         viewVCE_envs.floatAmpVal[osc-1].low[eleIndex - 1] = value;
                         $('#gainAmpLow').val = viewVCE_envs.computeOscGain(osc-1,0);
+                        // update the Voice tab
+                        document.getElementById(`OscGain[${osc}]`).value = viewVCE_envs.computeOscGain(osc-1,2)
+                        console.log("onchange: setGain: update voice tab: " +osc+1 + " "+ document.getElementById(`OscGain[${osc}]`).value)
                     }
                     break;
                 case "envAmpUpVal":
