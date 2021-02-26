@@ -19,6 +19,7 @@ var verboseFlag = flag.Bool("verbose", false, "Verbose debugging")
 var statsFlag = flag.Bool("stats", false, "print statistics about the sysex - dont generate vce")
 var stevealgoFlag = flag.Bool("stevealgo", false, "create 32 different vce's - one for each algo")
 var makecrtFlag = flag.String("makecrt", "", "Pathname of a directory containing VCEs")
+var algoFlag = flag.Int("algo", -1, "DX Algorithm Number")
 
 func usage(msg string) {
 	log.Printf("ERROR: %s\n", msg)
@@ -97,6 +98,22 @@ func main() {
 		selectedVoices = sysex.Voices
 	} else if *indexFlag >= 0 {
 		selectedVoices = sysex.Voices[*indexFlag : *indexFlag+1]
+	} else if *algoFlag != -1 {
+		// search for the algo
+		for i, v := range sysex.Voices {
+			if int(v.Algorithm) == *algoFlag {
+				selectedVoices = sysex.Voices[i : i+1]
+				break
+			}
+		}
+		if selectedVoices == nil {
+			log.Printf("ERROR: no such voice name '%d'. Valid names:\n", *algoFlag)
+			for _, v := range sysex.Voices {
+				log.Printf("'%d'\n", v.Algorithm)
+			}
+			os.Exit(1)
+		}
+
 	} else if *nameFlag != "" {
 		// search for the name
 		for i, v := range sysex.Voices {
