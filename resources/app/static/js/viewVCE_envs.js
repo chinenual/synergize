@@ -387,11 +387,22 @@ let viewVCE_envs = {
 
         var origGain = viewVCE_envs.computeOscGain(osc, lowup);
         // proportional change for each point
-        var proportion = gain / origGain;
         if (origGain <= 0.0) {
             // avoid divide by zero!  when original gain was zero, may as well just set the new
             // gain as requested
             origGain = 1.0;
+        }
+        var proportion = gain / origGain;
+        if (proportion < 0.006) {
+            // prevent the floatVals from going to "zero" due to gain manipulation.  Allow gain
+            // to ressurect the shape of the env even if "orig gain" was 0.  (values can be
+            // true zero if set directly on the point value, but not via gain).
+            //
+            // this value is chosen so that "max val" (72) * proportion rounds to zero so the displayed
+            // value (and value sent to the Synergy) will be zero even though the residual value in the
+            // float array can still retain the shape of the envelope in case the gain is increased.
+            //    72 * 0.006 == 0.432
+            proportion = 0.006;
         }
 
         var floatVals = lowup == 0 ? viewVCE_envs.floatAmpVal[osc].low : viewVCE_envs.floatAmpVal[osc].up;
