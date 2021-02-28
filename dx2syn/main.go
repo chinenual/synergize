@@ -101,13 +101,13 @@ func main() {
 	} else if *algoFlag != -1 {
 		// search for the algo
 		for i, v := range sysex.Voices {
-			if int(v.Algorithm) == *algoFlag {
+			if int(v.Algorithm) == (*algoFlag - 1) {
 				selectedVoices = sysex.Voices[i : i+1]
 				break
 			}
 		}
 		if selectedVoices == nil {
-			log.Printf("ERROR: no such voice name '%d'. Valid names:\n", *algoFlag)
+			log.Printf("ERROR: no such voice name '%d'. Valid names:\n", (*algoFlag - 1))
 			for _, v := range sysex.Voices {
 				log.Printf("'%d'\n", v.Algorithm)
 			}
