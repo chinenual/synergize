@@ -64,6 +64,7 @@ var (
 	a       *astilectron.Astilectron
 	//l          logger.Logger //*log.Logger
 	AppVersion string
+	OsVersion  string
 )
 
 func getDefaultBaud() uint {
@@ -156,6 +157,7 @@ func init() {
 	// for linux, it reports the kernel
 	//    Core:"5.4.0-52-generic"
 	gi := goInfo.GetInfo()
+	OsVersion = gi.Core
 	logger.Infof("Operating environment: %#v\n", gi)
 }
 
@@ -453,7 +455,7 @@ func main() {
 			Options: &astilectron.WindowOptions{
 				BackgroundColor: astikit.StrPtr("black"),
 				Center:          astikit.BoolPtr(true),
-				Height:          astikit.IntPtr(800),
+				Height:          astikit.IntPtr(900),
 				Width:           astikit.IntPtr(990),
 			},
 		}, {
@@ -476,7 +478,7 @@ func main() {
 				BackgroundColor: astikit.StrPtr("#ccc"),
 				Center:          astikit.BoolPtr(true),
 				Show:            astikit.BoolPtr(false),
-				Height:          astikit.IntPtr(630),
+				Height:          astikit.IntPtr(680),
 				Width:           astikit.IntPtr(800),
 				Custom: &astilectron.WindowCustomOptions{
 					HideOnClose: astikit.BoolPtr(true),

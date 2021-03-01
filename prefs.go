@@ -17,6 +17,7 @@ type Preferences struct {
 	OscPort            uint
 	SerialBaud         uint
 	SerialPort         string
+	SerialFlowControl  bool
 	UseOsc             bool
 	UseSerial          bool
 
@@ -27,12 +28,13 @@ type Preferences struct {
 var preferencesPathname = getWorkingDirectory() + "/preferences.json"
 
 var prefsUserPreferences = Preferences{
-	OscAutoConfig:   false,
-	OscCSurfacePort: 9000,
-	OscPort:         8000,
-	SerialBaud:      9600,
-	UseOsc:          false,
-	UseSerial:       true,
+	OscAutoConfig:     false,
+	OscCSurfacePort:   9000,
+	OscPort:           8000,
+	SerialBaud:        9600,
+	SerialFlowControl: true,
+	UseOsc:            false,
+	UseSerial:         true,
 }
 
 func prefsLoadPreferences() (err error) {

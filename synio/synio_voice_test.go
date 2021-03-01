@@ -167,9 +167,9 @@ func TestRoundTrip(t *testing.T) {
 		case "VIBDEL":
 			value = dumpedVce.Head.VIBDEL
 		case "VIBDEP":
-			value = dumpedVce.Head.VIBDEP
+			value = byte(dumpedVce.Head.VIBDEP)
 		case "APVIB":
-			value = dumpedVce.Head.APVIB
+			value = byte(dumpedVce.Head.APVIB)
 		default:
 			t.Errorf("Unhandled field %s", v.Name)
 		}

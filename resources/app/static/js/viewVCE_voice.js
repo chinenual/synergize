@@ -206,7 +206,7 @@ let viewVCE_voice = {
 
 	testConversionFunctions: function () {
 		var ok = true;
-		for (var i = 0; i < 5; i++) {
+		for (var i = 0; i < 3; i++) {
 			var str = viewVCE_voice.NullablePatchRegisterToText('' + i);
 			var reverseStr = viewVCE_voice.TextToNullablePatchRegister(str);
 			if (('' + i) != reverseStr) {
@@ -333,6 +333,7 @@ let viewVCE_voice = {
 		var value
 		var param
 		var args
+		var gainPattern = /OscGain\[(\d+)\]/;
 		var filterPattern = /FILTER\[(\d+)\]/;
 		var dsrPattern = /([0-9A-Za-z]+DSR)\[(\d+)\]/;
 		var waveKeyPattern = /wk([A-Z]+)\[(\d+)\]/;
@@ -342,6 +343,13 @@ let viewVCE_voice = {
 			param = "VNAME"
 			funcname = "setVNAME";
 			args = ele.value;
+		} else if (ret = id.match(gainPattern)) {
+			osc = parseInt(ret[1])
+			value = parseInt(ele.value, 10);
+			viewVCE_envs.setOscGain(osc-1,value);
+			viewVCE_voice.sendToCSurface(ele, ele.id, value);
+			return
+
 		} else if (ret = id.match(dsrPattern)) {
 			param = ret[1]
 			osc = ret[2]
@@ -361,10 +369,12 @@ let viewVCE_voice = {
 				funcname = "setOscWAVE"
 				value = ele.value == "Sin" ? 0 : 1;
 				args = [osc, value];
+				vce.Envelopes[osc-1].FreqEnvelope.Table[3] |= value;
 			} else {
 				funcname = "setOscKEYPROP"
 				value = ele.checked ? 1 : 0;
 				args = [osc, value];
+				vce.Envelopes[osc-1].FreqEnvelope.Table[3] |= (value ? 0x10 : 0);
 			}
 		} else if (ret = id.match(oscPattern)) {
 			param = ret[1];
@@ -373,7 +383,7 @@ let viewVCE_voice = {
 			args = [osc, value]
 
 			//console.log("changed: " + id + " param: " + param + " osc: " + osc);
-			vce.Envelopes[osc - 1][param] = valueConverter(ele.value);
+			vce.Envelopes[osc - 1].FreqEnvelope[param] = value;
 			funcname = "setVoiceByte"
 
 		} else if (ret = id.match(headPattern)) {
@@ -438,6 +448,7 @@ let viewVCE_voice = {
 			viewVCE_voice.sendToCSurface(null, `osc-enabled[${osc + 1}]`, 0);
 		}*/
 
+                var debug_patchBytes = "";
 		// populate new ones:
 		for (osc = 0; osc <= vce.Head.VOITAB; osc++) {
 			viewVCE_voice.sendToCSurface(null, `osc-enabled[${osc + 1}]`, 1);
@@ -461,6 +472,16 @@ let viewVCE_voice = {
 
 			tr.appendChild(td);
 
+			// Gain
+			gain = viewVCE_envs.computeOscGain(osc, 2);
+			td = document.createElement("td");
+			td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinPLAIN" id="OscGain[${osc + 1}]" 
+			onchange="viewVCE_voice.onchange(this,undefined,undefined)" value="${gain}"
+			min="0" max="100"
+			disabled/></div>`;
+			tr.appendChild(td);
+			viewVCE_voice.sendToCSurface(null, `OscGain[${osc + 1}]`, gain)
+
 			// XREF: patch byte encode/decode
 			// FIXME: assumes envelopes are sorted in oscillator order
 			var patchByte = vce.Envelopes[osc].FreqEnvelope.OPTCH;
@@ -477,6 +498,8 @@ let viewVCE_voice = {
 			//				" patchAdderInDSR  : " + patchAdderInDSR + "\n" +
 			//				" patchFOInputDSR  : " + patchFOInputDSR + "\n");
 
+                        debug_patchBytes += ", " + patchByte;
+                    
 			// compute the DAG based on current register usage:
 			if (!patchInhibitF0) {
 				var modulatingOscs = outRegisters[patchFOInputDSR];
@@ -509,7 +532,7 @@ let viewVCE_voice = {
 			} else {
 				td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinNullablePatchReg" id="patchFOInputDSR[${osc + 1}]" 
 				onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToNullablePatchRegister)" value="${viewVCE_voice.NullablePatchRegisterToText('' + reg)}" 
-				min="0" max="4"
+				min="0" max="2"
 				disabled/></div>`;
 			}
 			tr.appendChild(td);
@@ -523,7 +546,7 @@ let viewVCE_voice = {
 			}
 			td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinNullablePatchReg" id="patchAdderInDSR[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToNullablePatchRegister)" value="${viewVCE_voice.NullablePatchRegisterToText('' + reg)}" 
-			min="0" max="4"
+			min="0" max="2"
 			disabled/></div>`;
 			tr.appendChild(td);
 
@@ -531,7 +554,7 @@ let viewVCE_voice = {
 			td = document.createElement("td");
 			td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinPlain" id="patchOutputDSR[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,undefined)" value="${patchOutputDSR + 1}" 
-			min="1" max="4"
+			min="1" max="2"
 			disabled/></div>`;
 			tr.appendChild(td);
 
@@ -616,6 +639,7 @@ let viewVCE_voice = {
 			tbody.appendChild(temp.content.firstChild);
 		}
 
+            console.log("patchBytes: " + debug_patchBytes);
 		console.log("freqDAG: " + freqDAG);
 		// Generate the patch diagram:
 		var patchDiagramCanvas = document.getElementById('patchDiagram');
@@ -677,6 +701,11 @@ ${freqDAG}
 			return;
 		}
 
+		// reset the floating point backing arrays: FIXME: this may mean that someone who is in
+		// midst of twiddling gain, then adds/deletes a oscillator, then expects gain to keep working
+		// may get a suprised distortion in the envelope shape.
+		viewVCE_envs.floatAmpVal = null;
+
 		let message = {
 			"name": "setNumOscillators",
 			"payload": {
@@ -713,9 +742,12 @@ ${freqDAG}
 					for (i = oldLength; i < newNum; i++) {
 						// copy the envelope template into the vce:
 						// abuse JSON to do a deep copy:
-						vce.Envelopes[i] = JSON.parse(JSON.stringify(message.payload.EnvelopeTemplate))
-						// overwrite the default patch type 
-						vce.Envelopes[i].OPTCH = message.payload.PatchBytes[i]
+						vce.Envelopes[i] = JSON.parse(JSON.stringify(message.payload.EnvelopeTemplate));
+						// overwrite the default patch type
+						console.log("before copy", vce.Envelopes);
+						vce.Envelopes[i].OPTCH = message.payload.PatchBytes[i];
+						console.log(i, "copy env - now ", vce.Envelopes[i]);
+						console.log("AFTER copy", vce.Envelopes);
 					}
 				}
 				viewVCE.init();
@@ -1007,7 +1039,7 @@ ${freqDAG}
 				},
 				callback_after_calculation: function (value) {
 					return viewVCE_envs.AmpEnvValueToText(value);
-				}
+				},
 			});
 			$('.vceNum.spinAmpTime').TouchSpin({
 				verticalbuttons: true,

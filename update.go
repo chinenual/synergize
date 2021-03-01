@@ -13,7 +13,7 @@ import (
 var newVersionAvailable bool = false
 var checkedForVersion bool = false
 
-var versionUrl string = "https://api.chinenual.com/api/v1/version?latest&app=Synergize&v=" + Version + "&OS=" + runtime.GOOS + "&ARCH=" + runtime.GOARCH
+var versionUrl string = "https://api.chinenual.com/api/v1/version?latest&app=Synergize&v=" + Version + "&OS=" + runtime.GOOS + "&ARCH=" + runtime.GOARCH + "&OSVER=" // version filled in in the function call - not yet initialized at variable init time
 
 type GithubReleaseApiResponse []struct {
 	Redirect string `json:"redirect"`
@@ -50,7 +50,7 @@ func CheckForNewVersion(forceRecheck bool, synergyType string, hasCs bool) (newV
 		checkedForVersion = true
 		var latestVersion string
 		var err error
-		var url = versionUrl
+		var url = versionUrl + OsVersion
 		if forceRecheck {
 			url = versionUrl + "&synergy=" + synergyType + "&cs=" + strconv.FormatBool(hasCs)
 		}

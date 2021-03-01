@@ -1,6 +1,28 @@
 let viewVCE_filters = {
 	chart: null,
 
+	onchangeGain: function(ele) {
+		if (ele.id.match(/Plus/)) {
+			gain = 0.10; // 10% up
+		} else {
+			gain = -0.10; // 10% down
+		}
+		console.log(" gain " + gain );
+
+		for (i = 1; i <= 32; i++) {
+			var input = document.getElementById(`flt[${i}]`)
+			if (input) {
+				var oldval = parseInt(input.value,10)
+				var delta = oldval * gain;
+				var newval = Math.round(oldval + delta);
+				console.log(" gain " + gain + " " + input.id + " " + oldval + " " + delta + " " + newval);
+				input.value = "" + newval;
+				// update the chart after the last element
+				viewVCE_filters.onchange(input, i === 32);
+			}
+		}
+	},
+
 	onchange: function (ele, updateChart) {
 		if (viewVCE.supressOnchange) { /*console.log("viewVCE.suppressOnChange");*/ return; }
 		viewVCE_filters.deb_onchange(ele, updateChart);

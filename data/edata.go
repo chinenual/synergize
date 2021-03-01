@@ -37,6 +37,8 @@ const (
 	Off_VRAM_FILTAB   = 0xa0  // offset from start of VRAM to start of filters
 	Off_VRAM_EDATA    = 0x2c0 // offset from start of VRAM to start of EDATA
 
+	VRAM_Max_length = 8192 // max size of a CRT image
+
 	// relative offsets written to VRAM are always relative to VOIPTR (the first 51 bytes of VRAM are ignored)
 	Off_VOIPTR_FirstVoice = 0x28e
 

@@ -36,6 +36,7 @@ cibuild: version.go
 
 .PHONY: package
 package: test packageMac packageWindows packageLinux
+	cp osc/touchosc/Synergize-v*.touchosc packages
 
 
 # uses create-dmg (installed via "brew install create-dmg"):

@@ -3,6 +3,7 @@ package data
 import (
 	"bytes"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -104,6 +105,41 @@ func TestAllVCE(t *testing.T) {
 		})
 	for _, path := range fileList {
 		testReadWriteVCE(t, path)
+	}
+}
+
+func testVceValidate(t *testing.T, path string) {
+	var vce VCE
+	var err error
+	if vce, err = ReadVceFile(path); err != nil {
+		t.Errorf("Could not read VCE file %s\n", path)
+	}
+	if err = VceValidate(vce); err != nil {
+		t.Errorf("unexpected validation error for %s: %v\n", path, err)
+	}
+	if false {
+		// now inject some errors into the fields and check that the validator catches them:
+		vce.Head.FILTER[0] = 100
+		if err = VceValidate(vce); err != nil {
+			fmt.Printf("Got expected error: %v\n", err)
+		} else {
+			t.Errorf("expected validation error FILTER[0] out of range for %s\n", path)
+		}
+	}
+}
+
+func disable_TestVceValidate(t *testing.T) {
+	fileList := []string{}
+
+	_ = filepath.Walk(*testfilepath,
+		func(path string, f os.FileInfo, err error) error {
+			if filepath.Ext(path) == ".VCE" {
+				fileList = append(fileList, path)
+			}
+			return nil
+		})
+	for _, path := range fileList {
+		testVceValidate(t, path)
 	}
 }
 

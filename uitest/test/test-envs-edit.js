@@ -33,7 +33,7 @@ describe('Test envs page edits', () => {
     });
 
     // add some rows so we have enough variations to play with:
-    it('adds and removes points', async () => {
+    it('freq-adds and removes points', async () => {
         await app.client
             .isVisible(cssQuoteId('#envFreqLoop[2]')).should.eventually.equal(false)
             .pause(TYPING_PAUSE)
@@ -49,15 +49,10 @@ describe('Test envs page edits', () => {
             .click('#add-freq-env-point')
             .waitForVisible(cssQuoteId('#envFreqLoop[5]'))
 
-            .pause(TYPING_PAUSE)
-            .click('#add-amp-env-point')
-            .waitForVisible(cssQuoteId('#envAmpLoop[2]'))
-
             .isVisible(cssQuoteId('#envFreqLoop[2]')).should.eventually.equal(true)
             .isVisible(cssQuoteId('#envFreqLoop[3]')).should.eventually.equal(true)
             .isVisible(cssQuoteId('#envFreqLoop[4]')).should.eventually.equal(true)
             .isVisible(cssQuoteId('#envFreqLoop[5]')).should.eventually.equal(true)
-            .isVisible(cssQuoteId('#envAmpLoop[2]')).should.eventually.equal(true)
             .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
 
         await app.client
@@ -68,7 +63,38 @@ describe('Test envs page edits', () => {
             .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
     });
 
-    it('SUSTAIN at 1', async () => {
+    // add some rows so we have enough variations to play with:
+    it('amp-adds and removes points', async () => {
+        await app.client
+            .isVisible(cssQuoteId('#envAmpLoop[2]')).should.eventually.equal(false)
+            .pause(TYPING_PAUSE)
+            .click('#add-amp-env-point')
+            .waitForVisible(cssQuoteId('#envAmpLoop[2]'))
+            .pause(TYPING_PAUSE)
+            .click('#add-amp-env-point')
+            .waitForVisible(cssQuoteId('#envAmpLoop[3]'))
+            .pause(TYPING_PAUSE)
+            .click('#add-amp-env-point')
+            .waitForVisible(cssQuoteId('#envAmpLoop[4]'))
+            .pause(TYPING_PAUSE)
+            .click('#add-amp-env-point')
+            .waitForVisible(cssQuoteId('#envAmpLoop[5]'))
+
+            .isVisible(cssQuoteId('#envAmpLoop[2]')).should.eventually.equal(true)
+            .isVisible(cssQuoteId('#envAmpLoop[3]')).should.eventually.equal(true)
+            .isVisible(cssQuoteId('#envAmpLoop[4]')).should.eventually.equal(true)
+            .isVisible(cssQuoteId('#envAmpLoop[5]')).should.eventually.equal(true)
+            .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
+
+        await app.client
+            .pause(TYPING_PAUSE)
+            .click('#del-amp-env-point')
+            .waitForVisible(cssQuoteId('#envAmpLoop[5]'), 1000, true) // wait to disappear
+            .isVisible(cssQuoteId('#envAmpLoop[5]')).should.eventually.equal(false)
+            .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
+    });
+
+    it('freq-SUSTAIN at 1', async () => {
         await app.client
             .pause(TYPING_PAUSE)
             .selectByValue(cssQuoteId('#envFreqLoop[1]'), 'S')
@@ -79,13 +105,24 @@ describe('Test envs page edits', () => {
             .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
     });
 
-    it('LOOP and REPEAT at 2 should fail', async () => {
+    it('amp-SUSTAIN at 1', async () => {
+        await app.client
+            .pause(TYPING_PAUSE)
+            .selectByValue(cssQuoteId('#envAmpLoop[1]'), 'S')
+            .getValue(cssQuoteId('#envAmpLoop[1]')).should.eventually.equal('S')
+            .waitForValue(cssQuoteId('#envAmpLoop[1]'), 'S')
+            .isVisible(cssQuoteId('#accelAmpLow')).should.eventually.equal(false)
+            .isVisible(cssQuoteId('#accelAmpUp')).should.eventually.equal(false)
+            .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
+    });
+
+    it('freq-LOOP and REPEAT at 2 should fail', async () => {
         await app.client
             .pause(TYPING_PAUSE)
             .selectByValue(cssQuoteId('#envFreqLoop[2]'), 'L')
 
             .waitForVisible('#alertText')
-            .then(() => { return hooks.screenshotAndCompare(app, 'envs-LLoopAfterSustain-alert') })
+            .then(() => { return hooks.screenshotAndCompare(app, 'envs-freq-LLoopAfterSustain-alert') })
 
             .getText('#alertText').should.eventually.include('SUSTAIN point must be after')
 
@@ -96,7 +133,7 @@ describe('Test envs page edits', () => {
             .selectByValue(cssQuoteId('#envFreqLoop[2]'), 'R')
 
             .waitForVisible('#alertText')
-            .then(() => { return hooks.screenshotAndCompare(app, 'envs-RLoopAfterSustain-alert') })
+            .then(() => { return hooks.screenshotAndCompare(app, 'envs-freq-RLoopAfterSustain-alert') })
 
             .getText('#alertText').should.eventually.include('SUSTAIN point must be after')
 
@@ -106,7 +143,34 @@ describe('Test envs page edits', () => {
 
     });
 
-    it('should be able to move SUSTAIN', async () => {
+    it('amp-LOOP and REPEAT at 2 should fail', async () => {
+        await app.client
+            .pause(TYPING_PAUSE)
+            .selectByValue(cssQuoteId('#envAmpLoop[2]'), 'L')
+
+            .waitForVisible('#alertText')
+            .then(() => { return hooks.screenshotAndCompare(app, 'envs-amp-LLoopAfterSustain-alert') })
+
+            .getText('#alertText').should.eventually.include('SUSTAIN point must be after')
+
+            .click('#alertModal button')
+            .waitForVisible('#alertText', 1000, true) // wait to disappear
+
+            .pause(TYPING_PAUSE)
+            .selectByValue(cssQuoteId('#envAmpLoop[2]'), 'R')
+
+            .waitForVisible('#alertText')
+            .then(() => { return hooks.screenshotAndCompare(app, 'envs-amp-RLoopAfterSustain-alert') })
+
+            .getText('#alertText').should.eventually.include('SUSTAIN point must be after')
+
+            .pause(TYPING_PAUSE)
+            .click('#alertModal button')
+            .waitForVisible('#alertText', 1000, true) // wait to disappear
+
+    });
+
+    it('freq-should be able to move SUSTAIN', async () => {
         await app.client
             .pause(TYPING_PAUSE)
             .getValue(cssQuoteId('#envFreqLoop[1]')).should.eventually.equal('S')
@@ -120,7 +184,21 @@ describe('Test envs page edits', () => {
             .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
     });
 
-    it('now should be able to add a LOOP or REPEAT', async () => {
+    it('amp-should be able to move SUSTAIN', async () => {
+        await app.client
+            .pause(TYPING_PAUSE)
+            .getValue(cssQuoteId('#envAmpLoop[1]')).should.eventually.equal('S')
+            .selectByValue(cssQuoteId('#envAmpLoop[4]'), 'S')
+            .getValue(cssQuoteId('#envAmpLoop[1]')).should.eventually.equal('')
+            .getValue(cssQuoteId('#envAmpLoop[4]')).should.eventually.equal('S')
+            .isVisible(cssQuoteId('#accelAmpLow')).should.eventually.equal(false)
+
+            .waitForVisible('#accelAmpUp', 1000, true) // wait to disappear
+            .isVisible(cssQuoteId('#accelAmpUp')).should.eventually.equal(false)
+            .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
+    });
+
+    it('freq-now should be able to add a LOOP or REPEAT', async () => {
         await app.client
             .pause(TYPING_PAUSE)
             .selectByValue(cssQuoteId('#envFreqLoop[1]'), 'L')
@@ -130,7 +208,17 @@ describe('Test envs page edits', () => {
             .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
     });
 
-    it('now should be able to move the loop', async () => {
+    it('amp-now should be able to add a LOOP or REPEAT', async () => {
+        await app.client
+            .pause(TYPING_PAUSE)
+            .selectByValue(cssQuoteId('#envAmpLoop[1]'), 'L')
+            .getValue(cssQuoteId('#envAmpLoop[1]')).should.eventually.equal('L')
+            .isVisible(cssQuoteId('#accelAmpLow')).should.eventually.equal(false)
+            .isVisible(cssQuoteId('#accelAmpUp')).should.eventually.equal(false)
+            .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
+    });
+
+    it('freq-now should be able to move the loop', async () => {
         await app.client
             .pause(TYPING_PAUSE)
             .getValue(cssQuoteId('#envFreqLoop[1]')).should.eventually.equal('L')
@@ -142,13 +230,25 @@ describe('Test envs page edits', () => {
             .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
     });
 
-    it('should disallow removing row if it contains a loop point', async () => {
+    it('amp-now should be able to move the loop', async () => {
+        await app.client
+            .pause(TYPING_PAUSE)
+            .getValue(cssQuoteId('#envAmpLoop[1]')).should.eventually.equal('L')
+            .selectByValue(cssQuoteId('#envAmpLoop[2]'), 'R')
+            .getValue(cssQuoteId('#envAmpLoop[1]')).should.eventually.equal('')
+            .getValue(cssQuoteId('#envAmpLoop[2]')).should.eventually.equal('R')
+            .isVisible(cssQuoteId('#accelAmpLow')).should.eventually.equal(false)
+            .isVisible(cssQuoteId('#accelAmpUp')).should.eventually.equal(false)
+            .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
+    });
+
+    it('freq-should disallow removing row if it contains a loop point', async () => {
         await app.client
             .pause(TYPING_PAUSE)
             .click('#del-freq-env-point')
 
             .waitForVisible('#alertText')
-            .then(() => { return hooks.screenshotAndCompare(app, 'envs-deleteLoopPoint-alert') })
+            .then(() => { return hooks.screenshotAndCompare(app, 'envs-freq-deleteLoopPoint-alert') })
 
             .getText('#alertText').should.eventually.include('Cannot remove envelope point')
 
@@ -157,13 +257,28 @@ describe('Test envs page edits', () => {
             .waitForVisible('#alertText', 1000, true) // wait to disappear
     });
 
-    it('cannot delete sustain point if there are loop points', async () => {
+    it('amp-should disallow removing row if it contains a loop point', async () => {
+        await app.client
+            .pause(TYPING_PAUSE)
+            .click('#del-amp-env-point')
+
+            .waitForVisible('#alertText')
+            .then(() => { return hooks.screenshotAndCompare(app, 'envs-amp-deleteLoopPoint-alert') })
+
+            .getText('#alertText').should.eventually.include('Cannot remove envelope point')
+
+            .pause(TYPING_PAUSE)
+            .click('#alertModal button')
+            .waitForVisible('#alertText', 1000, true) // wait to disappear
+    });
+
+    it('freq-cannot delete sustain point if there are loop points', async () => {
         await app.client
             .pause(TYPING_PAUSE)
             .selectByValue(cssQuoteId('#envFreqLoop[4]'), '')
 
             .waitForVisible('#alertText')
-            .then(() => { return hooks.screenshotAndCompare(app, 'envs-deleteSustainPoint-alert') })
+            .then(() => { return hooks.screenshotAndCompare(app, 'envs-freq-deleteSustainPoint-alert') })
 
             .getText('#alertText').should.eventually.include('Cannot remove')
 
@@ -173,7 +288,23 @@ describe('Test envs page edits', () => {
 
     });
 
-    it('remove loops', async () => {
+    it('amp-cannot delete sustain point if there are loop points', async () => {
+        await app.client
+            .pause(TYPING_PAUSE)
+            .selectByValue(cssQuoteId('#envAmpLoop[4]'), '')
+
+            .waitForVisible('#alertText')
+            .then(() => { return hooks.screenshotAndCompare(app, 'envs-amp-deleteSustainPoint-alert') })
+
+            .getText('#alertText').should.eventually.include('Cannot remove')
+
+            .pause(TYPING_PAUSE)
+            .click('#alertModal button')
+            .waitForVisible('#alertText', 1000, true) // wait to disappear
+
+    });
+
+    it('freq-remove loops', async () => {
         await app.client
             .pause(TYPING_PAUSE)
             .selectByValue(cssQuoteId('#envFreqLoop[2]'), '')
@@ -190,7 +321,24 @@ describe('Test envs page edits', () => {
 
     });
 
-    it('now can remove a point', async () => {
+    it('amp-remove loops', async () => {
+        await app.client
+            .pause(TYPING_PAUSE)
+            .selectByValue(cssQuoteId('#envAmpLoop[2]'), '')
+            .pause(TYPING_PAUSE)
+            .selectByValue(cssQuoteId('#envAmpLoop[4]'), '')
+            .getValue(cssQuoteId('#envAmpLoop[1]')).should.eventually.equal('')
+            .getValue(cssQuoteId('#envAmpLoop[2]')).should.eventually.equal('')
+            .getValue(cssQuoteId('#envAmpLoop[3]')).should.eventually.equal('')
+            .getValue(cssQuoteId('#envAmpLoop[4]')).should.eventually.equal('')
+
+            .isVisible(cssQuoteId('#accelAmpLow')).should.eventually.equal(true)
+            .isVisible(cssQuoteId('#accelAmpUp')).should.eventually.equal(true)
+            .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
+
+    });
+
+    it('freq-now can remove a point', async () => {
         await app.client
             .pause(TYPING_PAUSE)
             .click('#del-freq-env-point')
@@ -199,39 +347,48 @@ describe('Test envs page edits', () => {
             .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
     });
 
+    it('amp-now can remove a point', async () => {
+        await app.client
+            .pause(TYPING_PAUSE)
+            .click('#del-amp-env-point')
+            .waitForVisible(cssQuoteId('#envAmpLoop[5]'), 1000, true) // wait to disappear
+            .isVisible(cssQuoteId('#envAmpLoop[4]')).should.eventually.equal(false)
+            .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
+    });
+
     // test that all the spinner text conversions work at the right ranges
     describe('freq values', () => {
-        it('type to envFreqLowVal[1] to and past -61', async () => {
+        it('type to envFreqLowVal[1] to and past -127', async () => {
             await app.client
                 .pause(TYPING_PAUSE)
                 .clearElement(cssQuoteId('#envFreqLowVal[1]'))
-                .setValue(cssQuoteId('#envFreqLowVal[1]'), '-60')
+                .setValue(cssQuoteId('#envFreqLowVal[1]'), '-126')
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqUpVal[1]')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#envFreqLowVal[1]')).should.eventually.equal('-60')
+                .getValue(cssQuoteId('#envFreqLowVal[1]')).should.eventually.equal('-126')
                 // should not be able to go below min
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqLowVal[1]')).keys('ArrowDown')
-                .getValue(cssQuoteId('#envFreqLowVal[1]')).should.eventually.equal('-61')
+                .getValue(cssQuoteId('#envFreqLowVal[1]')).should.eventually.equal('-127')
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqLowVal[1]')).keys('ArrowDown')
-                .getValue(cssQuoteId('#envFreqLowVal[1]')).should.eventually.equal('-61')
+                .getValue(cssQuoteId('#envFreqLowVal[1]')).should.eventually.equal('-127')
         });
-        it('type to envFreqUpVal[1] to and past 63', async () => {
+        it('type to envFreqUpVal[1] to and past 127', async () => {
             await app.client
                 .pause(TYPING_PAUSE)
                 .clearElement(cssQuoteId('#envFreqUpVal[1]'))
-                .setValue(cssQuoteId('#envFreqUpVal[1]'), '62')
+                .setValue(cssQuoteId('#envFreqUpVal[1]'), '126')
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqLowVal[1]')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#envFreqUpVal[1]')).should.eventually.equal('62')
+                .getValue(cssQuoteId('#envFreqUpVal[1]')).should.eventually.equal('126')
                 // should not be able to go above max
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqUpVal[1]')).keys('ArrowUp')
-                .getValue(cssQuoteId('#envFreqUpVal[1]')).should.eventually.equal('63')
+                .getValue(cssQuoteId('#envFreqUpVal[1]')).should.eventually.equal('127')
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqUpVal[1]')).keys('ArrowUp')
-                .getValue(cssQuoteId('#envFreqUpVal[1]')).should.eventually.equal('63')
+                .getValue(cssQuoteId('#envFreqUpVal[1]')).should.eventually.equal('127')
 
         });
     });

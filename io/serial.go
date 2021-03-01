@@ -20,12 +20,12 @@ type SerialIo struct {
 
 var readerChannel chan serialReadResponse
 
-func SerialInit(port string, baudRate uint) (s SerialIo, err error) {
+func SerialInit(port string, baudRate uint, flowControl bool) (s SerialIo, err error) {
 	options := serial.OpenOptions{
 		PortName:              port,
 		BaudRate:              baudRate,
 		ParityMode:            serial.PARITY_NONE,
-		RTSCTSFlowControl:     true,
+		RTSCTSFlowControl:     flowControl,
 		InterCharacterTimeout: 500,
 		MinimumReadSize:       1,
 		DataBits:              8,

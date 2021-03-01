@@ -111,7 +111,7 @@ func diagSaveVCE(path string) (err error) {
 	dumpedVce = *dumpedCrt.Voices[0]
 	logger.Infof("VCE %s -- %d bytes: %s\n", path, len(dumpedBytes), data.VceToJson(dumpedVce))
 
-	err = data.WriteVceFile(path, dumpedVce)
+	err = data.WriteVceFile(path, dumpedVce, false)
 	return
 }
 

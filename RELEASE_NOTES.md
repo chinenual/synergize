@@ -9,6 +9,54 @@ permalink: /docs/release-notes
 
 # Release Notes
 
+## 2.4.0
+
+* Implements [issue #38](https://github.com/chinenual/synergize/issues/38):
+  New "Gain" controls for amplitude envelopes.  The Voice tab has
+  a gain control for each oscillator. Changing the value scales the
+  oscillator's Amp envelopes by the corresponding proportion.  The
+  Envelope tab has per-envelope gain, so you can control the Low and
+  Up envelopes individually.   The control surface interface has new
+  sliders to control these gain controls.
+* Implements [issue #37](https://github.com/chinenual/synergize/issues/37):
+  Support frequency envelope values in range -127 .. 127 (previous
+  version was limited to the range supported by SYNHCS: -61 .. 63).
+  Note: the [Synergize.touchosc](https://github.com/chinenual/synergize/releases/latest/Synergize-v2.touchosc)
+  control surface file has changed to support the new range.  Install
+  the new version in order to use the new frequency envelope range.
+* Fixes [issue #34](https://github.com/chinenual/synergize/issues/34):
+  Filter index #4 was mislabeled with the wrong frequency.
+* Fixes [issue #35](https://github.com/chinenual/synergize/issues/35):
+  Attempts to create CRT's that exceed the max size supported by the
+  Synergy will throw an error.
+* Fixes [issue #36](https://github.com/chinenual/synergize/issues/36):
+  Negative frequency offsets in the envelope table were displayed with
+  incorrect numeric values, making them appear positive.
+* Change of behavior: saving a VCE from the voice editor used to
+  override the Voice Name set in the editor with the first 8
+  characters of the filename being saved.  The editor no longer
+  overrides the Voice Name - use the Voice Name field on the Voice tab
+  to set a new name if you need one.
+* Fixes [issue #39](https://github.com/chinenual/synergize/issues/39):
+  After adding an oscillator, the UI displayed incorrect values for 
+  Harmonic, Detune, Wave Type and Keyprop for the exiting oscillators.
+* Fixes [issue #30](https://github.com/chinenual/synergize/issues/30):
+  The up/down cursor images used for the up/down buttons on numeric 
+  input controls was difficult to see on Windows. Now use the same 
+  cursor on all platforms.
+* Fixes [issue #40](https://github.com/chinenual/synergize/issues/40):
+  Previous versions of Synergize allowed the user to use registers 3
+  and 4 to specify patch routing. We have recently discovered that the
+  Synergy does not actually support patches defined with these extra
+  two registers, so they are not longer supported by the editor.
+* Adds a new configuration option to enable or disable hardware flow
+  control (RTS/CTS) for serial connections.  The default remains "on",
+  but can be turned off via the `Help->Preferences` menu. While the
+  Synergy does use flow control, several users have told me that they
+  run their Kaypro/Synergy connections with 3-wire (no flow control)
+  serial cables. USB serial adapters sometimes fail to work with
+  strict flow control. 
+  
 ## 2.3.1
 
 * Change in behavior on the Envelopes editor: 

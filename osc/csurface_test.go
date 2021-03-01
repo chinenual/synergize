@@ -104,6 +104,7 @@ func TestVoiceFreqsTab(t *testing.T) {
 
 	testEventsArr(t, "OHARM", []int{1, 16}, []int{0, 42}, 1*time.Millisecond)
 	testEventsArr(t, "FDETUN", []int{1, 16}, []int{0, 127}, 1*time.Millisecond)
+	testEventsArr(t, "OscGain", []int{1, 16}, []int{0, 100}, 1*time.Millisecond)
 
 }
 func TestFreqEnvelopeTab(t *testing.T) {
@@ -116,8 +117,8 @@ func TestFreqEnvelopeTab(t *testing.T) {
 	// turn on:
 	testEvents(t, "num-freq-env-points", []int{1, 16}, 75*time.Millisecond)
 
-	testEventsArr(t, "envFreqLowVal", []int{1, 16}, []int{-61, 63}, 1*time.Millisecond)
-	testEventsArr(t, "envFreqUpVal", []int{1, 16}, []int{-61, 63}, 1*time.Millisecond)
+	testEventsArr(t, "envFreqLowVal", []int{1, 16}, []int{-127, 127}, 1*time.Millisecond)
+	testEventsArr(t, "envFreqUpVal", []int{1, 16}, []int{-127, 127}, 1*time.Millisecond)
 	testEventsArr(t, "envFreqLowTime", []int{1, 16}, []int{0, 84}, 1*time.Millisecond)
 	testEventsArr(t, "envFreqUpTime", []int{1, 16}, []int{0, 84}, 1*time.Millisecond)
 	testEvents(t, "accelFreqLow", []int{0, 127}, 1*time.Millisecond)
@@ -140,6 +141,8 @@ func TestAmpEnvelopeTab(t *testing.T) {
 	testEventsArr(t, "envAmpUpTime", []int{1, 16}, []int{0, 84}, 1*time.Millisecond)
 	testEvents(t, "accelAmpLow", []int{0, 127}, 1*time.Millisecond)
 	testEvents(t, "accelAmpUp", []int{0, 127}, 1*time.Millisecond)
+	testEvents(t, "gainAmpLow", []int{0, 100}, 1*time.Millisecond)
+	testEvents(t, "gainAmpUp", []int{0, 100}, 1*time.Millisecond)
 
 }
 

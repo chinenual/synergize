@@ -6,9 +6,9 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
-	"os"
 
 	"github.com/chinenual/synergize/logger"
+	"github.com/orcaman/writerseeker"
 	"github.com/pkg/errors"
 )
 
@@ -206,6 +206,7 @@ func addVce(buf io.WriteSeeker, slot /*one-based*/ int, cursor *crtCursor, vce V
 	if verboseWriting {
 		logger.Infof(" WRITE voice #%d: at 0x%04x\n", slot, cursor.VoiceOffset)
 	}
+
 	if _, err = buf.Seek(cursor.VoiceOffset, io.SeekStart); err != nil {
 		return
 	}
@@ -235,12 +236,16 @@ func WriteCrtFileFromVCEPaths(filename string, vcePaths []string) (err error) {
 }
 
 func WriteCrtFileFromVCEArray(filename string, vces []*VCE) (err error) {
-	var file *os.File
-	if file, err = os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0755); err != nil {
+	var writebuf = writerseeker.WriterSeeker{}
+
+	if err = WriteCrt(&writebuf, vces); err != nil {
 		return
 	}
-	defer file.Close()
-	if err = WriteCrt(file, vces); err != nil {
+	var write_bytes []byte
+	if write_bytes, err = ioutil.ReadAll(writebuf.Reader()); err != nil {
+		return
+	}
+	if err = ioutil.WriteFile(filename, write_bytes, 0644); err != nil {
 		return
 	}
 	return
@@ -310,7 +315,14 @@ func WriteCrt(buf io.WriteSeeker, vces []*VCE) (err error) {
 				return
 			}
 		}
+		if cursor.VoiceOffset > VRAM_Max_length {
+			err = errors.Errorf("Error adding voice #%d (%s) to CRT - requires %d bytes, which exceeds maximum of %d",
+				i+1, VceName(vce.Head), cursor.VoiceOffset, VRAM_Max_length)
+			return
+		}
+
 	}
+
 	if verboseWriting {
 		logger.Infof(" WRITE cursors after last voice: a, b voice: 0x%04x 0x%04x 0x%04x\n", cursor.AfilterOffset, cursor.BfilterOffset, cursor.VoiceOffset)
 	}

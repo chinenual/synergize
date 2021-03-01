@@ -48,7 +48,7 @@ func csurfaceInit() (err error) {
 }
 
 func changeOscRowVisibility(row int, onoff int) (err error) {
-	for _, field := range []string{"MUTE", "SOLO", "OHARM", "FDETUN", "wkWAVE", "wkKEYPROP", "FILTER"} {
+	for _, field := range []string{"MUTE", "SOLO", "OHARM", "FDETUN", "wkWAVE", "wkKEYPROP", "FILTER", "OscGain"} {
 		addr := fmt.Sprintf("/%s/%d/visible", field, row)
 
 		if err = oscSendInt(addr, int32(onoff)); err != nil {

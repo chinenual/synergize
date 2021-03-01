@@ -99,6 +99,18 @@ table {
 
 }
 
+.gain input {
+    height: 25px;
+    width: 25px;
+    font-size: larger;
+    color: #fff;
+    background-color: #222;
+    border: 1px solid #aaa;
+    border-style: solid;
+    border-radius: 5px;
+
+}
+
 .dir {
     cursor: pointer;
     padding: 3px;
@@ -351,11 +363,11 @@ span.spinNOSPIN-Enabled {
 
 .bootstrap-touchspin .input-group-btn-vertical .bootstrap-touchspin-down {
     bottom: 6;
-    cursor: s-resize;
+    cursor: url(../images/s-resize.png) 16 16, auto;
 }
 .bootstrap-touchspin .input-group-btn-vertical .bootstrap-touchspin-up {
     top: 1;
-    cursor: n-resize;
+    cursor: url(../images/n-resize.png) 16 16, auto;
 }
 /*
 .bootstrap-touchspin .input-group-btn-vertical .bootstrap-touchspin-up {
