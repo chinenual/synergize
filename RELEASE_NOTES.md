@@ -11,18 +11,6 @@ permalink: /docs/release-notes
 
 ## 2.4.0
 
-* Adds a new configuration option to enable or disable hardware flow
-  control (RTS/CTS) for serial connections.  The default remains "on",
-  but can be turned off via the `Help->Preferences` menu. While the
-  Synergy does use flow control, several users have told me that they
-  run their Kaypro/Synergy connections with 3-wire (no flow control)
-  serial cables. USB serial adapters sometimes fail to work with
-  strict flow control. 
-* Implements [issue #37](https://github.com/chinenual/synergize/issues/37):
-  Support frequency envelope values in range -127 .. 127.
-  Note: the [Synergize.touchosc](https://github.com/chinenual/synergize/releases/latest/Synergize-v2.touchosc)
-  control surface file has changed to support the new range.  Install
-  the new version in order to use the new frequency envelope range.
 * Implements [issue #38](https://github.com/chinenual/synergize/issues/38):
   New "Gain" controls for amplitude envelopes.  The Voice tab has
   a gain control for each oscillator. Changing the value scales the
@@ -30,6 +18,12 @@ permalink: /docs/release-notes
   Envelope tab has per-envelope gain, so you can control the Low and
   Up envelopes individually.   The control surface interface has new
   sliders to control these gain controls.
+* Implements [issue #37](https://github.com/chinenual/synergize/issues/37):
+  Support frequency envelope values in range -127 .. 127 (previous
+  version was limited to the range supported by SYNHCS: -61 .. 63).
+  Note: the [Synergize.touchosc](https://github.com/chinenual/synergize/releases/latest/Synergize-v2.touchosc)
+  control surface file has changed to support the new range.  Install
+  the new version in order to use the new frequency envelope range.
 * Fixes [issue #34](https://github.com/chinenual/synergize/issues/34):
   Filter index #4 was mislabeled with the wrong frequency.
 * Fixes [issue #35](https://github.com/chinenual/synergize/issues/35):
@@ -55,6 +49,13 @@ permalink: /docs/release-notes
   and 4 to specify patch routing. We have recently discovered that the
   Synergy does not actually support patches defined with these extra
   two registers, so they are not longer supported by the editor.
+* Adds a new configuration option to enable or disable hardware flow
+  control (RTS/CTS) for serial connections.  The default remains "on",
+  but can be turned off via the `Help->Preferences` menu. While the
+  Synergy does use flow control, several users have told me that they
+  run their Kaypro/Synergy connections with 3-wire (no flow control)
+  serial cables. USB serial adapters sometimes fail to work with
+  strict flow control. 
   
 ## 2.3.1
 
