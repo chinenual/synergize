@@ -70,6 +70,14 @@ func (l *synLogger) Printf(format string, v ...interface{}) {
 	l.Infof(format, v...)
 }
 
+func (l *synLogger) Fatal(v ...interface{}) {
+	l.Fatal(v...)
+}
+
+func (l *synLogger) Fatalf(format string, v ...interface{}) {
+	l.Fatalf(format, v...)
+}
+
 func (l *synLogger) Debug(v ...interface{}) {
 	if l.level <= LevelDebug {
 		newv := append([]interface{}{"DEBUG: "}, v...)
