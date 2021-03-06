@@ -107,9 +107,9 @@ func main() {
 			}
 		}
 		if selectedVoices == nil {
-			log.Printf("ERROR: no such voice name '%d'. Valid names:\n", (*algoFlag - 1))
+			log.Printf("ERROR: no such Algorithm '%d'. Valid Algorithms:\n", (*algoFlag))
 			for _, v := range sysex.Voices {
-				log.Printf("'%d'\n", v.Algorithm)
+				log.Printf("'%d'\n", v.Algorithm+1)
 			}
 			os.Exit(1)
 		}

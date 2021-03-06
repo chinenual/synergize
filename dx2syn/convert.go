@@ -86,12 +86,23 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 	if err = helperSetAlgorithmPatchType(&vce, dx7Voice.Algorithm, dx7Voice.Feedback); err != nil {
 		return
 	}
+
+	var freqValueByte byte // Synergy byte encoding for freq value
+	var freqValueInt int   // scaled freq value
+	var harmonic float64
+	var OSClevelPercent float64
+	var VelocityPercent float64
+	var PMfix float64
+	var LevComp float64
+	var patchOutputDSR byte
+	var ms [4]int
+	var fb int
+
 	// DX7 always uses 6 oscillators
 	vce.Head.VOITAB = 5
-
-	vce.Head.VASENS = 31
-	vce.Head.VTSENS = 31
-	vce.Head.VTCENT = 24
+	vce.Head.VASENS = 20
+	vce.Head.VTSENS = 20
+	vce.Head.VTCENT = 20
 	vce.Head.VIBRAT = (dx7Voice.LfoSpeed + 1) / 3
 	vce.Head.VIBDEL = dx7Voice.LfoDelay
 	vce.Head.VIBDEP = int8(dx7Voice.LfoPitchModDepth)
@@ -101,16 +112,6 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 	decyR := 0
 	sustR := 0
 	relsR := 0
-	var freqValueByte byte // Synergy byte encoding for freq value
-	var freqValueInt int   // scaled freq value
-	var harmonic float64
-	var OSClevelPercent float64
-	var VelocityPercent float64
-	var PMfix float64
-	var LevComp float64
-	var patchOutputDSR byte
-
-	var ms [4]int
 
 	filterIndex := int8(-1) // increment as we allocate each filter
 
@@ -184,24 +185,24 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		}
 		// Fix Over Values where max is 99...
 		if dxOsc.KeyLevelScalingBreakPoint > 99 {
-			fmt.Printf(" %s %d \n", " BP before =  ", dxOsc.KeyLevelScalingBreakPoint)
+			//fmt.Printf(" %s %d \n", " BP before =  ", dxOsc.KeyLevelScalingBreakPoint)
 			dxOsc.KeyLevelScalingBreakPoint = byte(math.Round(float64(dxOsc.KeyLevelScalingBreakPoint) * 0.727))
-			fmt.Printf(" %s %d \n", " BP after =  ", dxOsc.KeyLevelScalingBreakPoint)
+			//fmt.Printf(" %s %d \n", " BP after =  ", dxOsc.KeyLevelScalingBreakPoint)
 		}
 		if dxOsc.KeyLevelScalingRightDepth > 99 {
-			fmt.Printf(" %s %d \n", " RT before =  ", dxOsc.KeyLevelScalingRightDepth)
+			//fmt.Printf(" %s %d \n", " RT before =  ", dxOsc.KeyLevelScalingRightDepth)
 			dxOsc.KeyLevelScalingRightDepth = byte(math.Round(float64(dxOsc.KeyLevelScalingRightDepth) * 0.727))
-			fmt.Printf(" %s %d \n", " RT after =  ", dxOsc.KeyLevelScalingRightDepth)
+			//fmt.Printf(" %s %d \n", " RT after =  ", dxOsc.KeyLevelScalingRightDepth)
 		}
 		if dxOsc.KeyLevelScalingLeftDepth > 99 {
-			fmt.Printf(" %s %d \n", " LT before =  ", dxOsc.KeyLevelScalingLeftDepth)
+			//fmt.Printf(" %s %d \n", " LT before =  ", dxOsc.KeyLevelScalingLeftDepth)
 			dxOsc.KeyLevelScalingLeftDepth = byte(math.Round(float64(dxOsc.KeyLevelScalingLeftDepth) * 0.727))
-			fmt.Printf(" %s %d \n", " LT after =  ", dxOsc.KeyLevelScalingLeftDepth)
+			//fmt.Printf(" %s %d \n", " LT after =  ", dxOsc.KeyLevelScalingLeftDepth)
 		}
 		if dxOsc.OscFreqFine > 99 {
-			fmt.Printf(" %s %d \n", " Fine before=  ", dxOsc.OscFreqFine)
+			//fmt.Printf(" %s %d \n", " Fine before=  ", dxOsc.OscFreqFine)
 			dxOsc.OscFreqFine = byte(math.Round(float64(dxOsc.OscFreqFine) * 0.727))
-			fmt.Printf(" %s %d \n", " Fine after =  ", dxOsc.OscFreqFine)
+			//fmt.Printf(" %s %d \n", " Fine after =  ", dxOsc.OscFreqFine)
 		}
 
 		// ******************************************************************************************
@@ -252,21 +253,16 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 
 			} else if transposedDown == true && dxOsc.OscFreqCoarse == 0 && dxOsc.OscFreqFine == 0 {
 				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = 1
-				//fmt.Printf(" %d %s  \n", oscIndex, " Coarse = 0  Fine 0 Harm = 1")
+				fmt.Printf(" %d %s  \n", oscIndex, " true Coarse = 0  Fine 0 so Harm = 1")
 			} else if transposedDown == true && dxOsc.OscFreqCoarse == 0 && dxOsc.OscFreqFine == 50 {
-				//fmt.Printf(" %d %s  \n", oscIndex, " in true 0 50")
+				fmt.Printf(" %d %s  \n", oscIndex, " in true 0 50    +.5 then *2")
 				harmonic = float64(dxOsc.OscFreqCoarse)
 				harmonic = harmonic + .5
 				harmonic = harmonic * 2
 				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = int8(harmonic)
 
 			} else if transposedDown == true && dxOsc.OscFreqCoarse == 0 && dxOsc.OscFreqFine != 50 {
-				// TO DO
-				// Calculate combined freq of coarse and fine, then double for octave.
-				// Find closest harm to the OCT freq, then find remainder,
-				// and add the (remainder * 2) in as freqValueInt
-				//if dxOsc.OscFreqFine < 50 {
-				fmt.Printf(" %d %s  \n", oscIndex, " in true 0 !=50")
+				fmt.Printf(" %d %s  \n", oscIndex, " in true C=0  Fine!=50")
 				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = 1
 				freqValueInt = 0
 				freqValueInt = int(math.Round(1 + fineValues[dxOsc.OscFreqFine]*2))
@@ -349,7 +345,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		vce.Envelopes[oscIndex].AmpEnvelope.SUSTAINPT = 3
 		// envelopes: DX amp envelopes always have 4 points
 		vce.Envelopes[oscIndex].AmpEnvelope.NPOINTS = 4
-		// Freq Env Sustain point for DX& FINE
+		// Freq Env Sustain point for DX7 FINE
 		vce.Envelopes[oscIndex].FreqEnvelope.ENVTYPE = 2
 		vce.Envelopes[oscIndex].FreqEnvelope.SUSTAINPT = 1
 		vce.Envelopes[oscIndex].FreqEnvelope.NPOINTS = 2
@@ -431,6 +427,14 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		// special case for point1
 		vce.Envelopes[oscIndex].FreqEnvelope.Table[2] = 0x80 // matches default from EDATA
 		vce.Envelopes[oscIndex].FreqEnvelope.Table[3] = 0    // 0 == Sine, octave 0, freq int and amp int disabled
+
+		// Find is OSC is the FB OSc, if so look up in array and set to TRI wave
+		fb = fbOsc[dx7Voice.Algorithm+1] - 1
+		//fmt.Printf(" %s %d %d  \n", " Algo =   ", oscIndex, dx7Voice.Algorithm)
+		if oscIndex == fb {
+			//fmt.Printf(" %s %d \n \n", " oscIndex = ", oscIndex)
+			vce.Envelopes[oscIndex].FreqEnvelope.Table[3] = vce.Envelopes[oscIndex].FreqEnvelope.Table[3] | 0x1
+		}
 
 		// point2
 		vce.Envelopes[oscIndex].FreqEnvelope.Table[4] = freqValueByte
@@ -565,6 +569,11 @@ var fineValues = [100]float64{0.00000, 0.02329, 0.04713, 0.07152, 0.09648, 0.122
 	5.91831, 6.07946, 6.24436, 6.41310, 6.58578, 6.76247, 6.94328,
 	7.12831, 7.31764, 7.51138, 7.70964, 7.91251, 8.12011, 8.33254,
 	8.54993, 8.77237}
+
+var fbOsc = [33]int{0, 1, 5, 1, 1, 1, 1, 1, 3,
+	5, 4, 1, 5, 1, 1, 5, 1,
+	5, 4, 1, 4, 4, 1, 1, 1,
+	1, 1, 4, 2, 1, 2, 1, 1}
 
 var dTune = [16]int8{-81, -75, -69, -60, -42, -30, -24, 0, 9, 21, 24, 33, 45, 66, 72, 81}
 
