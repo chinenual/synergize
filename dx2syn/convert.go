@@ -428,10 +428,10 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		vce.Envelopes[oscIndex].FreqEnvelope.Table[2] = 0x80 // matches default from EDATA
 		vce.Envelopes[oscIndex].FreqEnvelope.Table[3] = 0    // 0 == Sine, octave 0, freq int and amp int disabled
 
-		// Find is OSC is the FB OSc, if so look up in array and set to TRI wave
+		// Find is OSC is the FB OSc, if so, look up in array and set to TRI wave
 		fb = fbOsc[dx7Voice.Algorithm+1] - 1
 		//fmt.Printf(" %s %d %d  \n", " Algo =   ", oscIndex, dx7Voice.Algorithm)
-		if oscIndex == fb {
+		if oscIndex == fb && dx7Voice.Feedback > 1 {
 			//fmt.Printf(" %s %d \n \n", " oscIndex = ", oscIndex)
 			vce.Envelopes[oscIndex].FreqEnvelope.Table[3] = vce.Envelopes[oscIndex].FreqEnvelope.Table[3] | 0x1
 		}
