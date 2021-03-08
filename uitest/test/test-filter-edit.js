@@ -40,7 +40,7 @@ describe('Test filter page edits', () => {
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#flt[2]')) // click in a different input to force onchange
                 .getValue(cssQuoteId('#flt[1]')).should.eventually.equal('-63')
-                // should not be able to go below min
+            // should not be able to go below min
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#flt[1]')).keys('ArrowDown')
                 .getValue(cssQuoteId('#flt[1]')).should.eventually.equal('-64')
@@ -56,7 +56,7 @@ describe('Test filter page edits', () => {
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#flt[1]')) // click in a different input to force onchange
                 .getValue(cssQuoteId('#flt[2]')).should.eventually.equal('62')
-                // should not be able to go above max
+            // should not be able to go above max
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#flt[2]')).keys('ArrowUp')
                 .getValue(cssQuoteId('#flt[2]')).should.eventually.equal('63')
@@ -71,7 +71,7 @@ describe('Test filter page edits', () => {
         it('check Af initial conditions', async () => {
 
             await app.client
-//                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-1`) })
+            //                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-1`) })
                 .selectByVisibleText(cssQuoteId('#filterSelect'), 'Af')
                 .waitForVisible('#filterTable')
                 .getValue(cssQuoteId('#flt[1]')).should.eventually.equal('-64')
@@ -80,11 +80,11 @@ describe('Test filter page edits', () => {
 
         it('switch to Bf 2', async () => {
             await app.client
-            .selectByVisibleText(cssQuoteId('#filterSelect'), 'Bf 2')
-            .waitForVisible('#filterTable')
-            .getValue(cssQuoteId('#flt[1]')).should.eventually.equal('0')
-            .getValue(cssQuoteId('#flt[2]')).should.eventually.equal('0')
-    });
+                .selectByVisibleText(cssQuoteId('#filterSelect'), 'Bf 2')
+                .waitForVisible('#filterTable')
+                .getValue(cssQuoteId('#flt[1]')).should.eventually.equal('0')
+                .getValue(cssQuoteId('#flt[2]')).should.eventually.equal('0')
+        });
 
         it('copy from 1', async () => {
             await app.client

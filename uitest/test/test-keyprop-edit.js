@@ -28,7 +28,7 @@ describe('Test keyprop page edits', () => {
 
     it('click load G7S', async () => {
         await app.client
-            // need to clear this since previous test may also be using same voice
+        // need to clear this since previous test may also be using same voice
             .clearElement("#VNAME")
             .click('.file=G7S')
 

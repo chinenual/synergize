@@ -366,7 +366,7 @@ describe('Test envs page edits', () => {
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqUpVal[1]')) // click in a different input to force onchange
                 .getValue(cssQuoteId('#envFreqLowVal[1]')).should.eventually.equal('-126')
-                // should not be able to go below min
+            // should not be able to go below min
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqLowVal[1]')).keys('ArrowDown')
                 .getValue(cssQuoteId('#envFreqLowVal[1]')).should.eventually.equal('-127')
@@ -382,7 +382,7 @@ describe('Test envs page edits', () => {
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqLowVal[1]')) // click in a different input to force onchange
                 .getValue(cssQuoteId('#envFreqUpVal[1]')).should.eventually.equal('126')
-                // should not be able to go above max
+            // should not be able to go above max
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqUpVal[1]')).keys('ArrowUp')
                 .getValue(cssQuoteId('#envFreqUpVal[1]')).should.eventually.equal('127')
@@ -426,7 +426,7 @@ describe('Test envs page edits', () => {
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envFreqLowTime[2]')) // click in a different input to force onchange
                 .getValue(cssQuoteId('#envAmpUpTime[2]')).should.eventually.equal('5859')
-                // should not be able to go above max
+            // should not be able to go above max
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envAmpUpTime[2]')).keys('ArrowUp')
                 .getValue(cssQuoteId('#envAmpUpTime[2]')).should.eventually.equal('6576')
@@ -445,7 +445,7 @@ describe('Test envs page edits', () => {
                 .setValue(cssQuoteId('#envAmpLowVal[1]'), '1')
                 .click(cssQuoteId('#envAmpUpVal[1]')) // click in a different input to force onchange
                 .getValue(cssQuoteId('#envAmpLowVal[1]')).should.eventually.equal('1')
-                // should not be able to go below min
+            // should not be able to go below min
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envAmpLowVal[1]')).keys('ArrowDown')
                 .getValue(cssQuoteId('#envAmpLowVal[1]')).should.eventually.equal('0')
@@ -460,7 +460,7 @@ describe('Test envs page edits', () => {
                 .setValue(cssQuoteId('#envAmpUpVal[1]'), '71')
                 .click(cssQuoteId('#envAmpLowVal[1]')) // click in a different input to force onchange
                 .getValue(cssQuoteId('#envAmpUpVal[1]')).should.eventually.equal('71')
-                // should not be able to go above max
+            // should not be able to go above max
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envAmpUpVal[1]')).keys('ArrowUp')
                 .getValue(cssQuoteId('#envAmpUpVal[1]')).should.eventually.equal('72')
@@ -478,7 +478,7 @@ describe('Test envs page edits', () => {
                 .setValue(cssQuoteId('#envAmpLowTime[1]'), '1')
                 .click(cssQuoteId('#envAmpUpTime[1]')) // click in a different input to force onchange
                 .getValue(cssQuoteId('#envAmpLowTime[1]')).should.eventually.equal('1')
-                // should not be able to go below min
+            // should not be able to go below min
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envAmpLowTime[1]')).keys('ArrowDown')
                 .getValue(cssQuoteId('#envAmpLowTime[1]')).should.eventually.equal('0')
@@ -493,7 +493,7 @@ describe('Test envs page edits', () => {
                 .setValue(cssQuoteId('#envAmpUpTime[1]'), '5858') // expect the conversion to round to the right value
                 .click(cssQuoteId('#envAmpLowTime[1]')) // click in a different input to force onchange
                 .getValue(cssQuoteId('#envAmpUpTime[1]')).should.eventually.equal('5859')
-                // should not be able to go above max
+            // should not be able to go above max
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#envAmpUpTime[1]')).keys('ArrowUp')
                 .getValue(cssQuoteId('#envAmpUpTime[1]')).should.eventually.equal('6576')
@@ -512,7 +512,7 @@ describe('Test envs page edits', () => {
                 .setValue(cssQuoteId('#accelAmpLow'), '1')
                 .click(cssQuoteId('#accelAmpUp')) // click in a different input to force onchange
                 .getValue(cssQuoteId('#accelAmpLow')).should.eventually.equal('1')
-                // should not be able to go below min
+            // should not be able to go below min
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#accelAmpLow')).keys('ArrowDown')
                 .getValue(cssQuoteId('#accelAmpLow')).should.eventually.equal('0')
@@ -528,7 +528,7 @@ describe('Test envs page edits', () => {
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#accelAmpLow')) // click in a different input to force onchange
                 .getValue(cssQuoteId('#accelAmpUp')).should.eventually.equal('126')
-                // should not be able to go above max
+            // should not be able to go above max
                 .pause(TYPING_PAUSE)
                 .click(cssQuoteId('#accelAmpUp')).keys('ArrowUp')
                 .getValue(cssQuoteId('#accelAmpUp')).should.eventually.equal('127')

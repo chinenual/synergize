@@ -50,14 +50,14 @@ describe('Test CRT edits', () => {
                 .getText('#crt_voicename_2').should.eventually.equal('')
         });
         /*
-        * Can't call native file dialogs from Spectron.  FIXME: add mocks
-        
-        it('alter slot 3', async () => {
-            await app.client
-                .click('#crt_tables > div:nth-child(1) > table > tbody > tr:nth-child(3) > td > span.crtSlotAddButton')
-                .waitUntilTextExists("#crt_voicename_3", 'GUITAR2A', LOAD_VCE_TIMEOUT)
-                .getText('#crt_voicename_3').should.eventually.equal('GUITAR2A')
-        });
+         * Can't call native file dialogs from Spectron.  FIXME: add mocks
+         
+         it('alter slot 3', async () => {
+         await app.client
+         .click('#crt_tables > div:nth-child(1) > table > tbody > tr:nth-child(3) > td > span.crtSlotAddButton')
+         .waitUntilTextExists("#crt_voicename_3", 'GUITAR2A', LOAD_VCE_TIMEOUT)
+         .getText('#crt_voicename_3').should.eventually.equal('GUITAR2A')
+         });
         */
     });
 

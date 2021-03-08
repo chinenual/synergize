@@ -174,7 +174,7 @@ describe('Test voice page edits', () => {
             .pause(TYPING_PAUSE)
             .click(cssQuoteId('#OHARM[1]')) // click in a different input to force onchange (FIXME! Enter should be enough)
             .getValue(cssQuoteId('#OHARM[2]')).should.eventually.equal('s3')
-            // and validate that the unnderlying value used by the spinner is in sync
+        // and validate that the unnderlying value used by the spinner is in sync
             .pause(TYPING_PAUSE)
             .click(cssQuoteId('#OHARM[2]')).keys('ArrowDown')
             .waitForValue(cssQuoteId('#OHARM[2]'), 's4')
@@ -227,7 +227,7 @@ describe('Test voice page edits', () => {
             .waitForValue(cssQuoteId('#FDETUN[3]'), 'ran3')
             .getValue(cssQuoteId('#FDETUN[3]')).should.eventually.equal('ran3')
 
-            // and validate that the unnderlying value used by the spinner is in sync
+        // and validate that the unnderlying value used by the spinner is in sync
             .pause(TYPING_PAUSE)
             .click(cssQuoteId('#FDETUN[3]')).keys('ArrowUp')
             .waitForValue(cssQuoteId('#FDETUN[3]'), 'ran4')
