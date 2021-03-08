@@ -12,15 +12,21 @@ describe('About window', () => {
     it('click Help/About', async () => {
       await app.client
         .waitUntilWindowLoaded()
-        .click('#helpButton')
-        .waitForVisible("#aboutMenuItem")
-        .click('#aboutMenuItem')
+      const button = await app.client.$('#helpButton')
+      await button.click()
+        
+      const item = await app.client.$('#aboutMenuItem')
+      await item.waitForDisplayed()
+      await item.click()
   
+      await app.client
         .pause(WINDOW_PAUSE) // HACK: but without this switching windows is unreliable. 
   
+      await app.client
         .switchWindow('About Synergize')
         .then(() => {return hooks.screenshotAndCompare(app, 'aboutWindow')})
 
+      await app.client
         .getTitle().should.eventually.equal('About Synergize')
     });
   
@@ -57,7 +63,9 @@ describe('About window', () => {
       await app.client
         .pause(WINDOW_PAUSE) // HACK: but without this switching windows is unreliable. 
   
+      await app.client
         .switchWindow('Synergize')
+      await app.client
         .getTitle().should.eventually.equal('Synergize')
     });
   

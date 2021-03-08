@@ -1,19 +1,19 @@
 {
-  "name": "synergize-uitest",
-  "version": "1.0.0",
-  "description": "Selenium/Spectron based UI automation to test Synergize",
-  "scripts": {
-    "test": "node ./node_modules/mocha/bin/_mocha test/test.js"
-  },
-  "devDependencies": {
-    "chai": "^4.1.2",
-    "chai-as-promised": "^7.1.1",
-    "electron": "^8.2.5",
-    "mocha": "^5.2.0",
-    "spectron": "^10.0.0",
-    "pngjs": "^3.4.0"
-  },
-  "engines": {
-    "node": "^8.12.0"
-  }
+    "name": "synergize-uitest",
+    "version": "1.0.0",
+    "description": "Selenium/Spectron based UI automation to test Synergize",
+    "scripts": {
+        "test": "node ./node_modules/mocha/bin/_mocha test/test.js"
+    },
+    "devDependencies": {
+        "chai": "^4.2.0",
+        "chai-as-promised": "^7.1.1",
+        "mocha": "^8.2.1",
+        "electron": "11.1.0",
+        "spectron": "^13.0.0",
+        "pngjs": "^3.4.0"
+    },
+    "engines": {
+        "node": ">=10.12.0"
+    }
 }

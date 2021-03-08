@@ -11,29 +11,41 @@ describe('Check initial preferences', () => {
 
   it('click Help/Preferences', async () => {
     await app.client
-      .waitUntilWindowLoaded()
-      .click('#helpButton')
-      .waitForVisible("#preferencesMenuItem")
-      .click('#preferencesMenuItem')
+       .waitUntilWindowLoaded()
+    const button = await app.client.$('#helpButton')
+    await button.click()
 
+   const item = await app.client.$('#preferencesMenuItem')
+   await item.waitForDisplayed()
+
+   await item.click()
+
+   await app.client
       .pause(WINDOW_PAUSE) // HACK: but without this switching windows is unreliable. 
 
+    await app.client
       .switchWindow('Synergize Preferences')
       .then(() => { return hooks.screenshotAndCompare(app, 'prefsWindow') })
 
+    await app.client
       .getTitle().should.eventually.equal('Synergize Preferences')
 
-        .$('#libraryPath').setValue('../data/testfiles')
+    const txt = await app.client.$('#libraryPath')
+    await txt.setValue('../data/testfiles')
 
-        .click('button[type=submit]')
+    const submit = await app.client.$('button[type=submit]')
+    await submit.click()
+
+    await app.client
         .pause(WINDOW_PAUSE) // HACK: but without this switching windows is unreliable.
 
+    await app.client
       .switchWindow('Synergize')
+    await app.client
       .getTitle().should.eventually.equal('Synergize')
 
-      .then(() => { return hooks.screenshotAndCompare(app, 'mainAfterSetLibraryPath') })
-
-      .getText('#path').should.eventually.equal('testfiles')
+    const txt2 = await app.client.$('#path')
+    await txt2.getText().should.eventually.equal('testfiles')
   });
 
 
@@ -41,7 +53,9 @@ describe('Check initial preferences', () => {
     await app.client
       .pause(WINDOW_PAUSE) // HACK: but without this switching windows is unreliable. 
 
+    await app.client
       .switchWindow('Synergize')
+    await app.client
       .getTitle().should.eventually.equal('Synergize')
   });
 

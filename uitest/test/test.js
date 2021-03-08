@@ -38,18 +38,22 @@ describe('Setup', () => {
       // we often get a segfault when trying to display the about window - prob because 
       // the about_w variable hasnt been initialized yet?  So wait a bit...
       .pause(5000)
+    await app.client
       .waitUntilWindowLoaded()
+    await app.client
       .getWindowCount()
       .should.eventually.be.above(0)
 
       // no screenshot: default lib directory is my $HOME - which can change from minute to minute
       // .then(() => {return hooks.screenshotAndCompare(app, 'mainWindow-startup')})
 
+    await app.client
       .getTitle().should.eventually.equal('Synergize')
 
   });
 
 });
+
 
 describe('Render unit tests', () => {
 
@@ -68,6 +72,7 @@ require('./test-about');
 
 require('./test-prefs');
 
+/*
 require('./test-edit-crt');
 
 describe('Test Voicing Mode views', () => {
@@ -93,6 +98,7 @@ describe('Test READ-ONLY views', () => {
   viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaINTERNALCRT, "readonlyCRT");
 });
 
+*/
 
 describe('Tear Down', () => {
   afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });

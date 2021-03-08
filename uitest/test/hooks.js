@@ -100,6 +100,7 @@ module.exports = {
   async startApp() {
     module.exports.startMainApp();
 
+   console.log("waiting 4000ms...");
     // give the main exe a little time to initialize itself    
     await sleep(4000)
     function sleep(ms) {
@@ -115,8 +116,8 @@ module.exports = {
       args: [astilectronJS(), `127.0.0.1:${PORT}`, 'true'],
 
       // for debugging:
-      //chromeDriverLogPath: './chromedriver.log',
-      //webdriverLogPath: './webdriver.log'
+      chromeDriverLogPath: './chromedriver.log',
+      //      webdriverLogPath: './webdriver.log'
 
     }).start();
     chaiAsPromised.transferPromiseness = rendererApp.transferPromiseness;
@@ -156,7 +157,7 @@ module.exports = {
       // sanitize the name (replace spaces, slashes with underscores)
       name = name.replace(/[^A-Za-z0-9_-]/g, '_')
       const ssPath = path.join(ssDir, name + '.failed.png')
-      console.log('ERROR:  afterEach write screeshot to ' + ssPath);
+      console.log('ERROR:  afterEach write screenshot to ' + ssPath);
       app.client.saveScreenshot(ssPath);
     }
   },
