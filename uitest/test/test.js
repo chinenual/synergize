@@ -30,6 +30,8 @@ describe('Setup', () => {
         }
         console.log("====== start up the app");
         app = await hooks.startApp();
+
+        app.client.setTimeout({'implicit': 0})
     });
 
     it('opens a window', async () => {
@@ -55,6 +57,7 @@ describe('Setup', () => {
 });
 
 
+/*
 describe('Render unit tests', () => {
 
     it('voice page text conversions', async () => {
@@ -67,8 +70,8 @@ describe('Render unit tests', () => {
     });
 });
 
-
 require('./test-about');
+*/
 
 require('./test-prefs');
 

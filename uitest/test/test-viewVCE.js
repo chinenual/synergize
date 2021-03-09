@@ -16,13 +16,23 @@ module.exports = {
     loadVCEViaLeftPanel(name) {
         describe('Load ' + name + '.VCE from left panel', () => {
             it('click load ' + name, async () => {
-                await app.client
-                    .click('.file=' + name)
-                    .waitUntilTextExists("#vce_name", name, LOAD_VCE_TIMEOUT)
-                    .pause(2000) // HACK
+                // NOTE: using webdriverio selector extension ("=FOO" means look for text "FOO")
+                //    https://webdriver.io/docs/selectors/#element-with-certain-text
+                const link = await app.client.$('.file=' + name)
+                await link.click()
+                
+                const vce_name = await app.client.$('#vce_name')
+                app.client.waitUntil(
+                    () => vce_name.getText() == name,
+                    {
+                        timeout: LOAD_VCE_TIMEOUT
+                    }
+                );
 
-                await app.client
-                    .getValue('#VNAME').should.eventually.equal(name)
+//                await app.client.pause(2000) // HACK
+
+                const vname = await app.client.$('#VNAME')
+                await vname.getValue().should.eventually.equal(name)
             });
         });
     },
@@ -62,18 +72,39 @@ module.exports = {
     loadVCEViaINTERNALCRT(name) {
         describe('Load ' + name + ' from Internal CRT', () => {
             it('click load ' + name, async () => {
-                await app.client
-                    .click('.file=INTERNAL')
-                    .waitUntilTextExists("#crt_path", 'INTERNAL', LOAD_VCE_TIMEOUT)
-                    .getText('#crt_path').should.eventually.equal('INTERNAL')
-                    .click(`//*[@id='content']//span[text()='${padName(name)}']`)
-                    .waitUntilTextExists("#vce_name", name, LOAD_VCE_TIMEOUT)
-                    .pause(2000) // HACK
+                const link = await app.client.$('.file=INTERNAL')
+                await link.click()
 
-                await app.client
-                    .getValue('#VNAME').should.eventually.equal(name)
-                    .getText('#vce_crt_name').should.eventually.equal('INTERNAL')
-                    .getText('#vce_name').should.eventually.equal(name)
+                const crt_path = await app.client.$('#crt_path')
+                app.client.waitUntil(
+                    () => crt_path.getText() == 'INTERNAL',
+                    {
+                        timeout: LOAD_VCE_TIMEOUT
+                    }
+                );
+
+                await crt_path.getText().should.eventually.equal('INTERNAL')
+
+                const v_link = await app.client.$(`//*[@id='content']//span[text()='${padName(name)}']`)
+                await v_link.click()
+
+                const vce_name = await app.client.$('#vce_name')
+                app.client.waitUntil(
+                    () => vce_name.getText() == name,
+                    {
+                        timeout: LOAD_VCE_TIMEOUT
+                    }
+                );
+
+                await app.client.pause(2000) // HACK
+
+                const vname = await app.client.$('#VNAME')
+                await vname.getValue().should.eventually.equal(name)
+                
+                const vce_crt_name = await app.client.$('#vce_crt_name')
+                await vce_crt_name.getText().should.eventually.equal('INTERNAL')
+                
+                await vce_name.getText().should.eventually.equal(name)
             });
         });
     },
@@ -96,6 +127,7 @@ module.exports = {
                 if (voiceLoader != null) {
                     voiceLoader(v.name);
                 }
+/*
                 describe('Check fields for ' + v.name, () => {
                     describe('check voice-tab', () => {
                         it('grab screenshot', async () => {
@@ -277,7 +309,7 @@ module.exports = {
                     });
 
                 });
-
+*/
             });
 
         });
