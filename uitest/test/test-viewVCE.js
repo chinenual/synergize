@@ -45,7 +45,7 @@ module.exports = {
             it('voice tab should display', async () => {
                 const tab = await app.client.$(`#vceTabs a[href='#vceVoiceTab']`)
                 await tab.click()
-                await getAttribute('class').should.eventually.include('active')
+                await tab.getAttribute('class').should.eventually.include('active')
                 const table = await app.client.$('#voiceParamTable')
                 await table.waitForDisplayed()
                 await table.isDisplayed('#voiceParamTable').should.eventually.equal(true)
@@ -53,7 +53,7 @@ module.exports = {
             it('click load ' + name, async () => {
                 const vname = await app.client.$('#VNAME')
                 // need to clear this since previous test may also be using same voice
-                await vname.clearElement()
+                await vname.clearValue()
                 const link = await app.client.$('.file=' + name)
                 await link.click()
                 const confirmText = await app.client.$('#confirmText')
@@ -62,7 +62,7 @@ module.exports = {
                 await confirmText.waitForDisplayed()
                 await confirmText.getText().should.eventually.include('pending edits')
                 await confirmOk.click()
-                confirmText.waitForDisplayed({timeout: 1000, reverse: true})
+                await confirmText.waitForDisplayed({reverse: true})
                 
                 app.client.waitUntil(
                     () => vname.getValue() == name,

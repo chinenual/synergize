@@ -9,25 +9,38 @@ describe('Test Voicing Mode OFF', () => {
     });
 
     it('should disable voicing mode', async () => {
-        await app.client
-            .click('#voicingModeButton')
+        const voicingModeButton = await app.client.$('#voicingModeButton')
+        await voicingModeButton.click()
 
-            .waitForVisible('#confirmText')
-            .getText('#confirmText').should.eventually.include('pending edits')
-            .click('#confirmOKButton')
-            .waitForVisible('#confirmText', 1000, true) // wait to disappear
-
-            .waitForVisible('#alertText')
-            .then(() => {return hooks.screenshotAndCompare(app, 'voicingModeOff-alert')})
-
-            .getText('#alertText').should.eventually.include('disabled')
-
-            .click('#alertModal button')
-            .waitForVisible('#alertText', 1000, true) // wait to disappear
+        const confirmText = await app.client.$('#confirmText')
+        await confirmText.getText().should.eventually.include('pending edits')
         
-            .getAttribute("#voicingModeButton img", "src").should.eventually.include('static/images/red-button-off-full.png')
+        const confirmOk = await app.client.$('#confirmOKButton')
+console.log("OFF 4")
+        await confirmOk.click()
+console.log("OFF 3")
 
-            .then(() => {return hooks.screenshotAndCompare(app, 'voicingModeOff')})
+        await confirmText.waitForDisplayed({reverse: true})  // wait to disappear
+        
+        const alertText = await app.client.$('#alertText')
+        const img = await app.client.$('#voicingModeButton img')
+
+        await alertText.waitForDisplayed()
+        await hooks.screenshotAndCompare(app, 'voicingModeOff-alert')
+
+        await alertText.getText().should.eventually.include('disabled')
+
+        const alertClose = await app.client.$('#alertModal button')
+console.log("OFF 2")
+        await alertClose.click()
+console.log("OFF 1")
+
+        await alertText.waitForDisplayed({reverse: true})  // wait to disappear
+
+        await img.getAttribute("src").should.eventually.include('static/images/red-button-off-full.png')
+
+        await hooks.screenshotAndCompare(app, 'voicingModeOff')
+
     });
 });
 

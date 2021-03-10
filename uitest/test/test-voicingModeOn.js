@@ -12,20 +12,25 @@ describe('Test Voicing Mode ON', () => {
     });
 
     it('should enable voicing mode', async () => {
-        await app.client
-            .click('#voicingModeButton')
+        const voicingModeButton = await app.client.$('#voicingModeButton')
+        await voicingModeButton.click()
 
-            .waitForVisible('#alertText', INIT_VOICING_TIMEOUT)
-            .then(() => {return hooks.screenshotAndCompare(app, 'voicingModeOn-alert')})
+        const alertText = await app.client.$('#alertText')
+        const button = await app.client.$('#alertModal button')
+        const img = await app.client.$('#voicingModeButton img')
 
-            .getText('#alertText').should.eventually.include('enabled')
+        await alertText.waitForDisplayed({timeout: INIT_VOICING_TIMEOUT})
+        await hooks.screenshotAndCompare(app, 'voicingModeOn-alert')
 
-            .click('#alertModal button')
-            .waitForVisible('#alertText', 1000, true) // wait to disappear
+        await alertText.getText().should.eventually.include('enabled')
 
-            .getAttribute("#voicingModeButton img", "src").should.eventually.include('static/images/red-button-on-full.png')
+        await button.click()
 
-            .then(() => {return hooks.screenshotAndCompare(app, 'voicingModeOn')})
+        await alertText.waitForDisplayed({timeout: 1000, reverse: true})  // wait to disappear
+
+        await img.getAttribute("src").should.eventually.include('static/images/red-button-on-full.png')
+
+        await hooks.screenshotAndCompare(app, 'voicingModeOn')
     });
 
     describe('initial VRAM image should be loaded', () => {
