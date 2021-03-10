@@ -18,9 +18,7 @@ describe('Test Voicing Mode OFF', () => {
         await confirmText.getText().should.eventually.include('pending edits')
         
         const confirmOk = await app.client.$('#confirmOKButton')
-console.log("OFF 4")
         await confirmOk.click()
-console.log("OFF 3")
 
         await confirmText.waitForDisplayed({reverse: true})  // wait to disappear
         
@@ -33,9 +31,7 @@ console.log("OFF 3")
         await alertText.getText().should.eventually.include('disabled')
 
         const alertClose = await app.client.$('#alertModal button')
-console.log("OFF 2")
         await alertClose.click()
-console.log("OFF 1")
 
         await alertText.waitForDisplayed({reverse: true})  // wait to disappear
 

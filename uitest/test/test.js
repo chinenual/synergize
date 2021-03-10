@@ -85,10 +85,11 @@ require('./test-prefs');
   require('./test-envs-edit');
   require('./test-filter-edit.js');
   require('./test-keyeq-edit');
-  require('./test-keyprop-edit');
 */
+  require('./test-keyprop-edit');
+/*
   viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaLeftPanelVoicingMode, "voicemode");
-
+*/
   require('./test-voicingModeOff');
   });
 
