@@ -57,10 +57,11 @@ module.exports = {
                 const link = await app.client.$('.file=' + name)
                 await link.click()
                 const confirmText = await app.client.$('#confirmText')
-                const confirmOk = await app.client.$('#confirmOkButton')
 
                 await confirmText.waitForDisplayed()
                 await confirmText.getText().should.eventually.include('pending edits')
+
+                const confirmOk = await app.client.$('#confirmOkButton')
                 await confirmOk.click()
                 await confirmText.waitForDisplayed({reverse: true})
                 

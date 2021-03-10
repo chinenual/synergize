@@ -13,6 +13,8 @@ describe('Test Voicing Mode OFF', () => {
         await voicingModeButton.click()
 
         const confirmText = await app.client.$('#confirmText')
+
+        await confirmText.waitForDisplayed()
         await confirmText.getText().should.eventually.include('pending edits')
         
         const confirmOk = await app.client.$('#confirmOKButton')
