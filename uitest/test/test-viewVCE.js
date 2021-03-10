@@ -127,47 +127,46 @@ module.exports = {
                 if (voiceLoader != null) {
                     voiceLoader(v.name);
                 }
-/*
                 describe('Check fields for ' + v.name, () => {
                     describe('check voice-tab', () => {
-                        it('grab screenshot', async () => {
-                            await app.client
-                                .then(() => { return hooks.screenshotAndCompare(app, `${v.name}-${context}-voiceTab`) })
+                        it('grab screenshot', () => {
+                                hooks.screenshotAndCompare(app, `${v.name}-${context}-voiceTab`)
                         });
                         for (k in v.voicetab) {
                             let key = k; // without this let, the value is not consistnent inside the it()'s
                             let value = v.voicetab[key];
                             if (typeof value === 'string') {
                                 it(`${key} should be ${value}`, async () => {
-                                    await app.client
-                                        .getText('#' + cssQuoteId(key)).should.eventually.equal(value)
+                                    const ele = await app.client.$('#' + cssQuoteId(key))
+                                    await ele.getText().should.eventually.equal(value)
                                 });
                             } else if (value["exist"] != undefined) {
                                 it(`${key} should ${value.exist ? '' : 'not '}exist`, async () => {
-                                    await app.client
-                                        .isExisting('#' + cssQuoteId(key)).should.eventually.equal(value.exist)
+                                    const ele = await app.client.$('#' + cssQuoteId(key))
+                                    await ele.isExisting().should.eventually.equal(value.exist)
                                 });
-
+                                
                             } else if (value["visible"] != undefined) {
                                 it(`${key} should ${value.exist ? '' : 'not '}be visible`, async () => {
-                                    await app.client
-                                        .isVisible('#' + cssQuoteId(key)).should.eventually.equal(value.visible)
+                                    const ele = await app.client.$('#' + cssQuoteId(key))
+                                    await ele.isDisplayed().should.eventually.equal(value.visible)
                                 });
-
+                                
                             } else if (value["value"] != undefined) {
                                 it(`${key} should be ${value.value}`, async () => {
-                                    await app.client
-                                        .getValue('#' + cssQuoteId(key)).should.eventually.equal(value.value)
+                                    const ele = await app.client.$('#' + cssQuoteId(key))
+                                    await ele.getValue().should.eventually.equal(value.value)
                                 });
-
+                                
                             } else if (value["selected"] != undefined) {
                                 it(`${key} should be ${value.selected}`, async () => {
-                                    await app.client
-                                        .$('#' + cssQuoteId(key)).isSelected().should.eventually.equal(value.selected)
+                                    const ele = await app.client.$('#' + cssQuoteId(key))
+                                    await ele.isSelected().should.eventually.equal(value.selected)
                                 });
                             }
                         }
                     });
+/*
                     describe('check envelopes-tab', () => {
                         it('env tab should display', async () => {
                             await app.client
@@ -307,9 +306,9 @@ module.exports = {
                             });
                         }
                     });
+*/
 
                 });
-*/
             });
 
         });
