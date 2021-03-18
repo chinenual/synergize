@@ -90,10 +90,10 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 	var freqValueByte byte // Synergy byte encoding for freq value
 	var freqValueInt int   // scaled freq value
 	var harmonic float64
-	var OSClevelPercent float64
-	var VelocityPercent float64
-	var PMfix float64
-	var LevComp float64
+	var osclevelPercent float64
+	var velocityPercent float64
+	var pmFix float64
+	var levComp float64
 	var patchOutputDSR byte
 	var ms [4]int
 	var fb int
@@ -130,7 +130,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 	//Lower carriers for volume compnstaon.
 	//Find # of carriers  ---  patchOutputDSR = 0
 	carrier := 0
-	LevComp = 1.0
+	levComp = 1.0
 	for i := range dx7Voice.Osc {
 		patchOutputDSR = ((vce.Envelopes[i].FreqEnvelope.OPTCH & 0xc0) >> 6)
 		if patchOutputDSR == 0 {
@@ -151,36 +151,36 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 
 		//
 		//  ********************  Check if OSC is MODULATOR
-		//  ********************  If yes, raise "OSClevelPercent" by 5 %  Trying to fake FM/PM difference
-		PMfix = 1.0
+		//  ********************  If yes, raise "osclevelPercent" by 5 %  Trying to fake FM/PM difference
+		pmFix = 1.0
 
 		if patchOutputDSR > 0 {
-			PMfix = 1.05
-			//fmt.Printf(" %s %f \n", " PMfix = ", PMfix)
+			pmFix = 1.05
+			//fmt.Printf(" %s %f \n", " pmFix = ", pmFix)
 		} else {
-			PMfix = 1.0
-			//fmt.Printf(" %s %f \n", " PMfix = ", PMfix)
+			pmFix = 1.0
+			//fmt.Printf(" %s %f \n", " pmFix = ", pmFix)
 		}
-		//fmt.Printf(" %s %d %d %f \n", " OSC - POdsr= ", oscIndex+1, patchOutputDSR, PMfix)
+		//fmt.Printf(" %s %d %d %f \n", " OSC - POdsr= ", oscIndex+1, patchOutputDSR, pmFix)
 
 		//OPTCH
 		//patchOutputDSR = ((patchByte & 0xc0) >> 6)
 		if patchOutputDSR == 0 {
 			switch carrier {
 			case 6:
-				LevComp = .70
+				levComp = .70
 			case 5:
-				LevComp = .75
+				levComp = .75
 			case 4:
-				LevComp = .80
+				levComp = .80
 			case 3:
-				LevComp = .85
+				levComp = .85
 			case 2:
-				LevComp = .90
+				levComp = .90
 			case 1:
-				LevComp = 1.0
+				levComp = 1.0
 			}
-			//fmt.Printf(" %s %f \n", " Levcomp =  ", LevComp)
+			//fmt.Printf(" %s %f \n", " Levcomp =  ", levComp)
 
 		}
 		// Fix Over Values where max is 99...
@@ -350,14 +350,14 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		vce.Envelopes[oscIndex].FreqEnvelope.SUSTAINPT = 1
 		vce.Envelopes[oscIndex].FreqEnvelope.NPOINTS = 2
 		// set lower Env levels for velocity sensitivity
-		VelocityPercent = 1.0 - (float64(dxOsc.KeyVelocitySensitivity) / 10.0)
-		//fmt.Printf(" %s %f %d \n", " Vel% = ", VelocityPercent, dxOsc.KeyVelocitySensitivity)
+		velocityPercent = 1.0 - (float64(dxOsc.KeyVelocitySensitivity) / 10.0)
+		//fmt.Printf(" %s %f %d \n", " Vel% = ", velocityPercent, dxOsc.KeyVelocitySensitivity)
 
 		//  change levels for velocity sensitivity, PM Fix, and level comp
-		OSClevelPercent = float64(float64(dxOsc.OperatorOutputLevel) / 99.00)
+		osclevelPercent = float64(float64(dxOsc.OperatorOutputLevel) / 99.00)
 
 		for k := 0; k < 4; k++ {
-			dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * OSClevelPercent * PMfix * LevComp * 0.727)
+			dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * osclevelPercent * pmFix * levComp * 0.727)
 		}
 
 		// Each Synergy oscillator is voice twice - for low and high key velocity response
@@ -370,7 +370,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		sustR = ms[2]
 		relsR = ms[3]
 		/*
-			fmt.Printf(" %s %f \n", " OSC % = ", OSClevelPercent)
+			fmt.Printf(" %s %f \n", " OSC % = ", osclevelPercent)
 			fmt.Printf(" %s %d \n", " attkR = ", attkR)
 			fmt.Printf(" %s %d \n", " decyR = ", decyR)
 			fmt.Printf(" %s %d \n", " sustR = ", sustR)
@@ -378,25 +378,25 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		*/
 
 		// point1
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[0] = byte((math.Round(float64(dxOsc.EgLevel[0]) * VelocityPercent)) + 55)
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[0] = byte((math.Round(float64(dxOsc.EgLevel[0]) * velocityPercent)) + 55)
 		vce.Envelopes[oscIndex].AmpEnvelope.Table[1] = byte((math.Round(float64(dxOsc.EgLevel[0]))) + 55)
 		vce.Envelopes[oscIndex].AmpEnvelope.Table[2] = byte(helperNearestAmpTimeIndex(attkR))
 		vce.Envelopes[oscIndex].AmpEnvelope.Table[3] = byte(helperNearestAmpTimeIndex(attkR))
 
 		//point2
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[4] = byte((math.Round(float64(dxOsc.EgLevel[1]) * VelocityPercent)) + 55)
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[4] = byte((math.Round(float64(dxOsc.EgLevel[1]) * velocityPercent)) + 55)
 		vce.Envelopes[oscIndex].AmpEnvelope.Table[5] = byte((math.Round(float64(dxOsc.EgLevel[1]))) + 55)
 		vce.Envelopes[oscIndex].AmpEnvelope.Table[6] = byte(helperNearestAmpTimeIndex(decyR))
 		vce.Envelopes[oscIndex].AmpEnvelope.Table[7] = byte(helperNearestAmpTimeIndex(decyR))
 
 		//point3
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[8] = byte((math.Round(float64(dxOsc.EgLevel[2]) * VelocityPercent)) + 55)
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[8] = byte((math.Round(float64(dxOsc.EgLevel[2]) * velocityPercent)) + 55)
 		vce.Envelopes[oscIndex].AmpEnvelope.Table[9] = byte((math.Round(float64(dxOsc.EgLevel[2]))) + 55)
 		vce.Envelopes[oscIndex].AmpEnvelope.Table[10] = byte(helperNearestAmpTimeIndex(sustR))
 		vce.Envelopes[oscIndex].AmpEnvelope.Table[11] = byte(helperNearestAmpTimeIndex(sustR))
 
 		//point4
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[12] = byte((math.Round(float64(dxOsc.EgLevel[3]) * VelocityPercent)) + 55)
+		vce.Envelopes[oscIndex].AmpEnvelope.Table[12] = byte((math.Round(float64(dxOsc.EgLevel[3]) * velocityPercent)) + 55)
 		vce.Envelopes[oscIndex].AmpEnvelope.Table[13] = byte((math.Round(float64(dxOsc.EgLevel[3]))) + 55)
 		vce.Envelopes[oscIndex].AmpEnvelope.Table[14] = byte(helperNearestAmpTimeIndex(relsR))
 		vce.Envelopes[oscIndex].AmpEnvelope.Table[15] = byte(helperNearestAmpTimeIndex(relsR))
