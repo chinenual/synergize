@@ -14,13 +14,13 @@ func main() {
 	var b []byte
 	var err error
 
-	err = synio.SetSynergySerialPort("/dev/tty.usbserial-AL05OC8S", 9600, true, false, false)
+	err = synio.SetSynergySerialPort("/dev/tty.usbserial-AL05OC8S", 9600, true, false, false, false)
 	if err != nil {
 		log.Panic(err)
 	}
 
 	if os.Args[1] == "--addrs" {
-		if _, err = synio.EnableVoicingMode(); err != nil {
+		if _, err = synio.EnableVoicingMode(nil); err != nil {
 			log.Panic(err)
 		}
 		return
