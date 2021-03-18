@@ -9,6 +9,10 @@ permalink: /docs/release-notes
 
 # Release Notes
 
+## 2.5.0
+
+* Updates the underlying components, most significantly to Electron 11.
+
 ## 2.4.0
 
 * Implements [issue #38](https://github.com/chinenual/synergize/issues/38):

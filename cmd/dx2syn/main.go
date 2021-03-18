@@ -1,14 +1,12 @@
-package dx2syn
+package main
 
 import (
 	"flag"
 	"fmt"
+	"github.com/chinenual/synergize/data"
+	"github.com/chinenual/synergize/dx2syn"
 	"log"
 	"os"
-	"path"
-	"regexp"
-
-	"github.com/chinenual/synergize/data"
 )
 
 var allFlag = flag.Bool("all", false, "extract all patches")
@@ -28,29 +26,11 @@ func usage(msg string) {
 	os.Exit(1)
 }
 
-func sanitizeFilename(v string) (result string) {
-	r, _ := regexp.Compile("[^A-Za-z0-9+!@# _-]")
-	result = r.ReplaceAllString(v, "_")
-	return
-}
-
-func makeVCEFilename(sysexPath string, synVoiceName string) (pathname string, err error) {
-	sysexExt := path.Ext(sysexPath)
-	sysexDir := (sysexPath)[0 : len(sysexPath)-len(sysexExt)]
-	if err = os.MkdirAll(sysexDir, 0777); err != nil {
-		log.Printf("ERROR: could not create output directory %s: %v\n", sysexDir, err)
-		return
-	}
-	base := path.Join(sysexDir, sanitizeFilename(synVoiceName))
-	pathname = base + ".VCE"
-	return
-}
-
 func main() {
 	flag.Parse()
 
 	if *makecrtFlag != "" {
-		if err := makeCrt(*makecrtFlag); err != nil {
+		if err := dx2syn.MakeCrt(*makecrtFlag, *verboseFlag); err != nil {
 			log.Printf("ERROR: could not create CRT from %s: %v", *makecrtFlag, err)
 		}
 		return
@@ -59,12 +39,12 @@ func main() {
 		for a := 0; a < 32; a++ {
 			var vce data.VCE
 			var err error
-			if vce, err = helperBlankVce(); err != nil {
+			if vce, err = data.BlankVce(); err != nil {
 				return
 			}
 			// DX7 always uses 6 oscillators
 			vce.Head.VOITAB = 5
-			if err = helperSetAlgorithmPatchType(&vce, byte(a), 0); err != nil {
+			if err = dx2syn.SetAlgorithmPatchType(&vce, byte(a), 0); err != nil {
 				log.Printf("ERROR: could not set algo %d: %v", a, err)
 			} else {
 				vcePathname := fmt.Sprintf("algo%d.VCE", a)
@@ -87,9 +67,9 @@ func main() {
 	}
 
 	var err error
-	var sysex Dx7Sysex
-	var selectedVoices []Dx7Voice
-	if sysex, err = ReadDx7Sysex(*sysexFlag); err != nil {
+	var sysex dx2syn.Dx7Sysex
+	var selectedVoices []dx2syn.Dx7Voice
+	if sysex, err = dx2syn.ReadDx7Sysex(*sysexFlag); err != nil {
 		log.Printf("ERROR: could not parse sysex file %s: %v", *sysexFlag, err)
 		os.Exit(1)
 	}
@@ -163,22 +143,22 @@ func main() {
 			hasError := false
 			var vce data.VCE
 			if *verboseFlag {
-				log.Printf("Translating '%s' %s...\n", v.VoiceName, Dx7VoiceToJSON(v))
+				log.Printf("Translating '%s' %s...\n", v.VoiceName, dx2syn.Dx7VoiceToJSON(v))
 			} else {
 				log.Printf("Translating '%s'...\n", v.VoiceName)
 			}
-			if vce, err = TranslateDx7ToVce(&nameMap, v); err != nil {
+			if vce, err = dx2syn.TranslateDx7ToVce(&nameMap, v); err != nil {
 				log.Printf("ERROR: could not translate Dx7 voice %s: %v", v.VoiceName, err)
 			} else {
 				if *verboseFlag {
-					log.Printf("Result VCE: '%s' %s\n", v.VoiceName, helperVCEToJSON(vce))
+					log.Printf("Result VCE: '%s' %s\n", v.VoiceName, data.CompactVceToJson(vce))
 				}
 				const IgnoreValidation = true
 				if err = data.VceValidate(vce); (err != nil) && (!IgnoreValidation) {
 					log.Printf("ERROR: validation error on translate Dx7 voice %s: %v\n", v.VoiceName, err)
 					hasError = true
 				} else {
-					vcePathname, err := makeVCEFilename(*sysexFlag, data.VceName(vce.Head))
+					vcePathname, err := dx2syn.MakeVCEFilename(*sysexFlag, data.VceName(vce.Head))
 					if err != nil {
 						hasError = true
 					}

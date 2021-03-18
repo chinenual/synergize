@@ -11,6 +11,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/orcaman/writerseeker"
+
 	"github.com/chinenual/synergize/logger"
 	"github.com/pkg/errors"
 	"gopkg.in/go-playground/validator.v9"
@@ -789,10 +791,38 @@ func VceToJson(vce VCE) (result string) {
 
 	return
 }
-
 func vceHeadToJson(head VCEHead) (result string) {
 	b, _ := json.Marshal(head)
 	result = string(b)
 
+	return
+}
+
+func CompactVCE(vce VCE) (compacted VCE, err error) {
+	var writebuf = writerseeker.WriterSeeker{}
+
+	if err = WriteVce(&writebuf, vce, VceName(vce.Head), false); err != nil {
+		return
+	}
+	writeBytes, _ := ioutil.ReadAll(writebuf.Reader())
+
+	var readbuf2 = bytes.NewReader(writeBytes)
+
+	if compacted, err = ReadVce(readbuf2, false); err != nil {
+		return
+	}
+	return
+}
+
+func CompactVceToJson(vce VCE) (result string) {
+	// compact the vce before printing it:
+	var err error
+	var compacted VCE
+	if compacted, err = CompactVCE(vce); err != nil {
+		return fmt.Sprintf("ERROR: %v", err)
+	}
+
+	b, _ := json.MarshalIndent(compacted, "", "\t")
+	result = string(b)
 	return
 }

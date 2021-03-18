@@ -27,35 +27,35 @@ func isSysexExt(path string) bool {
 	return ext == ".SYSX" || ext == ".SYSEX" || ext == ".SYX"
 }
 
-func makeCrt(path string) (err error) {
+func MakeCrt(path string, verbose bool) (err error) {
 	var fileInfo os.FileInfo
 	if fileInfo, err = os.Stat(path); err != nil {
 		return
 	}
 	if fileInfo.IsDir() {
-		if err = recurseMakeCrt(path); err != nil {
+		if err = recurseMakeCrt(path, verbose); err != nil {
 			return
 		}
 	} else {
-		if err = makeCrtFromSysex(path); err != nil {
+		if err = makeCrtFromSysex(path, verbose); err != nil {
 			return
 		}
 	}
 	return
 }
 
-func recurseMakeCrt(dirPath string) (err error) {
+func recurseMakeCrt(dirPath string, verbose bool) (err error) {
 	err = filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
 		if info.IsDir() && dirPath != path {
-			if err = recurseMakeCrt(path); err != nil {
+			if err = recurseMakeCrt(path, verbose); err != nil {
 				return err
 			}
 		} else if isSysexExt(path) {
-			if err = makeCrtFromSysex(path); err != nil {
+			if err = makeCrtFromSysex(path, verbose); err != nil {
 				return err
 			}
 		}
@@ -63,7 +63,7 @@ func recurseMakeCrt(dirPath string) (err error) {
 	})
 	return
 }
-func makeCrtFromSysex(sysexPath string) (err error) {
+func makeCrtFromSysex(sysexPath string, verbose bool) (err error) {
 	// make the vce's
 	var sysex Dx7Sysex
 	if sysex, err = ReadDx7Sysex(sysexPath); err != nil {
@@ -74,7 +74,7 @@ func makeCrtFromSysex(sysexPath string) (err error) {
 	for _, v := range sysex.Voices {
 		hasError := false
 		var vce data.VCE
-		if *verboseFlag {
+		if verbose {
 			log.Printf("Translating '%s' %s...\n", v.VoiceName, Dx7VoiceToJSON(v))
 		} else {
 			log.Printf("Translating '%s'...\n", v.VoiceName)
@@ -82,15 +82,15 @@ func makeCrtFromSysex(sysexPath string) (err error) {
 		if vce, err = TranslateDx7ToVce(&nameMap, v); err != nil {
 			log.Printf("ERROR: could not translate Dx7 voice %s: %v", v.VoiceName, err)
 		} else {
-			if *verboseFlag {
-				log.Printf("Result VCE: '%s' %s\n", v.VoiceName, helperVCEToJSON(vce))
+			if verbose {
+				log.Printf("Result VCE: '%s' %s\n", v.VoiceName, data.CompactVceToJson(vce))
 			}
 			const IgnoreValidation = true
 			if err = data.VceValidate(vce); (err != nil) && (!IgnoreValidation) {
 				log.Printf("ERROR: validation error on translate Dx7 voice %s: %v\n", v.VoiceName, err)
 				hasError = true
 			} else {
-				vcePathname, err := makeVCEFilename(sysexPath, data.VceName(vce.Head))
+				vcePathname, err := MakeVCEFilename(sysexPath, data.VceName(vce.Head))
 				if err != nil {
 					hasError = true
 				}

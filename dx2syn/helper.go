@@ -1,40 +1,14 @@
 package dx2syn
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"log"
 	"math"
-
-	"github.com/pkg/errors"
-
-	"github.com/chinenual/synergize/data"
-	"github.com/orcaman/writerseeker"
+	"os"
+	"path"
+	"regexp"
 )
 
 // Helper routines that may find their way back into the synergize/data module.
-
-func helperBlankVce() (vce data.VCE, err error) {
-	rdr := bytes.NewReader(data.VRAM_EDATA[data.Off_VRAM_EDATA:])
-	if vce, err = data.ReadVce(rdr, false); err != nil {
-		return
-	}
-	// re-allocate the Envelopes and each env Table to allow us to control size
-	//and #osc simply by writing to VOITAB and NPOINTS params
-	for i := 1; i < 16; i++ {
-		// make a copy of the first osc:
-		vce.Envelopes = append(vce.Envelopes, vce.Envelopes[0])
-	}
-	vce.Filters = make([][32]int8, 16)
-	for i := 0; i < 16; i++ {
-		// now re-allocate each envelope to their max possible length:
-		vce.Envelopes[i].AmpEnvelope.Table = make([]byte, 4*16)
-		vce.Envelopes[i].FreqEnvelope.Table = make([]byte, 4*16)
-	}
-	return
-}
 
 func min(x, y int) int {
 	if x < y {
@@ -50,88 +24,21 @@ func max(x, y int) int {
 	return y
 }
 
-func helperSetPatchType(vce *data.VCE, patchType int) {
-	for i := range data.PatchTypePerOscTable[patchType-1] {
-		vce.Envelopes[i].FreqEnvelope.OPTCH = data.PatchTypePerOscTable[patchType-1][i]
-	}
-}
-
-var dxAlgoNoFeedbackPatchTypePerOscTable = [32][16]byte{
-	{100, 97, 97, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},     // DX 1 (algo 0)
-	{100, 97, 97, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},     // DX 2 (algo 1)
-	{100, 97, 1, 100, 97, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},     // DX 3 (algo 2)
-	{100, 97, 1, 100, 97, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},     // DX 4 (algo 3)
-	{100, 1, 100, 1, 100, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4},   // DX 5 (algo 4)
-	{100, 1, 100, 1, 100, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4},   // DX 6 (algo 5)
-	{100, 97, 76, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},     // DX 7 (algo 6)
-	{100, 97, 76, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},     // DX 8 (algo 7)
-	{100, 97, 76, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},     // DX 9 (algo 8)
-	{100, 76, 1, 100, 97, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},     // DX 10 (algo 9)
-	{100, 76, 1, 100, 97, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},     // DX 11 (algo 10)
-	{100, 76, 76, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},     // DX 12 (algo 11)
-	{100, 76, 76, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},     // DX 13 (algo 12)
-	{100, 76, 97, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},     // DX 14 (algo 13)
-	{100, 76, 97, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},     // DX 15 (algo 14)
-	{100, 161, 100, 145, 148, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}, // DX 16 (algo 15)
-	{100, 161, 100, 145, 148, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}, // DX 17 (algo 16)
-	{100, 97, 97, 76, 76, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},     // DX 18 (algo 17)
-	{100, 1, 1, 100, 97, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},      // DX 19 (algo 18)
-	{100, 76, 1, 100, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},      // DX 20 (algo 19)
-	{100, 1, 1, 100, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},       // DX 21 (algo 20)
-	{100, 1, 1, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},       // DX 22 (algo 21)
-	{100, 1, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},       // DX 23 (algo 22)
-	{100, 1, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},         // DX 24 (algo 23)
-	{100, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},         // DX 25 (algo 24)
-	{100, 76, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},      // DX 26 (algo 25)
-	{100, 76, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},      // DX 27 (algo 26)
-	{4, 100, 97, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},      // DX 28 (algo 27)
-	{100, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},       // DX 29 (algo 28)
-	{4, 100, 97, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},        // DX 30 (algo 29)
-	{100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},         // DX 31 (algo 30)
-	{4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},           // DX 32 (algo 31)
-}
-
-func helperSetAlgorithmPatchType(vce *data.VCE, dxAlgo byte, dxFeedback byte) (err error) {
-	if dxFeedback != 0 {
-		log.Printf("WARNING: Limitation: unhandled DX feedback: %d", dxFeedback)
-	}
-	if dxAlgo < 0 || dxAlgo > byte(len(dxAlgoNoFeedbackPatchTypePerOscTable)) {
-		return errors.Errorf("Invalid Algorithm value %d - expected 0 .. 31", dxAlgo)
-	}
-
-	for i := range dxAlgoNoFeedbackPatchTypePerOscTable[dxAlgo] {
-		vce.Envelopes[i].FreqEnvelope.OPTCH = dxAlgoNoFeedbackPatchTypePerOscTable[dxAlgo][i]
-	}
-
+func sanitizeFilename(v string) (result string) {
+	r, _ := regexp.Compile("[^A-Za-z0-9+!@# _-]")
+	result = r.ReplaceAllString(v, "_")
 	return
 }
 
-func helperCompactVCE(vce data.VCE) (compacted data.VCE, err error) {
-	var writebuf = writerseeker.WriterSeeker{}
-
-	if err = data.WriteVce(&writebuf, vce, data.VceName(vce.Head), false); err != nil {
+func MakeVCEFilename(sysexPath string, synVoiceName string) (pathname string, err error) {
+	sysexExt := path.Ext(sysexPath)
+	sysexDir := (sysexPath)[0 : len(sysexPath)-len(sysexExt)]
+	if err = os.MkdirAll(sysexDir, 0777); err != nil {
+		log.Printf("ERROR: could not create output directory %s: %v\n", sysexDir, err)
 		return
 	}
-	writeBytes, _ := ioutil.ReadAll(writebuf.Reader())
-
-	var readbuf2 = bytes.NewReader(writeBytes)
-
-	if compacted, err = data.ReadVce(readbuf2, false); err != nil {
-		return
-	}
-	return
-}
-
-func helperVCEToJSON(vce data.VCE) (result string) {
-	// compact the vce before printing it:
-	var err error
-	var compacted data.VCE
-	if compacted, err = helperCompactVCE(vce); err != nil {
-		return fmt.Sprintf("ERROR: %v", err)
-	}
-
-	b, _ := json.MarshalIndent(compacted, "", "\t")
-	result = string(b)
+	base := path.Join(sysexDir, sanitizeFilename(synVoiceName))
+	pathname = base + ".VCE"
 	return
 }
 

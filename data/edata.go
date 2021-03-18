@@ -339,3 +339,23 @@ func ReadVceFromVRAM(vram []byte) (vce VCE, err error) {
 	}
 	return
 }
+
+func BlankVce() (vce VCE, err error) {
+	rdr := bytes.NewReader(VRAM_EDATA[Off_VRAM_EDATA:])
+	if vce, err = ReadVce(rdr, false); err != nil {
+		return
+	}
+	// re-allocate the Envelopes and each env Table to allow us to control size
+	//and #osc simply by writing to VOITAB and NPOINTS params
+	for i := 1; i < 16; i++ {
+		// make a copy of the first osc:
+		vce.Envelopes = append(vce.Envelopes, vce.Envelopes[0])
+	}
+	vce.Filters = make([][32]int8, 16)
+	for i := 0; i < 16; i++ {
+		// now re-allocate each envelope to their max possible length:
+		vce.Envelopes[i].AmpEnvelope.Table = make([]byte, 4*16)
+		vce.Envelopes[i].FreqEnvelope.Table = make([]byte, 4*16)
+	}
+	return
+}

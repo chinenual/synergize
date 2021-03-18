@@ -77,13 +77,13 @@ func _convertName(dxName string, length int) string {
 }
 
 func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VCE, err error) {
-	if vce, err = helperBlankVce(); err != nil {
+	if vce, err = data.BlankVce(); err != nil {
 		return
 	}
 
 	convertName(nameMap, dx7Voice.VoiceName, &vce)
 
-	if err = helperSetAlgorithmPatchType(&vce, dx7Voice.Algorithm, dx7Voice.Feedback); err != nil {
+	if err = SetAlgorithmPatchType(&vce, dx7Voice.Algorithm, dx7Voice.Feedback); err != nil {
 		return
 	}
 
