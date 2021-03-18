@@ -1,4 +1,4 @@
-package main
+package dx2syn
 
 import (
 	"errors"
