@@ -176,7 +176,6 @@ module.exports = {
                     });
                     describe('check envelopes-tab', () => {
                         it('env tab should display', async () => {
-                            await app.client
                             const tab = await app.client.$(`#vceTabs a[href='#vceEnvsTab']`)
                             await tab.click()
                             await tab.getAttribute('class').should.eventually.include('active')

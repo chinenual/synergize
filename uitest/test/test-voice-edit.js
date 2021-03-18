@@ -18,142 +18,259 @@ describe('Test voice page edits', () => {
     });
 
     it('voice tab should display', async () => {
-        await app.client
-            .click(`#vceTabs a[href='#vceVoiceTab']`)
-            .getAttribute(`#vceTabs a[href='#vceVoiceTab']`, 'class').should.eventually.include('active')
-            .waitForVisible('#voiceOscTable')
-            .waitForVisible('#voiceParamTable')
-            .pause(2000)//HACK
+        const tab = await app.client.$(`#vceTabs a[href='#vceVoiceTab']`)
+        await tab.click()
+        await tab.getAttribute('class').should.eventually.include('active')
+        const paramTable = await app.client.$('#voiceParamTable')
+        const oscTable = await app.client.$('#voiceOscTable') 
+        await oscTable.waitForDisplayed()
+        await paramTable.waitForDisplayed()
     });
 
     // assumes we are on the INITVRAM voice
     it('sanity check initial state', async () => {
-        await app.client
-            .pause(TYPING_PAUSE)
-            .getValue('#patchType').should.eventually.equal('0')
-            .getText('#nOsc').should.eventually.equal('1')
-            .isVisible(cssQuoteId('#MUTE[1]')).should.eventually.equal(true)
-            .isVisible(cssQuoteId('#MUTE[2]')).should.eventually.equal(false)
+        const patchType = await app.client.$('#patchType')
+        const nOsc = await app.client.$('#nOsc')
+        const mute1 = await app.client.$(cssQuoteId('#MUTE[1]'))
+        const mute2 = await app.client.$(cssQuoteId('#MUTE[2]'))
+
+        await app.client.pause(TYPING_PAUSE)
+
+        await patchType.getValue().should.eventually.equal('0')
+        await nOsc.getValue().should.eventually.equal('1')
+        await mute1.isDisplayed().should.eventually.equal(true)
+        await mute2.isDisplayed().should.eventually.equal(false)
     });
 
     // test that vibrato type changes when negative depth
     it('down-arrow to VIBDEP 0->-1', async () => {
-        await app.client
-            .getValue(cssQuoteId('#VIBDEP')).should.eventually.equal('0')
-            .getText(cssQuoteId('#vibType')).should.eventually.equal('Sine')
-            .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#VIBDEP')).keys('ArrowDown')
+        const vibdep = await app.client.$('#VIBDEP')
+        const vibtype = await app.client.$('#vibType')
+        await vibdep.getValue().should.eventually.equal('0')
+        await vibtype.getText().should.eventually.equal('Sine')
 
-            .waitForValue(cssQuoteId('#VIBDEP'), '-1')
-            .pause(1000) /// hack: just waiting for text or "should eventually" as below doesnt seem to work :(
-            .waitForText(cssQuoteId('#vibType'), 'Random')
-            .getText(cssQuoteId('#vibType')).should.eventually.equal('Random')
+        await app.client.pause(TYPING_PAUSE)
+
+        await vibdep.click()
+        await app.client.keys('ArrowDown')
+
+        await vibdep.getValue().should.eventually.equal('-1')
+        await vibtype.getText().should.eventually.equal('Random')
     });
 
     // test increasing Osc count
     it('up-arrow to osc count 1->4', async () => {
-        await app.client
-            .click(cssQuoteId('#add-osc'))
-            .waitForText(cssQuoteId('#nOsc'), '2')
+        const add = await app.client.$('#add-osc')
+        const del = await app.client.$('#del-osc')
+        const nOsc = await app.client.$('#nOsc')
+        const mute4 = await app.client.$(cssQuoteId('#MUTE[4]'))
+        const mute5 = await app.client.$(cssQuoteId('#MUTE[5]'))
+ const start=Date.now()
+        await add.click()
+        console.log('NOSC: ' + await nOsc.getText() + ' - click took ' +(Date.now()-start))
+        app.client.waitUntil(
+            () => nOsc.getText() == '2',
+            {
+                timeout: LOAD_VCE_TIMEOUT
+            }
+        );       
+        console.log('0NOSC: ' + await nOsc.getText()+ ' - waitUntil took ' +(Date.now()-start))
 
-            .pause(ADD_OSC_PAUSE)
-            .click(cssQuoteId('#add-osc'))
-            .waitForText(cssQuoteId('#nOsc'), '3')
+        nOsc.getText().should.eventually.equal(2)
+        console.log('1NOSC: ' + await nOsc.getText()+ ' - eventually took ' +(Date.now()-start))
+        
+        await add.click()
+        app.client.waitUntil(
+            () => nOsc.getText() == '3',
+            {
+                timeout: LOAD_VCE_TIMEOUT
+            }
+        );       
+        nOsc.getText().should.eventually.equal(3)
 
-            .pause(ADD_OSC_PAUSE)
-            .click(cssQuoteId('#add-osc'))
-            .waitForText(cssQuoteId('#nOsc'), '4')
+        await add.click()
+        app.client.waitUntil(
+            () => nOsc.getText() == '4',
+            {
+                timeout: LOAD_VCE_TIMEOUT
+            }
+        );       
 
-            .pause(ADD_OSC_PAUSE)
-            .click(cssQuoteId('#add-osc'))
-            .waitForText(cssQuoteId('#nOsc'), '5')
-            .waitForVisible(cssQuoteId('#MUTE[5]'))
+        await add.click()
+        app.client.waitUntil(
+            () => nOsc.getText() == '5',
+            {
+                timeout: LOAD_VCE_TIMEOUT
+            }
+        );       
 
-            .pause(ADD_OSC_PAUSE)
-            .click(cssQuoteId('#del-osc'))
-            .pause(ADD_OSC_PAUSE)
-            .waitForText(cssQuoteId('#nOsc'), '4')
-            .waitForVisible(cssQuoteId('#MUTE[4]'))
-            .isVisible(cssQuoteId('#MUTE[5]')).should.eventually.equal(false)
+        await mute4.isDisplayed().should.eventually.equal(true)
+        await mute5.isDisplayed().should.eventually.equal(true)
+
+        await del.click()
+        app.client.waitUntil(
+            () => nOsc.getText() == '4',
+            {
+                timeout: LOAD_VCE_TIMEOUT
+            }
+        );       
+        
+        await mute4.isDisplayed().should.eventually.equal(true)
+        await mute5.isDisplayed().should.eventually.equal(false)        
+ console.log('NOSC: ' + await nOsc.getText())
+ await hooks.screenshotAndCompare(app, `DEBUG`)
     });
 
     it('keys playable changes', async () => {
-        await app.client
-            .waitForText(cssQuoteId('#nOsc'), '4')
-            .getText(cssQuoteId('#keysPlayable')).should.eventually.equal('8')
+        const nOsc = await app.client.$('#nOsc')
+        const keysPlayable = await app.client.$('#keysPlayable')
+        await nOsc.getText().should.eventually.equal('4')
+        await keysPlayable.getText().should.eventually.equal('8')
     });
 
     it('4 rows in the osc table', async () => {
-        await app.client
-            .isVisible(cssQuoteId('#MUTE[1]')).should.eventually.equal(true)
-            .isVisible(cssQuoteId('#MUTE[2]')).should.eventually.equal(true)
-            .isVisible(cssQuoteId('#MUTE[3]')).should.eventually.equal(true)
-            .isVisible(cssQuoteId('#MUTE[4]')).should.eventually.equal(true)
-            .isVisible(cssQuoteId('#MUTE[5]')).should.eventually.equal(false)
+        const mute1 = await app.client.$(cssQuoteId('#MUTE[1]'))
+        const mute2 = await app.client.$(cssQuoteId('#MUTE[2]'))
+        const mute3 = await app.client.$(cssQuoteId('#MUTE[3]'))
+        const mute4 = await app.client.$(cssQuoteId('#MUTE[4]'))
+        const mute5 = await app.client.$(cssQuoteId('#MUTE[5]'))
+        await mute1.isDisplayed().should.eventually.equal(true)
+        await mute2.isDisplayed().should.eventually.equal(true)
+        await mute3.isDisplayed().should.eventually.equal(true)
+        await mute4.isDisplayed().should.eventually.equal(true)
+        await mute5.isDisplayed().should.eventually.equal(false)
     });
 
     it('patch routing matches patchtype 0', async () => {
-        await app.client
-            .getValue(cssQuoteId('#patchFOInputDSR[1]')).should.eventually.equal('')
-            .getValue(cssQuoteId('#patchAdderInDSR[1]')).should.eventually.equal('1')
-            .getValue(cssQuoteId('#patchOutputDSR[1]')).should.eventually.equal('1')
+        {
+            const ele = await app.client.$(cssQuoteId('#patchFOInputDSR[1]'))
+            await ele.getValue().should.eventually.equal('')
+        }
+        {
+            const ele = await app.client.$(cssQuoteId('#patchAdderInDSR[1]'))
+            await ele.getValue().should.eventually.equal('1')
+        }
+        {
+            const ele = await app.client.$(cssQuoteId('#patchOutputDSR[1]'))
+            await ele.getValue().should.eventually.equal('1')
+        }
 
-            .getValue(cssQuoteId('#patchFOInputDSR[2]')).should.eventually.equal('')
-            .getValue(cssQuoteId('#patchAdderInDSR[2]')).should.eventually.equal('1')
-            .getValue(cssQuoteId('#patchOutputDSR[2]')).should.eventually.equal('1')
+        {
+            const ele = await app.client.$(cssQuoteId('#patchFOInputDSR[2]'))
+            await ele.getValue().should.eventually.equal('')
+        }
+        {
+            const ele = await app.client.$(cssQuoteId('#patchAdderInDSR[2]'))
+            await ele.getValue().should.eventually.equal('1')
+        }
+        {
+            const ele = await app.client.$(cssQuoteId('#patchOutputDSR[2]'))
+            await ele.getValue().should.eventually.equal('1')
+        }
 
-            .getValue(cssQuoteId('#patchFOInputDSR[2]')).should.eventually.equal('')
-            .getValue(cssQuoteId('#patchAdderInDSR[2]')).should.eventually.equal('1')
-            .getValue(cssQuoteId('#patchOutputDSR[2]')).should.eventually.equal('1')
+        {
+            const ele = await app.client.$(cssQuoteId('#patchFOInputDSR[2]'))
+            await ele.getValue().should.eventually.equal('')
+        }
+        {
+            const ele = await app.client.$(cssQuoteId('#patchAdderInDSR[2]'))
+            await ele.getValue().should.eventually.equal('1')
+        }
+        {
+            const ele = await app.client.$(cssQuoteId('#patchOutputDSR[2]'))
+            await ele.getValue().should.eventually.equal('1')
+        }
 
-            .getValue(cssQuoteId('#patchFOInputDSR[2]')).should.eventually.equal('')
-            .getValue(cssQuoteId('#patchAdderInDSR[2]')).should.eventually.equal('1')
-            .getValue(cssQuoteId('#patchOutputDSR[2]')).should.eventually.equal('1')
+        {
+            const ele = await app.client.$(cssQuoteId('#patchFOInputDSR[2]'))
+            await ele.getValue().should.eventually.equal('')
+        }
+        {
+            const ele = await app.client.$(cssQuoteId('#patchAdderInDSR[2]'))
+            await ele.getValue().should.eventually.equal('1')
+        }
+        {
+            const ele = await app.client.$(cssQuoteId('#patchOutputDSR[2]'))
+            await ele.getValue().should.eventually.equal('1')
+        }
     });
 
     /// change patch type to 1 - routing should change
     it('select patchtype 1', async () => {
-        await app.client
-            .pause(TYPING_PAUSE)
-            .selectByValue('#patchType', '1')
-            .getValue(cssQuoteId('#patchType')).should.eventually.equal('1')
-            .waitForValue(cssQuoteId('#patchType'), '1')
+        const patchType = await app.client.$('#patchType')
+        await patchType.selectByIndex(1)
+        await patchType.getValue().should.eventually.equal('1')
     });
 
     it('patch routing matches patchtype 1', async () => {
-        await app.client
-            .pause(1000) // hack to allow page to update - nothing to reliably wait for
-            .getValue(cssQuoteId('#patchFOInputDSR[1]')).should.eventually.equal('')
-            .getValue(cssQuoteId('#patchAdderInDSR[1]')).should.eventually.equal('')
-            .getValue(cssQuoteId('#patchOutputDSR[1]')).should.eventually.equal('2')
 
-            .getValue(cssQuoteId('#patchFOInputDSR[2]')).should.eventually.equal('2')
-            .getValue(cssQuoteId('#patchAdderInDSR[2]')).should.eventually.equal('1')
-            .getValue(cssQuoteId('#patchOutputDSR[2]')).should.eventually.equal('1')
+        {
+            const ele = await app.client.$(cssQuoteId('#patchFOInputDSR[1]'))
+            await ele.getValue().should.eventually.equal('')
+        }
+        {
+            const ele = await app.client.$(cssQuoteId('#patchAdderInDSR[1]'))
+            await ele.getValue().should.eventually.equal('')
+        }
+        {
+            const ele = await app.client.$(cssQuoteId('#patchOutputDSR[1]'))
+            await ele.getValue().should.eventually.equal('2')
+        }
 
-            .getValue(cssQuoteId('#patchFOInputDSR[3]')).should.eventually.equal('')
-            .getValue(cssQuoteId('#patchAdderInDSR[3]')).should.eventually.equal('')
-            .getValue(cssQuoteId('#patchOutputDSR[3]')).should.eventually.equal('2')
+        {
+            const ele = await app.client.$(cssQuoteId('#patchFOInputDSR[2]'))
+            await ele.getValue().should.eventually.equal('2')
+        }
+        {
+            const ele = await app.client.$(cssQuoteId('#patchAdderInDSR[2]'))
+            await ele.getValue().should.eventually.equal('1')
+        }
+        {
+            const ele = await app.client.$(cssQuoteId('#patchOutputDSR[2]'))
+            await ele.getValue().should.eventually.equal('1')
+        }
 
-            .getValue(cssQuoteId('#patchFOInputDSR[4]')).should.eventually.equal('2')
-            .getValue(cssQuoteId('#patchAdderInDSR[4]')).should.eventually.equal('1')
-            .getValue(cssQuoteId('#patchOutputDSR[4]')).should.eventually.equal('1')
+        {
+            const ele = await app.client.$(cssQuoteId('#patchFOInputDSR[3]'))
+            await ele.getValue().should.eventually.equal('')
+        }
+        {
+            const ele = await app.client.$(cssQuoteId('#patchAdderInDSR[3]'))
+            await ele.getValue().should.eventually.equal('')
+        }
+        {
+            const ele = await app.client.$(cssQuoteId('#patchOutputDSR[3]'))
+            await ele.getValue().should.eventually.equal('2')
+        }
+
+        {
+            const ele = await app.client.$(cssQuoteId('#patchFOInputDSR[4]'))
+            await ele.getValue().should.eventually.equal('2')
+        }
+        {
+            const ele = await app.client.$(cssQuoteId('#patchAdderInDSR[4]'))
+            await ele.getValue().should.eventually.equal('1')
+        }
+        {
+            const ele = await app.client.$(cssQuoteId('#patchOutputDSR[4]'))
+            await ele.getValue().should.eventually.equal('1')
+        }
     });
 
     // click MUTE and SOLO - should see class change (.on)
     it('MUTE and SOLO', async () => {
-        await app.client
-            .isExisting(cssQuoteId('#MUTE[1].on')).should.eventually.equal(false)
-            .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#MUTE[1]'))
-            .isExisting(cssQuoteId('#MUTE[1].on')).should.eventually.equal(true)
+        const mute1 = await app.client.$(cssQuoteId('#MUTE[1]'))
+        const solo2 = await app.client.$(cssQuoteId('#SOLO[2]'))
+        const mute1on = await app.client.$(cssQuoteId('#MUTE[1].on'))
+        const solo2on = await app.client.$(cssQuoteId('#SOLO[2].on'))
 
-        await app.client
-            .isExisting(cssQuoteId('#SOLO[2].on')).should.eventually.equal(false)
-            .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#SOLO[2]'))
-            .isExisting(cssQuoteId('#SOLO[2].on')).should.eventually.equal(true)
-
+        await mute1on.isExisting().should.eventually.equal(false)
+        await mute1.click()
+        await mute1on.isExisting().should.eventually.equal(true)
+        
+        await solo2on.isExisting().should.eventually.equal(false)
+        await solo2.click()
+        await solo2on.isExisting().should.eventually.equal(true)
     });
 
     /// now test that the text-value conversions work for the OHARM and FDETUN spinners
@@ -234,63 +351,56 @@ describe('Test voice page edits', () => {
     });
 
     it('Wave select', async () => {
-        await app.client
-            .pause(TYPING_PAUSE)
-            .selectByValue(cssQuoteId('#wkWAVE[1]'), 'Tri')
-            .getValue(cssQuoteId('#wkWAVE[1]')).should.eventually.equal('Tri')
-            .waitForValue(cssQuoteId('#wkWAVE[1]'), 'Tri')
+        const ele = await app.client.$(cssQuoteId('#wkWAVE[1]'))
+        await ele.selectByVisibleText('Tri')
+        await ele.getValue().should.eventually.equal('Tri')        
     });
     it('Keyprop select', async () => {
-        await app.client
-            .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#wkKEYPROP[1]'))
-            .getValue(cssQuoteId('#wkKEYPROP[1]')).should.eventually.equal('true')
-            .waitForValue(cssQuoteId('#wkKEYPROP[1]'), 'true')
+        const ele = await app.client.$(cssQuoteId('#wkKEYPROP[1]'))
+        await ele.click()
+        await ele.isSelected().should.eventually.equal(true)
     });
     it('Filter select', async () => {
-        await app.client
-            .pause(TYPING_PAUSE)
-            .selectByVisibleText(cssQuoteId('#FILTER[1]'), 'Af')
-            .getValue(cssQuoteId('#FILTER[1]')).should.eventually.equal('-1')
-            .waitForValue(cssQuoteId('#FILTER[1]'), '-1')
-
-            .pause(TYPING_PAUSE)
-            .selectByVisibleText(cssQuoteId('#FILTER[2]'), 'Bf')
-            .getValue(cssQuoteId('#FILTER[2]')).should.eventually.equal('2')
-            .waitForValue(cssQuoteId('#FILTER[2]'), '2')
+        {
+            const ele = await app.client.$(cssQuoteId('#FILTER[1]'))
+            await ele.selectByVisibleText('Af')
+            await ele.getValue().should.eventually.equal('-1') 
+        }
+        {
+            const ele = await app.client.$(cssQuoteId('#FILTER[2]'))
+            await ele.selectByVisibleText('Bf')
+            await ele.getValue().should.eventually.equal('2') 
+        }
     });
     describe('patch edits', () => {
 
         it('addr', async () => {
-            await app.client
-                .getValue(cssQuoteId('#patchAdderInDSR[1]')).should.eventually.equal('')
-                .click(cssQuoteId('#patchAdderInDSR[1]')).keys('ArrowUp')
-                .pause(PATCH_PAUSE)
-                .getValue(cssQuoteId('#patchAdderInDSR[1]')).should.eventually.equal('1')
+            const ele = await app.client.$(cssQuoteId('#patchAdderInDSR[1]'))
+            await ele.should.eventually.equal('')
+            await ele.click()
+            await app.client.keys('ArrowUp')
+            await ele.should.eventually.equal('1')
         });
         it('freq', async () => {
-            await app.client
-                .getValue(cssQuoteId('#patchFOInputDSR[3]')).should.eventually.equal('')
-                .click(cssQuoteId('#patchFOInputDSR[3]')).keys('ArrowUp')
-
-                .pause(PATCH_PAUSE)
-                .getValue(cssQuoteId('#patchFOInputDSR[3]')).should.eventually.equal('1')
-                .click(cssQuoteId('#patchFOInputDSR[3]')).keys('ArrowUp')
-
-                .pause(PATCH_PAUSE)
-                .getValue(cssQuoteId('#patchFOInputDSR[3]')).should.eventually.equal('2')
+            const ele = await app.client.$(cssQuoteId('#patchFOInputDSR[3]'))
+            await ele.should.eventually.equal('')
+            await ele.click()
+            await app.client.keys('ArrowUp')
+            await ele.should.eventually.equal('1')
+            await ele.click()
+            await app.client.keys('ArrowUp')
+            await ele.should.eventually.equal('2')
         });
         it('out', async () => {
-            await app.client
-                .getValue(cssQuoteId('#patchOutputDSR[4]')).should.eventually.equal('1')
-                .click(cssQuoteId('#patchOutputDSR[4]')).keys('ArrowUp')
-                .pause(PATCH_PAUSE)
-                .getValue(cssQuoteId('#patchOutputDSR[4]')).should.eventually.equal('2')
+            const ele = await app.client.$(cssQuoteId('#patchOutputDSR[4]'))
+            await ele.should.eventually.equal('1')
+            await ele.click()
+            await app.client.keys('ArrowUp')
+            await ele.should.eventually.equal('2')
         });
     });
     it('screenshot', async () => {
-        await app.client
-            .then(() => { return hooks.screenshotAndCompare(app, `INITVRAM-after-edit-voice`) })
+        await hooks.screenshotAndCompare(app, `INITVRAM-after-edit-voice`)
     });
 
 });

@@ -33,8 +33,5 @@ describe('Test Voicing Mode ON', () => {
         await hooks.screenshotAndCompare(app, 'voicingModeOn')
     });
 
-    describe('initial VRAM image should be loaded', () => {
-        viewVCE.testViewVCE([voiceINITVRAM], null, "voicemode");
-    });
 });
 

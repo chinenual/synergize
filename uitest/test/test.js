@@ -74,20 +74,26 @@ describe('Render unit tests', () => {
 
 require('./test-prefs');
 
+/*
   require('./test-edit-crt');
-
+*/
   describe('Test Voicing Mode views', () => {
   afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
 
   require('./test-voicingModeOn');
 /*
-  require('./test-voice-edit');
-  require('./test-envs-edit');
-  require('./test-filter-edit.js');
+  describe('initial VRAM image should be loaded', () => {
+      viewVCE.testViewVCE([voiceINITVRAM], null, "voicemode");
+  });
 */
-  require('./test-keyeq-edit');
+  require('./test-voice-edit');
+/*
+  require('./test-envs-edit');
+*/
+  require('./test-filter-edit.js');
 
 /*
+  require('./test-keyeq-edit');
   require('./test-keyprop-edit');
   viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaLeftPanelVoicingMode, "voicemode");
 */
@@ -102,6 +108,7 @@ describe('Test READ-ONLY views', () => {
     viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaINTERNALCRT, "readonlyCRT");
 });
 
+// at end since we can't close the window - can just let it get closed implicity by the tear down
 require('./test-about');
 */
 describe('Tear Down', () => {
