@@ -6,10 +6,10 @@ replace github.com/brutella/dnssd => ../dnssd
 
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
-	github.com/akavel/rsrc v0.9.0 // indirect
-	github.com/asticode/go-astikit v0.8.0
-	github.com/asticode/go-astilectron v0.16.0
-	github.com/asticode/go-astilectron-bootstrap v0.4.1
+	github.com/akavel/rsrc v0.10.1 // indirect
+	github.com/asticode/go-astikit v0.18.0
+	github.com/asticode/go-astilectron v0.22.4
+	github.com/asticode/go-astilectron-bootstrap v0.4.10
 	github.com/brutella/dnssd v1.1.1
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect

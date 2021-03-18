@@ -16,88 +16,101 @@ describe('Test filter page edits', () => {
     });
 
     it('filter tab should display', async () => {
-        await app.client
-            .click(`#vceTabs a[href='#vceFiltersTab']`)
-            .getAttribute(`#vceTabs a[href='#vceFiltersTab']`, 'class').should.eventually.include('active')
-            .waitForVisible('#filterSelect')
+        const tab = await app.client.$(`#vceTabs a[href='#vceFiltersTab']`)
+        await tab.click()
+        await tab.getAttribute('class').should.eventually.include('active')
+        const ele = await app.client.$('#filterSelect')
+        await ele.waitForDisplayed()
     });
 
     it('select Af', async () => {
-        await app.client
-            .selectByVisibleText(cssQuoteId('#filterSelect'), 'Af')
-            .waitForVisible('#filterTable')
-
+        const ele = await app.client.$('#filterSelect')
+        await ele.selectByVisibleText('Af')
+        const table = await app.client.$('#filterTable')
+        await table.waitForDisplayed()
     });
 
 
     // test that all the spinner text conversions work at the right ranges
     describe('filter values', () => {
         it('type to flt[1] to and past -64', async () => {
-            await app.client
-                .pause(TYPING_PAUSE)
-                .clearElement(cssQuoteId('#flt[1]'))
-                .setValue(cssQuoteId('#flt[1]'), '-63')
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#flt[2]')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#flt[1]')).should.eventually.equal('-63')
-                // should not be able to go below min
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#flt[1]')).keys('ArrowDown')
-                .getValue(cssQuoteId('#flt[1]')).should.eventually.equal('-64')
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#flt[1]')).keys('ArrowDown')
-                .getValue(cssQuoteId('#flt[1]')).should.eventually.equal('-64')
+            const ele = await app.client.$(cssQuoteId('#flt[1]'))
+            const otherele = await app.client.$(cssQuoteId('#flt[2]'))
+            await app.client.pause(TYPING_PAUSE)
+            await ele.setValue('-63')
+            await otherele.click() // click in a different input to force onchange
+            await ele.getValue().should.eventually.equal('-63')
+
+            await app.client.pause(TYPING_PAUSE)
+            await ele.click()
+            await app.client.keys('ArrowDown')
+            await ele.getValue().should.eventually.equal('-64')
+            
+            await app.client.pause(TYPING_PAUSE)
+            await ele.click()
+            await app.client.keys('ArrowDown')
+            await ele.getValue().should.eventually.equal('-64')            
         });
         it('type to flt[2] to and past 63', async () => {
-            await app.client
-                .pause(TYPING_PAUSE)
-                .clearElement(cssQuoteId('#flt[2]'))
-                .setValue(cssQuoteId('#flt[2]'), '62')
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#flt[1]')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#flt[2]')).should.eventually.equal('62')
-                // should not be able to go above max
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#flt[2]')).keys('ArrowUp')
-                .getValue(cssQuoteId('#flt[2]')).should.eventually.equal('63')
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#flt[2]')).keys('ArrowUp')
-                .getValue(cssQuoteId('#flt[2]')).should.eventually.equal('63')
+            const ele = await app.client.$(cssQuoteId('#flt[2]'))
+            const otherele = await app.client.$(cssQuoteId('#flt[1]'))
+            await app.client.pause(TYPING_PAUSE)
+            await ele.setValue('62')
+            await otherele.click() // click in a different input to force onchange
+            await ele.getValue().should.eventually.equal('62')
 
+            await app.client.pause(TYPING_PAUSE)
+            await ele.click()
+            await app.client.keys('ArrowUp')
+            await ele.getValue().should.eventually.equal('63')
+            
+            await app.client.pause(TYPING_PAUSE)
+            await ele.click()
+            await app.client.keys('ArrowUp')
+            await ele.getValue().should.eventually.equal('63')
         });
     });
 
     describe('copy filter', () => {
         it('check Af initial conditions', async () => {
+            const filterSelect = await app.client.$('#filterSelect')
+            await filterSelect.selectByVisibleText('Af')
+            const filterTable = await app.client.$('#filterTable')
+            await filterTable.waitForDisplayed()
 
-            await app.client
-//                .then(() => { return hooks.screenshotAndCompare(app, `DEBUG-1`) })
-                .selectByVisibleText(cssQuoteId('#filterSelect'), 'Af')
-                .waitForVisible('#filterTable')
-                .getValue(cssQuoteId('#flt[1]')).should.eventually.equal('-64')
-                .getValue(cssQuoteId('#flt[2]')).should.eventually.equal('63')
+            const flt1 = await app.client.$(cssQuoteId('#flt[1]'))
+            const flt2 = await app.client.$(cssQuoteId('#flt[2]'))
+            await flt1.getValue().should.eventually.equal('-64')
+            await flt2.getValue().should.eventually.equal('63')
         });
 
         it('switch to Bf 2', async () => {
-            await app.client
-            .selectByVisibleText(cssQuoteId('#filterSelect'), 'Bf 2')
-            .waitForVisible('#filterTable')
-            .getValue(cssQuoteId('#flt[1]')).should.eventually.equal('0')
-            .getValue(cssQuoteId('#flt[2]')).should.eventually.equal('0')
-    });
+            const filterSelect = await app.client.$('#filterSelect')
+            await filterSelect.selectByVisibleText('Bf 2')
+            const filterTable = await app.client.$('#filterTable')
+            await filterTable.waitForDisplayed()
+
+            const flt1 = await app.client.$(cssQuoteId('#flt[1]'))
+            const flt2 = await app.client.$(cssQuoteId('#flt[2]'))
+            await flt1.getValue().should.eventually.equal('0')
+            await flt2.getValue().should.eventually.equal('0')
+        });
 
         it('copy from 1', async () => {
-            await app.client
-                .selectByVisibleText('#filterCopySelect', 'Af')
-                .pause(TYPING_PAUSE)
-                .getValue(cssQuoteId('#flt[1]')).should.eventually.equal('-64')
-                .getValue(cssQuoteId('#flt[2]')).should.eventually.equal('63')
+            const filterSelect = await app.client.$('#filterSelect')
+            await filterSelect.selectByVisibleText('Af')
+            const filterTable = await app.client.$('#filterTable')
+            await filterTable.waitForDisplayed()
+
+            const flt1 = await app.client.$(cssQuoteId('#flt[1]'))
+            const flt2 = await app.client.$(cssQuoteId('#flt[2]'))
+            await flt1.getValue().should.eventually.equal('-64')
+            await flt2.getValue().should.eventually.equal('63')
         });
 
     });
 
     it('screenshot', async () => {
-        await app.client
-            .then(() => { return hooks.screenshotAndCompare(app, `INITVRAM-after-edit-filters`) })
+        await hooks.screenshotAndCompare(app, `INITVRAM-after-edit-filters`) 
     });
 });

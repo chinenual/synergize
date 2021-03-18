@@ -142,7 +142,7 @@ func getWorkingDirectory() (path string) {
 }
 
 func init() {
-	logger.Init(getWorkingDirectory()+"/synergize.log", logger.LevelInfo)
+	logger.Init(getWorkingDirectory()+"/synergize.log", logger.LevelDebug)
 	setVersion()
 	logger.Infof("Running app version %s\n", AppVersion)
 	// log some info about the operating system.  This uses uname on linux and macos, and ver on windows, so info is limited.
@@ -457,6 +457,9 @@ func main() {
 				Center:          astikit.BoolPtr(true),
 				Height:          astikit.IntPtr(900),
 				Width:           astikit.IntPtr(990),
+				WebPreferences: &astilectron.WebPreferences{
+					EnableRemoteModule: astikit.BoolPtr(true),
+				},
 			},
 		}, {
 			Homepage:       "about.html",
@@ -470,6 +473,9 @@ func main() {
 				Custom: &astilectron.WindowCustomOptions{
 					HideOnClose: astikit.BoolPtr(true),
 				},
+				WebPreferences: &astilectron.WebPreferences{
+					EnableRemoteModule: astikit.BoolPtr(true),
+				},
 			},
 		}, {
 			Homepage:       "prefs.html",
@@ -482,6 +488,9 @@ func main() {
 				Width:           astikit.IntPtr(800),
 				Custom: &astilectron.WindowCustomOptions{
 					HideOnClose: astikit.BoolPtr(true),
+				},
+				WebPreferences: &astilectron.WebPreferences{
+					EnableRemoteModule: astikit.BoolPtr(true),
 				},
 			},
 		}},

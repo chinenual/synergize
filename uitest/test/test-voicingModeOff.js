@@ -4,30 +4,41 @@ const WINDOW_PAUSE = 1000;
 let app;
 
 describe('Test Voicing Mode OFF', () => {
-  before(async () => {
-    app = await hooks.getApp();
-  });
+    before(async () => {
+        app = await hooks.getApp();
+    });
 
-  it('should disable voicing mode', async () => {
-    await app.client
-      .click('#voicingModeButton')
+    it('should disable voicing mode', async () => {
+        const voicingModeButton = await app.client.$('#voicingModeButton')
+        await voicingModeButton.click()
 
-      .waitForVisible('#confirmText')
-      .getText('#confirmText').should.eventually.include('pending edits')
-      .click('#confirmOKButton')
-      .waitForVisible('#confirmText', 1000, true) // wait to disappear
+        const confirmText = await app.client.$('#confirmText')
 
-      .waitForVisible('#alertText')
-      .then(() => {return hooks.screenshotAndCompare(app, 'voicingModeOff-alert')})
+        await confirmText.waitForDisplayed()
+        await confirmText.getText().should.eventually.include('pending edits')
+        
+        const confirmOk = await app.client.$('#confirmOKButton')
+        await confirmOk.click()
 
-      .getText('#alertText').should.eventually.include('disabled')
+        await confirmText.waitForDisplayed({reverse: true})  // wait to disappear
+        
+        const alertText = await app.client.$('#alertText')
+        const img = await app.client.$('#voicingModeButton img')
 
-      .click('#alertModal button')
-      .waitForVisible('#alertText', 1000, true) // wait to disappear
-      
-      .getAttribute("#voicingModeButton img", "src").should.eventually.include('static/images/red-button-off-full.png')
+        await alertText.waitForDisplayed()
+        await hooks.screenshotAndCompare(app, 'voicingModeOff-alert')
 
-      .then(() => {return hooks.screenshotAndCompare(app, 'voicingModeOff')})
-  });
+        await alertText.getText().should.eventually.include('disabled')
+
+        const alertClose = await app.client.$('#alertModal button')
+        await alertClose.click()
+
+        await alertText.waitForDisplayed({reverse: true})  // wait to disappear
+
+        await img.getAttribute("src").should.eventually.include('static/images/red-button-off-full.png')
+
+        await hooks.screenshotAndCompare(app, 'voicingModeOff')
+
+    });
 });
 
