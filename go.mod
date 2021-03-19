@@ -2,15 +2,13 @@ module github.com/chinenual/synergize
 
 go 1.14
 
-replace github.com/brutella/dnssd => ../dnssd
-
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/akavel/rsrc v0.10.1 // indirect
 	github.com/asticode/go-astikit v0.18.0
 	github.com/asticode/go-astilectron v0.22.4
 	github.com/asticode/go-astilectron-bootstrap v0.4.10
-	github.com/brutella/dnssd v1.1.1
+	github.com/chinenual/dnssd v1.1.2
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/hypebeast/go-osc v0.0.0-20200115085105-85fee7fed692
@@ -24,10 +22,9 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/sasha-s/go-deadlock v0.2.0
 	github.com/snksoft/crc v1.1.0
-	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
-	golang.org/x/net v0.0.0-20200822124328-c89045814202 // indirect
-	golang.org/x/sys v0.0.0-20200831180312-196b9ba8737a // indirect
+	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
+	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.31.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gopkg.in/yaml.v2 v2.3.0 // indirect

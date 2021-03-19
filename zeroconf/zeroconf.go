@@ -8,7 +8,7 @@ import (
 
 	"github.com/chinenual/synergize/logger"
 
-	"github.com/brutella/dnssd"
+	"github.com/chinenual/dnssd"
 )
 
 type Service struct {
