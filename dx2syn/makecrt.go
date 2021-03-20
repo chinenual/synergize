@@ -66,11 +66,13 @@ func recurseMakeCrt(dirPath string, verbose bool) (err error) {
 func makeCrtFromSysex(sysexPath string, verbose bool) (err error) {
 	// make the vce's
 	var sysex Dx7Sysex
+	log.Printf("CONVERT VOICES FROM %s\n", sysexPath)
 	if sysex, err = ReadDx7Sysex(sysexPath); err != nil {
 		log.Printf("ERROR: could not parse sysex file %s: %v", sysexPath, err)
 		return
 	}
 	nameMap := make(map[string]bool)
+
 	for _, v := range sysex.Voices {
 		hasError := false
 		var vce data.VCE
@@ -156,7 +158,9 @@ func makeCrtFromSysexVces(sysexPath string) (err error) {
 				}
 				vces = newVces
 			}
+
 		}
+
 	}
 	if len(vces) > 1 {
 		// write the last set of vce's that fit:
@@ -164,5 +168,6 @@ func makeCrtFromSysexVces(sysexPath string) (err error) {
 			return
 		}
 	}
+	log.Printf("SUCCESS! MADE CRT FROM %s\n\n\n", sysexPath)
 	return
 }

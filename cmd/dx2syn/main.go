@@ -3,10 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/chinenual/synergize/data"
-	"github.com/chinenual/synergize/dx2syn"
 	"log"
 	"os"
+
+	"github.com/chinenual/synergize/data"
+	"github.com/chinenual/synergize/dx2syn"
 )
 
 var allFlag = flag.Bool("all", false, "extract all patches")

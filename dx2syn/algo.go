@@ -1,8 +1,6 @@
 package dx2syn
 
 import (
-	"log"
-
 	"github.com/chinenual/synergize/data"
 	"github.com/pkg/errors"
 )
@@ -44,7 +42,7 @@ var dxAlgoNoFeedbackPatchTypePerOscTable = [32][16]byte{
 
 func SetAlgorithmPatchType(vce *data.VCE, dxAlgo byte, dxFeedback byte) (err error) {
 	if dxFeedback != 0 {
-		log.Printf("WARNING: Limitation: unhandled DX feedback: %d", dxFeedback)
+		//log.Printf("WARNING: Limitation: unhandled DX feedback: %d", dxFeedback)
 	}
 	if dxAlgo < 0 || dxAlgo > byte(len(dxAlgoNoFeedbackPatchTypePerOscTable)) {
 		return errors.Errorf("Invalid Algorithm value %d - expected 0 .. 31", dxAlgo)
