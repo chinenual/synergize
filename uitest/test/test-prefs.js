@@ -23,12 +23,10 @@ describe('Check initial preferences', () => {
         await app.client
             .pause(WINDOW_PAUSE) // HACK: but without this switching windows is unreliable. 
 
-        await app.client
-            .switchWindow('Synergize Preferences')
-            .then(() => { return hooks.screenshotAndCompare(app, 'prefsWindow') })
+        await app.client.switchWindow('Synergize Preferences');
+        await hooks.screenshotAndCompare(app, 'prefsWindow');
 
-        await app.client
-            .getTitle().should.eventually.equal('Synergize Preferences')
+        (await app.client.getTitle()).should.equal('Synergize Preferences')
 
         const txt = await app.client.$('#libraryPath')
         await txt.setValue('../data/testfiles')
@@ -39,24 +37,21 @@ describe('Check initial preferences', () => {
         await app.client
             .pause(WINDOW_PAUSE) // HACK: but without this switching windows is unreliable.
 
-        await app.client
-            .switchWindow('Synergize')
-        await app.client
-            .getTitle().should.eventually.equal('Synergize')
+        await app.client.switchWindow('Synergize');
+        (await app.client.getTitle()).should.equal('Synergize')
 
-        const txt2 = await app.client.$('#path')
-        await txt2.getText().should.eventually.equal('testfiles')
+        const txt2 = await app.client.$('#path');
+
+        (await txt2.getText()).should.equal('testfiles')
     });
 
 
     it('show main window', async () => {
         await app.client
-            .pause(WINDOW_PAUSE) // HACK: but without this switching windows is unreliable. 
+            .pause(WINDOW_PAUSE); // HACK: but without this switching windows is unreliable. 
 
-        await app.client
-            .switchWindow('Synergize')
-        await app.client
-            .getTitle().should.eventually.equal('Synergize')
+        await app.client.switchWindow('Synergize');
+        (await app.client.getTitle()).should.equal('Synergize')
     });
 
 });

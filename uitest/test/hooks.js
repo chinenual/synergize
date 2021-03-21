@@ -1,7 +1,7 @@
 const Application = require('spectron').Application;
 const chai = require('chai');
-const chaiAsPromised = require('chai-as-promised');
 const electron = require('electron');
+
 const { exec } = require("child_process");
 const fs = require('fs')
 const path = require('path')
@@ -19,7 +19,6 @@ const SERIALVERBOSE = "-SERIALVERBOSE";
 
 global.before(() => {
     chai.should();
-    chai.use(chaiAsPromised);
 });
 
 // Map nodejs arch to golang arch
@@ -120,7 +119,6 @@ module.exports = {
             //      webdriverLogPath: './webdriver.log'
 
         }).start();
-        chaiAsPromised.transferPromiseness = rendererApp.transferPromiseness;
         module.exports.app = rendererApp;
         return rendererApp;
     },
