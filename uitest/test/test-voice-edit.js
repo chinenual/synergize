@@ -54,7 +54,7 @@ describe('Test voice page edits', () => {
         await vibdep.click()
         await app.client.keys('ArrowDown');
         
-        await app.client.pause(TYPING_PAUSE)
+        await app.client.pause(TYPING_PAUSE);
 
         (await vibdep.getValue()).should.equal('-1');
         (await vibtype.getText()).should.equal('Random');
@@ -68,20 +68,20 @@ describe('Test voice page edits', () => {
         const mute4 = await app.client.$(cssQuoteId('#MUTE[4]'))
         const mute5 = await app.client.$(cssQuoteId('#MUTE[5]'))
  const start=Date.now()
-        await add.click()
-        console.log('NOSC: ' + await nOsc.getText() + ' - click took ' +(Date.now()-start));
+        await add.click();
+        await app.client.pause(5000); // HACK
+
         app.client.waitUntil(
             () => nOsc.getText() == '2',
             {
                 timeout: LOAD_VCE_TIMEOUT
             }
         ); 
-        console.log('0NOSC: ' + await nOsc.getText()+ ' - waitUntil took ' +(Date.now()-start));
 
         (await nOsc.getText()).should.equal('2');
-        console.log('1NOSC: ' + await nOsc.getText()+ ' - eventually took ' +(Date.now()-start));
         
         await add.click()
+        await app.client.pause(5000); // HACK
         app.client.waitUntil(
             () => nOsc.getText() == '3',
             {
@@ -91,6 +91,7 @@ describe('Test voice page edits', () => {
         (await nOsc.getText()).should.equal('3');
 
         await add.click()
+        await app.client.pause(5000); // HACK
         app.client.waitUntil(
             () => nOsc.getText() == '4',
             {
@@ -98,7 +99,8 @@ describe('Test voice page edits', () => {
             }
         );       
 
-        await add.click()
+        await add.click();
+        await app.client.pause(5000); // HACK
         app.client.waitUntil(
             () => nOsc.getText() == '5',
             {
@@ -110,6 +112,7 @@ describe('Test voice page edits', () => {
         (await mute5.isDisplayed()).should.equal(true);
 
         await del.click()
+        await app.client.pause(5000); // HACK
         app.client.waitUntil(
             () => nOsc.getText() == '4',
             {
@@ -119,7 +122,7 @@ describe('Test voice page edits', () => {
         
         (await mute4.isDisplayed()).should.equal(true);
         (await mute5.isDisplayed()).should.equal(false)        ;
- console.log('NOSC: ' + await nOsc.getText())
+
         await hooks.screenshotAndCompare(app, `DEBUG`)
     });
 
@@ -237,7 +240,7 @@ describe('Test voice page edits', () => {
             (await ele.getValue()).should.equal('');
         }
         {
-            const ele = await app.client.$(cssQuoteId('#patchAdderInDSR[3]'))
+            const ele = await app.client.$(cssQuoteId('#patchAdderInDSR[3]'));
             (await ele.getValue()).should.equal('')
         }
         {
@@ -267,10 +270,10 @@ describe('Test voice page edits', () => {
         const solo2on = await app.client.$(cssQuoteId('#SOLO[2].on'));
 
         (await mute1on.isExisting()).should.equal(false);
-        await mute1.click()
-        await mute1on.isExisting().should.eventually.equal(true)
+        await mute1.click();
+        (await mute1on.isExisting()).should.equal(true);
         
-        await solo2on.isExisting().should.eventually.equal(false)
+        (await solo2on.isExisting()).should.equal(false);
         await solo2.click();
         (await solo2on.isExisting()).should.equal(true);
     });
@@ -280,125 +283,136 @@ describe('Test voice page edits', () => {
     // should be able to type those strings (s1 and ran2)
     // should be able to type something in between stepped values for FDETUN and get to the nearest value (247 should end up as 246)
     it('OHARM text conversions', async () => {
-        await app.client
-            .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#OHARM[1]')).keys('ArrowDown')
-            .waitForValue(cssQuoteId('#OHARM[1]'), '0')
-            .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#OHARM[1]')).keys('ArrowDown')
-            .waitForValue(cssQuoteId('#OHARM[1]'), 's1')
+        const oharm1 = await app.client.$(cssQuoteId('#OHARM[1]'));
+        const oharm2 = await app.client.$(cssQuoteId('#OHARM[2]'));
+        const oharm3 = await app.client.$(cssQuoteId('#OHARM[3]'));
+        await oharm1.click();
+        await app.client.keys('ArrowDown');
+        (await oharm1.getValue()).should.equal('0');
+        
+        await oharm1.click();
+        await app.client.keys('ArrowDown');
+        (await oharm1.getValue()).should.equal('s1');
+        
+        await oharm2.click();
+        await oharm2.clearValue();
+        await oharm2.setValue('s3'); 
+        await oharm2.click(); // click in a different input to force onchange (FIXME! Enter should be enough)
+        (await oharm2.getValue()).should.equal('s3'); // rounded to nearest value
 
-            .clearElement(cssQuoteId('#OHARM[2]'))
-            .setValue(cssQuoteId('#OHARM[2]'), 's3')
-            .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#OHARM[1]')) // click in a different input to force onchange (FIXME! Enter should be enough)
-            .getValue(cssQuoteId('#OHARM[2]')).should.eventually.equal('s3')
         // and validate that the unnderlying value used by the spinner is in sync
-            .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#OHARM[2]')).keys('ArrowDown')
-            .waitForValue(cssQuoteId('#OHARM[2]'), 's4')
+        await oharm2.click();
+        await app.client.keys('ArrowDown');
+        (await oharm2.getValue()).should.equal('s4');
 
-            .pause(TYPING_PAUSE)
-            .clearElement(cssQuoteId('#OHARM[3]'))
-            .setValue(cssQuoteId('#OHARM[3]'), 'dc')
-            .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#OHARM[1]')) // click in a different input to force onchange (FIXME! Enter should be enough)
-            .waitForValue(cssQuoteId('#OHARM[3]'), 'dc')
-            .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#OHARM[3]')).keys('ArrowUp')
-            .waitForValue(cssQuoteId('#OHARM[3]'), 's11')
-            .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#OHARM[3]')).keys('ArrowDown')
-            .waitForValue(cssQuoteId('#OHARM[3]'), 'dc')
+        await oharm3.click();
+        await oharm3.clearValue();
+        await oharm3.setValue('dc'); 
+        await oharm3.click(); // click in a different input to force onchange (FIXME! Enter should be enough)
+        (await oharm3.getValue()).should.equal('dc'); // rounded to nearest value
+
+        await oharm3.click();
+        await app.client.keys('ArrowUp');
+        (await oharm3.getValue()).should.equal('s11');
+
+        await oharm3.click();
+        await app.client.keys('ArrowDown');
+        (await oharm3.getValue()).should.equal('dc');
 
     });
 
 
     it('FDETUN text conversions', async () => {
+        const fdetun1 = await app.client.$(cssQuoteId('#FDETUN[1]'));
+        const fdetun2 = await app.client.$(cssQuoteId('#FDETUN[2]'));
+        const fdetun3 = await app.client.$(cssQuoteId('#FDETUN[3]'));
 
-        await app.client
-            .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#FDETUN[1]')).keys('ArrowUp')
-            .waitForValue(cssQuoteId('#FDETUN[1]'), '3')
-            .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#FDETUN[1]')).keys('ArrowUp')
-            .waitForValue(cssQuoteId('#FDETUN[1]'), '6')
+        await fdetun1.click();
+        await app.client.keys('ArrowUp');
+        (await fdetun1.getValue()).should.equal('3');
+        
+        await fdetun1.click();
+        await app.client.keys('ArrowUp');
+        (await fdetun1.getValue()).should.equal('6');
 
-            .pause(TYPING_PAUSE)
-            .clearElement(cssQuoteId('#FDETUN[2]'))
-            .setValue(cssQuoteId('#FDETUN[2]'), '247')
-            .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#FDETUN[1]')) // click in a different input to force onchange (FIXME! Enter should be enough)
-            .getValue(cssQuoteId('#FDETUN[2]')).should.eventually.equal('246') // rounded to nearest value
+        await fdetun2.click();
+        await fdetun2.clearValue();
+        await fdetun2.setValue('247'); 
+        await fdetun1.click(); // click in a different input to force onchange (FIXME! Enter should be enough)
+        (await fdetun2.getValue()).should.equal('246'); // rounded to nearest value
+        
+        await fdetun2.click();
+        await app.client.keys('ArrowUp');
+        (await fdetun2.getValue()).should.equal('252'); // rounded to nearest value
 
-            .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#FDETUN[2]')).keys('ArrowUp')
-            .waitForValue(cssQuoteId('#FDETUN[2]'), '252')
-            .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#FDETUN[2]')).keys('ArrowUp')
-            .waitForValue(cssQuoteId('#FDETUN[2]'), 'ran1')
+        await fdetun2.click();
+        await app.client.keys('ArrowUp');
+        (await fdetun2.getValue()).should.equal('ran1'); // rounded to nearest value
+        
+        await fdetun2.setValue('247'); 
+        await fdetun1.click(); // click in a different input to force onchange (FIXME! Enter should be enough)
+        (await fdetun2.getValue()).should.equal('246'); // rounded to nearest value
+        
+        await fdetun3.click();
+        await fdetun3.clearValue();
+        await fdetun3.setValue('ran3'); 
+        await fdetun1.click(); // click in a different input to force onchange (FIXME! Enter should be enough)
+        (await fdetun3.getValue()).should.equal('ran3'); // rounded to nearest value
 
-            .pause(TYPING_PAUSE)
-            .clearElement(cssQuoteId('#FDETUN[3]'))
-            .setValue(cssQuoteId('#FDETUN[3]'), 'ran3')
-            .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#FDETUN[1]')) // click in a different input to force onchange (FIXME! Enter should be enough)
-            .waitForValue(cssQuoteId('#FDETUN[3]'), 'ran3')
-            .getValue(cssQuoteId('#FDETUN[3]')).should.eventually.equal('ran3')
 
         // and validate that the unnderlying value used by the spinner is in sync
-            .pause(TYPING_PAUSE)
-            .click(cssQuoteId('#FDETUN[3]')).keys('ArrowUp')
-            .waitForValue(cssQuoteId('#FDETUN[3]'), 'ran4')
+        await fdetun3.click();
+        await app.client.keys('ArrowUp');
+        (await fdetun3.getValue()).should.equal('ran4'); // rounded to nearest value
     });
 
     it('Wave select', async () => {
         const ele = await app.client.$(cssQuoteId('#wkWAVE[1]'))
-        await ele.selectByVisibleText('Tri')
-        await ele.getValue().should.eventually.equal('Tri')        
+        await ele.selectByVisibleText('Tri');
+        (await ele.getValue()).should.equal('Tri') 
     });
     it('Keyprop select', async () => {
         const ele = await app.client.$(cssQuoteId('#wkKEYPROP[1]'))
-        await ele.click()
-        await ele.isSelected().should.eventually.equal(true)
+        await ele.click();
+        (await ele.isSelected()).should.equal(true)
     });
     it('Filter select', async () => {
         {
             const ele = await app.client.$(cssQuoteId('#FILTER[1]'))
-            await ele.selectByVisibleText('Af')
-            await ele.getValue().should.eventually.equal('-1') 
+            await ele.selectByVisibleText('Af');
+            (await ele.getValue()).should.equal('-1') 
         }
         {
             const ele = await app.client.$(cssQuoteId('#FILTER[2]'))
-            await ele.selectByVisibleText('Bf')
-            await ele.getValue().should.eventually.equal('2') 
+            await ele.selectByVisibleText('Bf');
+            (await ele.getValue()).should.equal('2') 
         }
     });
     describe('patch edits', () => {
 
         it('addr', async () => {
-            const ele = await app.client.$(cssQuoteId('#patchAdderInDSR[1]'))
-            await ele.should.eventually.equal('')
+            const ele = await app.client.$(cssQuoteId('#patchAdderInDSR[1]'));
+            (await ele.getValue()).should.equal('');
             await ele.click()
-            await app.client.keys('ArrowUp')
-            await ele.should.eventually.equal('1')
+            await app.client.keys('ArrowUp');
+            (await ele.getValue()).should.equal('1');
         });
         it('freq', async () => {
-            const ele = await app.client.$(cssQuoteId('#patchFOInputDSR[3]'))
-            await ele.should.eventually.equal('')
+            const ele = await app.client.$(cssQuoteId('#patchFOInputDSR[3]'));
+            (await ele.getValue()).should.equal('');
             await ele.click()
-            await app.client.keys('ArrowUp')
-            await ele.should.eventually.equal('1')
-            await ele.click()
-            await app.client.keys('ArrowUp')
-            await ele.should.eventually.equal('2')
+            await app.client.keys('ArrowUp');
+            (await ele.getValue()).should.equal('1');
+            await ele.click();
+            await app.client.keys('ArrowUp');
+            (await ele.getValue()).should.equal('2');
         });
         it('out', async () => {
-            const ele = await app.client.$(cssQuoteId('#patchOutputDSR[4]'))
-            await ele.should.eventually.equal('1')
+            const ele = await app.client.$(cssQuoteId('#patchOutputDSR[4]'));
+            (await ele.getValue()).should.equal('1');
             await ele.click()
-            await app.client.keys('ArrowUp')
-            await ele.should.eventually.equal('2')
+            await app.client.keys('ArrowUp');
+            (await ele.getValue()).should.equal('2');
         });
     });
     it('screenshot', async () => {
