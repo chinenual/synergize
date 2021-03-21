@@ -20,15 +20,15 @@ describe('Test Voicing Mode ON', () => {
         const img = await app.client.$('#voicingModeButton img')
 
         await alertText.waitForDisplayed({timeout: INIT_VOICING_TIMEOUT})
-        await hooks.screenshotAndCompare(app, 'voicingModeOn-alert')
+        await hooks.screenshotAndCompare(app, 'voicingModeOn-alert');
 
-        await alertText.getText().should.eventually.include('enabled')
+        (await alertText.getText()).should.include('enabled');
 
         await button.click()
 
-        await alertText.waitForDisplayed({timeout: 1000, reverse: true})  // wait to disappear
+        await alertText.waitForDisplayed({timeout: 1000, reverse: true});  // wait to disappear
 
-        await img.getAttribute("src").should.eventually.include('static/images/red-button-on-full.png')
+        (await img.getAttribute("src")).should.include('static/images/red-button-on-full.png')
 
         await hooks.screenshotAndCompare(app, 'voicingModeOn')
     });
