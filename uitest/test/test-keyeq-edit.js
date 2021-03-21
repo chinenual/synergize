@@ -17,11 +17,11 @@ describe('Test keyeq page edits', () => {
 
     it('voice tab should display', async () => {
         const tab = await app.client.$(`#vceTabs a[href='#vceVoiceTab']`)
-        await tab.click()
-        await tab.getAttribute('class').should.eventually.include('active')
+        await tab.click();
+        (await tab.getAttribute('class')).should.include('active');
         const table = await app.client.$('#voiceParamTable')
-        await table.waitForDisplayed()
-        await table.isDisplayed().should.eventually.equal(true)
+        await table.waitForDisplayed();
+        (await table.isDisplayed()).should.equal(true);
     });
 
     it('click load G7S', async () => {
@@ -35,8 +35,8 @@ describe('Test keyeq page edits', () => {
                 
         const confirmText = await app.client.$('#confirmText')
 
-        await confirmText.waitForDisplayed()
-        await confirmText.getText().should.eventually.include('pending edits')
+        await confirmText.waitForDisplayed();
+        (await confirmText.getText()).should.include('pending edits');
         
         const confirmOk = await app.client.$('#confirmOKButton')
         await confirmOk.click()
@@ -49,17 +49,17 @@ describe('Test keyeq page edits', () => {
             }
         );       
 
-        await vname.getValue().should.eventually.equal('G7S')
+        (await vname.getValue()).should.equal('G7S');
 
     });
 
     it('keyeq tab should display', async () => {
         const tab = await app.client.$(`#vceTabs a[href='#vceKeyEqTab']`)
-        await tab.click()
-        await tab.getAttribute('class').should.eventually.include('active')
+        await tab.click();
+        (await tab.getAttribute('class')).should.include('active')
         const table = await app.client.$('#keyEqTable')
-        await table.waitForDisplayed()
-        await table.isDisplayed().should.eventually.equal(true)
+        await table.waitForDisplayed();
+        (await table.isDisplayed()).should.equal(true);
     });
 
     // element 1-5's initial value is -24 (min)
@@ -71,32 +71,32 @@ describe('Test keyeq page edits', () => {
         const otherele = await app.client.$(cssQuoteId('#keyeq[1]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.setValue('-24')
-        await otherele.click() // click in a different input to force onchange
-        await ele.getValue().should.eventually.equal('-24')
+        await otherele.click(); // click in a different input to force onchange
+        (await ele.getValue()).should.equal('-24');
     });
     it('type to element 10 via setvalue - 1->-24', async () => {
         const ele = await app.client.$(cssQuoteId('#keyeq[10]'))
         const otherele = await app.client.$(cssQuoteId('#keyeq[1]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.setValue('-24')
-        await otherele.click() // click in a different input to force onchange
-        await ele.getValue().should.eventually.equal('-24')
+        await otherele.click(); // click in a different input to force onchange
+        (await ele.getValue()).should.equal('-24');
     });
     it('type to element 11 via setvalue - 0->100 - above range', async () => {
         const ele = await app.client.$(cssQuoteId('#keyeq[11]'))
         const otherele = await app.client.$(cssQuoteId('#keyeq[1]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.setValue('100')
-        await otherele.click() // click in a different input to force onchange
-        await ele.getValue().should.eventually.equal('7')
+        await otherele.click(); // click in a different input to force onchange
+        (await ele.getValue()).should.equal('7');
     });
     it('type to element 12 via setvalue - 9->-100 - below range', async () => {
         const ele = await app.client.$(cssQuoteId('#keyeq[12]'))
         const otherele = await app.client.$(cssQuoteId('#keyeq[1]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.setValue('-100')
-        await otherele.click() // click in a different input to force onchange
-        await ele.getValue().should.eventually.equal('-24')
+        await otherele.click(); // click in a different input to force onchange
+        (await ele.getValue()).should.equal('-24');
     });
 
 
@@ -105,29 +105,29 @@ describe('Test keyeq page edits', () => {
         const ele = await app.client.$(cssQuoteId('#keyeq[1]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.click()
-        await app.client.keys('ArrowUp')
-        await ele.getValue().should.eventually.equal('-3')
+        await app.client.keys('ArrowUp');
+        (await ele.getValue()).should.equal('-3');
     });
     it('up-arrow to element 16 - 7->8 at limit', async () => {
         const ele = await app.client.$(cssQuoteId('#keyeq[16]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.click()
-        await app.client.keys('ArrowUp')
-        await ele.getValue().should.eventually.equal('7')
+        await app.client.keys('ArrowUp');
+        (await ele.getValue()).should.equal('7');
     });
     it('down-arrow to element 19 - 6->5', async () => {
         const ele = await app.client.$(cssQuoteId('#keyeq[19]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.click()
-        await app.client.keys('ArrowDown')
-        await ele.getValue().should.eventually.equal('5')
+        await app.client.keys('ArrowDown');
+        (await ele.getValue()).should.equal('5');
     });
     it('down-arrow to element 10 - -24->-24 at limit', async () => {
         const ele = await app.client.$(cssQuoteId('#keyeq[10]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.click()
-        await app.client.keys('ArrowDown')
-        await ele.getValue().should.eventually.equal('-24')
+        await app.client.keys('ArrowDown');
+        (await ele.getValue()).should.equal('-24');
     });
 
     // test spinner buttons
@@ -135,38 +135,38 @@ describe('Test keyeq page edits', () => {
         const ele = await app.client.$(cssQuoteId('#keyeq[9]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.moveTo()
-        const arrow = await app.client.$(cssQuoteId('#keyeq[9] ~ span button.bootstrap-touchspin-down'))
-        await arrow.isDisplayed().should.eventually.be.true
-        arrow.click()        
-        await ele.getValue().should.eventually.equal('-24')
+        const arrow = await app.client.$(cssQuoteId('#keyeq[9] ~ span button.bootstrap-touchspin-down'));
+        (await arrow.isDisplayed()).should.be.true;
+        arrow.click();
+        (await ele.getValue()).should.equal('-24');
     });
     it('button-down to element 22 2->1 - in range', async () => {
         const ele = await app.client.$(cssQuoteId('#keyeq[22]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.moveTo()
-        const arrow = await app.client.$(cssQuoteId('#keyeq[22] ~ span button.bootstrap-touchspin-down'))
-        await arrow.isDisplayed().should.eventually.be.true
-        arrow.click()        
-        await ele.getValue().should.eventually.equal('1')        
+        const arrow = await app.client.$(cssQuoteId('#keyeq[22] ~ span button.bootstrap-touchspin-down'));
+        (await arrow.isDisplayed()).should.be.true;
+        arrow.click();
+        (await ele.getValue()).should.equal('1');
     });
 
     it('button-up to element 23 2->3 - in range', async () => {
         const ele = await app.client.$(cssQuoteId('#keyeq[23]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.moveTo()
-        const arrow = await app.client.$(cssQuoteId('#keyeq[23] ~ span button.bootstrap-touchspin-up'))
-        await arrow.isDisplayed().should.eventually.be.true
-        arrow.click()        
-        await ele.getValue().should.eventually.equal('3') 
+        const arrow = await app.client.$(cssQuoteId('#keyeq[23] ~ span button.bootstrap-touchspin-up'));
+        (await arrow.isDisplayed()).should.be.true;
+        arrow.click();
+        (await ele.getValue()).should.equal('3');;
     });
     it('button-up to element 17 7->8 - above range', async () => {
         const ele = await app.client.$(cssQuoteId('#keyeq[17]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.moveTo()
-        const arrow = await app.client.$(cssQuoteId('#keyeq[17] ~ span button.bootstrap-touchspin-up'))
-        await arrow.isDisplayed().should.eventually.be.true
-        arrow.click()        
-        await ele.getValue().should.eventually.equal('7') 
+        const arrow = await app.client.$(cssQuoteId('#keyeq[17] ~ span button.bootstrap-touchspin-up'));
+        (await arrow.isDisplayed()).should.be.true;
+        arrow.click();
+        (await ele.getValue()).should.equal('7') ;
     });
 
     it('screenshot', async () => {

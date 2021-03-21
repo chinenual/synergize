@@ -17,11 +17,11 @@ describe('Test keyprop page edits', () => {
 
     it('voice tab should display', async () => {
         const tab = await app.client.$(`#vceTabs a[href='#vceVoiceTab']`)
-        await tab.click()
-        await tab.getAttribute('class').should.eventually.include('active')
+        await tab.click();
+        (await tab.getAttribute('class')).should.include('active');
         const table = await app.client.$('#voiceParamTable')
-        await table.waitForDisplayed()
-        await table.isDisplayed().should.eventually.equal(true)
+        await table.waitForDisplayed();
+        (await table.isDisplayed()).should.equal(true);
     });
 
     it('click load G7S', async () => {
@@ -35,8 +35,8 @@ describe('Test keyprop page edits', () => {
                 
         const confirmText = await app.client.$('#confirmText')
 
-        await confirmText.waitForDisplayed()
-        await confirmText.getText().should.eventually.include('pending edits')
+        await confirmText.waitForDisplayed();
+        (await confirmText.getText()).should.include('pending edits');
         
         const confirmOk = await app.client.$('#confirmOKButton')
         await confirmOk.click()
@@ -49,17 +49,17 @@ describe('Test keyprop page edits', () => {
             }
         );       
 
-        await vname.getValue().should.eventually.equal('G7S')
+        (await vname.getValue()).should.equal('G7S');
 
     });
 
     it('keyprop tab should display', async () => {
         const tab = await app.client.$(`#vceTabs a[href='#vceKeyPropTab']`)
-        await tab.click()
-        await tab.getAttribute('class').should.eventually.include('active')
+        await tab.click();
+        (await tab.getAttribute('class')).should.include('active');
         const table = await app.client.$('#keyPropTable')
-        await table.waitForDisplayed()
-        await table.isDisplayed().should.eventually.equal(true)
+        await table.waitForDisplayed();
+        (await table.isDisplayed()).should.equal(true);
         
     });
 
@@ -71,29 +71,29 @@ describe('Test keyprop page edits', () => {
         const ele = await app.client.$(cssQuoteId('#keyprop[1]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.click()
-        await app.client.keys('ArrowUp')
-        await ele.getValue().should.eventually.equal('1')
+        await app.client.keys('ArrowUp');
+        (await ele.getValue()).should.equal('1');
     });
     it('up-arrow to element 24 - 32->32 at limit', async () => {
         const ele = await app.client.$(cssQuoteId('#keyprop[24]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.click()
-        await app.client.keys('ArrowUp')
-        await ele.getValue().should.eventually.equal('32')
+        await app.client.keys('ArrowUp');
+        (await ele.getValue()).should.equal('32');
     });
     it('down-arrow to element 23 - 32->31', async () => {
         const ele = await app.client.$(cssQuoteId('#keyprop[24]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.click()
-        await app.client.keys('ArrowDown')
-        await ele.getValue().should.eventually.equal('31')
+        await app.client.keys('ArrowDown');
+        (await ele.getValue()).should.equal('31');
     });
     it('down-arrow to element 2 - 0->0 at limit', async () => {
         const ele = await app.client.$(cssQuoteId('#keyprop[2]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.click()
-        await app.client.keys('ArrowDown')
-        await ele.getValue().should.eventually.equal('0')
+        await app.client.keys('ArrowDown');
+        (await ele.getValue()).should.equal('0');
     });
 
 
@@ -103,24 +103,24 @@ describe('Test keyprop page edits', () => {
         const otherele = await app.client.$(cssQuoteId('#keyprop[1]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.setValue('18')
-        await otherele.click() // click in a different input to force onchange
-        await ele.getValue().should.eventually.equal('18')
+        await otherele.click(); // click in a different input to force onchange
+        (await ele.getValue()).should.equal('18');
     });
     it('type to element 11 via setvalue - 0->100 - above range', async () => {
         const ele = await app.client.$(cssQuoteId('#keyprop[11]'))
         const otherele = await app.client.$(cssQuoteId('#keyprop[1]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.setValue('100')
-        await otherele.click() // click in a different input to force onchange
-        await ele.getValue().should.eventually.equal('32')
+        await otherele.click(); // click in a different input to force onchange
+        (await ele.getValue()).should.equal('32');
     });
     it('type to element 12 via setvalue - 9->-100 - below range', async () => {
         const ele = await app.client.$(cssQuoteId('#keyprop[12]'))
         const otherele = await app.client.$(cssQuoteId('#keyprop[1]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.setValue('-100')
-        await otherele.click() // click in a different input to force onchange
-        await ele.getValue().should.eventually.equal('0')
+        await otherele.click(); // click in a different input to force onchange
+        (await ele.getValue()).should.equal('0');
     });
 
     // test spinner buttons
@@ -128,38 +128,38 @@ describe('Test keyprop page edits', () => {
         const ele = await app.client.$(cssQuoteId('#keyprop[3]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.moveTo()
-        const arrow = await app.client.$(cssQuoteId('#keyprop[3] ~ span button.bootstrap-touchspin-down'))
-        await arrow.isDisplayed().should.eventually.be.true
-        arrow.click()        
-        await ele.getValue().should.eventually.equal('0')
+        const arrow = await app.client.$(cssQuoteId('#keyprop[3] ~ span button.bootstrap-touchspin-down'));
+        (await arrow.isDisplayed()).should.be.true;
+        arrow.click();        
+        (await ele.getValue()).should.equal('0');
     });
     it('button-down to element 14 11->10 - in range', async () => {
         const ele = await app.client.$(cssQuoteId('#keyprop[14]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.moveTo()
-        const arrow = await app.client.$(cssQuoteId('#keyprop[14] ~ span button.bootstrap-touchspin-down'))
-        await arrow.isDisplayed().should.eventually.be.true
-        arrow.click()        
-        await ele.getValue().should.eventually.equal('10')
+        const arrow = await app.client.$(cssQuoteId('#keyprop[14] ~ span button.bootstrap-touchspin-down'));
+        (await arrow.isDisplayed()).should.be.true;
+        arrow.click();        
+        (await ele.getValue()).should.equal('10');
     });
 
     it('button-up to element 15 13->14 - in range', async () => {
         const ele = await app.client.$(cssQuoteId('#keyprop[15]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.moveTo()
-        const arrow = await app.client.$(cssQuoteId('#keyprop[15] ~ span button.bootstrap-touchspin-up'))
-        await arrow.isDisplayed().should.eventually.be.true
-        arrow.click()        
-        await ele.getValue().should.eventually.equal('14')
+        const arrow = await app.client.$(cssQuoteId('#keyprop[15] ~ span button.bootstrap-touchspin-up'));
+        (await arrow.isDisplayed()).should.be.true;
+        arrow.click();
+        (await ele.getValue()).should.equal('14');
     });
     it('button-up to element 21 32->33 - above range', async () => {
         const ele = await app.client.$(cssQuoteId('#keyprop[21]'))
         await app.client.pause(TYPING_PAUSE)
         await ele.moveTo()
-        const arrow = await app.client.$(cssQuoteId('#keyprop[21] ~ span button.bootstrap-touchspin-up'))
-        await arrow.isDisplayed().should.eventually.be.true
-        arrow.click()        
-        await ele.getValue().should.eventually.equal('32')
+        const arrow = await app.client.$(cssQuoteId('#keyprop[21] ~ span button.bootstrap-touchspin-up'));
+        (await arrow.isDisplayed()).should.be.true;
+        arrow.click();
+        (await ele.getValue()).should.equal('32');
     });
 
     it('screenshot', async () => {

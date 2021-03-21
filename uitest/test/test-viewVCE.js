@@ -21,15 +21,12 @@ module.exports = {
                 const link = await app.client.$('.file=' + name)
                 await link.click()
                 
-                const vce_name = await app.client.$('#vce_name')
                 app.client.waitUntil(
-                    () => vce_name.getText() == name,
+                    () => vname.getText() == name,
                     {
                         timeout: LOAD_VCE_TIMEOUT
                     }
                 );
-
-//                await app.client.pause(2000) // HACK
 
                 const vname = await app.client.$('#VNAME');
                 await (vname.getValue()).should.equal(name);
@@ -110,7 +107,7 @@ module.exports = {
                 (await vname.getValue()).should.equal(name)
                 
                 const vce_crt_name = await app.client.$('#vce_crt_name');
-                (await vce_crt_name()).should.equal('INTERNAL');;
+                (await vce_crt_name.getText()).should.equal('INTERNAL');;
                 
                 (await vce_name.getText()).should.equal(name)
             });
