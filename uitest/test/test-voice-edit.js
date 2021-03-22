@@ -400,19 +400,27 @@ describe('Test voice page edits', () => {
         it('freq', async () => {
             const ele = await app.client.$(cssQuoteId('#patchFOInputDSR[3]'));
             (await ele.getValue()).should.equal('');
-            await ele.click()
+            await ele.click();
             await app.client.keys('ArrowUp');
             (await ele.getValue()).should.equal('1');
-            await ele.click();
+
             await app.client.keys('ArrowUp');
             (await ele.getValue()).should.equal('2');
         });
         it('out', async () => {
-            const ele = await app.client.$(cssQuoteId('#patchOutputDSR[4]'));
-            (await ele.getValue()).should.equal('1');
-            await ele.click()
-            await app.client.keys('ArrowUp');
-            (await ele.getValue()).should.equal('2');
+            {
+                const ele = await app.client.$(cssQuoteId('#patchOutputDSR[4]'));
+                (await ele.getValue()).should.equal('1');
+            }
+            {
+                const ele = await app.client.$(cssQuoteId('#patchOutputDSR[4]'));
+                await ele.click()
+                await app.client.keys('ArrowUp');
+            }
+            {
+                const ele = await app.client.$(cssQuoteId('#patchOutputDSR[4]'));
+                (await ele.getValue()).should.equal('2');
+            }
         });
     });
     it('screenshot', async () => {
