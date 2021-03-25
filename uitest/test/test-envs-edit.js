@@ -96,7 +96,9 @@ describe('Test envs page edits', () => {
             const envLoop2 = await app.client.$(cssQuoteId('#env'+which+'Loop[2]'));
             const alertButton = await app.client.$(cssQuoteId('#alertModal button'));
             const alertText = await app.client.$(cssQuoteId('#alertText'));
-            
+
+            await app.client.pause(TYPING_PAUSE);
+            (await envLoop2.getValue()).should.equal('');
             await app.client.pause(TYPING_PAUSE);
             await envLoop2.selectByVisibleText('L->');
             await app.client.pause(TYPING_PAUSE);
@@ -118,6 +120,8 @@ describe('Test envs page edits', () => {
             const alertButton = await app.client.$(cssQuoteId('#alertModal button'));
             const alertText = await app.client.$(cssQuoteId('#alertText'));
             
+            await app.client.pause(TYPING_PAUSE);
+            (await envLoop2.getValue()).should.equal(''); 
             await app.client.pause(TYPING_PAUSE);
             await envLoop2.selectByVisibleText('R->');
             await app.client.pause(TYPING_PAUSE);
@@ -192,315 +196,332 @@ describe('Test envs page edits', () => {
 
             await delenvpoint.click();
             await alertText.waitForDisplayed();
-            await hooks.screenshotAndCompare(app, 'envs-freq-deleteLoopPoint-alert');
+            await hooks.screenshotAndCompare(app, 'envs-'+which.toLowerCase()+'-deleteLoopPoint-alert');
 
             (await alertText.getText()).should.include('Cannot remove envelope point');
             await alertButton.click();
             await alertText.waitForDisplayed({inverse: true});
         });
+
+        it(which.toLowerCase()+'-cannot delete sustain point if there are loop points', async () => {
+            const envLoop4 = await app.client.$(cssQuoteId('#env'+which+'Loop[4]'));
+            const alertButton = await app.client.$(cssQuoteId('#alertModal button'));
+            const alertText = await app.client.$(cssQuoteId('#alertText'));
+
+            (await envLoop4.getValue()).should.equal('S');
+
+            await app.client.pause(TYPING_PAUSE);
+            await envLoop4.selectByVisibleText('');
+            await app.client.pause(TYPING_PAUSE);
+           
+            await alertText.waitForDisplayed();
+            
+            await hooks.screenshotAndCompare(app, 'envs-'+which.toLowerCase()+'-deleteSustainPoint-alert');
+
+            (await alertText.getText()).should.include('Cannot remove');
+            await app.client.pause(TYPING_PAUSE);
+            await alertButton.click();
+            await alertText.waitForDisplayed({reverse: true});
+        });
+        
+        it(which.toLowerCase()+'-remove loops', async () => {
+            const envLoop1 = await app.client.$(cssQuoteId('#env'+which+'Loop[1]'));
+            const envLoop2 = await app.client.$(cssQuoteId('#env'+which+'Loop[2]'));
+            const envLoop3 = await app.client.$(cssQuoteId('#env'+which+'Loop[3]'));
+            const envLoop4 = await app.client.$(cssQuoteId('#env'+which+'Loop[4]'));
+            const accelLow = await app.client.$(cssQuoteId('#accel'+which+'Low'));
+            const accelUp = await app.client.$(cssQuoteId('#accel'+which+'Up'));
+            const alertText = await app.client.$(cssQuoteId('#alertText'));
+
+            await app.client.pause(TYPING_PAUSE);
+            (await envLoop2.getValue()).should.equal('R');
+            (await envLoop4.getValue()).should.equal('S');
+
+            await app.client.pause(TYPING_PAUSE);
+            await envLoop2.selectByVisibleText('');
+            await app.client.pause(TYPING_PAUSE);
+            await envLoop4.selectByVisibleText('');
+            await app.client.pause(TYPING_PAUSE);
+            
+            (await envLoop1.getValue()).should.equal('');
+            (await envLoop2.getValue()).should.equal('');
+            (await envLoop3.getValue()).should.equal('');
+            (await envLoop4.getValue()).should.equal('');            
+            (await accelLow.isDisplayed()).should.equal(true); 
+            (await accelUp.isDisplayed()).should.equal(true);
+            (await alertText.isDisplayed()).should.equal(false); 
+        });
+        it(which.toLowerCase()+'-now can remove a point', async () => {
+            const envLoop3 = await app.client.$(cssQuoteId('#env'+which+'Loop[3]'));
+            const envLoop4 = await app.client.$(cssQuoteId('#env'+which+'Loop[4]'));
+            const alertText = await app.client.$(cssQuoteId('#alertText'));
+            const delenvpoint = await app.client.$(cssQuoteId('#del-'+which.toLowerCase()+'-env-point'));
+
+            await app.client.pause(TYPING_PAUSE);
+            (await envLoop3.isDisplayed()).should.equal(true);
+            (await envLoop4.isDisplayed()).should.equal(true);
+
+            await delenvpoint.click();
+            await app.client.pause(TYPING_PAUSE);
+
+            await envLoop4.waitForDisplayed({reverse: true});
+            
+            (await envLoop3.isDisplayed()).should.equal(true);
+            (await envLoop4.isDisplayed()).should.equal(false);
+
+            (await alertText.isDisplayed()).should.equal(false);            
+        });
+
     }
     sharedTests('Freq');
     sharedTests('Amp');
-   
-
-/*********
-
-    it('freq-cannot delete sustain point if there are loop points', async () => {
-        await app.client
-            .pause(TYPING_PAUSE)
-            .selectByValue(cssQuoteId('#envFreqLoop[4]'), '')
-
-            .waitForVisible('#alertText')
-            .then(() => { return hooks.screenshotAndCompare(app, 'envs-freq-deleteSustainPoint-alert') })
-
-            .getText('#alertText').should.eventually.include('Cannot remove')
-
-            .pause(TYPING_PAUSE)
-            .click('#alertModal button')
-            .waitForVisible('#alertText', 1000, true) // wait to disappear
-
-    });
-
-    it('amp-cannot delete sustain point if there are loop points', async () => {
-        await app.client
-            .pause(TYPING_PAUSE)
-            .selectByValue(cssQuoteId('#envAmpLoop[4]'), '')
-
-            .waitForVisible('#alertText')
-            .then(() => { return hooks.screenshotAndCompare(app, 'envs-amp-deleteSustainPoint-alert') })
-
-            .getText('#alertText').should.eventually.include('Cannot remove')
-
-            .pause(TYPING_PAUSE)
-            .click('#alertModal button')
-            .waitForVisible('#alertText', 1000, true) // wait to disappear
-
-    });
-
-    it('freq-remove loops', async () => {
-        await app.client
-            .pause(TYPING_PAUSE)
-            .selectByValue(cssQuoteId('#envFreqLoop[2]'), '')
-            .pause(TYPING_PAUSE)
-            .selectByValue(cssQuoteId('#envFreqLoop[4]'), '')
-            .getValue(cssQuoteId('#envFreqLoop[1]')).should.eventually.equal('')
-            .getValue(cssQuoteId('#envFreqLoop[2]')).should.eventually.equal('')
-            .getValue(cssQuoteId('#envFreqLoop[3]')).should.eventually.equal('')
-            .getValue(cssQuoteId('#envFreqLoop[4]')).should.eventually.equal('')
-
-            .isVisible(cssQuoteId('#accelFreqLow')).should.eventually.equal(true)
-            .isVisible(cssQuoteId('#accelFreqUp')).should.eventually.equal(true)
-            .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
-
-    });
-
-    it('amp-remove loops', async () => {
-        await app.client
-            .pause(TYPING_PAUSE)
-            .selectByValue(cssQuoteId('#envAmpLoop[2]'), '')
-            .pause(TYPING_PAUSE)
-            .selectByValue(cssQuoteId('#envAmpLoop[4]'), '')
-            .getValue(cssQuoteId('#envAmpLoop[1]')).should.eventually.equal('')
-            .getValue(cssQuoteId('#envAmpLoop[2]')).should.eventually.equal('')
-            .getValue(cssQuoteId('#envAmpLoop[3]')).should.eventually.equal('')
-            .getValue(cssQuoteId('#envAmpLoop[4]')).should.eventually.equal('')
-
-            .isVisible(cssQuoteId('#accelAmpLow')).should.eventually.equal(true)
-            .isVisible(cssQuoteId('#accelAmpUp')).should.eventually.equal(true)
-            .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
-
-    });
-
-    it('freq-now can remove a point', async () => {
-        await app.client
-            .pause(TYPING_PAUSE)
-            .click('#del-freq-env-point')
-            .waitForVisible(cssQuoteId('#envFreqLoop[5]'), 1000, true) // wait to disappear
-            .isVisible(cssQuoteId('#envFreqLoop[4]')).should.eventually.equal(false)
-            .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
-    });
-
-    it('amp-now can remove a point', async () => {
-        await app.client
-            .pause(TYPING_PAUSE)
-            .click('#del-amp-env-point')
-            .waitForVisible(cssQuoteId('#envAmpLoop[5]'), 1000, true) // wait to disappear
-            .isVisible(cssQuoteId('#envAmpLoop[4]')).should.eventually.equal(false)
-            .isVisible(cssQuoteId('#alertText')).should.eventually.equal(false)
-    });
 
     // test that all the spinner text conversions work at the right ranges
     describe('freq values', () => {
         it('type to envFreqLowVal[1] to and past -127', async () => {
-            await app.client
-                .pause(TYPING_PAUSE)
-                .clearElement(cssQuoteId('#envFreqLowVal[1]'))
-                .setValue(cssQuoteId('#envFreqLowVal[1]'), '-126')
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envFreqUpVal[1]')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#envFreqLowVal[1]')).should.eventually.equal('-126')
-            // should not be able to go below min
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envFreqLowVal[1]')).keys('ArrowDown')
-                .getValue(cssQuoteId('#envFreqLowVal[1]')).should.eventually.equal('-127')
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envFreqLowVal[1]')).keys('ArrowDown')
-                .getValue(cssQuoteId('#envFreqLowVal[1]')).should.eventually.equal('-127')
-        });
-        it('type to envFreqUpVal[1] to and past 127', async () => {
-            await app.client
-                .pause(TYPING_PAUSE)
-                .clearElement(cssQuoteId('#envFreqUpVal[1]'))
-                .setValue(cssQuoteId('#envFreqUpVal[1]'), '126')
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envFreqLowVal[1]')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#envFreqUpVal[1]')).should.eventually.equal('126')
-            // should not be able to go above max
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envFreqUpVal[1]')).keys('ArrowUp')
-                .getValue(cssQuoteId('#envFreqUpVal[1]')).should.eventually.equal('127')
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envFreqUpVal[1]')).keys('ArrowUp')
-                .getValue(cssQuoteId('#envFreqUpVal[1]')).should.eventually.equal('127')
+            const ele = await app.client.$(cssQuoteId('#envFreqLowVal[1]'))
+            const otherele = await app.client.$(cssQuoteId('#envFreqUpVal[1]'))
+            await app.client.pause(TYPING_PAUSE)
+            await ele.setValue('-126')
+            await otherele.click(); // click in a different input to force onchange
+            (await ele.getValue()).should.equal('-126');
 
+            // should not be able to go below min
+            
+            await app.client.pause(TYPING_PAUSE)
+            await ele.click()
+            await app.client.keys('ArrowDown');
+            (await ele.getValue()).should.equal('-127');
+            
+            await app.client.pause(TYPING_PAUSE)
+            await ele.click()
+            await app.client.keys('ArrowDown');
+            (await ele.getValue()).should.equal('-127');
+        });
+        
+        it('type to envFreqUpVal[1] to and past 127', async () => {
+            const ele = await app.client.$(cssQuoteId('#envFreqUpVal[1]'))
+            const otherele = await app.client.$(cssQuoteId('#envFreqLowVal[1]'))
+            await app.client.pause(TYPING_PAUSE)
+            await ele.setValue('126')
+            await otherele.click(); // click in a different input to force onchange
+            (await ele.getValue()).should.equal('126');
+
+            // should not be able to go above max
+            
+            await app.client.pause(TYPING_PAUSE)
+            await ele.click()
+            await app.client.keys('ArrowUp');
+            (await ele.getValue()).should.equal('127');
+            
+            await app.client.pause(TYPING_PAUSE)
+            await ele.click()
+            await app.client.keys('ArrowUp');
+            (await ele.getValue()).should.equal('127');
         });
     });
     describe('freq times', () => {
         describe('type to envFreqLowTime[2] to and past 0', () => {
             it('set envFreqLowTime[2] to 1', async () => {
-                await app.client
-                    .pause(TYPING_PAUSE)
-                    .clearElement(cssQuoteId('#envFreqLowTime[2]'))
-                    .setValue(cssQuoteId('#envFreqLowTime[2]'), '1')
-                    .pause(TYPING_PAUSE)
-                    .click(cssQuoteId('#envAmpUpTime[1]')) // click in a different input to force onchange
-                    .getValue(cssQuoteId('#envFreqLowTime[2]')).should.eventually.equal('1')
+                const ele = await app.client.$(cssQuoteId('#envFreqLowTime[2]'));
+                const otherele = await app.client.$(cssQuoteId('#envAmpUpTime[1]'));
+                await app.client.pause(TYPING_PAUSE)
+                await ele.setValue('1')
+                await otherele.click(); // click in a different input to force onchange
+                (await ele.getValue()).should.equal('1');
             });
             // should not be able to go below min
             it('set envFreqLowTime[2] down to 0', async () => {
-                await app.client
-                    .pause(TYPING_PAUSE)
-                    .click(cssQuoteId('#envFreqLowTime[2]')).keys('ArrowDown')
-                    .getValue(cssQuoteId('#envFreqLowTime[2]')).should.eventually.equal('0')
+                const ele = await app.client.$(cssQuoteId('#envFreqLowTime[2]'));
+                (await ele.getValue()).should.equal('1'); 
+                await ele.click();
+                await app.client.keys('ArrowDown');
+                await app.client.pause(TYPING_PAUSE);
+                (await ele.getValue()).should.equal('0');               
             });
             it('set envFreqLowTime[2] down doesnt go past 0', async () => {
-                await app.client
-                    .pause(TYPING_PAUSE)
-                    .click(cssQuoteId('#envFreqLowTime[2]')).keys('ArrowDown')
-                    .pause(TYPING_PAUSE)
-                    .getValue(cssQuoteId('#envFreqLowTime[2]')).should.eventually.equal('0')
+                const ele = await app.client.$(cssQuoteId('#envFreqLowTime[2]'));
+                (await ele.getValue()).should.equal('0');               
+                await ele.click();
+                await app.client.keys('ArrowDown');
+                await app.client.pause(TYPING_PAUSE);
+                (await ele.getValue()).should.equal('0');               
             });
         });
-        it('type to envAmpUpTime[2] to and past 6576', async () => {
-            await app.client
-                .pause(TYPING_PAUSE)
-                .clearElement(cssQuoteId('#envAmpUpTime[2]'))
-                .setValue(cssQuoteId('#envAmpUpTime[2]'), '5858')
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envFreqLowTime[2]')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#envAmpUpTime[2]')).should.eventually.equal('5859')
-            // should not be able to go above max
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envAmpUpTime[2]')).keys('ArrowUp')
-                .getValue(cssQuoteId('#envAmpUpTime[2]')).should.eventually.equal('6576')
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envAmpUpTime[2]')).keys('ArrowUp')
-                .getValue(cssQuoteId('#envAmpUpTime[2]')).should.eventually.equal('6576')
-
-        });
-
     });
     describe('amp values', () => {
         it('type to envAmpLowVal[1] to and past 0', async () => {
-            await app.client
-                .pause(TYPING_PAUSE)
-                .clearElement(cssQuoteId('#envAmpLowVal[1]'))
-                .setValue(cssQuoteId('#envAmpLowVal[1]'), '1')
-                .click(cssQuoteId('#envAmpUpVal[1]')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#envAmpLowVal[1]')).should.eventually.equal('1')
+            const ele = await app.client.$(cssQuoteId('#envAmpLowVal[1]'));
+            const otherele = await app.client.$(cssQuoteId('#envAmpUpVal[1]'));
+            await app.client.pause(TYPING_PAUSE);
+            await ele.setValue('1');
+            await otherele.click(); // click in a different input to force onchange
+            (await ele.getValue()).should.equal('1');
+
             // should not be able to go below min
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envAmpLowVal[1]')).keys('ArrowDown')
-                .getValue(cssQuoteId('#envAmpLowVal[1]')).should.eventually.equal('0')
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envAmpLowVal[1]')).keys('ArrowDown')
-                .getValue(cssQuoteId('#envAmpLowVal[1]')).should.eventually.equal('0')
+            await ele.click();
+            await app.client.keys('ArrowDown');
+            await app.client.pause(TYPING_PAUSE);
+            (await ele.getValue()).should.equal('0');         
+            
+            await ele.click();
+            await app.client.keys('ArrowDown');
+            await app.client.pause(TYPING_PAUSE);
+            (await ele.getValue()).should.equal('0'); 
         });
         it('type to envAmpUpVal[1] to and past 72', async () => {
-            await app.client
-                .pause(TYPING_PAUSE)
-                .clearElement(cssQuoteId('#envAmpUpVal[1]'))
-                .setValue(cssQuoteId('#envAmpUpVal[1]'), '71')
-                .click(cssQuoteId('#envAmpLowVal[1]')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#envAmpUpVal[1]')).should.eventually.equal('71')
-            // should not be able to go above max
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envAmpUpVal[1]')).keys('ArrowUp')
-                .getValue(cssQuoteId('#envAmpUpVal[1]')).should.eventually.equal('72')
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envAmpUpVal[1]')).keys('ArrowUp')
-                .getValue(cssQuoteId('#envAmpUpVal[1]')).should.eventually.equal('72')
+            const ele = await app.client.$(cssQuoteId('#envAmpUpVal[1]'));
+            const otherele = await app.client.$(cssQuoteId('#envAmpLowVal[1]'));
+            
+            await app.client.pause(TYPING_PAUSE);
+            await ele.setValue('71');
+            await otherele.click(); // click in a different input to force onchange
+            (await ele.getValue()).should.equal('71');
 
+            await app.client.pause(TYPING_PAUSE)
+
+            await ele.click();
+            await app.client.keys('ArrowUp');
+            await app.client.pause(TYPING_PAUSE);
+            (await ele.getValue()).should.equal('72');               
+
+            await ele.click();
+            await app.client.keys('ArrowUp');
+            await app.client.pause(TYPING_PAUSE);
+            (await ele.getValue()).should.equal('72');
         });
     });
+
     describe('amp times', () => {
         it('type to envAmpLowTime[1] to and past 0', async () => {
-            await app.client
-                .pause(TYPING_PAUSE)
-                .clearElement(cssQuoteId('#envAmpLowTime[1]'))
-                .setValue(cssQuoteId('#envAmpLowTime[1]'), '1')
-                .click(cssQuoteId('#envAmpUpTime[1]')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#envAmpLowTime[1]')).should.eventually.equal('1')
-            // should not be able to go below min
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envAmpLowTime[1]')).keys('ArrowDown')
-                .getValue(cssQuoteId('#envAmpLowTime[1]')).should.eventually.equal('0')
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envAmpLowTime[1]')).keys('ArrowDown')
-                .getValue(cssQuoteId('#envAmpLowTime[1]')).should.eventually.equal('0')
-        });
-        it('type to envAmpUpTime[1] to and past 6576', async () => {
-            await app.client
-                .pause(TYPING_PAUSE)
-                .clearElement(cssQuoteId('#envAmpUpTime[1]'))
-                .setValue(cssQuoteId('#envAmpUpTime[1]'), '5858') // expect the conversion to round to the right value
-                .click(cssQuoteId('#envAmpLowTime[1]')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#envAmpUpTime[1]')).should.eventually.equal('5859')
-            // should not be able to go above max
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envAmpUpTime[1]')).keys('ArrowUp')
-                .getValue(cssQuoteId('#envAmpUpTime[1]')).should.eventually.equal('6576')
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#envAmpUpTime[1]')).keys('ArrowUp')
-                .getValue(cssQuoteId('#envAmpUpTime[1]')).should.eventually.equal('6576')
+            const ele = await app.client.$(cssQuoteId('#envAmpLowTime[1]'));
+            const otherele = await app.client.$(cssQuoteId('#envAmpUpTime[1]'));
+            await app.client.pause(TYPING_PAUSE);
+            await ele.setValue('1');
+            await otherele.click(); // click in a different input to force onchange
+            (await ele.getValue()).should.equal('1');
 
+            // should not be able to go below min
+            await ele.click();
+            await app.client.keys('ArrowDown');
+            await app.client.pause(TYPING_PAUSE);
+            (await ele.getValue()).should.equal('0');         
+            
+            await ele.click();
+            await app.client.keys('ArrowDown');
+            await app.client.pause(TYPING_PAUSE);
+            (await ele.getValue()).should.equal('0');                     
         });
+        
+        it('type to envAmpUpTime[1] to and past 6576', async () => {
+            const ele = await app.client.$(cssQuoteId('#envAmpUpTime[1]'));
+            const otherele = await app.client.$(cssQuoteId('#envAmpLowTime[2]'));
+            
+            await app.client.pause(TYPING_PAUSE);
+            await ele.setValue('5858');
+            await otherele.click(); // click in a different input to force onchange
+            (await ele.getValue()).should.equal('5859');
+
+            await app.client.pause(TYPING_PAUSE);
+
+            await ele.click();
+            await app.client.keys('ArrowUp');
+            await app.client.pause(TYPING_PAUSE);
+            (await ele.getValue()).should.equal('6576');               
+
+            await ele.click();
+            await app.client.keys('ArrowUp');
+            await app.client.pause(TYPING_PAUSE);
+            (await ele.getValue()).should.equal('6576'); 
+        });
+
     });
 
+    
     describe('accelerations', () => {
         it('type to accelAmpLow to and past 0', async () => {
-            await app.client
-                .pause(TYPING_PAUSE)
-                .clearElement(cssQuoteId('#accelAmpLow'))
-                .setValue(cssQuoteId('#accelAmpLow'), '1')
-                .click(cssQuoteId('#accelAmpUp')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#accelAmpLow')).should.eventually.equal('1')
+            const ele = await app.client.$(cssQuoteId('#accelAmpLow'));
+            const otherele = await app.client.$(cssQuoteId('#accelAmpUp'));
+            await app.client.pause(TYPING_PAUSE);
+            await ele.setValue('1')
+            await otherele.click(); // click in a different input to force onchange
+            (await ele.getValue()).should.equal('1');
+
             // should not be able to go below min
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#accelAmpLow')).keys('ArrowDown')
-                .getValue(cssQuoteId('#accelAmpLow')).should.eventually.equal('0')
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#accelAmpLow')).keys('ArrowDown')
-                .getValue(cssQuoteId('#accelAmpLow')).should.eventually.equal('0')
+            await ele.click();
+            await app.client.keys('ArrowDown');
+            await app.client.pause(TYPING_PAUSE);
+            (await ele.getValue()).should.equal('0');         
+            
+            await ele.click();
+            await app.client.keys('ArrowDown');
+            await app.client.pause(TYPING_PAUSE);
+            (await ele.getValue()).should.equal('0');
         });
         it('type to accelAmpUp to and past 126', async () => {
-            await app.client
-                .pause(TYPING_PAUSE)
-                .clearElement(cssQuoteId('#accelAmpUp'))
-                .setValue(cssQuoteId('#accelAmpUp'), '126') // expect the conversion to round to the right value
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#accelAmpLow')) // click in a different input to force onchange
-                .getValue(cssQuoteId('#accelAmpUp')).should.eventually.equal('126')
-            // should not be able to go above max
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#accelAmpUp')).keys('ArrowUp')
-                .getValue(cssQuoteId('#accelAmpUp')).should.eventually.equal('127')
-                .pause(TYPING_PAUSE)
-                .click(cssQuoteId('#accelAmpUp')).keys('ArrowUp')
-                .getValue(cssQuoteId('#accelAmpUp')).should.eventually.equal('127')
+            const ele = await app.client.$(cssQuoteId('#accelAmpUp'));
+            const otherele = await app.client.$(cssQuoteId('#accelAmpLow'));
+            await app.client.pause(TYPING_PAUSE);
+            await ele.setValue('126');
+            await otherele.click(); // click in a different input to force onchange
+            (await ele.getValue()).should.equal('126');
 
+            // should not be able to go below min
+            await ele.click();
+            await app.client.keys('ArrowUp');
+            await app.client.pause(TYPING_PAUSE);
+            (await ele.getValue()).should.equal('127');         
+            
+            await ele.click();
+            await app.client.keys('ArrowUp');
+            await app.client.pause(TYPING_PAUSE);
+            (await ele.getValue()).should.equal('127');
         });
 
     });
 
     describe('copy env', () => {
         it('check osc 1 initial conditions', async () => {
+            const envOscSelect = await app.client.$(cssQuoteId('#envOscSelect'));
+            const envAmpUpTime1 = await app.client.$(cssQuoteId('#envAmpUpTime[1]'));
+            const accelAmpUp = await app.client.$(cssQuoteId('#accelAmpUp'));
 
-            await app.client
-                .getValue('#envOscSelect').should.eventually.equal('1')
-                .getValue(cssQuoteId('#envAmpUpTime[1]')).should.eventually.equal('6576')
-                .getValue(cssQuoteId('#accelAmpUp')).should.eventually.equal('127')
+            (await envOscSelect.getValue()).should.equal('1');
+            (await envAmpUpTime1.getValue()).should.equal('6576');
+            (await accelAmpUp.getValue()).should.equal('127');
         });
 
         it('switch to osc 2', async () => {
-            await app.client
-                .selectByVisibleText('#envOscSelect', '2')
-                .pause(TYPING_PAUSE)
-                .getValue('#tabTelltaleContent').should.eventually.equal(`osc:2`)
-                .getValue(cssQuoteId('#envAmpUpTime[1]')).should.eventually.equal('0')
-                .getValue(cssQuoteId('#accelAmpUp')).should.eventually.equal('30')
+            const envOscSelect = await app.client.$(cssQuoteId('#envOscSelect'));
+            const envAmpUpTime1 = await app.client.$(cssQuoteId('#envAmpUpTime[1]'));
+            const accelAmpUp = await app.client.$(cssQuoteId('#accelAmpUp'));
+
+            await app.client.pause(TYPING_PAUSE)
+            await envOscSelect.selectByVisibleText('2');
+            await app.client.pause(TYPING_PAUSE)
+            await hooks.waitUntilValueExists('#tabTelltaleContent', 'osc:2');
+            
+            (await envOscSelect.getValue()).should.equal('2');
+            (await envAmpUpTime1.getValue()).should.equal('0');
+            (await accelAmpUp.getValue()).should.equal('30');
         });
 
         it('copy from 1', async () => {
-            await app.client
-                .selectByVisibleText('#envCopySelect', '1')
-                .pause(TYPING_PAUSE)
-                .getValue(cssQuoteId('#envAmpUpTime[1]')).should.eventually.equal('6576')
-                .getValue(cssQuoteId('#accelAmpUp')).should.eventually.equal('127')
+            const envCopySelect = await app.client.$(cssQuoteId('#envCopySelect'));
+            const envAmpUpTime1 = await app.client.$(cssQuoteId('#envAmpUpTime[1]'));
+            const accelAmpUp = await app.client.$(cssQuoteId('#accelAmpUp'));
+
+            await app.client.pause(TYPING_PAUSE)
+            await envCopySelect.selectByVisibleText('1');
+            await app.client.pause(TYPING_PAUSE)
+            
+            await hooks.waitUntilValueExists('#accelAmpUp', '127');
+            
+            (await envAmpUpTime1.getValue()).should.equal('6576');
+            (await accelAmpUp.getValue()).should.equal('127');
         });
 
     });
-*********/
     
     it('screenshot', async () => {
         await hooks.screenshotAndCompare(app, `INITVRAM-after-edit-envs`);
