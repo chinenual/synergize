@@ -1,7 +1,7 @@
 const Application = require('spectron').Application;
 const chai = require('chai');
-const chaiAsPromised = require('chai-as-promised');
 const electron = require('electron');
+
 const { exec } = require("child_process");
 const fs = require('fs')
 const path = require('path')
@@ -19,7 +19,6 @@ const SERIALVERBOSE = "-SERIALVERBOSE";
 
 global.before(() => {
     chai.should();
-    chai.use(chaiAsPromised);
 });
 
 // Map nodejs arch to golang arch
@@ -120,7 +119,6 @@ module.exports = {
             //      webdriverLogPath: './webdriver.log'
 
         }).start();
-        chaiAsPromised.transferPromiseness = rendererApp.transferPromiseness;
         module.exports.app = rendererApp;
         return rendererApp;
     },
@@ -144,6 +142,31 @@ module.exports = {
         });
     },
 
+    waitUntilValueExists(selector, text, timeout) {
+        // Adapted from waitUntilTextExists() in Spectron's application.js
+        const self = module.exports.app.client;
+        return self
+            .waitUntil(async function () {
+                const elem = await self.$(selector);
+                const exists = await elem.isExisting();
+                if (!exists) {
+                    return false;
+                }
+                
+                const selectorText = await elem.getValue();
+                return Array.isArray(selectorText)
+                    ? selectorText.some((s) => s.includes(text))
+                    : selectorText.includes(text);
+            }, timeout)
+            .then(
+                function () {},
+                function (error) {
+                    error.message = 'waitUntilValueExists ' + error.message;
+                    throw error;
+                }
+            );
+    },
+    
     screenshotIfFailed(mochaInstance, app) {
         module.exports.flushRenderLogs(app);
 

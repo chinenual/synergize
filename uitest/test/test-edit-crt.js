@@ -21,49 +21,44 @@ describe('Test CRT edits', () => {
             await link.click()
             
             const crt_path = await app.client.$('#crt_path')
-            app.client.waitUntil(
-                () => crt_path.getText() == 'INTERNAL',
-                {
-                    timeout: LOAD_VCE_TIMEOUT
-                }
-            );
+            await app.client.waitUntilTextExists('#crt_path', 'INTERNAL');
 
-            await crt_path.getText().should.eventually.equal('INTERNAL')
+            (await crt_path.getText()).should.equal('INTERNAL');
 
-            const clearButton = await app.client.$('#crt_tables > div:nth-child(1) > table > tbody > tr:nth-child(2) > td > span.crtSlotClearButton')
-            await clearButton.isDisplayed().should.eventually.equal(false)
+            const clearButton = await app.client.$('#crt_tables > div:nth-child(1) > table > tbody > tr:nth-child(2) > td > span.crtSlotClearButton');
+            (await clearButton.isDisplayed()).should.equal(false)
         });
         it('sanity check slots', async () => {
-            const crt_voicename_1 = await app.client.$('#crt_voicename_1')
-            const crt_voicename_2 = await app.client.$('#crt_voicename_2')
-            const crt_voicename_3 = await app.client.$('#crt_voicename_3')
-            await crt_voicename_1.getText().should.eventually.equal('G7S')
-            await crt_voicename_2.getText().should.eventually.equal('HORNSXX')
-            await crt_voicename_3.getText().should.eventually.equal('RRHODES')
+            const crt_voicename_1 = await app.client.$('#crt_voicename_1');
+            const crt_voicename_2 = await app.client.$('#crt_voicename_2');
+            const crt_voicename_3 = await app.client.$('#crt_voicename_3');
+            (await crt_voicename_1.getText()).should.equal('G7S');
+            (await crt_voicename_2.getText()).should.equal('HORNSXX');
+            (await crt_voicename_3.getText()).should.equal('RRHODES');
         });
         it('toggle edit mode', async () => {
             const edit = await app.client.$('#editCRTButton')
             await edit.click()
 
             const clearButton = await app.client.$('#crt_tables > div:nth-child(1) > table > tbody > tr:nth-child(2) > td > span.crtSlotClearButton')
-            await clearButton.waitForDisplayed()
-            await clearButton.isDisplayed().should.eventually.equal(true)
+            await clearButton.waitForDisplayed();
+            (await clearButton.isDisplayed()).should.equal(true)
         });
         it('sanity check slots', async () => {
-            const crt_voicename_1 = await app.client.$('#crt_voicename_1')
-            const crt_voicename_2 = await app.client.$('#crt_voicename_2')
-            const crt_voicename_3 = await app.client.$('#crt_voicename_3')
-            await crt_voicename_1.getText().should.eventually.equal('G7S')
-            await crt_voicename_2.getText().should.eventually.equal('HORNSXX')
-            await crt_voicename_3.getText().should.eventually.equal('RRHODES')
+            const crt_voicename_1 = await app.client.$('#crt_voicename_1');
+            const crt_voicename_2 = await app.client.$('#crt_voicename_2');
+            const crt_voicename_3 = await app.client.$('#crt_voicename_3');
+            (await crt_voicename_1.getText()).should.equal('G7S');
+            (await crt_voicename_2.getText()).should.equal('HORNSXX');
+            (await crt_voicename_3.getText()).should.equal('RRHODES');
         });
     });
     describe('Edit slots', () => {
         it('clear slot 2', async () => {
             const clearButton = await app.client.$('#crt_tables > div:nth-child(1) > table > tbody > tr:nth-child(2) > td > span.crtSlotClearButton')
             await clearButton.click()
-            const crt_voicename_2 = await app.client.$('#crt_voicename_2')
-            await crt_voicename_2.getText().should.eventually.equal('')
+            const crt_voicename_2 = await app.client.$('#crt_voicename_2');
+            (await crt_voicename_2.getText()).should.equal('')
         });
         /*
          * Can't call native file dialogs from Spectron.  FIXME: add mocks

@@ -14,8 +14,8 @@ describe('Test Voicing Mode OFF', () => {
 
         const confirmText = await app.client.$('#confirmText')
 
-        await confirmText.waitForDisplayed()
-        await confirmText.getText().should.eventually.include('pending edits')
+        await confirmText.waitForDisplayed();
+        (await confirmText.getText()).should.include('pending edits');
         
         const confirmOk = await app.client.$('#confirmOKButton')
         await confirmOk.click()
@@ -26,16 +26,16 @@ describe('Test Voicing Mode OFF', () => {
         const img = await app.client.$('#voicingModeButton img')
 
         await alertText.waitForDisplayed()
-        await hooks.screenshotAndCompare(app, 'voicingModeOff-alert')
+        await hooks.screenshotAndCompare(app, 'voicingModeOff-alert');
 
-        await alertText.getText().should.eventually.include('disabled')
+        (await alertText.getText()).should.include('disabled')
 
         const alertClose = await app.client.$('#alertModal button')
         await alertClose.click()
 
-        await alertText.waitForDisplayed({reverse: true})  // wait to disappear
+        await alertText.waitForDisplayed({reverse: true});  // wait to disappear
 
-        await img.getAttribute("src").should.eventually.include('static/images/red-button-off-full.png')
+        (await img.getAttribute("src")).should.include('static/images/red-button-off-full.png');
 
         await hooks.screenshotAndCompare(app, 'voicingModeOff')
 

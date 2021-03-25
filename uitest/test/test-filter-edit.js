@@ -17,8 +17,8 @@ describe('Test filter page edits', () => {
 
     it('filter tab should display', async () => {
         const tab = await app.client.$(`#vceTabs a[href='#vceFiltersTab']`)
-        await tab.click()
-        await tab.getAttribute('class').should.eventually.include('active')
+        await tab.click();
+        (await tab.getAttribute('class')).should.include('active');
         const ele = await app.client.$('#filterSelect')
         await ele.waitForDisplayed()
     });
@@ -38,36 +38,36 @@ describe('Test filter page edits', () => {
             const otherele = await app.client.$(cssQuoteId('#flt[2]'))
             await app.client.pause(TYPING_PAUSE)
             await ele.setValue('-63')
-            await otherele.click() // click in a different input to force onchange
-            await ele.getValue().should.eventually.equal('-63')
+            await otherele.click(); // click in a different input to force onchange
+            (await ele.getValue()).should.equal('-63');
 
             await app.client.pause(TYPING_PAUSE)
             await ele.click()
-            await app.client.keys('ArrowDown')
-            await ele.getValue().should.eventually.equal('-64')
+            await app.client.keys('ArrowDown');
+            (await ele.getValue()).should.equal('-64');
             
             await app.client.pause(TYPING_PAUSE)
             await ele.click()
-            await app.client.keys('ArrowDown')
-            await ele.getValue().should.eventually.equal('-64')            
+            await app.client.keys('ArrowDown');
+            (await ele.getValue()).should.equal('-64')            ;
         });
         it('type to flt[2] to and past 63', async () => {
             const ele = await app.client.$(cssQuoteId('#flt[2]'))
             const otherele = await app.client.$(cssQuoteId('#flt[1]'))
             await app.client.pause(TYPING_PAUSE)
             await ele.setValue('62')
-            await otherele.click() // click in a different input to force onchange
-            await ele.getValue().should.eventually.equal('62')
+            await otherele.click(); // click in a different input to force onchange
+            (await ele.getValue()).should.equal('62');
 
             await app.client.pause(TYPING_PAUSE)
             await ele.click()
-            await app.client.keys('ArrowUp')
-            await ele.getValue().should.eventually.equal('63')
+            await app.client.keys('ArrowUp');
+            (await ele.getValue()).should.equal('63');
             
             await app.client.pause(TYPING_PAUSE)
             await ele.click()
-            await app.client.keys('ArrowUp')
-            await ele.getValue().should.eventually.equal('63')
+            await app.client.keys('ArrowUp');
+            (await ele.getValue()).should.equal('63');
         });
     });
 
@@ -79,9 +79,9 @@ describe('Test filter page edits', () => {
             await filterTable.waitForDisplayed()
 
             const flt1 = await app.client.$(cssQuoteId('#flt[1]'))
-            const flt2 = await app.client.$(cssQuoteId('#flt[2]'))
-            await flt1.getValue().should.eventually.equal('-64')
-            await flt2.getValue().should.eventually.equal('63')
+            const flt2 = await app.client.$(cssQuoteId('#flt[2]'));
+            (await flt1.getValue()).should.equal('-64');
+            (await flt2.getValue()).should.equal('63');
         });
 
         it('switch to Bf 2', async () => {
@@ -91,9 +91,9 @@ describe('Test filter page edits', () => {
             await filterTable.waitForDisplayed()
 
             const flt1 = await app.client.$(cssQuoteId('#flt[1]'))
-            const flt2 = await app.client.$(cssQuoteId('#flt[2]'))
-            await flt1.getValue().should.eventually.equal('0')
-            await flt2.getValue().should.eventually.equal('0')
+            const flt2 = await app.client.$(cssQuoteId('#flt[2]'));
+            (await flt1.getValue()).should.equal('0');
+            (await flt2.getValue()).should.equal('0');
         });
 
         it('copy from 1', async () => {
@@ -103,9 +103,9 @@ describe('Test filter page edits', () => {
             await filterTable.waitForDisplayed()
 
             const flt1 = await app.client.$(cssQuoteId('#flt[1]'))
-            const flt2 = await app.client.$(cssQuoteId('#flt[2]'))
-            await flt1.getValue().should.eventually.equal('-64')
-            await flt2.getValue().should.eventually.equal('63')
+            const flt2 = await app.client.$(cssQuoteId('#flt[2]'));
+            (await flt1.getValue()).should.equal('-64');
+            (await flt2.getValue()).should.equal('63');
         });
 
     });

@@ -24,10 +24,10 @@ describe('About window', () => {
         
         await app.client
             .switchWindow('About Synergize')
-            .then(() => {return hooks.screenshotAndCompare(app, 'aboutWindow')})
+            .then(() => {return hooks.screenshotAndCompare(app, 'aboutWindow')});
 
-        await app.client
-            .getTitle().should.eventually.equal('About Synergize')
+        (await app.client
+            .getTitle()).should.equal('About Synergize')
     });
     
     /***
@@ -64,9 +64,9 @@ describe('About window', () => {
             .pause(WINDOW_PAUSE) // HACK: but without this switching windows is unreliable. 
         
         await app.client
-            .switchWindow('Synergize')
-        await app.client
-            .getTitle().should.eventually.equal('Synergize')
+            .switchWindow('Synergize');
+        (await app.client
+            .getTitle()).should.equal('Synergize')
     });
     
 });
