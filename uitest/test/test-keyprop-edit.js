@@ -42,7 +42,7 @@ describe('Test keyprop page edits', () => {
         await confirmOk.click()
         await confirmText.waitForDisplayed({reverse: true})  // wait to disappear
         
-        app.client.waitUntilTextExists('#VNAME', 'G7S');
+        await hooks.waitUntilValueExists('#VNAME', 'G7S');
         (await vname.getValue()).should.equal('G7S');
 
     });

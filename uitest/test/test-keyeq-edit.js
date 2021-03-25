@@ -38,11 +38,11 @@ describe('Test keyeq page edits', () => {
         await confirmText.waitForDisplayed();
         (await confirmText.getText()).should.include('pending edits');
         
-        const confirmOk = await app.client.$('#confirmOKButton')
-        await confirmOk.click()
+        const confirmOk = await app.client.$('#confirmOKButton');
+        await confirmOk.click();
         await confirmText.waitForDisplayed({reverse: true})  // wait to disappear
         
-        app.client.waitUntilTextExists('#VNAME', 'G7S');
+        await hooks.waitUntilValueExists('#VNAME', 'G7S');
         (await vname.getValue()).should.equal('G7S');
 
     });

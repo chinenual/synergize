@@ -34,7 +34,7 @@ describe('Setup', () => {
 
         app.client.setTimeout({'implicit': 0})
     });
-
+    
     it('opens a window', async () => {
         await app.client
         // HACK:  astilectron seems to not have executed onWait if we start too fast - 
@@ -53,7 +53,6 @@ describe('Setup', () => {
 
 });
 
-/*DONE:
 describe('Render unit tests', () => {
 
     it('voice page text conversions', async () => {
@@ -65,55 +64,47 @@ describe('Render unit tests', () => {
          .executeJavaScript('viewVCE_envs.testConversionFunctions()')).should.be.true
     });
 });
-*/
 
 
 
 require('./test-prefs');
 
-/*DONE
 require('./test-edit-crt');
-*/
+
 
 describe('Test Voicing Mode views', () => {
     afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
-
+    
     require('./test-voicingModeOn');
+    
+    describe('initial VRAM image should be loaded', () => {
+        viewVCE.testViewVCE([voiceINITVRAM], null, "voicemode");
+    });
+    
+    
+    require('./test-voice-edit');
+    require('./test-envs-edit');
+    require('./test-filter-edit.js');
+    require('./test-keyeq-edit');
+    require('./test-keyprop-edit');
+    viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaLeftPanelVoicingMode, "voicemode");
+    
+    require('./test-voicingModeOff');
+    
+});
 
-/*DONE
-  describe('initial VRAM image should be loaded', () => {
-      viewVCE.testViewVCE([voiceINITVRAM], null, "voicemode");
-  });
-*/
-
-
-  require('./test-voice-edit');
-
-  require('./test-envs-edit');
-
-/*DONE
-  require('./test-filter-edit.js');
-
-  require('./test-keyeq-edit');
-  require('./test-keyprop-edit');
-  viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaLeftPanelVoicingMode, "voicemode");
-
-  require('./test-voicingModeOff');
-*/
-  });
-
-
-/*DONE
+/*****DONE
 describe('Test READ-ONLY views', () => {
     afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
     
     viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaLeftPanel, "readonlyVCE");
     viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaINTERNALCRT, "readonlyCRT");
 });
-*/
-      
+
+
 // at end since we can't close the window - can just let it get closed implicity by the tear down
 require('./test-about');
+*/
 
 describe('Tear Down', () => {
     afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });

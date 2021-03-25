@@ -22,7 +22,7 @@ module.exports = {
                 await link.click()
                 
                 const vname = await app.client.$('#VNAME');
-                await app.client.waitUntilTextExists('#VNAME', name);
+                await hooks.waitUntilValueExists('#VNAME', name);
                 await (vname.getValue()).should.equal(name);
             });
         });
@@ -56,7 +56,7 @@ module.exports = {
                 await confirmOk.click()
                 await confirmText.waitForDisplayed({reverse: true})
                 
-                await app.client.waitUntilTextExists('#VNAME', name);
+                await hooks.waitUntilValueExists('#VNAME', name);
 
                 (await vname.getValue()).should.equal(name)
             });
