@@ -67,58 +67,32 @@ describe('Test voice page edits', () => {
         const nOsc = await app.client.$('#nOsc')
         const mute4 = await app.client.$(cssQuoteId('#MUTE[4]'))
         const mute5 = await app.client.$(cssQuoteId('#MUTE[5]'))
- const start=Date.now()
+const start=Date.now()
+        
         await add.click();
-        await app.client.pause(5000); // HACK
-
-        app.client.waitUntil(
-            () => nOsc.getText() == '2',
-            {
-                timeout: LOAD_VCE_TIMEOUT
-            }
-        ); 
-
+        await app.client.waitUntilTextExists('#nOsc', '2');
         (await nOsc.getText()).should.equal('2');
         
         await add.click()
-        await app.client.pause(5000); // HACK
-        app.client.waitUntil(
-            () => nOsc.getText() == '3',
-            {
-                timeout: LOAD_VCE_TIMEOUT
-            }
-        );       
+        await app.client.waitUntilTextExists('#nOsc', '3');
         (await nOsc.getText()).should.equal('3');
 
+
         await add.click()
-        await app.client.pause(5000); // HACK
-        app.client.waitUntil(
-            () => nOsc.getText() == '4',
-            {
-                timeout: LOAD_VCE_TIMEOUT
-            }
-        );       
+        await app.client.waitUntilTextExists('#nOsc', '4');
+        (await nOsc.getText()).should.equal('4');
 
         await add.click();
-        await app.client.pause(5000); // HACK
-        app.client.waitUntil(
-            () => nOsc.getText() == '5',
-            {
-                timeout: LOAD_VCE_TIMEOUT
-            }
-        );       
+        await app.client.waitUntilTextExists('#nOsc', '5');
+        (await nOsc.getText()).should.equal('5');
+
 
         (await mute4.isDisplayed()).should.equal(true);
         (await mute5.isDisplayed()).should.equal(true);
 
         await del.click()
-        await app.client.pause(5000); // HACK
-        app.client.waitUntil(
-            () => nOsc.getText() == '4',
-            {
-                timeout: LOAD_VCE_TIMEOUT
-            }
-        );       
+        await app.client.waitUntilTextExists('#nOsc', '4');
+        (await nOsc.getText()).should.equal('4');
         
         (await mute4.isDisplayed()).should.equal(true);
         (await mute5.isDisplayed()).should.equal(false)        ;
@@ -390,41 +364,77 @@ describe('Test voice page edits', () => {
     });
     describe('patch edits', () => {
 
+        // careful: each edit causes the page to redraw, so wait for each change.
+        
         it('addr', async () => {
             const ele = await app.client.$(cssQuoteId('#patchAdderInDSR[1]'));
+            const otherele = await app.client.$(cssQuoteId('#patchAdderInDSR[4]'));
             (await ele.getValue()).should.equal('');
+
             await ele.click()
+            await app.client.pause(TYPING_PAUSE);//HACK
             await app.client.keys('ArrowUp');
+            await app.client.pause(TYPING_PAUSE);//HACK
+            await otherele.click()
+            await app.client.pause(TYPING_PAUSE);//HACK
+            
+            await hooks.waitUntilValueExists(cssQuoteId('#patchAdderInDSR[1]'), '1');
             (await ele.getValue()).should.equal('1');
         });
         it('freq', async () => {
             const ele = await app.client.$(cssQuoteId('#patchFOInputDSR[3]'));
+            const otherele = await app.client.$(cssQuoteId('#patchAdderInDSR[4]'));
             (await ele.getValue()).should.equal('');
+            
             await ele.click();
+            await app.client.pause(TYPING_PAUSE);//HACK
             await app.client.keys('ArrowUp');
-            (await ele.getValue()).should.equal('1');
+            await app.client.pause(TYPING_PAUSE);//HACK
+            await otherele.click()
+            await app.client.pause(TYPING_PAUSE);//HACK
 
+            await hooks.waitUntilValueExists(cssQuoteId('#patchFOInputDSR[3]'), '1');
+            (await ele.getValue()).should.equal('1');
+ 
+            await ele.click();
+            await app.client.pause(TYPING_PAUSE);//HACK
             await app.client.keys('ArrowUp');
+            await app.client.pause(TYPING_PAUSE);//HACK
+            await otherele.click()
+            await app.client.pause(TYPING_PAUSE);//HACK
+            
+            await hooks.waitUntilValueExists(cssQuoteId('#patchFOInputDSR[3]'), '2');
             (await ele.getValue()).should.equal('2');
         });
         it('out', async () => {
-            {
-                const ele = await app.client.$(cssQuoteId('#patchOutputDSR[4]'));
-                (await ele.getValue()).should.equal('1');
-            }
-            {
-                const ele = await app.client.$(cssQuoteId('#patchOutputDSR[4]'));
-                await ele.click()
-                await app.client.keys('ArrowUp');
-            }
-            {
-                const ele = await app.client.$(cssQuoteId('#patchOutputDSR[4]'));
-                (await ele.getValue()).should.equal('2');
-            }
+            const ele = await app.client.$(cssQuoteId('#patchOutputDSR[4]'));
+            const otherele = await app.client.$(cssQuoteId('#patchAdderInDSR[4]'));
+            (await ele.getValue()).should.equal('1');
+
+            await ele.click()
+            await app.client.pause(TYPING_PAUSE);//HACK
+            await app.client.keys('ArrowUp');
+            await app.client.pause(TYPING_PAUSE);//HACK
+            await otherele.click()
+            await app.client.pause(TYPING_PAUSE);//HACK
+
+            await hooks.waitUntilValueExists(cssQuoteId('#patchOutputDSR[4]'), '2');
+            (await ele.getValue()).should.equal('2');        
         });
     });
     it('screenshot', async () => {
         await hooks.screenshotAndCompare(app, `INITVRAM-after-edit-voice`)
+
+
+
+
+
+
+
+
+
+
+
     });
 
 });

@@ -142,6 +142,31 @@ module.exports = {
         });
     },
 
+    waitUntilValueExists(selector, text, timeout) {
+        // Adapted from waitUntilTextExists() in Spectron's application.js
+        const self = module.exports.app.client;
+        return self
+            .waitUntil(async function () {
+                const elem = await self.$(selector);
+                const exists = await elem.isExisting();
+                if (!exists) {
+                    return false;
+                }
+                
+                const selectorText = await elem.getValue();
+                return Array.isArray(selectorText)
+                    ? selectorText.some((s) => s.includes(text))
+                    : selectorText.includes(text);
+            }, timeout)
+            .then(
+                function () {},
+                function (error) {
+                    error.message = 'waitUntilValueExists ' + error.message;
+                    throw error;
+                }
+            );
+    },
+    
     screenshotIfFailed(mochaInstance, app) {
         module.exports.flushRenderLogs(app);
 

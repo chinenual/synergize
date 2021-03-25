@@ -21,12 +21,7 @@ describe('Test CRT edits', () => {
             await link.click()
             
             const crt_path = await app.client.$('#crt_path')
-            app.client.waitUntil(
-                () => crt_path.getText() == 'INTERNAL',
-                {
-                    timeout: LOAD_VCE_TIMEOUT
-                }
-            );
+            await app.client.waitUntilTextExists('#crt_path', 'INTERNAL');
 
             (await crt_path.getText()).should.equal('INTERNAL');
 

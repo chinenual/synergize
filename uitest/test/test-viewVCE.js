@@ -21,14 +21,8 @@ module.exports = {
                 const link = await app.client.$('.file=' + name)
                 await link.click()
                 
-                app.client.waitUntil(
-                    () => vname.getText() == name,
-                    {
-                        timeout: LOAD_VCE_TIMEOUT
-                    }
-                );
-
                 const vname = await app.client.$('#VNAME');
+                await app.client.waitUntilTextExists('#VNAME', name);
                 await (vname.getValue()).should.equal(name);
             });
         });
@@ -62,12 +56,7 @@ module.exports = {
                 await confirmOk.click()
                 await confirmText.waitForDisplayed({reverse: true})
                 
-                app.client.waitUntil(
-                    () => vname.getValue() == name,
-                    {
-                        timeout: LOAD_VCE_TIMEOUT
-                    }
-                );
+                await app.client.waitUntilTextExists('#VNAME', name);
 
                 (await vname.getValue()).should.equal(name)
             });
@@ -81,27 +70,15 @@ module.exports = {
                 await link.click()
 
                 const crt_path = await app.client.$('#crt_path')
-                app.client.waitUntil(
-                    () => crt_path.getText() == 'INTERNAL',
-                    {
-                        timeout: LOAD_VCE_TIMEOUT
-                    }
-                );
-
+                
+                await app.client.waitUntilTextExists('#crt_path','INTERNAL');
                 (await crt_path.getText()).should.equal('INTERNAL')
 
                 const v_link = await app.client.$(`//*[@id='content']//span[text()='${padName(name)}']`)
                 await v_link.click()
 
                 const vce_name = await app.client.$('#vce_name')
-                app.client.waitUntil(
-                    () => vce_name.getText() == name,
-                    {
-                        timeout: LOAD_VCE_TIMEOUT
-                    }
-                );
-
-                await app.client.pause(2000) // HACK
+                await app.client.waitUntilTextExists('#vce_name', name);
 
                 const vname = await app.client.$('#VNAME');
                 (await vname.getValue()).should.equal(name)

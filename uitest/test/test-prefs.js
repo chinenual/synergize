@@ -20,8 +20,8 @@ describe('Check initial preferences', () => {
 
         await item.click()
 
-        await app.client
-            .pause(WINDOW_PAUSE) // HACK: but without this switching windows is unreliable. 
+//        await app.client
+//            .pause(WINDOW_PAUSE) // HACK: but without this switching windows is unreliable. 
 
         await app.client.switchWindow('Synergize Preferences');
         await hooks.screenshotAndCompare(app, 'prefsWindow');
@@ -34,8 +34,8 @@ describe('Check initial preferences', () => {
         const submit = await app.client.$('button[type=submit]')
         await submit.click()
 
-        await app.client
-            .pause(WINDOW_PAUSE) // HACK: but without this switching windows is unreliable.
+//        await app.client
+//            .pause(WINDOW_PAUSE) // HACK: but without this switching windows is unreliable.
 
         await app.client.switchWindow('Synergize');
         (await app.client.getTitle()).should.equal('Synergize')
@@ -47,8 +47,8 @@ describe('Check initial preferences', () => {
 
 
     it('show main window', async () => {
-        await app.client
-            .pause(WINDOW_PAUSE); // HACK: but without this switching windows is unreliable. 
+//        await app.client
+//            .pause(WINDOW_PAUSE); // HACK: but without this switching windows is unreliable. 
 
         await app.client.switchWindow('Synergize');
         (await app.client.getTitle()).should.equal('Synergize')

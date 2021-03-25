@@ -53,6 +53,7 @@ describe('Setup', () => {
 
 });
 
+/*DONE:
 describe('Render unit tests', () => {
 
     it('voice page text conversions', async () => {
@@ -64,11 +65,15 @@ describe('Render unit tests', () => {
          .executeJavaScript('viewVCE_envs.testConversionFunctions()')).should.be.true
     });
 });
+*/
+
 
 
 require('./test-prefs');
 
+/*DONE
 require('./test-edit-crt');
+*/
 
 describe('Test Voicing Mode views', () => {
     afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
@@ -84,13 +89,11 @@ describe('Test Voicing Mode views', () => {
 
   require('./test-voice-edit');
 
-/*
   require('./test-envs-edit');
-*/
-
-  require('./test-filter-edit.js');
 
 /*DONE
+  require('./test-filter-edit.js');
+
   require('./test-keyeq-edit');
   require('./test-keyprop-edit');
   viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaLeftPanelVoicingMode, "voicemode");
