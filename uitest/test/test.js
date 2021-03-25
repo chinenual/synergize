@@ -71,7 +71,6 @@ require('./test-prefs');
 
 require('./test-edit-crt');
 
-
 describe('Test Voicing Mode views', () => {
     afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
     
@@ -93,7 +92,7 @@ describe('Test Voicing Mode views', () => {
     
 });
 
-/*****DONE
+
 describe('Test READ-ONLY views', () => {
     afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
     
@@ -104,7 +103,6 @@ describe('Test READ-ONLY views', () => {
 
 // at end since we can't close the window - can just let it get closed implicity by the tear down
 require('./test-about');
-*/
 
 describe('Tear Down', () => {
     afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });

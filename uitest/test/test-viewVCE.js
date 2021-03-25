@@ -20,10 +20,13 @@ module.exports = {
                 //    https://webdriver.io/docs/selectors/#element-with-certain-text
                 const link = await app.client.$('.file=' + name)
                 await link.click()
+                await app.client.pause(WINDOW_PAUSE);
                 
-                const vname = await app.client.$('#VNAME');
-                await hooks.waitUntilValueExists('#VNAME', name);
-                await (vname.getValue()).should.equal(name);
+                const vce_name = await app.client.$('#vce_name')
+                await app.client.waitUntilTextExists('#vce_name', name);
+                
+                //const vname = await app.client.$('#VNAME');
+                //await (vname.getValue()).should.equal(name);
             });
         });
     },
@@ -47,6 +50,7 @@ module.exports = {
                 await vname.clearValue()
                 const link = await app.client.$('.file=' + name)
                 await link.click()
+                await app.client.pause(WINDOW_PAUSE);
                 const confirmText = await app.client.$('#confirmText')
 
                 await confirmText.waitForDisplayed();
@@ -54,9 +58,11 @@ module.exports = {
 
                 const confirmOk = await app.client.$('#confirmOkButton')
                 await confirmOk.click()
+                await app.client.pause(WINDOW_PAUSE);
                 await confirmText.waitForDisplayed({reverse: true})
                 
-                await hooks.waitUntilValueExists('#VNAME', name);
+                const vce_name = await app.client.$('#vce_name')
+                await app.client.waitUntilTextExists('#vce_name', name);
 
                 (await vname.getValue()).should.equal(name)
             });
@@ -76,6 +82,7 @@ module.exports = {
 
                 const v_link = await app.client.$(`//*[@id='content']//span[text()='${padName(name)}']`)
                 await v_link.click()
+                await app.client.pause(WINDOW_PAUSE);
 
                 const vce_name = await app.client.$('#vce_name')
                 await app.client.waitUntilTextExists('#vce_name', name);
