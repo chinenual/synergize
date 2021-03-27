@@ -423,7 +423,14 @@ let viewVCE_voice = {
 	},
 
 	patchTable: function () {
-		document.getElementById("patchType").value = vce.Extra.PatchType;
+		// FIXME: Dynamic update of option not yet working:
+		// The _first_ load of the page appear that the DOM is not ready for the
+		// updated options, despite being called from the jquery load() "complete"
+		// callback.   All subsequent loads(), however work.
+		// Fix this once the DOM lifecycle issue is sorted out.
+		//
+		//$("#patchType").empty().append(viewVCE_voice.patchTypeOptions);
+		$("#patchType").val(vce.Extra.PatchType);
 
 		var tbody = document.getElementById("patchTbody");
 		// remove old rows:
@@ -1127,14 +1134,39 @@ ${freqDAG}
 		document.getElementById("vibType").innerHTML = (vce.Head.VIBDEP >= 0) ? "Sine" : "Random";
 	},
 
+	patchTypeOptions: null, // HTML fragment used to populate the <options> for the patchType select
+
+	getPatchTypeNames: function() {
+		let message = {
+			"name": "getPatchTypeNames",
+			"payload": null
+		};
+		astilectron.sendMessage(message, function (message) {
+			//console.log("sendToCSurface returned: " + JSON.stringify(message));
+			// Check error
+			if (message.name === "error") {
+				index.errorNotification(message.payload);
+			}
+			nameArray = message.payload;
+			html = ""
+			for (i = 0; i < nameArray.length; i++) {
+				html += `<option value="${i}">${nameArray[i]}</option>\n`;
+			}
+			viewVCE_voice.patchTypeOptions = html;
+		});
+	},
+
 	init: function (incrementalUpdate) {
-		//console.log('--- start viewVCE_voice init');
+		console.log('--- start viewVCE_voice init');
 
 		if (viewVCE_voice.deb_onchange == null) {
 			viewVCE_voice.deb_onchange = index.debounceFirstArg(viewVCE_voice.raw_onchange, DEBOUNCE_WAIT);
 		}
 		if (viewVCE_voice.deb_setNumOscillators == null) {
 			viewVCE_voice.deb_setNumOscillators = _.debounce(viewVCE_voice.raw_setNumOscillators, DEBOUNCE_WAIT);
+		}
+		if (viewVCE_voice.patchTypeNames == null) {
+			viewVCE_voice.getPatchTypeNames();
 		}
 
 		$('#vceTabs a[href="#vceVoiceTab"]').on('shown.bs.tab', function (e) {
@@ -1282,7 +1314,7 @@ ${freqDAG}
 		// do this last to help the uitest to not start testing too soon
 		document.getElementById("vce_name").innerHTML = vce.Head.VNAME;
 		document.getElementById("VNAME").value = vce.Head.VNAME.replace(/ +$/g, ''); // trim trailing spaces for editing
-		//console.log('--- finish viewVCE_voice init');
+		console.log('--- finish viewVCE_voice init');
 	},
 
 	updateFromCSurface: function (payload) {
