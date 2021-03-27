@@ -18,6 +18,9 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+// XREF: needs to match the array in viewVCE.html
+// FIXME: see viewVCE_voices.patchTable() -- for commented out code to dynamically update
+// the options array from this string.
 var PatchTypeNames = []string{
 	"1 + 2 + 3 + 4 + 5 + 6 + 7 + 8",
 	"(1~2) + (3~4) + (5~6) + (7~8)",
@@ -33,7 +36,7 @@ var PatchTypeNames = []string{
 	// DX patches. Some share same register layout - see PatchTypePerOscTable
 	"(1~2~3~4) + (5~6)", // DX 1 & 2
 	"(1~2~3) + (4~5~6)", // DX 3 & 4
-	//      DX 5 & 6 are same as Syn #2
+	//                      DX 5 & 6 are same as Syn #2
 	"((1~2)+3)~4) + (5~6)",          // DX 7 & 8 & 9
 	"((1+2)~3) + (4~5~6)",           // DX 10 & 11
 	"((1+2+3)~4) + (5~6)",           // DX 12 & 13
@@ -72,7 +75,7 @@ var PatchTypePerOscTable = [][16]byte{
 	// XREF: keep in sync with dx2syn/algo.go: dxAlgoNoFeedbackPatchTypePerOscTable
 	{100, 97, 97, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}, // DX 1 & 2
 	{100, 97, 1, 100, 97, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}, // DX 3 & 4
-	//      DX 5 & 6 same as SYN #2
+	//                                                         DX 5 & 6 same as SYN #2
 	{100, 97, 76, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},     // DX 7 & 8 & 9
 	{100, 76, 1, 100, 97, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},     // DX 10 & 11
 	{100, 76, 76, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},     // DX 12 & 13

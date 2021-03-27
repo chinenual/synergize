@@ -423,14 +423,14 @@ let viewVCE_voice = {
 	},
 
 	patchTable: function () {
-		console.log("Set patch JQUERY BEFORE: ", $("#patchType"))
-		console.log("Set patch options and value: " + vce.Extra.PatchType)
-		$("#patchType").empty().append(viewVCE_voice.patchTypeOptions);
+		// FIXME: Dynamic update of option not yet working:
+		// The _first_ load of the page appear that the DOM is not ready for the
+		// updated options, despite being called from the jquery load() "complete"
+		// callback.   All subsequent loads(), however work.
+		// Fix this once the DOM lifecycle issue is sorted out.
+		//
+		//$("#patchType").empty().append(viewVCE_voice.patchTypeOptions);
 		$("#patchType").val(vce.Extra.PatchType);
-
-		console.log("SHOW patch options and value: " + document.getElementById("patchType").value
-		+ " " + $("#patchType").html());
-		console.log("Set patch JQUERY AFTER: ", $("#patchType"))
 
 		var tbody = document.getElementById("patchTbody");
 		// remove old rows:
