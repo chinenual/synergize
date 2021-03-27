@@ -184,6 +184,10 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		response := connectionStatusResponse{io.SynergyName(), osc.ControlSurfaceName()}
 		payload = response
 
+	case "getPatchTypeNames":
+		response := data.PatchTypeNames
+		payload = response
+
 	case "getPreferences":
 		payload = struct {
 			Os          string
