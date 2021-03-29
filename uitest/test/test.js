@@ -68,30 +68,29 @@ describe('Render unit tests', () => {
 
 
 require('./test-prefs');
-
 require('./test-edit-crt');
 
 describe('Test Voicing Mode views', () => {
     afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
     
     require('./test-voicingModeOn');
-    
+
     describe('initial VRAM image should be loaded', () => {
         viewVCE.testViewVCE([voiceINITVRAM], null, "voicemode");
     });
-    
     
     require('./test-voice-edit');
     require('./test-envs-edit');
     require('./test-filter-edit.js');
     require('./test-keyeq-edit');
     require('./test-keyprop-edit');
+    require('./test-gain');
+
     viewVCE.testViewVCE([voiceG7S, voiceCATHERG, voiceGUITAR2A], viewVCE.loadVCEViaLeftPanelVoicingMode, "voicemode");
     
     require('./test-voicingModeOff');
     
 });
-
 
 describe('Test READ-ONLY views', () => {
     afterEach("screenshot on failure", function () { hooks.screenshotIfFailed(this,app); });
