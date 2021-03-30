@@ -11,6 +11,9 @@ permalink: /docs/release-notes
 
 ## 2.5.0
 
+* Fixes [issue #43](https://github.com/chinenual/synergize/issues/43):
+  The editor did not preserve envelope shape at some gain settings,
+  especially once gain was set to zero.
 * Updates the underlying components, most significantly to Electron 11.
 
 ## 2.4.0
