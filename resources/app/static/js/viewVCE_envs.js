@@ -8,11 +8,12 @@ let viewVCE_envs = {
 
     chart: null,
 
+    // amp values for the currently displayed envelope - computed lazily
     floatAmpVal: null,
 
     init: function (incrementalUpdate) {
         //console.log('--- start viewVCE_envs init');
-        viewVCE_envs.floatAmpVal = null;
+        viewVCE_envs.unsetFloatVals();
 
         if (viewVCE_envs.deb_onchange == null) {
             viewVCE_envs.deb_onchange = index.debounceFirstArg(viewVCE_envs.raw_onchange, DEBOUNCE_WAIT);
@@ -314,36 +315,87 @@ let viewVCE_envs = {
         return ok;
     },
 
+    unsetFloatVals: function() {
+        viewVCE_envs.floatAmpVal = null;
+    },
+
     initFloatVals: function () {
+        // floatAmpVal.low/up : float versions of the displayed amp values
+        // floatAmpVal.referenceLow/ReferenceUp: snapshot of the current values, but
+        // scaled to 100% per envelope.  This allows subsequent gain changes to retain
+        // the original env shape, even at extreme gain amounts.
+
         if (viewVCE_envs.floatAmpVal === null) {
             viewVCE_envs.floatAmpVal = []
             console.log("initFloatVals init: ",viewVCE_envs.floatAmpVal)
             for (osc = 0; osc <= vce.Head.VOITAB; osc++) {
-                viewVCE_envs.floatAmpVal.push({low: [], up: []})
+                currentOscGain = viewVCE_envs.raw_computeOscGain(osc);
+                if (currentOscGain[0] <= 0.0) {
+                    // avoid divide by zero!  when original gain was zero, may as well just set the new
+                    // gain as requested
+                    currentOscGain[0] = 1.0;
+                }
+                if (currentOscGain[1] <= 0.0) {
+                    // avoid divide by zero!  when original gain was zero, may as well just set the new
+                    // gain as requested
+                    currentOscGain[1] = 1.0;
+                }
+
+                viewVCE_envs.floatAmpVal.push({low: [], up: [], referenceLow: [], referenceUp: []})
                 console.log("initFloatVals top: " + osc,viewVCE_envs.floatAmpVal)
 
                 for (eleIndex = 0; eleIndex < vce.Envelopes[osc].AmpEnvelope.NPOINTS; eleIndex++) {
                     var v = viewVCE_envs.scaleAmpEnvValue(vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 0]);
                     viewVCE_envs.floatAmpVal[osc].low.push(v)
+                    v = 100.0 / currentOscGain[0] * v;
+                    viewVCE_envs.floatAmpVal[osc].referenceLow.push(v)
                     v = viewVCE_envs.scaleAmpEnvValue(vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 1]);
                     viewVCE_envs.floatAmpVal[osc].up.push(v)
+                    v = 100.0 / currentOscGain[1] * v;
+                    viewVCE_envs.floatAmpVal[osc].referenceUp.push(v)
                 }
                 console.log("initFloatVals eles: " + osc,viewVCE_envs.floatAmpVal)
             }
         }
     },
 
+    raw_computeOscGain: function (osc /* zero-based*/) {
+        // initial computation of each env's gain from the byte values used to initialize the floatVal's
+        // -- all subsequent gain calculations are based on the float vals
+        var maxLow = 0;
+        var maxUp = 0;
+        for (eleIndex = 0; eleIndex < vce.Envelopes[osc].AmpEnvelope.NPOINTS; eleIndex++) {
+                // low
+                var v = viewVCE_envs.scaleAmpEnvValue(vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 0]);
+                maxLow = Math.max(maxLow, v)
+                // up
+                v = viewVCE_envs.scaleAmpEnvValue(vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 1]);
+                maxUp = Math.max(maxUp, v)
+        }
+        var result = [
+            100.0 * maxLow / 72.0,
+            100.0 * maxUp / 72.0 ]; // 72 == MAX allowed Amp Val
+        console.log("raw_computeOscGain " + osc + " " + maxLow + " " + maxUp + " -> " + result)
+        return result;
+    },
+
     computeOscGain: function (osc /* zero-based*/, lowupboth /*0,1 or 2*/) {
+        // lazy init:
+        viewVCE_envs.initFloatVals();
+
+        // compute the request gain computation based on the floating point values in the
+        // floatAmpVal arrays
+
         var max = 0;
         for (eleIndex = 0; eleIndex < vce.Envelopes[osc].AmpEnvelope.NPOINTS; eleIndex++) {
             if (lowupboth == 0 || lowupboth == 2) {
                 // low
-                var v = viewVCE_envs.scaleAmpEnvValue(vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 0]);
+                var v = viewVCE_envs.floatAmpVal[osc].low[eleIndex];
                 max = Math.max(max, v)
             }
             if (lowupboth == 1 || lowupboth == 2) {
                 // up
-                v = viewVCE_envs.scaleAmpEnvValue(vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 1]);
+                v = viewVCE_envs.floatAmpVal[osc].up[eleIndex];
                 max = Math.max(max, v)
             }
         }
@@ -375,6 +427,9 @@ let viewVCE_envs = {
         // called from the main voice tab).  So if visible, update the <inputs> and send
         // updates to the csurface. If not visible, update the data structures and send
         // changes to the Synergy, but dont update any visible controls.
+        //
+        // Gain is set by simply multiplying the requested gain against the "reference" gains
+        // in the floatAmpVal arrays. (reference gains are scaled to "100%").
 
         console.log("setGain: " + osc + " " + gain + " " + lowup);
 
@@ -382,39 +437,22 @@ let viewVCE_envs = {
         var visibleOsc = parseInt(envOscSelectEle.value, 10); // one-based osc index
         visibleOsc--; // convert to zero-base
 
-        // lazy initialization -
         viewVCE_envs.initFloatVals();
 
-        var origGain = viewVCE_envs.computeOscGain(osc, lowup);
-        // proportional change for each point
-        if (origGain <= 0.0) {
-            // avoid divide by zero!  when original gain was zero, may as well just set the new
-            // gain as requested
-            origGain = 1.0;
-        }
-        var proportion = gain / origGain;
-        if (proportion < 0.006) {
-            // prevent the floatVals from going to "zero" due to gain manipulation.  Allow gain
-            // to ressurect the shape of the env even if "orig gain" was 0.  (values can be
-            // true zero if set directly on the point value, but not via gain).
-            //
-            // this value is chosen so that "max val" (72) * proportion rounds to zero so the displayed
-            // value (and value sent to the Synergy) will be zero even though the residual value in the
-            // float array can still retain the shape of the envelope in case the gain is increased.
-            //    72 * 0.006 == 0.432
-            proportion = 0.006;
-        }
-
+        var referenceFloatVals = lowup == 0 ? viewVCE_envs.floatAmpVal[osc].referenceLow : viewVCE_envs.floatAmpVal[osc].referenceUp;
         var floatVals = lowup == 0 ? viewVCE_envs.floatAmpVal[osc].low : viewVCE_envs.floatAmpVal[osc].up;
 
         for (eleIndex = 0; eleIndex < vce.Envelopes[osc].AmpEnvelope.NPOINTS; eleIndex++) {
             var stub = lowup == 0 ? 'envAmpLowVal' : 'envAmpUpVal';
-            var oldval = floatVals[eleIndex]
-            var floatNewVal = oldval * proportion;
+            // reference val is for the "100%" gain case - doesnt change when we change gain
+            var refval = referenceFloatVals[eleIndex]
+            var floatNewVal = refval * gain / 100.0;
             floatNewVal = Math.min(72, Math.max(0, floatNewVal));
             var newval = Math.round(floatNewVal);
+            // non-reference entries in the floatvals need to be kept up to date with the gain change
             floatVals[eleIndex] = floatNewVal;
-            console.log("  setGain (point) " + gain + " " + stub + "[" + eleIndex + "] " + oldval + " " + proportion + " " + floatVals[eleIndex] + " " + newval);
+
+            console.log("  setGain (point) " + gain + " " + stub + "[" + eleIndex + "] " + refval + " " + floatVals[eleIndex] + " " + newval);
 
             if (visibleOsc == osc) {
                 var input = document.getElementById(`${stub}[${eleIndex + 1}]`)
@@ -856,8 +894,7 @@ let viewVCE_envs = {
                     vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 0] = bytevalue;
                     if (extraarg == undefined) {
                         // update the floatVal so gains work
-                        viewVCE_envs.initFloatVals();
-                        viewVCE_envs.floatAmpVal[osc-1].low[eleIndex - 1] = value;
+                        viewVCE_envs.unsetFloatVals();
                         $('#gainAmpLow').val = viewVCE_envs.computeOscGain(osc-1,0);
                         // update the Voice tab
                         document.getElementById(`OscGain[${osc}]`).value = viewVCE_envs.computeOscGain(osc-1,2)
@@ -869,9 +906,10 @@ let viewVCE_envs = {
                     vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 1] = bytevalue;
                     if (extraarg == undefined) {
                         // update the floatVal so gains work
-                        viewVCE_envs.initFloatVals();
-                        viewVCE_envs.floatAmpVal[osc-1].up[eleIndex - 1] = value;
+                        viewVCE_envs.unsetFloatVals();
                         $('#gainAmpUp').val = viewVCE_envs.computeOscGain(osc-1,1);
+                        document.getElementById(`OscGain[${osc}]`).value = viewVCE_envs.computeOscGain(osc-1,2)
+                        console.log("onchange: setGain: update voice tab: " +osc+1 + " "+ document.getElementById(`OscGain[${osc}]`).value)
                     }
                     break;
                 case "envAmpLowTime":
@@ -924,7 +962,7 @@ let viewVCE_envs = {
         // reset the floating point backing arrays: FIXME: this may mean that someone who is in
         // midst of twiddling gain, then adds/deletes a point, then expects gain to keep working
         // may get a suprised distortion in the envelope shape.
-        viewVCE_envs.floatAmpVal = null;
+        viewVCE_envs.unsetFloatVals();
 
         var changed = false;
         if (whichEnv === 'freq') {
