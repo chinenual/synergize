@@ -2,6 +2,7 @@ package dx2syn
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"strings"
 
@@ -76,6 +77,41 @@ func _convertName(dxName string, length int) string {
 	return newName
 }
 
+func TranslateDx7ToVceFile(sysexPath string, verbose bool, nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VCE, err error) {
+	VoiceNotesStart(sysexPath, dx7Voice.VoiceName)
+
+	if vce, err = TranslateDx7ToVce(nameMap, dx7Voice); err != nil {
+		return
+	}
+
+	// jump through hoops to get the vcePathname computed later in the function. By default
+	// go binds the variables in the defer when evaluating the defer, not when executing it
+	type pathHolderStruct struct {
+		vcePathname string
+	}
+	var pathHolder pathHolderStruct
+	defer func(s *pathHolderStruct) { VoiceNotesClose(s.vcePathname) }(&pathHolder)
+
+	if verbose {
+		log.Printf("Result VCE: '%s' %s\n", dx7Voice.VoiceName, data.CompactVceToJson(vce))
+	}
+	const IgnoreValidation = true
+	if err = data.VceValidate(vce); (err != nil) && (!IgnoreValidation) {
+		log.Printf("ERROR: validation error on translate Dx7 voice %s: %dx7Voice\n", dx7Voice.VoiceName, err)
+		return
+	} else {
+		pathHolder.vcePathname, err = MakeVCEFilename(sysexPath, data.VceName(vce.Head))
+		if err != nil {
+			return
+		}
+		if err = data.WriteVceFile(pathHolder.vcePathname, vce, false); err != nil {
+			log.Printf("ERROR: could not write VCEfile %s: %dx7Voice\n", pathHolder.vcePathname, err)
+			return
+		}
+	}
+	return
+}
+
 func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VCE, err error) {
 	if vce, err = data.BlankVce(); err != nil {
 		return
@@ -83,9 +119,14 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 
 	convertName(nameMap, dx7Voice.VoiceName, &vce)
 
+	VoiceNotesSynVNAME(vce)
+
 	if err = SetAlgorithmPatchType(&vce, dx7Voice.Algorithm, dx7Voice.Feedback); err != nil {
 		return
 	}
+
+	VoiceNotesAlgorithm(dx7Voice.Algorithm)
+	VoiceNotesFeedback(dx7Voice.Feedback)
 
 	var freqValueByte byte // Synergy byte encoding for freq value
 	var freqValueInt int   // scaled freq value
