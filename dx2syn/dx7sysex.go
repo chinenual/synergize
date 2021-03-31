@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
+	"io"
 	"io/ioutil"
 
 	"github.com/pkg/errors"
@@ -177,7 +178,12 @@ func ReadDx7Sysex(pathname string) (sysex Dx7Sysex, err error) {
 	}
 	for i := range expectHeader {
 		if expectHeader[i] != header[i] {
-			err = errors.Errorf("Invalid Sysex header byte[%d] - expected %2x, saw %2x", i, expectHeader[i], header[i])
+			//err = errors.Errorf("Invalid Sysex header byte[%d] - expected %2x, saw %2x", i, expectHeader[i], header[i])
+			//return
+			// rewind and try to read the file as a header-less sysx
+			if _, err = reader.Seek(0, io.SeekStart); err != nil {
+				err = errors.Wrapf(err, "Invalid Sysex header byte[%d] - expected %2x, saw %2x, but failed to rewind to try to parse without header", i, expectHeader[i], header[i])
+			}
 		}
 	}
 	for i := 0; i < 32; i++ {
