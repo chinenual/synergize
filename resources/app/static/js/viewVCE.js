@@ -35,6 +35,7 @@ let viewVCE = {
         viewVCE_keyeq.init(false);
         viewVCE_envs.init(false);
         viewVCE_filters.init(false);
+        viewVCE_doc.init();
         viewVCE_voice.init(false); // do this last since the uitest uses existance of VNAME to indicate that the pages are loaded and ready to roll
 
         viewVCE_voice.voicingModeVisuals();

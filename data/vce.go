@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 
@@ -118,7 +119,8 @@ type VCEExtra struct {
 	// extra stuff we can compute from the raw voice data and want to have
 	// available in the UI, but which is not serialized to/from the byte stream
 
-	PatchType int // inferred based on each oscilators OPTCH byte
+	PatchType int    // inferred based on each oscilators OPTCH byte
+	Doc       string // contents of the .DOC or .txt file (if any)
 }
 
 type FreqEnvelopeTable struct {
@@ -319,6 +321,23 @@ func ReadVceFile(filename string) (vce VCE, err error) {
 	if vce, err = ReadVce(buf, false); err != nil {
 		return
 	}
+	vce.Extra.Doc = readDocFile(filename)
+	return
+}
+
+func readDocFile(vcePath string) (result string) {
+	vceExt := path.Ext(vcePath)
+	base := (vcePath)[0 : len(vcePath)-len(vceExt)]
+	// tolerate case differences:
+	extensions := []string{".DOC", ".doc", ".Doc", ".TXT", ".txt", ".Txt"}
+	for _, ext := range extensions {
+		pathname := base + ext
+		if b, err := ioutil.ReadFile(pathname); err == nil {
+			result = string(b)
+			return
+		}
+	}
+	result = ""
 	return
 }
 
