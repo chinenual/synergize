@@ -359,7 +359,6 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		// Find is OSC is the FB OSc, if so, look up in array and set to TRI wave
 		fb = fbOsc[dx7Voice.Algorithm+1] - 1
 		//fmt.Printf(" %s %d %d  \n", " Algo =   ", oscIndex, dx7Voice.Algorithm)
-
 		//  If OSC is FB OSC, set as Triangle waveform else set as SIN waveform
 		if oscIndex == fb { //&& dx7Voice.Feedback > 0 {
 			//fmt.Printf(" %s %d \n \n", " oscIndex = ", oscIndex)
