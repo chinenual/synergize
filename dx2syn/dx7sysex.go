@@ -7,6 +7,8 @@ import (
 	"io"
 	"io/ioutil"
 
+	"github.com/chinenual/synergize/logger"
+
 	"github.com/pkg/errors"
 )
 
@@ -193,7 +195,17 @@ func ReadDx7Sysex(pathname string) (sysex Dx7Sysex, err error) {
 			return
 		}
 		if v.VoiceName[0] != '\000' {
-			sysex.Voices = append(sysex.Voices, v)
+			ok := true
+
+			// Data validation:
+			if v.Algorithm > 31 {
+				logger.Warnf("Voice #%d \"%s\" DX Algorithm out of range: %d - must be between 0 and 31. Voice ignored",
+					i, v.VoiceName, v.Algorithm)
+				ok = false
+			}
+			if ok {
+				sysex.Voices = append(sysex.Voices, v)
+			}
 		}
 	}
 	return
