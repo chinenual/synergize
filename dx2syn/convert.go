@@ -155,7 +155,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		pmFix = 1.0
 
 		if patchOutputDSR > 0 {
-			pmFix = 1.05
+			pmFix = 1.04
 			//fmt.Printf(" %s %f \n", " pmFix = ", pmFix)
 		} else {
 			pmFix = 1.0
@@ -356,11 +356,15 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		//  change levels for velocity sensitivity, PM Fix, and level comp
 		osclevelPercent = float64(float64(dxOsc.OperatorOutputLevel) / 99.00)
 
+		// Find is OSC is the FB OSc, if so, look up in array and set to TRI wave
+		fb = fbOsc[dx7Voice.Algorithm+1] - 1
+		fmt.Printf(" %s %d %d  \n", " Algo =   ", oscIndex, dx7Voice.Algorithm)
+
 		//  If OSC is FB OSC, set as Triangle waveform else set as SIN waveform
-		if oscIndex == fb && dx7Voice.Feedback > 0 {
+		if oscIndex == fb { //&& dx7Voice.Feedback > 0 {
 			//fmt.Printf(" %s %d \n \n", " oscIndex = ", oscIndex)
 			//  increase FB OSC level by 'dx7Voice.Feedback'
-			osclevelPercent = osclevelPercent + float64(float64(dx7Voice.Feedback)*0.03)
+			osclevelPercent = osclevelPercent + float64(float64(dx7Voice.Feedback)*0.01)
 			vce.Envelopes[oscIndex].FreqEnvelope.Table[3] = vce.Envelopes[oscIndex].FreqEnvelope.Table[3] | 0x1
 		} else {
 			vce.Envelopes[oscIndex].FreqEnvelope.Table[3] = 0
@@ -438,10 +442,6 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		vce.Envelopes[oscIndex].FreqEnvelope.Table[2] = 0x80 // matches default from EDATA
 		//  set in Feedback OSC section
 		/////vce.Envelopes[oscIndex].FreqEnvelope.Table[3] = 0    // 0 == Sine, octave 0, freq int and amp int disabled
-
-		// Find is OSC is the FB OSc, if so, look up in array and set to TRI wave
-		fb = fbOsc[dx7Voice.Algorithm+1] - 1
-		//fmt.Printf(" %s %d %d  \n", " Algo =   ", oscIndex, dx7Voice.Algorithm)
 
 		// point2
 		vce.Envelopes[oscIndex].FreqEnvelope.Table[4] = freqValueByte
