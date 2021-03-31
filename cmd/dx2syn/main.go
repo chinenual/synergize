@@ -142,32 +142,14 @@ func main() {
 			*/
 		} else {
 			hasError := false
-			var vce data.VCE
 			if *verboseFlag {
 				log.Printf("Translating '%s' %s...\n", v.VoiceName, dx2syn.Dx7VoiceToJSON(v))
 			} else {
 				log.Printf("Translating '%s'...\n", v.VoiceName)
 			}
-			if vce, err = dx2syn.TranslateDx7ToVce(&nameMap, v); err != nil {
+			if _, err = dx2syn.TranslateDx7ToVceFile(*sysexFlag, *verboseFlag, &nameMap, v); err != nil {
 				log.Printf("ERROR: could not translate Dx7 voice %s: %v", v.VoiceName, err)
-			} else {
-				if *verboseFlag {
-					log.Printf("Result VCE: '%s' %s\n", v.VoiceName, data.CompactVceToJson(vce))
-				}
-				const IgnoreValidation = true
-				if err = data.VceValidate(vce); (err != nil) && (!IgnoreValidation) {
-					log.Printf("ERROR: validation error on translate Dx7 voice %s: %v\n", v.VoiceName, err)
-					hasError = true
-				} else {
-					vcePathname, err := dx2syn.MakeVCEFilename(*sysexFlag, data.VceName(vce.Head))
-					if err != nil {
-						hasError = true
-					}
-					if err = data.WriteVceFile(vcePathname, vce, false); err != nil {
-						log.Printf("ERROR: could not write VCEfile %s: %v\n", vcePathname, err)
-						hasError = true
-					}
-				}
+				hasError = true
 			}
 			if hasError {
 				log.Printf("ERROR: Error during conversion\n")

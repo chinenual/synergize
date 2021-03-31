@@ -75,32 +75,14 @@ func makeCrtFromSysex(sysexPath string, verbose bool) (err error) {
 
 	for _, v := range sysex.Voices {
 		hasError := false
-		var vce data.VCE
 		if verbose {
 			log.Printf("Translating '%s' %s...\n", v.VoiceName, Dx7VoiceToJSON(v))
 		} else {
 			log.Printf("Translating '%s'...\n", v.VoiceName)
 		}
-		if vce, err = TranslateDx7ToVce(&nameMap, v); err != nil {
+		if _, err = TranslateDx7ToVceFile(sysexPath, verbose, &nameMap, v); err != nil {
 			log.Printf("ERROR: could not translate Dx7 voice %s: %v", v.VoiceName, err)
-		} else {
-			if verbose {
-				log.Printf("Result VCE: '%s' %s\n", v.VoiceName, data.CompactVceToJson(vce))
-			}
-			const IgnoreValidation = true
-			if err = data.VceValidate(vce); (err != nil) && (!IgnoreValidation) {
-				log.Printf("ERROR: validation error on translate Dx7 voice %s: %v\n", v.VoiceName, err)
-				hasError = true
-			} else {
-				vcePathname, err := MakeVCEFilename(sysexPath, data.VceName(vce.Head))
-				if err != nil {
-					hasError = true
-				}
-				if err = data.WriteVceFile(vcePathname, vce, false); err != nil {
-					log.Printf("ERROR: could not write VCEfile %s: %v\n", vcePathname, err)
-					hasError = true
-				}
-			}
+			hasError = true
 		}
 		if hasError {
 			log.Printf("ERROR: Error during conversion\n")
