@@ -41,6 +41,7 @@ var (
 	serial            = flag.Bool("serial", false, "use the serial port even if a VST is available")
 	record            = flag.String("RECORD", "", "capture bytes to <record>.in and <record>.out")
 	uitest            = flag.Int("UITEST", 0, "alter startup to support automated testing (specifies listening port)")
+	loglevel          = flag.String("LOGLEVEL", "INFO", "Set log level to DEBUG")
 	provisionOnly     = flag.Bool("PROVISION", false, "run the provisioner and then exit")
 	serialVerboseFlag = flag.Bool("SERIALVERBOSE", false, "Show each byte operation through the serial port")
 	verboseOscIn      = flag.Bool("OSCINVERBOSE", false, "Show OSC input events")
@@ -141,8 +142,26 @@ func getWorkingDirectory() (path string) {
 	return
 }
 
-func init() {
-	logger.Init(getWorkingDirectory()+"/synergize.log", logger.LevelDebug)
+func mainInit() {
+	var level logger.Level
+	var levelMsg = ""
+	switch *loglevel {
+	case "DEBUG":
+		level = logger.LevelDebug
+	case "INFO":
+		level = logger.LevelInfo
+	case "WARN":
+		level = logger.LevelWarn
+	case "ERROR":
+		level = logger.LevelWarn
+	default:
+		level = logger.LevelInfo
+		levelMsg = fmt.Sprintf("Invalid value for --LOGLEVEL (%s).  Defaulting to INFO\n", *loglevel)
+	}
+	logger.Init(getWorkingDirectory()+"/synergize.log", level)
+	if levelMsg != "" {
+		logger.Warn(levelMsg)
+	}
 	setVersion()
 	logger.Infof("Running app version %s\n", AppVersion)
 	// log some info about the operating system.  This uses uname on linux and macos, and ver on windows, so info is limited.
@@ -202,6 +221,7 @@ func recordIo(f func(string) error, arg string) (err error) {
 func main() {
 	// Parse flags
 	flag.Parse()
+	mainInit()
 
 	// if we read something different off the command line, set it
 	// (but dont persist it) in the preferences object:
