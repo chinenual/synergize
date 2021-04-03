@@ -11,6 +11,12 @@ permalink: /docs/release-notes
 
 ## 2.5.0
 
+* Adds a new Doc tab to the Voice viewer/editor.  This will display
+  the contents of the voices associated .DOC file (if there is one in 
+  the same directory as the VCE that is being viewed).
+* Adds a new tab to the [Synergize.touchosc](https://github.com/chinenual/synergize/releases/latest/Synergize-v3.touchosc) control surface - "Voice Levels" which 
+  provides GDS-like long-throw faders to tune oscillator gain.
+  Added by Don Turnock.
 * Fixes [issue #43](https://github.com/chinenual/synergize/issues/43):
   The editor did not preserve envelope shape at some gain settings,
   especially once gain was set to zero.

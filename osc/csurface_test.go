@@ -92,7 +92,7 @@ func TestVoiceTab(t *testing.T) {
 	testEvents(t, "VTSENS", []int{0, 31}, 1*time.Millisecond)
 	testEvents(t, "VTRANS", []int{-127, 128}, 1*time.Millisecond)
 }
-func TestVoiceFreqsTab(t *testing.T) {
+func TestOscFreqsTab(t *testing.T) {
 	if !*oscio {
 		t.Skip()
 	}
@@ -104,6 +104,19 @@ func TestVoiceFreqsTab(t *testing.T) {
 
 	testEventsArr(t, "OHARM", []int{1, 16}, []int{0, 42}, 1*time.Millisecond)
 	testEventsArr(t, "FDETUN", []int{1, 16}, []int{0, 127}, 1*time.Millisecond)
+	testEventsArr(t, "OscGain", []int{1, 16}, []int{0, 100}, 1*time.Millisecond)
+
+}
+func TestOscGainTab(t *testing.T) {
+	if !*oscio {
+		t.Skip()
+	}
+	testEvents(t, "osc-gain-tab", []int{1, 1}, 10*time.Millisecond)
+	time.Sleep(1 * time.Second)
+
+	// turn on:
+	testEvents(t, "num-osc", []int{1, 16}, 75*time.Millisecond)
+
 	testEventsArr(t, "OscGain", []int{1, 16}, []int{0, 100}, 1*time.Millisecond)
 
 }

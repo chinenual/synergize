@@ -1320,11 +1320,12 @@ ${freqDAG}
 	updateFromCSurface: function (payload) {
 		if (!viewVCE_voice.voicingMode) {
 			// ignore unless we're voicing
+			return
 		}
 
 		// special handling for switching tabs -- fieldnames end with "-tab":
 		if (payload.Field.search("-tab") >= 0) {
-			if (payload.Field === "voice-tab" || payload.Field === "voice-freqs-tab") {
+			if (payload.Field === "voice-tab" || payload.Field === "voice-freqs-tab" || payload.Field === "osc-gain-tab") {
 				$('#vceTabs a[href="#vceVoiceTab"]').tab('show');
 			} else if (payload.Field === "freq-envelopes-tab") {
 				$('#vceTabs a[href="#vceEnvsTab"]').tab('show');

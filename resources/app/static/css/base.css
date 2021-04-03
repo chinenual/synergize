@@ -395,3 +395,10 @@ input[type="checkbox"].form-control {
     top: 50%;
     transform: translateY(-50%);
 }
+
+.doctext {
+    margin-top: 2em;
+    font-size: 1.1rem;
+    font-family: monospace;
+    white-space: pre;
+}

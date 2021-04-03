@@ -56,7 +56,8 @@ func recurseMakeCrt(dirPath string, verbose bool) (err error) {
 			}
 		} else if isSysexExt(path) {
 			if err = makeCrtFromSysex(path, verbose); err != nil {
-				return err
+				// Don't fail the whole job just because one SYX is bad
+				// return err
 			}
 		}
 		return nil
