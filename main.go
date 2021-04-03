@@ -143,7 +143,7 @@ func getWorkingDirectory() (path string) {
 }
 
 func mainInit() {
-	logger.InitViaString(getWorkingDirectory()+"/synergize.log", *logLevel)
+	logger.InitViaString(getWorkingDirectory()+"/synergize.log", *loglevel)
 
 	setVersion()
 	logger.Infof("Running app version %s\n", AppVersion)
