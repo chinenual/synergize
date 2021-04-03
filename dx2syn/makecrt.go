@@ -66,7 +66,7 @@ func recurseMakeCrt(dirPath string, verbose bool) (err error) {
 func makeCrtFromSysex(sysexPath string, verbose bool) (err error) {
 	// make the vce's
 	var sysex Dx7Sysex
-	log.Printf("CONVERT VOICES FROM %s\n", sysexPath)
+	//log.Printf("CONVERT VOICES FROM %s\n", sysexPath)
 	if sysex, err = ReadDx7Sysex(sysexPath); err != nil {
 		log.Printf("ERROR: could not parse sysex file %s: %v", sysexPath, err)
 		return
@@ -78,7 +78,7 @@ func makeCrtFromSysex(sysexPath string, verbose bool) (err error) {
 		if verbose {
 			log.Printf("Translating '%s' %s...\n", v.VoiceName, Dx7VoiceToJSON(v))
 		} else {
-			log.Printf("Translating '%s'...\n", v.VoiceName)
+			//log.Printf("Translating '%s'...\n", v.VoiceName)
 		}
 		if _, err = TranslateDx7ToVceFile(sysexPath, verbose, &nameMap, v); err != nil {
 			log.Printf("ERROR: could not translate Dx7 voice %s: %v", v.VoiceName, err)
@@ -99,7 +99,7 @@ func makeCrtFromSysex(sysexPath string, verbose bool) (err error) {
 
 func makeCrtFromSysexVces(sysexPath string) (err error) {
 
-	log.Printf("MAKE CRT FROM %s\n", sysexPath)
+	//log.Printf("MAKE CRT FROM %s\n", sysexPath)
 
 	crtCount := 1
 	crtPath := filepath.Join(sysexPath, filepath.Base(sysexPath)+".CRT")
@@ -134,9 +134,9 @@ func makeCrtFromSysexVces(sysexPath string) (err error) {
 					// start a new file
 					crtCount++
 					crtPath = filepath.Join(sysexPath, filepath.Base(sysexPath)+"-"+strconv.Itoa(crtCount)+".CRT")
-					log.Printf("%s: Add %s ...\n", crtPath, path)
+					//log.Printf("%s: Add %s ...\n", crtPath, path)
 				} else {
-					log.Printf("%s: Add %s ...\n", crtPath, path)
+					//log.Printf("%s: Add %s ...\n", crtPath, path)
 				}
 				vces = newVces
 			}
@@ -150,6 +150,6 @@ func makeCrtFromSysexVces(sysexPath string) (err error) {
 			return
 		}
 	}
-	log.Printf("SUCCESS! MADE CRT FROM %s\n\n\n", sysexPath)
+	//log.Printf("SUCCESS! MADE CRT FROM %s\n\n\n", sysexPath)
 	return
 }

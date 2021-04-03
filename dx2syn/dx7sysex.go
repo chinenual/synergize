@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
+
 	"io"
 	"io/ioutil"
 
@@ -175,14 +176,21 @@ func ReadDx7Sysex(pathname string) (sysex Dx7Sysex, err error) {
 	// validate that the header of the Sysex is a "bulk DX7 sysex":
 	var header [6]byte
 	expectHeader := []byte{0xF0, 0x43, 0x00, 0x09, 0x20, 0x00}
+	expectHeader1 := []byte{0xF0, 0x43, 0x00, 0x09, 0x10, 0x00}
+	expectHeader2 := []byte{0xF0, 0x43, 0x00, 0x09, 0x00, 0x10}
+
 	if err = binary.Read(reader, binary.LittleEndian, &header); err != nil {
 		return
 	}
 	for i := range expectHeader {
-		if expectHeader[i] != header[i] {
-			//err = errors.Errorf("Invalid Sysex header byte[%d] - expected %2x, saw %2x", i, expectHeader[i], header[i])
-			//return
-			// rewind and try to read the file as a header-less sysx
+		if expectHeader[i] == header[i] {
+			//fmt.Printf(" %s %x \n", " header =  ", header[i])
+		} else if expectHeader1[i] == header[i] {
+			//fmt.Printf(" %s %x \n", " header2 =  ", header[i])
+		} else if expectHeader2[i] == header[i] {
+			//fmt.Printf(" %s %x \n", " header2 =  ", header[i])
+		} else if expectHeader[i] != header[i] {
+			//fmt.Printf("Got bad header byte  \n")
 			if _, err = reader.Seek(0, io.SeekStart); err != nil {
 				err = errors.Wrapf(err, "Invalid Sysex header byte[%d] - expected %2x, saw %2x, but failed to rewind to try to parse without header", i, expectHeader[i], header[i])
 			}
@@ -199,8 +207,8 @@ func ReadDx7Sysex(pathname string) (sysex Dx7Sysex, err error) {
 
 			// Data validation:
 			if v.Algorithm > 31 {
-				logger.Warnf("Voice #%d \"%s\" DX Algorithm out of range: %d - must be between 0 and 31. Voice ignored",
-					i, v.VoiceName, v.Algorithm)
+				logger.Warnf("%s - Voice #%d \"%s\" DX Algorithm out of range: %d - must be between 0 and 31. Voice ignored",
+					pathname, i, v.VoiceName, v.Algorithm)
 				ok = false
 			}
 			if ok {
