@@ -3,11 +3,12 @@ package dx2syn
 import (
 	"errors"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/chinenual/synergize/logger"
 
 	"github.com/chinenual/synergize/data"
 	"github.com/orcaman/writerseeker"
@@ -67,9 +68,9 @@ func recurseMakeCrt(dirPath string, verbose bool) (err error) {
 func makeCrtFromSysex(sysexPath string, verbose bool) (err error) {
 	// make the vce's
 	var sysex Dx7Sysex
-	log.Printf("CONVERT VOICES FROM %s\n", sysexPath)
+	logger.Infof("Convert voices from %s\n", sysexPath)
 	if sysex, err = ReadDx7Sysex(sysexPath); err != nil {
-		log.Printf("ERROR: could not parse sysex file %s: %v", sysexPath, err)
+		logger.Errorf("Could not parse sysex file %s: %v", sysexPath, err)
 		return
 	}
 	nameMap := make(map[string]bool)
@@ -77,16 +78,16 @@ func makeCrtFromSysex(sysexPath string, verbose bool) (err error) {
 	for _, v := range sysex.Voices {
 		hasError := false
 		if verbose {
-			log.Printf("Translating '%s' %s...\n", v.VoiceName, Dx7VoiceToJSON(v))
+			logger.Infof("Translating '%s' %s...\n", v.VoiceName, Dx7VoiceToJSON(v))
 		} else {
-			log.Printf("Translating '%s'...\n", v.VoiceName)
+			logger.Debugf("Translating '%s'...\n", v.VoiceName)
 		}
 		if _, err = TranslateDx7ToVceFile(sysexPath, verbose, &nameMap, v); err != nil {
-			log.Printf("ERROR: could not translate Dx7 voice %s: %v", v.VoiceName, err)
+			logger.Errorf("Could not translate Dx7 voice %s: %v", v.VoiceName, err)
 			hasError = true
 		}
 		if hasError {
-			log.Printf("ERROR: Error during conversion\n")
+			logger.Errorf("Error during conversion\n")
 		}
 	}
 
@@ -100,7 +101,7 @@ func makeCrtFromSysex(sysexPath string, verbose bool) (err error) {
 
 func makeCrtFromSysexVces(sysexPath string) (err error) {
 
-	log.Printf("MAKE CRT FROM %s\n", sysexPath)
+	logger.Debugf("Make CRT from %s\n", sysexPath)
 
 	crtCount := 1
 	crtPath := filepath.Join(sysexPath, filepath.Base(sysexPath)+".CRT")
@@ -135,9 +136,9 @@ func makeCrtFromSysexVces(sysexPath string) (err error) {
 					// start a new file
 					crtCount++
 					crtPath = filepath.Join(sysexPath, filepath.Base(sysexPath)+"-"+strconv.Itoa(crtCount)+".CRT")
-					log.Printf("%s: Add %s ...\n", crtPath, path)
+					logger.Debugf("%s: Add %s ...\n", crtPath, path)
 				} else {
-					log.Printf("%s: Add %s ...\n", crtPath, path)
+					logger.Debugf("%s: Add %s ...\n", crtPath, path)
 				}
 				vces = newVces
 			}
@@ -151,6 +152,6 @@ func makeCrtFromSysexVces(sysexPath string) (err error) {
 			return
 		}
 	}
-	log.Printf("SUCCESS! MADE CRT FROM %s\n\n\n", sysexPath)
+	logger.Debugf("SUCCESS! Made CRT from %s", sysexPath)
 	return
 }

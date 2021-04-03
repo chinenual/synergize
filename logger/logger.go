@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -43,17 +44,40 @@ func GetLogger() Logger {
 	return &l
 }
 
-func Init(logPath string, level Level) {
-	multi := io.MultiWriter(
-		&lumberjack.Logger{
-			Filename:   logPath,
-			MaxSize:    5, // megabytes
-			MaxBackups: 2,
-			Compress:   false,
-		},
-		os.Stderr)
-	log.SetOutput(multi)
+func InitViaString(logPath string, logLevelString string) {
+	var level Level
+	var levelMsg = ""
+	switch logLevelString {
+	case "DEBUG":
+		level = LevelDebug
+	case "INFO":
+		level = LevelInfo
+	case "WARN":
+		level = LevelWarn
+	case "ERROR":
+		level = LevelWarn
+	default:
+		level = LevelInfo
+		levelMsg = fmt.Sprintf("Invalid value for --loglevel (%s).  Defaulting to INFO\n", logLevelString)
+	}
+	Init(logPath, level)
+	if levelMsg != "" {
+		Warn(levelMsg)
+	}
+}
 
+func Init(logPath string, level Level) {
+	if logPath != "" {
+		multi := io.MultiWriter(
+			&lumberjack.Logger{
+				Filename:   logPath,
+				MaxSize:    5, // megabytes
+				MaxBackups: 2,
+				Compress:   false,
+			},
+			os.Stderr)
+		log.SetOutput(multi)
+	}
 	l.level = level
 	l.l = log.New(log.Writer(), log.Prefix(), log.Flags()) //|log.Lshortfile)
 }
