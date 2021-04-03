@@ -1,11 +1,11 @@
 package dx2syn
 
 import (
-	"log"
 	"math"
 	"strings"
 
 	"github.com/chinenual/synergize/data"
+	"github.com/chinenual/synergize/logger"
 )
 
 // compress the DX7 10-character name to something that fits in the 8-character VNAME.
@@ -33,41 +33,36 @@ func convertName(nameMap *map[string]bool, dxName string, vce *data.VCE) {
 	for i := 0; i < 8; i++ {
 		vce.Head.VNAME[i] = newName[i]
 	}
-	//fmt.Printf("DX7 VoiceName: '%s' Synergy VNAME: '%s'\n", dxName, newName)
+	logger.Debugf("DX7 VoiceName: '%s' Synergy VNAME: '%s'\n", dxName, newName)
 }
 
 func _convertName(dxName string, length int) string {
 	newName := dxName
 	// remove leading or trailing spaces:
 	newName = strings.Trim(newName, " ")
-	//fmt.Printf("AFTER TRIM: '%s'\n", newName)
 
 	for len(newName) > length && strings.Contains(newName, "  ") {
 		// compress internal spaces:
 		newName = strings.ReplaceAll(newName, "  ", " ")
 	}
-	//fmt.Printf("AFTER COMPRESS SPACE: '%s'\n", newName)
 	for len(newName) > length && strings.Contains(newName, " ") {
 		// remove spaces - starting with the last one:
 		i := strings.LastIndex(newName, " ")
 		newName = newName[:i] + newName[i+1:]
 	}
-	//fmt.Printf("AFTER INTERNAL SPACE: '%s'\n", newName)
 	const punctuation = "_-\\/:;,.<>?!@#$%^&*()=[]{}'\""
 	for len(newName) > length && strings.ContainsAny(newName, punctuation) {
 		// remove punctuation - starting with the last one:
 		i := strings.LastIndexAny(newName, punctuation)
 		newName = newName[:i] + newName[i+1:]
 	}
-	//fmt.Printf("AFTER PUNCTUATION: '%s'\n", newName)
 	const vowels = "aeiouAEIOU"
 	for len(newName) > length && strings.ContainsAny(newName, vowels) {
 		// remove vowels - starting with the last one:
 		i := strings.LastIndexAny(newName, vowels)
-		//fmt.Printf("last idx: '%s' %d\n", newName, i)
+		logger.Debugf("last idx: '%s' %d\n", newName, i)
 		newName = newName[:i] + newName[i+1:]
 	}
-	//fmt.Printf("AFTER VOWELS: '%s'\n", newName)
 
 	if len(newName) > length {
 		newName = newName[0:length]
@@ -92,11 +87,11 @@ func TranslateDx7ToVceFile(sysexPath string, verbose bool, nameMap *map[string]b
 	defer func(s *pathHolderStruct) { VoiceNotesClose(s.vcePathname) }(&pathHolder)
 
 	if verbose {
-		log.Printf("Result VCE: '%s' %s\n", dx7Voice.VoiceName, data.CompactVceToJson(vce))
+		logger.Infof("Result VCE: '%s' %s\n", dx7Voice.VoiceName, data.CompactVceToJson(vce))
 	}
 	const IgnoreValidation = true
 	if err = data.VceValidate(vce); (err != nil) && (!IgnoreValidation) {
-		log.Printf("ERROR: validation error on translate Dx7 voice %s: %dx7Voice\n", dx7Voice.VoiceName, err)
+		logger.Errorf("Validation error on translate Dx7 voice %s: %dx7Voice\n", dx7Voice.VoiceName, err)
 		return
 	} else {
 		pathHolder.vcePathname, err = MakeVCEFilename(sysexPath, data.VceName(vce.Head))
@@ -104,7 +99,7 @@ func TranslateDx7ToVceFile(sysexPath string, verbose bool, nameMap *map[string]b
 			return
 		}
 		if err = data.WriteVceFile(pathHolder.vcePathname, vce, false); err != nil {
-			log.Printf("ERROR: could not write VCEfile %s: %dx7Voice\n", pathHolder.vcePathname, err)
+			logger.Errorf("Could not write VCEfile %s: %dx7Voice\n", pathHolder.vcePathname, err)
 			return
 		}
 	}
@@ -162,7 +157,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		if o.OscFreqCoarse == 0 && o.OscMode == false {
 			transposedDown = true
 			vce.Head.VTRANS = vce.Head.VTRANS - 12
-			//fmt.Printf(" %s %d %d \n", " transpose - Ratio mode  ", o, o.OscMode)
+			logger.Debugf(" %s %d %d \n", " transpose - Ratio mode  ", o, o.OscMode)
 			break
 		}
 	}
@@ -175,7 +170,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		patchOutputDSR = ((vce.Envelopes[i].FreqEnvelope.OPTCH & 0xc0) >> 6)
 		if patchOutputDSR == 0 {
 			carrier++
-			//fmt.Printf(" %s %d \n", " # Carriers = ", carrier)
+			logger.Debugf(" %s %d \n", " # Carriers = ", carrier)
 		}
 	}
 
@@ -196,12 +191,12 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 
 		if patchOutputDSR > 0 {
 			pmFix = 1.04
-			//fmt.Printf(" %s %f \n", " pmFix = ", pmFix)
+			logger.Debugf(" %s %f \n", " pmFix = ", pmFix)
 		} else {
 			pmFix = 1.0
-			//fmt.Printf(" %s %f \n", " pmFix = ", pmFix)
+			logger.Debugf(" %s %f \n", " pmFix = ", pmFix)
 		}
-		//fmt.Printf(" %s %d %d %f \n", " OSC - POdsr= ", oscIndex+1, patchOutputDSR, pmFix)
+		logger.Debugf(" %s %d %d %f \n", " OSC - POdsr= ", oscIndex+1, patchOutputDSR, pmFix)
 
 		//OPTCH
 		//patchOutputDSR = ((patchByte & 0xc0) >> 6)
@@ -220,29 +215,29 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			case 1:
 				levComp = 1.0
 			}
-			//fmt.Printf(" %s %f \n", " Levcomp =  ", levComp)
+			logger.Debugf(" %s %f \n", " Levcomp =  ", levComp)
 
 		}
 		// ******************* Fix Over Values where max is 99 ***********************...
 		if dxOsc.KeyLevelScalingBreakPoint > 99 {
-			//fmt.Printf(" %s %d \n", " BP before =  ", dxOsc.KeyLevelScalingBreakPoint)
+			logger.Debugf(" %s %d \n", " BP before =  ", dxOsc.KeyLevelScalingBreakPoint)
 			dxOsc.KeyLevelScalingBreakPoint = byte(min(99, int(math.Round(float64(dxOsc.KeyLevelScalingBreakPoint)*0.727))))
-			//fmt.Printf(" %s %d \n", " BP after =  ", dxOsc.KeyLevelScalingBreakPoint)
+			logger.Debugf(" %s %d \n", " BP after =  ", dxOsc.KeyLevelScalingBreakPoint)
 		}
 		if dxOsc.KeyLevelScalingRightDepth > 99 {
-			//fmt.Printf(" %s %d \n", " RT before =  ", dxOsc.KeyLevelScalingRightDepth)
+			logger.Debugf(" %s %d \n", " RT before =  ", dxOsc.KeyLevelScalingRightDepth)
 			dxOsc.KeyLevelScalingRightDepth = byte(min(99, int(math.Round(float64(dxOsc.KeyLevelScalingRightDepth)*0.727))))
-			//fmt.Printf(" %s %d \n", " RT after =  ", dxOsc.KeyLevelScalingRightDepth)
+			logger.Debugf(" %s %d \n", " RT after =  ", dxOsc.KeyLevelScalingRightDepth)
 		}
 		if dxOsc.KeyLevelScalingLeftDepth > 99 {
-			//fmt.Printf(" %s %d \n", " LT before =  ", dxOsc.KeyLevelScalingLeftDepth)
+			logger.Debugf(" %s %d \n", " LT before =  ", dxOsc.KeyLevelScalingLeftDepth)
 			dxOsc.KeyLevelScalingLeftDepth = byte(min(99, int(math.Round(float64(dxOsc.KeyLevelScalingLeftDepth)*0.727))))
-			//fmt.Printf(" %s %d \n", " LT after =  ", dxOsc.KeyLevelScalingLeftDepth)
+			logger.Debugf(" %s %d \n", " LT after =  ", dxOsc.KeyLevelScalingLeftDepth)
 		}
 		if dxOsc.OscFreqFine > 99 {
-			//fmt.Printf(" %s %d \n", " Fine before=  ", dxOsc.OscFreqFine)
+			logger.Debugf(" %s %d \n", " Fine before=  ", dxOsc.OscFreqFine)
 			dxOsc.OscFreqFine = byte(min(99, int(math.Round(float64(dxOsc.OscFreqFine)*0.727))))
-			//fmt.Printf(" %s %d \n", " Fine after =  ", dxOsc.OscFreqFine)
+			logger.Debugf(" %s %d \n", " Fine after =  ", dxOsc.OscFreqFine)
 		}
 
 		// ******************************************************************************************
@@ -280,49 +275,49 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			// Transpose down takes care of that
 
 			if transposedDown == false && dxOsc.OscFreqFine == 0 { //No harmonic changes
-				//fmt.Printf(" %d %s  \n", oscIndex, " transdowndown false == 0 Standard Harm")
+				logger.Debugf(" %d %s  \n", oscIndex, " transdowndown false == 0 Standard Harm")
 				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse
 				//freqValueInt = int(math.Round(fineValues[dxOsc.OscFreqFine]))
 				//freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
 
 			} else if transposedDown == false && dxOsc.OscFreqFine != 0 {
-				//fmt.Printf(" %d %s  \n", oscIndex, " transdown false !=0      Harm + Fine")
+				logger.Debugf(" %d %s  \n", oscIndex, " transdown false !=0      Harm + Fine")
 				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse
 				freqValueInt = int(math.Round(fineValues[dxOsc.OscFreqFine] * float64(dxOsc.OscFreqCoarse)))
 				freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
 
 			} else if transposedDown == true && dxOsc.OscFreqCoarse == 0 && dxOsc.OscFreqFine == 0 {
 				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = 1
-				//fmt.Printf(" %d %s  \n", oscIndex, " true Coarse = 0  Fine 0 so Harm = 1")
+				logger.Debugf(" %d %s  \n", oscIndex, " true Coarse = 0  Fine 0 so Harm = 1")
 			} else if transposedDown == true && dxOsc.OscFreqCoarse == 0 && dxOsc.OscFreqFine == 50 {
-				//fmt.Printf(" %d %s  \n", oscIndex, " in true 0 50    +.5 then *2")
+				logger.Debugf(" %d %s  \n", oscIndex, " in true 0 50    +.5 then *2")
 				harmonic = float64(dxOsc.OscFreqCoarse)
 				harmonic = harmonic + .5
 				harmonic = harmonic * 2
 				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = int8(harmonic)
 
 			} else if transposedDown == true && dxOsc.OscFreqCoarse == 0 && dxOsc.OscFreqFine != 50 {
-				//fmt.Printf(" %d %s  \n", oscIndex, " in true C=0  Fine!=50")
+				logger.Debugf(" %d %s  \n", oscIndex, " in true C=0  Fine!=50")
 				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = 1
 				freqValueInt = 0
 				freqValueInt = int(math.Round(1 + fineValues[dxOsc.OscFreqFine]*2))
 				freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
 
 			} else if transposedDown == true && dxOsc.OscFreqCoarse != 0 && dxOsc.OscFreqFine == 50 {
-				//fmt.Printf(" %d %s  \n", oscIndex, " in true !0 = 50")
+				logger.Debugf(" %d %s  \n", oscIndex, " in true !0 = 50")
 				harmonic = float64(dxOsc.OscFreqCoarse)
 				harmonic = harmonic + .5
 				harmonic = harmonic * 2
 				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = int8(harmonic)
 
 			} else if transposedDown == true && dxOsc.OscFreqCoarse != 0 && dxOsc.OscFreqFine != 50 {
-				//fmt.Printf(" %d %s  \n", oscIndex, " in true !0 !50  ")
+				logger.Debugf(" %d %s  \n", oscIndex, " in true !0 !50  ")
 				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse * 2
 				freqValueInt = int(math.Round(fineValues[dxOsc.OscFreqFine] * float64(dxOsc.OscFreqCoarse*2)))
 				freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
 				//  have to add in FINE
 			} else {
-				//fmt.Printf(" %d %s  \n", oscIndex, " in else")
+				logger.Debugf(" %d %s  \n", oscIndex, " in else")
 				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse * 2
 			} // Add Coarse <>0  fine = 50
 
@@ -341,7 +336,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 				{
 					freqValueInt = 0
 					freqValueInt = int(math.Round(1 + fineValues[dxOsc.OscFreqFine]))
-					//fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
+					logger.Debugf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 				}
 
 			case 1, 5, 9, 13, 17, 21, 25, 29:
@@ -349,30 +344,30 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 				{
 					freqValueInt = 0
 					freqValueInt = int(math.Round(10 + (fineValues[dxOsc.OscFreqFine] * 10)))
-					//fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
+					logger.Debugf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 				}
 			case 2, 6, 10, 14, 18, 22, 26, 30:
 				// freq = 100
 				{
 					freqValueInt = 0
 					freqValueInt = int(math.Round(100 + (fineValues[dxOsc.OscFreqFine] * 100)))
-					//fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
+					logger.Debugf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 				}
 			case 3, 7, 11, 15, 19, 23, 27, 31:
 				// freq = 1000
 				{
 					freqValueInt = 0
 					freqValueInt = int(math.Round(1000 + (fineValues[dxOsc.OscFreqFine] * 1000)))
-					//fmt.Printf(" %s %d  \n", " Fixed freq = ", freqValueInt)
+					logger.Debugf(" %s %d  \n", " Fixed freq = ", freqValueInt)
 				}
 			}
 			freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
-			//fmt.Printf(" %d %s %d %d %d  \n \n", oscIndex+1, "  Fixed freq = ", dxOsc.OscFreqFine, freqValueInt, freqValueByte)
+			logger.Debugf(" %d %s %d %d %d  \n \n", oscIndex+1, "  Fixed freq = ", dxOsc.OscFreqFine, freqValueInt, freqValueByte)
 		}
 
 		// Set OSC detune
 		vce.Envelopes[oscIndex].FreqEnvelope.FDETUN = helperUnscaleDetune(int(dTune[int(dxOsc.OscDetune)]))
-		//fmt.Printf(" %s %d %d \n", " Detune = ", dxOsc.OscDetune, vce.Envelopes[oscIndex].FreqEnvelope.FDETUN)
+		logger.Debugf(" %s %d %d \n", " Detune = ", dxOsc.OscDetune, vce.Envelopes[oscIndex].FreqEnvelope.FDETUN)
 
 		// type = 1  : no loop (and LOOPPT and SUSTAINPT are accelleration rates not point positions)
 		// type = 2  : S only
@@ -391,17 +386,17 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		vce.Envelopes[oscIndex].FreqEnvelope.NPOINTS = 2
 		// set lower Env levels for velocity sensitivity
 		velocityPercent = 1.0 - (float64(dxOsc.KeyVelocitySensitivity) / 10.0)
-		//fmt.Printf(" %s %f %d \n", " Vel% = ", velocityPercent, dxOsc.KeyVelocitySensitivity)
+		logger.Debugf(" %s %f %d \n", " Vel% = ", velocityPercent, dxOsc.KeyVelocitySensitivity)
 
 		//  change levels for velocity sensitivity, PM Fix, and level comp
 		osclevelPercent = float64(float64(dxOsc.OperatorOutputLevel) / 99.00)
 
 		// Find is OSC is the FB OSc, if so, look up in array and set to TRI wave
 		fb = fbOsc[dx7Voice.Algorithm+1] - 1
-		//fmt.Printf(" %s %d %d  \n", " Algo =   ", oscIndex, dx7Voice.Algorithm)
+		logger.Debugf(" %s %d %d  \n", " Algo =   ", oscIndex, dx7Voice.Algorithm)
 		//  If OSC is FB OSC, set as Triangle waveform else set as SIN waveform
 		if oscIndex == fb { //&& dx7Voice.Feedback > 0 {
-			//fmt.Printf(" %s %d \n \n", " oscIndex = ", oscIndex)
+			logger.Debugf(" %s %d \n \n", " oscIndex = ", oscIndex)
 			//  increase FB OSC level by 'dx7Voice.Feedback'
 			osclevelPercent = osclevelPercent + float64(float64(dx7Voice.Feedback)*0.02)
 			vce.Envelopes[oscIndex].FreqEnvelope.Table[3] = vce.Envelopes[oscIndex].FreqEnvelope.Table[3] | 0x1
@@ -425,14 +420,14 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
 
-				//fmt.Printf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
 		if (dx7Voice.Algorithm == 0) && oscIndex == 1 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
 
-				//fmt.Printf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
 
@@ -441,20 +436,20 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
 
-				//fmt.Printf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
 		if (dx7Voice.Algorithm == 2 || dx7Voice.Algorithm == 3) && oscIndex == 3 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
-				//fmt.Printf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
 		//   DX7 10 & 11
 		if (dx7Voice.Algorithm == 9 || dx7Voice.Algorithm == 10) && oscIndex == 3 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
-				//fmt.Printf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
 		//   DX7 14 & 15
@@ -462,13 +457,13 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
 
-				//fmt.Printf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
 		if (dx7Voice.Algorithm == 13 || dx7Voice.Algorithm == 14) && oscIndex == 5 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
-				//fmt.Printf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
 		//   DX7 16 & 17    CLUSTER F*CK
@@ -478,7 +473,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
 
-				//fmt.Printf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
 
@@ -487,7 +482,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
 
-				//fmt.Printf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
 
@@ -496,7 +491,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
 
-				//fmt.Printf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
 
@@ -505,7 +500,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
 
-				//fmt.Printf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
 

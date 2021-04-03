@@ -1,11 +1,12 @@
 package dx2syn
 
 import (
-	"log"
 	"math"
 	"os"
 	"path"
 	"regexp"
+
+	"github.com/chinenual/synergize/logger"
 )
 
 // Helper routines that may find their way back into the synergize/data module.
@@ -34,7 +35,7 @@ func MakeVCEFilename(sysexPath string, synVoiceName string) (pathname string, er
 	sysexExt := path.Ext(sysexPath)
 	sysexDir := (sysexPath)[0 : len(sysexPath)-len(sysexExt)]
 	if err = os.MkdirAll(sysexDir, 0777); err != nil {
-		log.Printf("ERROR: could not create output directory %s: %v\n", sysexDir, err)
+		logger.Errorf("Could not create output directory %s: %v\n", sysexDir, err)
 		return
 	}
 	base := path.Join(sysexDir, sanitizeFilename(synVoiceName))
