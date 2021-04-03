@@ -4,9 +4,8 @@ import (
 	"math"
 	"strings"
 
-	"github.com/chinenual/synergize/logger"
-
 	"github.com/chinenual/synergize/data"
+	"github.com/chinenual/synergize/logger"
 )
 
 // compress the DX7 10-character name to something that fits in the 8-character VNAME.
@@ -191,7 +190,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		pmFix = 1.0
 
 		if patchOutputDSR > 0 {
-			pmFix = 1.05
+			pmFix = 1.04
 			logger.Debugf(" %s %f \n", " pmFix = ", pmFix)
 		} else {
 			pmFix = 1.0
@@ -219,25 +218,25 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			logger.Debugf(" %s %f \n", " Levcomp =  ", levComp)
 
 		}
-		// Fix Over Values where max is 99...
+		// ******************* Fix Over Values where max is 99 ***********************...
 		if dxOsc.KeyLevelScalingBreakPoint > 99 {
 			logger.Debugf(" %s %d \n", " BP before =  ", dxOsc.KeyLevelScalingBreakPoint)
-			dxOsc.KeyLevelScalingBreakPoint = byte(math.Round(float64(dxOsc.KeyLevelScalingBreakPoint) * 0.727))
+			dxOsc.KeyLevelScalingBreakPoint = byte(min(99, int(math.Round(float64(dxOsc.KeyLevelScalingBreakPoint)*0.727))))
 			logger.Debugf(" %s %d \n", " BP after =  ", dxOsc.KeyLevelScalingBreakPoint)
 		}
 		if dxOsc.KeyLevelScalingRightDepth > 99 {
 			logger.Debugf(" %s %d \n", " RT before =  ", dxOsc.KeyLevelScalingRightDepth)
-			dxOsc.KeyLevelScalingRightDepth = byte(math.Round(float64(dxOsc.KeyLevelScalingRightDepth) * 0.727))
+			dxOsc.KeyLevelScalingRightDepth = byte(min(99, int(math.Round(float64(dxOsc.KeyLevelScalingRightDepth)*0.727))))
 			logger.Debugf(" %s %d \n", " RT after =  ", dxOsc.KeyLevelScalingRightDepth)
 		}
 		if dxOsc.KeyLevelScalingLeftDepth > 99 {
 			logger.Debugf(" %s %d \n", " LT before =  ", dxOsc.KeyLevelScalingLeftDepth)
-			dxOsc.KeyLevelScalingLeftDepth = byte(math.Round(float64(dxOsc.KeyLevelScalingLeftDepth) * 0.727))
+			dxOsc.KeyLevelScalingLeftDepth = byte(min(99, int(math.Round(float64(dxOsc.KeyLevelScalingLeftDepth)*0.727))))
 			logger.Debugf(" %s %d \n", " LT after =  ", dxOsc.KeyLevelScalingLeftDepth)
 		}
 		if dxOsc.OscFreqFine > 99 {
 			logger.Debugf(" %s %d \n", " Fine before=  ", dxOsc.OscFreqFine)
-			dxOsc.OscFreqFine = byte(math.Round(float64(dxOsc.OscFreqFine) * 0.727))
+			dxOsc.OscFreqFine = byte(min(99, int(math.Round(float64(dxOsc.OscFreqFine)*0.727))))
 			logger.Debugf(" %s %d \n", " Fine after =  ", dxOsc.OscFreqFine)
 		}
 
@@ -328,7 +327,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			// test freq code
 			// for k := -100; k >= -127; k-- {
 			//	 freqValueInt = int(14764 * math.Pow(2, float64(k-127)/12))
-			//	 logger.Debugf(" %s %d %d  \n", "******* m  FRQACC = ", k, freqValueInt)
+			//	 fmt.Printf(" %s %d %d  \n", "******* m  FRQACC = ", k, freqValueInt)
 			// }
 
 			switch dxOsc.OscFreqCoarse {
@@ -392,11 +391,14 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		//  change levels for velocity sensitivity, PM Fix, and level comp
 		osclevelPercent = float64(float64(dxOsc.OperatorOutputLevel) / 99.00)
 
+		// Find is OSC is the FB OSc, if so, look up in array and set to TRI wave
+		fb = fbOsc[dx7Voice.Algorithm+1] - 1
+		logger.Debugf(" %s %d %d  \n", " Algo =   ", oscIndex, dx7Voice.Algorithm)
 		//  If OSC is FB OSC, set as Triangle waveform else set as SIN waveform
-		if oscIndex == fb && dx7Voice.Feedback > 0 {
+		if oscIndex == fb { //&& dx7Voice.Feedback > 0 {
 			logger.Debugf(" %s %d \n \n", " oscIndex = ", oscIndex)
 			//  increase FB OSC level by 'dx7Voice.Feedback'
-			osclevelPercent = osclevelPercent + float64(float64(dx7Voice.Feedback)*0.03)
+			osclevelPercent = osclevelPercent + float64(float64(dx7Voice.Feedback)*0.02)
 			vce.Envelopes[oscIndex].FreqEnvelope.Table[3] = vce.Envelopes[oscIndex].FreqEnvelope.Table[3] | 0x1
 		} else {
 			vce.Envelopes[oscIndex].FreqEnvelope.Table[3] = 0
@@ -404,6 +406,102 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 
 		for k := 0; k < 4; k++ {
 			dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * osclevelPercent * pmFix * levComp * 0.727)
+			if dxOsc.EgLevel[k] > 127 {
+				dxOsc.EgLevel[k] = 127
+			}
+		}
+		//  ********  Time to fix bad DX7 algoriths *********
+
+		// Set top OSC of 3 OSC stacks to under 50% level.  Synergy does not like 3 OSC stacks...
+		// User can experiment with levels after conversion
+
+		//    DX7 1    OSCs 1(0) & 2(1)
+		if (dx7Voice.Algorithm == 0) && oscIndex == 0 {
+			for k := 0; k < 4; k++ {
+				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
+
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+			}
+		}
+		if (dx7Voice.Algorithm == 0) && oscIndex == 1 {
+			for k := 0; k < 4; k++ {
+				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
+
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+			}
+		}
+
+		//    DX7 3 & 4
+		if (dx7Voice.Algorithm == 2 || dx7Voice.Algorithm == 3) && oscIndex == 0 {
+			for k := 0; k < 4; k++ {
+				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
+
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+			}
+		}
+		if (dx7Voice.Algorithm == 2 || dx7Voice.Algorithm == 3) && oscIndex == 3 {
+			for k := 0; k < 4; k++ {
+				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+			}
+		}
+		//   DX7 10 & 11
+		if (dx7Voice.Algorithm == 9 || dx7Voice.Algorithm == 10) && oscIndex == 3 {
+			for k := 0; k < 4; k++ {
+				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+			}
+		}
+		//   DX7 14 & 15
+		if (dx7Voice.Algorithm == 13 || dx7Voice.Algorithm == 14) && oscIndex == 4 {
+			for k := 0; k < 4; k++ {
+				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
+
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+			}
+		}
+		if (dx7Voice.Algorithm == 13 || dx7Voice.Algorithm == 14) && oscIndex == 5 {
+			for k := 0; k < 4; k++ {
+				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+			}
+		}
+		//   DX7 16 & 17    CLUSTER F*CK
+
+		//   DX7 18             OSC 6 (5)
+		if (dx7Voice.Algorithm == 17) && oscIndex == 5 {
+			for k := 0; k < 4; k++ {
+				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
+
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+			}
+		}
+
+		//   DX7 19             OSC 3 (2)
+		if (dx7Voice.Algorithm == 19) && oscIndex == 2 {
+			for k := 0; k < 4; k++ {
+				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
+
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+			}
+		}
+
+		//   DX7 28             OSC 2 (1)
+		if (dx7Voice.Algorithm == 27) && oscIndex == 1 {
+			for k := 0; k < 4; k++ {
+				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
+
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+			}
+		}
+
+		//   DX7 30             OSC 5 (4)
+		if (dx7Voice.Algorithm == 29) && oscIndex == 4 {
+			for k := 0; k < 4; k++ {
+				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.45)
+
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+			}
 		}
 
 		// Each Synergy oscillator is voice twice - for low and high key velocity response
@@ -416,11 +514,11 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		sustR = ms[2]
 		relsR = ms[3]
 		/*
-			logger.Debugf(" %s %f \n", " OSC % = ", osclevelPercent)
-			logger.Debugf(" %s %d \n", " attkR = ", attkR)
-			logger.Debugf(" %s %d \n", " decyR = ", decyR)
-			logger.Debugf(" %s %d \n", " sustR = ", sustR)
-			logger.Debugf(" %s %d \n \n", " relsR = ", relsR)
+			fmt.Printf(" %s %f \n", " OSC % = ", osclevelPercent)
+			fmt.Printf(" %s %d \n", " attkR = ", attkR)
+			fmt.Printf(" %s %d \n", " decyR = ", decyR)
+			fmt.Printf(" %s %d \n", " sustR = ", sustR)
+			fmt.Printf(" %s %d \n \n", " relsR = ", relsR)
 		*/
 
 		// point1
@@ -474,10 +572,6 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		vce.Envelopes[oscIndex].FreqEnvelope.Table[2] = 0x80 // matches default from EDATA
 		//  set in Feedback OSC section
 		/////vce.Envelopes[oscIndex].FreqEnvelope.Table[3] = 0    // 0 == Sine, octave 0, freq int and amp int disabled
-
-		// Find is OSC is the FB OSc, if so, look up in array and set to TRI wave
-		fb = fbOsc[dx7Voice.Algorithm+1] - 1
-		logger.Debugf(" %s %d %d  \n", " Algo =   ", oscIndex, dx7Voice.Algorithm)
 
 		// point2
 		vce.Envelopes[oscIndex].FreqEnvelope.Table[4] = freqValueByte
