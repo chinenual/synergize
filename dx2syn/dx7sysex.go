@@ -125,10 +125,15 @@ func readDx7Voice(reader *bytes.Reader) (voice Dx7Voice, err error) {
 	if err = binary.Read(reader, binary.LittleEndian, &voice.PitchEgLevel); err != nil {
 		return
 	}
-	if err = binary.Read(reader, binary.LittleEndian, &voice.Algorithm); err != nil {
+
+	var v byte
+	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
 		return
 	}
-	var v byte
+	// some files have bogus values for Algorithm.  Seems effective to just mask off
+	// the upper order bits.  Do that rather than reject them (Dexed does something similar).
+	voice.Algorithm = v & 0x1f
+
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
 		return
 	}

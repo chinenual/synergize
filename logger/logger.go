@@ -58,7 +58,7 @@ func InitViaString(logPath string, logLevelString string) {
 		level = LevelWarn
 	default:
 		level = LevelInfo
-		levelMsg = fmt.Sprintf("Invalid value for --loglevel (%s).  Defaulting to INFO\n", logLevelString)
+		levelMsg = fmt.Sprintf("Invalid value for -loglevel (%s).  Defaulting to INFO\n", logLevelString)
 	}
 	Init(logPath, level)
 	if levelMsg != "" {
