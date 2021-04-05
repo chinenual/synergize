@@ -328,8 +328,8 @@ func ReadVceFile(filename string) (vce VCE, err error) {
 func readDocFile(vcePath string) (result string) {
 	vceExt := path.Ext(vcePath)
 	base := (vcePath)[0 : len(vcePath)-len(vceExt)]
-	// tolerate case differences:
-	extensions := []string{".DOC", ".doc", ".Doc", ".TXT", ".txt", ".Txt"}
+	// tolerate expected case differences on case-sensitive file systems:
+	extensions := []string{".DOC", ".doc", ".Doc"}
 	for _, ext := range extensions {
 		pathname := base + ext
 		if b, err := ioutil.ReadFile(pathname); err == nil {
