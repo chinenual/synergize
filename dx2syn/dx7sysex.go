@@ -202,9 +202,10 @@ func readDx7Voice(reader *bytes.Reader) (voice Dx7Voice, err error) {
 	if err = binary.Read(reader, binary.LittleEndian, &rawName); err != nil {
 		return
 	}
-	//for a := 0; a < 10; a++ {
-	//	rawName[a] &= 0x1f
-	//}
+
+	for a := 0; a < 10; a++ {
+		rawName[a] &= 0x7f
+	}
 	voice.VoiceName = string(rawName[:])
 	return
 }
