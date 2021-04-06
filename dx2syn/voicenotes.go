@@ -8,7 +8,7 @@ import (
 	"github.com/chinenual/synergize/data"
 )
 
-const VOICENAME_EXT = ".txt"
+const VOICENAME_EXT = ".DOC"
 
 var _voiceNotes string = ""
 

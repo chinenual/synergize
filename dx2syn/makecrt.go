@@ -51,11 +51,7 @@ func recurseMakeCrt(dirPath string, verbose bool) (err error) {
 			return err
 		}
 
-		if info.IsDir() && dirPath != path {
-			if err = recurseMakeCrt(path, verbose); err != nil {
-				return err
-			}
-		} else if isSysexExt(path) {
+		if (!info.IsDir()) && isSysexExt(path) {
 			if err = makeCrtFromSysex(path, verbose); err != nil {
 				// Don't fail the whole job just because one SYX is bad
 				// return err
