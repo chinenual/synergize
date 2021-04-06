@@ -114,7 +114,9 @@ func readDx7Osc(reader *bytes.Reader) (osc Dx7Osc, err error) {
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //&osc.OperatorOutputLevel
 		return
 	}
+
 	osc.OperatorOutputLevel = v & 0x7f
+
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
 		return
 	}
@@ -150,6 +152,7 @@ func readDx7Voice(reader *bytes.Reader) (voice Dx7Voice, err error) {
 		return
 	}
 	for a := 0; a < 4; a++ {
+
 		voice.PitchEgLevel[a] = voice.PitchEgLevel[a] & 0x7f
 	}
 
@@ -228,14 +231,14 @@ func ReadDx7Sysex(pathname string) (sysex Dx7Sysex, err error) {
 		return
 	}
 
-	var oneVoice = false
+	//var oneVoice = false
 
 	if expectHeaderSingle == header {
-		oneVoice = true
+		//oneVoice = true
 		fmt.Printf(" Process One Voice - ")
 
 	} else { /////////////////if oneVoice == false {
-		oneVoice = false
+		//oneVoice = false
 		for i := range expectHeader {
 			if expectHeader == header {
 				//fmt.Printf(" %s %x \n", " header =  ", header[i])
