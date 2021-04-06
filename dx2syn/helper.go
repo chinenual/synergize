@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 	"regexp"
+	"strings"
 
 	"github.com/chinenual/synergize/logger"
 )
@@ -33,7 +34,7 @@ func sanitizeFilename(v string) (result string) {
 
 func MakeVCEFilename(sysexPath string, synVoiceName string) (pathname string, err error) {
 	sysexExt := path.Ext(sysexPath)
-	sysexDir := (sysexPath)[0 : len(sysexPath)-len(sysexExt)]
+	sysexDir := strings.TrimRight((sysexPath)[0:len(sysexPath)-len(sysexExt)], " ")
 	if err = os.MkdirAll(sysexDir, 0777); err != nil {
 		logger.Errorf("Could not create output directory %s: %v\n", sysexDir, err)
 		return
