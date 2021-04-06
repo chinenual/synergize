@@ -68,30 +68,30 @@ func readDx7Osc(reader *bytes.Reader) (osc Dx7Osc, err error) {
 		return
 	}
 	for a := 0; a < 4; a++ {
-		osc.EgRate[a] = osc.EgRate[a] & 0x1f
+		osc.EgRate[a] = osc.EgRate[a] & 0x7f
 	}
 
 	if err = binary.Read(reader, binary.LittleEndian, &osc.EgLevel); err != nil { //osc.EgLevel
 		return
 	}
 	for a := 0; a < 4; a++ {
-		osc.EgLevel[a] = osc.EgLevel[a] & 0x1f
+		osc.EgLevel[a] = osc.EgLevel[a] & 0x7f
 	}
 
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //osc.KeyLevelScalingBreakPoint
 		return
 	}
-	osc.KeyLevelScalingBreakPoint = v & 0x1f
+	osc.KeyLevelScalingBreakPoint = v & 0x7f
 
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //osc.KeyLevelScalingLeftDepth
 		return
 	}
-	osc.KeyLevelScalingLeftDepth = v & 0x1f
+	osc.KeyLevelScalingLeftDepth = v & 0x7f
 
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //osc.KeyLevelScalingRightDepth
 		return
 	}
-	osc.KeyLevelScalingRightDepth = v & 0x1f
+	osc.KeyLevelScalingRightDepth = v & 0x7f
 
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
 		return
@@ -114,7 +114,9 @@ func readDx7Osc(reader *bytes.Reader) (osc Dx7Osc, err error) {
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //&osc.OperatorOutputLevel
 		return
 	}
-	osc.OperatorOutputLevel = v & 0x1f
+
+	osc.OperatorOutputLevel = v & 0x7f
+
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
 		return
 	}
@@ -124,7 +126,7 @@ func readDx7Osc(reader *bytes.Reader) (osc Dx7Osc, err error) {
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //&osc.OscFreqFine
 		return
 	}
-	osc.OscFreqFine = v & 0x1f
+	osc.OscFreqFine = v & 0x7f
 
 	return
 }
@@ -143,14 +145,15 @@ func readDx7Voice(reader *bytes.Reader) (voice Dx7Voice, err error) {
 		return
 	}
 	for a := 0; a < 4; a++ {
-		voice.PitchEgRate[a] = voice.PitchEgRate[a] & 0x1f
+		voice.PitchEgRate[a] = voice.PitchEgRate[a] & 0x7f
 	}
 
 	if err = binary.Read(reader, binary.LittleEndian, &voice.PitchEgLevel); err != nil {
 		return
 	}
 	for a := 0; a < 4; a++ {
-		voice.PitchEgLevel[a] = voice.PitchEgLevel[a] & 0x1f
+
+		voice.PitchEgLevel[a] = voice.PitchEgLevel[a] & 0x7f
 	}
 
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
@@ -169,22 +172,22 @@ func readDx7Voice(reader *bytes.Reader) (voice Dx7Voice, err error) {
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //voice.LfoSpeed
 		return
 	}
-	voice.LfoSpeed = v & 0x1f
+	voice.LfoSpeed = v & 0x7f
 
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //voice.LfoDelay
 		return
 	}
-	voice.LfoDelay = v & 0x1f
+	voice.LfoDelay = v & 0x7f
 
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //voice.LfoPitchModDepth
 		return
 	}
-	voice.LfoPitchModDepth = v & 0x1f
+	voice.LfoPitchModDepth = v & 0x7f
 
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //voice.LfoAmpModDepth
 		return
 	}
-	voice.LfoAmpModDepth = v & 0x1f
+	voice.LfoAmpModDepth = v & 0x7f
 
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
 		return
@@ -196,13 +199,12 @@ func readDx7Voice(reader *bytes.Reader) (voice Dx7Voice, err error) {
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //voice.Transpose
 		return
 	}
-	voice.Transpose = v & 0x1f
+	voice.Transpose = v & 0x7f
 
 	var rawName [10]byte
 	if err = binary.Read(reader, binary.LittleEndian, &rawName); err != nil {
 		return
 	}
-
 	for a := 0; a < 10; a++ {
 		rawName[a] &= 0x7f
 	}
@@ -219,34 +221,35 @@ func ReadDx7Sysex(pathname string) (sysex Dx7Sysex, err error) {
 
 	// validate that the header of the Sysex is a "bulk DX7 sysex":
 	var header [6]byte
-	expectHeader := []byte{0xF0, 0x43, 0x00, 0x09, 0x20, 0x00}
-	expectHeader1 := []byte{0xF0, 0x43, 0x00, 0x09, 0x10, 0x00}
-	expectHeader2 := []byte{0xF0, 0x43, 0x00, 0x09, 0x00, 0x10}
-	expectHeader3 := []byte{0xF0, 0x43, 0x00, 0x09, 0x00, 0x20}
-	expectHeaderSingle := [6]byte{0xF0, 0x43, 0x00, 0x00, 0x01, 0x20}
+	expectHeader := [6]byte{0xF0, 0x43, 0x00, 0x09, 0x20, 0x00}
+	expectHeader1 := [6]byte{0xF0, 0x43, 0x00, 0x09, 0x10, 0x00}
+	expectHeader2 := [6]byte{0xF0, 0x43, 0x00, 0x09, 0x00, 0x10}
+	expectHeader3 := [6]byte{0xF0, 0x43, 0x00, 0x09, 0x00, 0x20}
+	expectHeaderSingle := [6]byte{0xF0, 0x43, 0x00, 0x00, 0x01, 0x1B}
 
 	if err = binary.Read(reader, binary.LittleEndian, &header); err != nil {
 		return
 	}
 
-	var oneVoice = false
+	//var oneVoice = false
 
 	if expectHeaderSingle == header {
-		oneVoice = true
+		//oneVoice = true
 		fmt.Printf(" Process One Voice - ")
 
-	} else if oneVoice == false {
+	} else { /////////////////if oneVoice == false {
+		//oneVoice = false
 		for i := range expectHeader {
-			if expectHeader[i] == header[i] {
+			if expectHeader == header {
 				//fmt.Printf(" %s %x \n", " header =  ", header[i])
-			} else if expectHeader1[i] == header[i] {
+			} else if expectHeader1 == header {
 				//fmt.Printf(" %s %x \n", " header1 =  ", header[i])
-			} else if expectHeader2[i] == header[i] {
+			} else if expectHeader2 == header {
 				//fmt.Printf(" %s %x \n", " header2 =  ", header[i])
-			} else if expectHeader3[i] == header[i] {
+			} else if expectHeader3 == header {
 				//fmt.Printf(" %s %x \n", " header3 =  ", header[i])
-			} else if expectHeader[i] != header[i] {
-				//fmt.Printf("Got bad header byte  \n")
+			} else { // expectHeader != header[i] {
+				fmt.Printf("Got bad header byte  \n")
 				if _, err = reader.Seek(0, io.SeekStart); err != nil {
 					err = errors.Wrapf(err, "Invalid Sysex header byte[%d] - expected %2x, saw %2x, but failed to rewind to try to parse without header", i, expectHeader[i], header[i])
 				}
