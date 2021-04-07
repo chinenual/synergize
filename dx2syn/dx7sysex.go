@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
-	"fmt"
 
 	"io"
 	"io/ioutil"
@@ -212,6 +211,52 @@ func readDx7Voice(reader *bytes.Reader) (voice Dx7Voice, err error) {
 	return
 }
 
+type sysexHeaderType int
+
+const (
+	noHeader sysexHeaderType = iota
+	sysex32Voice
+	sysex1Voice
+)
+
+func checkHeader(header [6]byte) (headerType sysexHeaderType) {
+	multiHeaders := [][6]byte{
+		{0xF0, 0x43, 0x00, 0x09, 0x20, 0x00},
+		{0xF0, 0x43, 0x00, 0x09, 0x10, 0x00},
+		{0xF0, 0x43, 0x00, 0x09, 0x00, 0x10},
+		{0xF0, 0x43, 0x00, 0x09, 0x00, 0x20},
+	}
+	singleHeaders := [][6]byte{
+		{0xF0, 0x43, 0x00, 0x00, 0x01, 0x1B},
+	}
+
+	for _, h := range multiHeaders {
+		match := true
+		for i := 0; i < 6; i++ {
+			if header[i] != h[i] {
+				match = false
+				break // try next header
+			}
+		}
+		if match {
+			return sysex32Voice
+		}
+	}
+	for _, h := range singleHeaders {
+		match := true
+		for i := 0; i < 6; i++ {
+			if header[i] != h[i] {
+				match = false
+				break // try next header
+			}
+		}
+		if match {
+			return sysex1Voice
+		}
+	}
+	return noHeader
+}
+
 func ReadDx7Sysex(pathname string) (sysex Dx7Sysex, err error) {
 	var b []byte
 	if b, err = ioutil.ReadFile(pathname); err != nil {
@@ -221,58 +266,43 @@ func ReadDx7Sysex(pathname string) (sysex Dx7Sysex, err error) {
 
 	// validate that the header of the Sysex is a "bulk DX7 sysex":
 	var header [6]byte
-	expectHeader := [6]byte{0xF0, 0x43, 0x00, 0x09, 0x20, 0x00}
-	expectHeader1 := [6]byte{0xF0, 0x43, 0x00, 0x09, 0x10, 0x00}
-	expectHeader2 := [6]byte{0xF0, 0x43, 0x00, 0x09, 0x00, 0x10}
-	expectHeader3 := [6]byte{0xF0, 0x43, 0x00, 0x09, 0x00, 0x20}
-	expectHeaderSingle := [6]byte{0xF0, 0x43, 0x00, 0x00, 0x01, 0x1B}
 
 	if err = binary.Read(reader, binary.LittleEndian, &header); err != nil {
 		return
 	}
 
-	//var oneVoice = false
+	headerType := checkHeader(header)
 
-	if expectHeaderSingle == header {
-		//oneVoice = true
-		fmt.Printf(" Process One Voice - ")
-
-	} else { /////////////////if oneVoice == false {
-		//oneVoice = false
-		for i := range expectHeader {
-			if expectHeader == header {
-				//fmt.Printf(" %s %x \n", " header =  ", header[i])
-			} else if expectHeader1 == header {
-				//fmt.Printf(" %s %x \n", " header1 =  ", header[i])
-			} else if expectHeader2 == header {
-				//fmt.Printf(" %s %x \n", " header2 =  ", header[i])
-			} else if expectHeader3 == header {
-				//fmt.Printf(" %s %x \n", " header3 =  ", header[i])
-			} else { // expectHeader != header[i] {
-				fmt.Printf("Got bad header byte  \n")
-				if _, err = reader.Seek(0, io.SeekStart); err != nil {
-					err = errors.Wrapf(err, "Invalid Sysex header byte[%d] - expected %2x, saw %2x, but failed to rewind to try to parse without header", i, expectHeader[i], header[i])
-				}
-			}
+	var voiceCount int
+	switch headerType {
+	case noHeader:
+		if _, err = reader.Seek(0, io.SeekStart); err != nil {
+			err = errors.Wrapf(err, "Invalid Sysex header but failed to rewind to try to parse without header")
+			return
 		}
-		for i := 0; i < 32; i++ {
-			var v Dx7Voice
-			if v, err = readDx7Voice(reader); err != nil {
-				err = errors.Wrapf(err, "Error reading voice[%d]", i)
-				return
-			}
-			if v.VoiceName[0] != '\000' {
-				ok := true
+	case sysex1Voice:
+		voiceCount = 1
+	case sysex32Voice:
+		voiceCount = 32
+	}
 
-				// Data validation:
-				if v.Algorithm > 31 {
-					logger.Warnf("%s - Voice #%d \"%s\" DX Algorithm out of range: %d - must be between 0 and 31. Voice ignored",
-						pathname, i, v.VoiceName, v.Algorithm)
-					ok = false
-				}
-				if ok {
-					sysex.Voices = append(sysex.Voices, v)
-				}
+	for i := 0; i < voiceCount; i++ {
+		var v Dx7Voice
+		if v, err = readDx7Voice(reader); err != nil {
+			err = errors.Wrapf(err, "Error reading voice[%d]", i)
+			return
+		}
+		if v.VoiceName[0] != '\000' {
+			ok := true
+
+			// Data validation:
+			if v.Algorithm > 31 {
+				logger.Warnf("%s - Voice #%d \"%s\" DX Algorithm out of range: %d - must be between 0 and 31. Voice ignored",
+					pathname, i, v.VoiceName, v.Algorithm)
+				ok = false
+			}
+			if ok {
+				sysex.Voices = append(sysex.Voices, v)
 			}
 		}
 	}
