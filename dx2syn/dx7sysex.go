@@ -61,7 +61,7 @@ type Dx7Voice struct {
 	VoiceName           string
 }
 
-func readDx7Osc(reader *bytes.Reader) (osc Dx7Osc, err error) {
+func readDx7Osc(reader *bytes.Reader, packed bool) (osc Dx7Osc, err error) {
 	var v byte
 	if err = binary.Read(reader, binary.LittleEndian, &osc.EgRate); err != nil { //osc.EgRate
 		return
@@ -80,61 +80,110 @@ func readDx7Osc(reader *bytes.Reader) (osc Dx7Osc, err error) {
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //osc.KeyLevelScalingBreakPoint
 		return
 	}
-	osc.KeyLevelScalingBreakPoint = v & 0x7f
 
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //osc.KeyLevelScalingLeftDepth
 		return
 	}
-	osc.KeyLevelScalingLeftDepth = v & 0x7f
 
 	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //osc.KeyLevelScalingRightDepth
 		return
 	}
-	osc.KeyLevelScalingRightDepth = v & 0x7f
 
-	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
-		return
-	}
-	osc.KeyLevelScalingLeftCurve = v & 0x03
-	osc.KeyLevelScalingRightCurve = (v & 0x0C) >> 2
+	if packed {
+		if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
+			return
+		}
+		osc.KeyLevelScalingLeftCurve = v & 0x03
+		osc.KeyLevelScalingRightCurve = (v & 0x0C) >> 2
+	} else {
+		if err = binary.Read(reader, binary.LittleEndian, &osc.KeyLevelScalingLeftCurve); err != nil {
+			return
+		}
 
-	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
-		return
-	}
-	osc.OscDetune = (v & 0x78) >> 3
-	osc.KeyRateScaling = v & 0x07
-
-	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
-		return
-	}
-	osc.AmpModSensitivity = v & 0x03
-	osc.KeyVelocitySensitivity = (v & 0x1C) >> 3
-
-	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //&osc.OperatorOutputLevel
-		return
+		if err = binary.Read(reader, binary.LittleEndian, &osc.KeyLevelScalingRightCurve); err != nil {
+			return
+		}
 	}
 
-	osc.OperatorOutputLevel = v & 0x7f
+	if packed {
+		if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
+			return
+		}
+		osc.OscDetune = (v & 0x78) >> 3
+		osc.KeyRateScaling = v & 0x07
 
-	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
-		return
-	}
-	osc.OscMode = (v & 0x01) != 0
-	osc.OscFreqCoarse = int8((v & 0x7E) >> 1)
+		if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
+			return
+		}
+		osc.AmpModSensitivity = v & 0x03
+		osc.KeyVelocitySensitivity = (v & 0x1C) >> 3
 
-	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //&osc.OscFreqFine
-		return
+		if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //&osc.OperatorOutputLevel
+			return
+		}
+
+		if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
+			return
+		}
+		osc.OscMode = (v & 0x01) != 0
+		osc.OscFreqCoarse = int8((v & 0x7E) >> 1)
+
+		if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //&osc.OscFreqFine
+			return
+		}
+	} else {
+		// Groan - in the single voice "unpacked" case, it's not just a
+		// matter of not packing multiple things into same byte.   Values are
+		// also in a different order...
+		if err = binary.Read(reader, binary.LittleEndian, &osc.KeyRateScaling); err != nil {
+			return
+		}
+		if err = binary.Read(reader, binary.LittleEndian, &osc.AmpModSensitivity); err != nil {
+			return
+		}
+		if err = binary.Read(reader, binary.LittleEndian, &osc.KeyVelocitySensitivity); err != nil {
+			return
+		}
+		if err = binary.Read(reader, binary.LittleEndian, &osc.OperatorOutputLevel); err != nil {
+			return
+		}
+		if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
+			return
+		}
+		osc.OscMode = (v & 0x01) != 0
+		if err = binary.Read(reader, binary.LittleEndian, &osc.OscFreqCoarse); err != nil {
+			return
+		}
+		if err = binary.Read(reader, binary.LittleEndian, &osc.OscFreqFine); err != nil {
+			return
+		}
+		if err = binary.Read(reader, binary.LittleEndian, &osc.OscDetune); err != nil {
+			return
+		}
 	}
-	osc.OscFreqFine = v & 0x7f
+
+	// mask off invalid values - common to both packed and unpacked
+	osc.KeyLevelScalingBreakPoint &= 0x7f
+	osc.KeyLevelScalingLeftDepth &= 0x7f
+	osc.KeyLevelScalingRightDepth &= 0x7f
+	osc.KeyLevelScalingLeftCurve &= 0x03
+	osc.KeyLevelScalingRightCurve &= 0x03
+	osc.KeyRateScaling &= 0x07
+	osc.AmpModSensitivity &= 0x03
+	osc.KeyVelocitySensitivity &= 0x07
+	osc.OperatorOutputLevel &= 0x7f
+	osc.OscFreqCoarse &= 0x1f
+	osc.OscFreqFine &= 0x7f
+	osc.OscDetune &= 0x0f
 
 	return
 }
 
-func readDx7Voice(reader *bytes.Reader) (voice Dx7Voice, err error) {
+func readDx7Voice(reader *bytes.Reader, packed bool) (voice Dx7Voice, err error) {
 	var v byte
 	for i := 0; i < 6; i++ {
 		var osc Dx7Osc
-		if osc, err = readDx7Osc(reader); err != nil {
+		if osc, err = readDx7Osc(reader, packed); err != nil {
 			return
 		}
 		voice.Osc[i] = osc
@@ -144,7 +193,7 @@ func readDx7Voice(reader *bytes.Reader) (voice Dx7Voice, err error) {
 		return
 	}
 	for a := 0; a < 4; a++ {
-		voice.PitchEgRate[a] = voice.PitchEgRate[a] & 0x7f
+		voice.PitchEgRate[a] &= 0x7f
 	}
 
 	if err = binary.Read(reader, binary.LittleEndian, &voice.PitchEgLevel); err != nil {
@@ -152,53 +201,79 @@ func readDx7Voice(reader *bytes.Reader) (voice Dx7Voice, err error) {
 	}
 	for a := 0; a < 4; a++ {
 
-		voice.PitchEgLevel[a] = voice.PitchEgLevel[a] & 0x7f
+		voice.PitchEgLevel[a] &= 0x7f
 	}
 
-	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
+	if err = binary.Read(reader, binary.LittleEndian, &voice.Algorithm); err != nil {
 		return
 	}
 	// some files have bogus values for Algorithm.  Seems effective to just mask off
 	// the upper order bits.  Do that rather than reject them (Dexed does something similar).
-	voice.Algorithm = v & 0x1f
+	voice.Algorithm &= 0x1f
 
-	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
+	if packed {
+		if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
+			return
+		}
+		voice.OscSync = (v & 0x08) != 0
+		voice.Feedback = v & 0x07
+	} else {
+		if err = binary.Read(reader, binary.LittleEndian, &voice.Feedback); err != nil {
+			return
+		}
+		voice.Feedback &= 0x07
+		if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
+			return
+		}
+		voice.OscSync = (v & 0x08) != 0
+	}
+
+	if err = binary.Read(reader, binary.LittleEndian, &voice.LfoSpeed); err != nil { //voice.LfoSpeed
 		return
 	}
-	voice.OscSync = (v & 0x08) != 0
-	voice.Feedback = v & 0x07
+	voice.LfoSpeed &= 0x7f
 
-	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //voice.LfoSpeed
+	if err = binary.Read(reader, binary.LittleEndian, &voice.LfoDelay); err != nil { //voice.LfoDelay
 		return
 	}
-	voice.LfoSpeed = v & 0x7f
+	voice.LfoDelay &= 0x7f
 
-	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //voice.LfoDelay
+	if err = binary.Read(reader, binary.LittleEndian, &voice.LfoPitchModDepth); err != nil { //voice.LfoPitchModDepth
 		return
 	}
-	voice.LfoDelay = v & 0x7f
+	voice.LfoPitchModDepth &= 0x7f
 
-	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //voice.LfoPitchModDepth
+	if err = binary.Read(reader, binary.LittleEndian, &voice.LfoAmpModDepth); err != nil { //voice.LfoAmpModDepth
 		return
 	}
-	voice.LfoPitchModDepth = v & 0x7f
+	voice.LfoAmpModDepth &= 0x7f
 
-	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //voice.LfoAmpModDepth
+	if packed {
+		if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
+			return
+		}
+		voice.LfoSync = (v & 0x01) != 0
+		voice.Waveform = (v & 0x1E) >> 1
+		voice.PitchModSensitivity = (v & 0xC0) >> 6
+	} else {
+		if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
+			return
+		}
+		voice.LfoSync = (v & 0x01) != 0
+		if err = binary.Read(reader, binary.LittleEndian, &voice.Waveform); err != nil {
+			return
+		}
+		voice.Waveform &= 0x05
+		if err = binary.Read(reader, binary.LittleEndian, &voice.PitchModSensitivity); err != nil {
+			return
+		}
+		voice.PitchModSensitivity &= 0x07
+	}
+
+	if err = binary.Read(reader, binary.LittleEndian, &voice.Transpose); err != nil { //voice.Transpose
 		return
 	}
-	voice.LfoAmpModDepth = v & 0x7f
-
-	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil {
-		return
-	}
-	voice.LfoSync = (v & 0x01) != 0
-	voice.Waveform = (v & 0x1E) >> 1
-	voice.PitchModSensitivity = (v & 0xC0) >> 6
-
-	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //voice.Transpose
-		return
-	}
-	voice.Transpose = v & 0x7f
+	voice.Transpose &= 0x7f
 
 	var rawName [10]byte
 	if err = binary.Read(reader, binary.LittleEndian, &rawName); err != nil {
@@ -273,6 +348,7 @@ func ReadDx7Sysex(pathname string) (sysex Dx7Sysex, err error) {
 
 	headerType := checkHeader(header)
 
+	var packed bool
 	var voiceCount int
 	switch headerType {
 	case noHeader:
@@ -280,15 +356,19 @@ func ReadDx7Sysex(pathname string) (sysex Dx7Sysex, err error) {
 			err = errors.Wrapf(err, "Invalid Sysex header but failed to rewind to try to parse without header")
 			return
 		}
+		voiceCount = 32
+		packed = true
 	case sysex1Voice:
 		voiceCount = 1
+		packed = false
 	case sysex32Voice:
 		voiceCount = 32
+		packed = true
 	}
 
 	for i := 0; i < voiceCount; i++ {
 		var v Dx7Voice
-		if v, err = readDx7Voice(reader); err != nil {
+		if v, err = readDx7Voice(reader, packed); err != nil {
 			err = errors.Wrapf(err, "Error reading voice[%d]", i)
 			return
 		}
