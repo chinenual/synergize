@@ -138,11 +138,9 @@ func makeCrtFromSysexVces(sysexPath string) (err error) {
 				}
 				vces = newVces
 			}
-
 		}
-
 	}
-	if len(vces) > 1 {
+	if len(vces) > 0 {
 		// write the last set of vce's that fit:
 		if err = data.WriteCrtFileFromVCEArray(crtPath, vces); err != nil {
 			return
