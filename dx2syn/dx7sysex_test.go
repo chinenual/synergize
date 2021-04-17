@@ -72,7 +72,7 @@ func diffSysex(sysex Dx7Sysex, expected Dx7Sysex) bool {
 	return result
 }
 
-func Test32(t *testing.T) {
+func TestParseSysex32Voice(t *testing.T) {
 	var err error
 	var sysex Dx7Sysex
 	if sysex, err = ReadDx7Sysex("testfiles/DX7IIFDVoice32.SYX"); err != nil {
@@ -94,7 +94,7 @@ func Test32(t *testing.T) {
 	}
 }
 
-func Test1(t *testing.T) {
+func TestParseSysex1Voice(t *testing.T) {
 	var err error
 	var sysex Dx7Sysex
 	if sysex, err = ReadDx7Sysex("testfiles/001.SYX"); err != nil {
