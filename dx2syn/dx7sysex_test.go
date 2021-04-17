@@ -95,5 +95,23 @@ func Test32(t *testing.T) {
 }
 
 func Test1(t *testing.T) {
-
+	var err error
+	var sysex Dx7Sysex
+	if sysex, err = ReadDx7Sysex("testfiles/001.SYX"); err != nil {
+		t.Errorf("Failed to parse SYX: %v\n", err)
+		return
+	}
+	var b []byte
+	if b, err = ioutil.ReadFile("testfiles/001.json"); err != nil {
+		t.Errorf("Failed to read json: %v\n", err)
+		return
+	}
+	var expected Dx7Sysex
+	if err = json.Unmarshal(b, &expected); err != nil {
+		t.Errorf("Failed to parse json: %v\n", err)
+		return
+	}
+	if !diffSysex(sysex, expected) {
+		t.Fatalf("Sysex is different\n")
+	}
 }

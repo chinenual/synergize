@@ -1,0 +1,190 @@
+{"Voices": [{
+	"Osc": [
+		{
+			"EgRate": [
+				99,
+				99,
+				99,
+				99
+			],
+			"EgLevel": [
+				99,
+				99,
+				99,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 87,
+			"OscMode": false,
+			"OscFreqCoarse": 11,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				39,
+				99,
+				99
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 7,
+			"OperatorOutputLevel": 65,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				39,
+				99,
+				99
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 10,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 5,
+			"OperatorOutputLevel": 88,
+			"OscMode": false,
+			"OscFreqCoarse": 8,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				32,
+				99,
+				87
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 17,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 71,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				35,
+				99,
+				87
+			],
+			"EgLevel": [
+				99,
+				99,
+				99,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 17,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 92,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				67,
+				30,
+				87
+			],
+			"EgLevel": [
+				99,
+				95,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 4,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 15,
+	"Feedback": 5,
+	"OscSync": false,
+	"LfoSpeed": 35,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 0,
+	"LfoSync": true,
+	"Waveform": 0,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "GET FUNKY "
+}]}
