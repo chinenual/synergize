@@ -1,0 +1,6050 @@
+{"Voices": [{
+	"Osc": [
+		{
+			"EgRate": [
+				84,
+				36,
+				10,
+				16
+			],
+			"EgLevel": [
+				99,
+				99,
+				95,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 52,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 3,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 56,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 0,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				84,
+				36,
+				10,
+				12
+			],
+			"EgLevel": [
+				99,
+				99,
+				95,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 52,
+			"KeyLevelScalingLeftDepth": 18,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 73,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 1
+		},
+		{
+			"EgRate": [
+				84,
+				36,
+				10,
+				0
+			],
+			"EgLevel": [
+				99,
+				99,
+				99,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 38,
+			"KeyLevelScalingLeftDepth": 6,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 80,
+			"OscMode": true,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 39,
+			"OscDetune": 4
+		},
+		{
+			"EgRate": [
+				38,
+				7,
+				7,
+				41
+			],
+			"EgLevel": [
+				93,
+				92,
+				92,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 36,
+			"KeyLevelScalingLeftDepth": 31,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 13
+		},
+		{
+			"EgRate": [
+				44,
+				36,
+				10,
+				22
+			],
+			"EgLevel": [
+				99,
+				99,
+				99,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 34,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 76,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				45,
+				35,
+				10,
+				48
+			],
+			"EgLevel": [
+				99,
+				99,
+				99,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 36,
+			"KeyLevelScalingLeftDepth": 31,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 3,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 97,
+			"OscMode": true,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 26,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		84,
+		95,
+		95,
+		60
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 14,
+	"Feedback": 7,
+	"OscSync": false,
+	"LfoSpeed": 30,
+	"LfoDelay": 15,
+	"LfoPitchModDepth": 18,
+	"LfoAmpModDepth": 0,
+	"LfoSync": false,
+	"Waveform": 12,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "Warm Stg A"
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				65,
+				44,
+				22,
+				50
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 1,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 71,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 6,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				58,
+				47,
+				22,
+				50
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 8,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 78,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 10,
+			"OscDetune": 6
+		},
+		{
+			"EgRate": [
+				57,
+				25,
+				22,
+				50
+			],
+			"EgLevel": [
+				99,
+				80,
+				80,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 80,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				53,
+				59,
+				19,
+				71
+			],
+			"EgLevel": [
+				99,
+				90,
+				90,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				50,
+				34,
+				15,
+				60
+			],
+			"EgLevel": [
+				85,
+				86,
+				86,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 2,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 92,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				54,
+				35,
+				19,
+				60
+			],
+			"EgLevel": [
+				99,
+				99,
+				99,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 95,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		99,
+		95,
+		95,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		48,
+		50,
+		50
+	],
+	"Algorithm": 1,
+	"Feedback": 7,
+	"OscSync": true,
+	"LfoSpeed": 31,
+	"LfoDelay": 10,
+	"LfoPitchModDepth": 6,
+	"LfoAmpModDepth": 0,
+	"LfoSync": false,
+	"Waveform": 0,
+	"PitchModSensitivity": 0,
+	"Transpose": 12,
+	"VoiceName": "MellowHorn"
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				99,
+				57,
+				99,
+				99
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				99
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 53,
+			"KeyLevelScalingRightDepth": 20,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 86,
+			"OscMode": false,
+			"OscFreqCoarse": 16,
+			"OscFreqFine": 1,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				81,
+				87,
+				22,
+				99
+			],
+			"EgLevel": [
+				99,
+				92,
+				0,
+				99
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 15,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 92,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				81,
+				87,
+				32,
+				99
+			],
+			"EgLevel": [
+				99,
+				92,
+				0,
+				99
+			],
+			"KeyLevelScalingBreakPoint": 26,
+			"KeyLevelScalingLeftDepth": 60,
+			"KeyLevelScalingRightDepth": 14,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 86,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				78,
+				87,
+				22,
+				53
+			],
+			"EgLevel": [
+				59,
+				92,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 34,
+			"KeyLevelScalingLeftDepth": 9,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 6,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				91,
+				25,
+				39,
+				60
+			],
+			"EgLevel": [
+				99,
+				86,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 32,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 2,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				74,
+				85,
+				27,
+				70
+			],
+			"EgLevel": [
+				99,
+				95,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 7,
+	"Feedback": 7,
+	"OscSync": false,
+	"LfoSpeed": 35,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 5,
+	"LfoAmpModDepth": 0,
+	"LfoSync": false,
+	"Waveform": 0,
+	"PitchModSensitivity": 0,
+	"Transpose": 12,
+	"VoiceName": "PickGuitar"
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				99,
+				27,
+				60,
+				53
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 54,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 75,
+			"OscMode": false,
+			"OscFreqCoarse": 2,
+			"OscFreqFine": 0,
+			"OscDetune": 9
+		},
+		{
+			"EgRate": [
+				99,
+				13,
+				60,
+				53
+			],
+			"EgLevel": [
+				98,
+				82,
+				85,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 54,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 60,
+			"OscMode": false,
+			"OscFreqCoarse": 5,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				71,
+				25,
+				20,
+				53
+			],
+			"EgLevel": [
+				98,
+				47,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 54,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 89,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				75,
+				50,
+				25,
+				54
+			],
+			"EgLevel": [
+				99,
+				92,
+				84,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": true,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				70,
+				49,
+				25,
+				33
+			],
+			"EgLevel": [
+				98,
+				93,
+				55,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 51,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 3,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 90,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				70,
+				53,
+				14,
+				54
+			],
+			"EgLevel": [
+				98,
+				99,
+				89,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 1,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": true,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 4,
+			"OscDetune": 0
+		}
+	],
+	"PitchEgRate": [
+		99,
+		45,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		45,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 14,
+	"Feedback": 7,
+	"OscSync": true,
+	"LfoSpeed": 45,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 0,
+	"LfoSync": false,
+	"Waveform": 4,
+	"PitchModSensitivity": 1,
+	"Transpose": 12,
+	"VoiceName": "Analog-X  "
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				95,
+				29,
+				20,
+				50
+			],
+			"EgLevel": [
+				99,
+				95,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 41,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 16,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 85,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 11
+		},
+		{
+			"EgRate": [
+				95,
+				20,
+				20,
+				50
+			],
+			"EgLevel": [
+				99,
+				95,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 95,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 14
+		},
+		{
+			"EgRate": [
+				95,
+				29,
+				20,
+				50
+			],
+			"EgLevel": [
+				99,
+				95,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 89,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				95,
+				20,
+				20,
+				50
+			],
+			"EgLevel": [
+				99,
+				95,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 95,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				95,
+				45,
+				35,
+				78
+			],
+			"EgLevel": [
+				99,
+				75,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 80,
+			"OscMode": false,
+			"OscFreqCoarse": 12,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				96,
+				25,
+				20,
+				67
+			],
+			"EgLevel": [
+				99,
+				75,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 95,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 0
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 4,
+	"Feedback": 4,
+	"OscSync": false,
+	"LfoSpeed": 9,
+	"LfoDelay": 33,
+	"LfoPitchModDepth": 4,
+	"LfoAmpModDepth": 0,
+	"LfoSync": false,
+	"Waveform": 12,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "FullTines "
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				99,
+				99,
+				62,
+				99
+			],
+			"EgLevel": [
+				99,
+				99,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 6,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				99,
+				38,
+				99
+			],
+			"EgLevel": [
+				99,
+				99,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 5,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 70,
+			"OscMode": false,
+			"OscFreqCoarse": 9,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				59,
+				99,
+				41,
+				71
+			],
+			"EgLevel": [
+				99,
+				99,
+				46,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 5,
+			"AmpModSensitivity": 3,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 88,
+			"OscMode": false,
+			"OscFreqCoarse": 9,
+			"OscFreqFine": 0,
+			"OscDetune": 6
+		},
+		{
+			"EgRate": [
+				59,
+				99,
+				99,
+				71
+			],
+			"EgLevel": [
+				99,
+				99,
+				99,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 5,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 76,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				59,
+				99,
+				22,
+				71
+			],
+			"EgLevel": [
+				0,
+				97,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 5,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 72,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 4
+		},
+		{
+			"EgRate": [
+				99,
+				64,
+				30,
+				71
+			],
+			"EgLevel": [
+				99,
+				88,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 1
+		}
+	],
+	"PitchEgRate": [
+		50,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		46
+	],
+	"Algorithm": 16,
+	"Feedback": 7,
+	"OscSync": true,
+	"LfoSpeed": 30,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 0,
+	"LfoSync": false,
+	"Waveform": 0,
+	"PitchModSensitivity": 0,
+	"Transpose": 12,
+	"VoiceName": "SuperBass "
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				14,
+				11,
+				17,
+				21
+			],
+			"EgLevel": [
+				72,
+				92,
+				97,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 1,
+			"AmpModSensitivity": 2,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 75,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 0,
+			"OscDetune": 5
+		},
+		{
+			"EgRate": [
+				15,
+				22,
+				22,
+				99
+			],
+			"EgLevel": [
+				99,
+				93,
+				97,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 46,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 1,
+			"AmpModSensitivity": 3,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 9
+		},
+		{
+			"EgRate": [
+				35,
+				28,
+				14,
+				62
+			],
+			"EgLevel": [
+				80,
+				94,
+				90,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 1,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 99,
+			"OscMode": true,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				78,
+				76,
+				25,
+				36
+			],
+			"EgLevel": [
+				21,
+				43,
+				91,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 46,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 1,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 77,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				55,
+				17,
+				18,
+				75
+			],
+			"EgLevel": [
+				50,
+				82,
+				86,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 1,
+			"AmpModSensitivity": 3,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				44,
+				33,
+				38,
+				78
+			],
+			"EgLevel": [
+				99,
+				96,
+				80,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 1,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 94,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		3
+	],
+	"Algorithm": 10,
+	"Feedback": 5,
+	"OscSync": false,
+	"LfoSpeed": 11,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 0,
+	"LfoSync": false,
+	"Waveform": 0,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "FMilters  "
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				99,
+				82,
+				75,
+				0
+			],
+			"EgLevel": [
+				99,
+				87,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 41,
+			"KeyLevelScalingLeftDepth": 30,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 99,
+			"OscMode": true,
+			"OscFreqCoarse": 31,
+			"OscFreqFine": 41,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				64,
+				0,
+				8
+			],
+			"EgLevel": [
+				85,
+				48,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 37,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 25,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				90,
+				67,
+				21,
+				82
+			],
+			"EgLevel": [
+				99,
+				85,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 18,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 2,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 1,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 78,
+			"OscMode": false,
+			"OscFreqCoarse": 7,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				30,
+				34,
+				46
+			],
+			"EgLevel": [
+				99,
+				80,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				75,
+				69,
+				82,
+				11
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 99,
+			"OscMode": true,
+			"OscFreqCoarse": 24,
+			"OscFreqFine": 17,
+			"OscDetune": 5
+		},
+		{
+			"EgRate": [
+				99,
+				33,
+				14,
+				32
+			],
+			"EgLevel": [
+				99,
+				80,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 43,
+			"KeyLevelScalingLeftDepth": 5,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 85,
+			"OscMode": true,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		94,
+		67,
+		95,
+		60
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 15,
+	"Feedback": 7,
+	"OscSync": true,
+	"LfoSpeed": 30,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 0,
+	"LfoSync": true,
+	"Waveform": 8,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "Pluk      "
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				67,
+				9,
+				11,
+				42
+			],
+			"EgLevel": [
+				99,
+				92,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 2,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 78,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 1,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 75,
+			"OscMode": false,
+			"OscFreqCoarse": 7,
+			"OscFreqFine": 1,
+			"OscDetune": 1
+		},
+		{
+			"EgRate": [
+				64,
+				10,
+				13,
+				42
+			],
+			"EgLevel": [
+				99,
+				88,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 34,
+			"KeyLevelScalingLeftDepth": 8,
+			"KeyLevelScalingRightDepth": 9,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 81,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 9
+		},
+		{
+			"EgRate": [
+				78,
+				73,
+				51,
+				55
+			],
+			"EgLevel": [
+				99,
+				58,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 51,
+			"KeyLevelScalingLeftDepth": 12,
+			"KeyLevelScalingRightDepth": 11,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 3,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 92,
+			"OscMode": true,
+			"OscFreqCoarse": 6,
+			"OscFreqFine": 17,
+			"OscDetune": 6
+		},
+		{
+			"EgRate": [
+				64,
+				21,
+				7,
+				44
+			],
+			"EgLevel": [
+				99,
+				79,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 30,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 6,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 8
+		},
+		{
+			"EgRate": [
+				63,
+				8,
+				0,
+				39
+			],
+			"EgLevel": [
+				99,
+				91,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 32,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 9,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 5,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 76,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 1,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				64,
+				21,
+				7,
+				44
+			],
+			"EgLevel": [
+				99,
+				79,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 30,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 5,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 5
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 6,
+	"Feedback": 5,
+	"OscSync": true,
+	"LfoSpeed": 7,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 0,
+	"LfoSync": false,
+	"Waveform": 4,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "EbonyIvory"
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				53,
+				64,
+				32,
+				19
+			],
+			"EgLevel": [
+				70,
+				89,
+				90,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 6,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 6,
+			"AmpModSensitivity": 3,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 74,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 2,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				90,
+				88,
+				35,
+				31
+			],
+			"EgLevel": [
+				97,
+				92,
+				84,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 70,
+			"KeyLevelScalingLeftDepth": 9,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 79,
+			"OscMode": true,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 90,
+			"OscDetune": 6
+		},
+		{
+			"EgRate": [
+				96,
+				50,
+				32,
+				25
+			],
+			"EgLevel": [
+				91,
+				94,
+				95,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 1,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 74,
+			"OscMode": true,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 42,
+			"OscDetune": 10
+		},
+		{
+			"EgRate": [
+				38,
+				45,
+				35,
+				44
+			],
+			"EgLevel": [
+				94,
+				97,
+				99,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 68,
+			"KeyLevelScalingLeftDepth": 12,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 1,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 72,
+			"OscMode": true,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 74,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				98,
+				60,
+				67,
+				30
+			],
+			"EgLevel": [
+				82,
+				85,
+				90,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 29,
+			"KeyLevelScalingLeftDepth": 2,
+			"KeyLevelScalingRightDepth": 12,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 1,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 87,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				30,
+				25,
+				25,
+				35
+			],
+			"EgLevel": [
+				84,
+				89,
+				99,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 91,
+			"OscMode": true,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 55,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		98,
+		99,
+		98,
+		98
+	],
+	"PitchEgLevel": [
+		10,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 15,
+	"Feedback": 7,
+	"OscSync": false,
+	"LfoSpeed": 44,
+	"LfoDelay": 20,
+	"LfoPitchModDepth": 18,
+	"LfoAmpModDepth": 0,
+	"LfoSync": false,
+	"Waveform": 12,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "Whisper  A"
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				99,
+				65,
+				0,
+				24
+			],
+			"EgLevel": [
+				94,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 60,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 1,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 6,
+			"OscFreqFine": 17,
+			"OscDetune": 8
+		},
+		{
+			"EgRate": [
+				95,
+				35,
+				23,
+				28
+			],
+			"EgLevel": [
+				99,
+				70,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 52,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 6,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 85,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 0,
+			"OscDetune": 11
+		},
+		{
+			"EgRate": [
+				74,
+				99,
+				23,
+				39
+			],
+			"EgLevel": [
+				81,
+				99,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 3
+		},
+		{
+			"EgRate": [
+				95,
+				50,
+				50,
+				49
+			],
+			"EgLevel": [
+				99,
+				99,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 58,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 37,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 85,
+			"OscMode": false,
+			"OscFreqCoarse": 8,
+			"OscFreqFine": 0,
+			"OscDetune": 1
+		},
+		{
+			"EgRate": [
+				95,
+				77,
+				32,
+				12
+			],
+			"EgLevel": [
+				99,
+				91,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 52,
+			"KeyLevelScalingLeftDepth": 8,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 85,
+			"OscMode": false,
+			"OscFreqCoarse": 2,
+			"OscFreqFine": 0,
+			"OscDetune": 5
+		},
+		{
+			"EgRate": [
+				34,
+				95,
+				29,
+				37
+			],
+			"EgLevel": [
+				65,
+				99,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 12
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		48,
+		50,
+		50
+	],
+	"Algorithm": 2,
+	"Feedback": 6,
+	"OscSync": true,
+	"LfoSpeed": 25,
+	"LfoDelay": 33,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 0,
+	"LfoSync": true,
+	"Waveform": 4,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "HarpStrum "
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				99,
+				99,
+				50,
+				99
+			],
+			"EgLevel": [
+				99,
+				90,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 99,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 95,
+			"OscMode": false,
+			"OscFreqCoarse": 10,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				90,
+				50,
+				99
+			],
+			"EgLevel": [
+				99,
+				90,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 99,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 5,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				99,
+				99,
+				99
+			],
+			"EgLevel": [
+				99,
+				95,
+				95,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 20,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 1,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 95,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				99,
+				99,
+				99,
+				99
+			],
+			"EgLevel": [
+				99,
+				95,
+				95,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				99,
+				99,
+				99,
+				99
+			],
+			"EgLevel": [
+				99,
+				95,
+				95,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 20,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 1,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 90,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				99,
+				99,
+				99,
+				99
+			],
+			"EgLevel": [
+				99,
+				95,
+				95,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 14
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 5,
+	"Feedback": 5,
+	"OscSync": true,
+	"LfoSpeed": 9,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 7,
+	"LfoAmpModDepth": 0,
+	"LfoSync": true,
+	"Waveform": 8,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "TouchOrgan"
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				99,
+				78,
+				48,
+				98
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 46,
+			"KeyLevelScalingLeftDepth": 40,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 1,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 95,
+			"OscMode": true,
+			"OscFreqCoarse": 7,
+			"OscFreqFine": 88,
+			"OscDetune": 12
+		},
+		{
+			"EgRate": [
+				89,
+				71,
+				55,
+				88
+			],
+			"EgLevel": [
+				99,
+				60,
+				30,
+				21
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 5,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 95,
+			"OscMode": false,
+			"OscFreqCoarse": 5,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				70,
+				60,
+				51,
+				50
+			],
+			"EgLevel": [
+				99,
+				85,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 78,
+			"OscMode": false,
+			"OscFreqCoarse": 5,
+			"OscFreqFine": 1,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				80,
+				35,
+				30,
+				35
+			],
+			"EgLevel": [
+				99,
+				85,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				80,
+				70,
+				62,
+				50
+			],
+			"EgLevel": [
+				31,
+				86,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": true,
+			"OscFreqCoarse": 2,
+			"OscFreqFine": 29,
+			"OscDetune": 14
+		},
+		{
+			"EgRate": [
+				90,
+				35,
+				40,
+				36
+			],
+			"EgLevel": [
+				99,
+				85,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 2
+		}
+	],
+	"PitchEgRate": [
+		54,
+		21,
+		98,
+		2
+	],
+	"PitchEgLevel": [
+		40,
+		50,
+		50,
+		51
+	],
+	"Algorithm": 6,
+	"Feedback": 7,
+	"OscSync": false,
+	"LfoSpeed": 35,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 0,
+	"LfoSync": true,
+	"Waveform": 0,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "Maribumba "
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				90,
+				44,
+				22,
+				50
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 1,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 52,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 3,
+			"OscDetune": 14
+		},
+		{
+			"EgRate": [
+				80,
+				47,
+				22,
+				50
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 10,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 85,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 4,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				55,
+				25,
+				22,
+				50
+			],
+			"EgLevel": [
+				99,
+				80,
+				80,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 65,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				48,
+				37,
+				15,
+				65
+			],
+			"EgLevel": [
+				88,
+				93,
+				92,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 1,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 1,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 89,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				48,
+				55,
+				15,
+				60
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 10,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 65,
+			"OscMode": false,
+			"OscFreqCoarse": 2,
+			"OscFreqFine": 6,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				61,
+				25,
+				19,
+				68
+			],
+			"EgLevel": [
+				99,
+				90,
+				90,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		94,
+		69,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		49,
+		85,
+		50,
+		50
+	],
+	"Algorithm": 17,
+	"Feedback": 7,
+	"OscSync": false,
+	"LfoSpeed": 29,
+	"LfoDelay": 50,
+	"LfoPitchModDepth": 5,
+	"LfoAmpModDepth": 0,
+	"LfoSync": false,
+	"Waveform": 0,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "Trumpet  A"
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				99,
+				90,
+				34,
+				44
+			],
+			"EgLevel": [
+				99,
+				78,
+				11,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 54,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 20,
+			"OscFreqFine": 0,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				99,
+				28,
+				37,
+				41
+			],
+			"EgLevel": [
+				99,
+				85,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 94,
+			"OscMode": false,
+			"OscFreqCoarse": 4,
+			"OscFreqFine": 0,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				99,
+				92,
+				17,
+				44
+			],
+			"EgLevel": [
+				99,
+				78,
+				11,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 54,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 0,
+			"OscDetune": 1
+		},
+		{
+			"EgRate": [
+				99,
+				26,
+				23,
+				41
+			],
+			"EgLevel": [
+				99,
+				85,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				90,
+				34,
+				44
+			],
+			"EgLevel": [
+				99,
+				78,
+				11,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 54,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 20,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				28,
+				37,
+				41
+			],
+			"EgLevel": [
+				99,
+				85,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 94,
+			"OscMode": false,
+			"OscFreqCoarse": 4,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 4,
+	"Feedback": 7,
+	"OscSync": true,
+	"LfoSpeed": 35,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 0,
+	"LfoSync": false,
+	"Waveform": 4,
+	"PitchModSensitivity": 0,
+	"Transpose": 12,
+	"VoiceName": "PianoBells"
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				60,
+				67,
+				0,
+				51
+			],
+			"EgLevel": [
+				99,
+				70,
+				70,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 70,
+			"OscMode": false,
+			"OscFreqCoarse": 4,
+			"OscFreqFine": 6,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				66,
+				99,
+				41
+			],
+			"EgLevel": [
+				99,
+				80,
+				80,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 80,
+			"OscMode": false,
+			"OscFreqCoarse": 2,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				95,
+				99,
+				64
+			],
+			"EgLevel": [
+				99,
+				90,
+				90,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 70,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				54,
+				59,
+				99,
+				64
+			],
+			"EgLevel": [
+				99,
+				90,
+				90,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				42,
+				99,
+				99
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				67
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 49,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				50,
+				69,
+				99,
+				54
+			],
+			"EgLevel": [
+				79,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 94,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		50,
+		12,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		51,
+		50,
+		50,
+		49
+	],
+	"Algorithm": 11,
+	"Feedback": 7,
+	"OscSync": true,
+	"LfoSpeed": 30,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 0,
+	"LfoSync": false,
+	"Waveform": 12,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "SongFlute "
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				40,
+				20,
+				99,
+				50
+			],
+			"EgLevel": [
+				80,
+				99,
+				99,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 8
+		},
+		{
+			"EgRate": [
+				40,
+				20,
+				99,
+				50
+			],
+			"EgLevel": [
+				80,
+				99,
+				99,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 9
+		},
+		{
+			"EgRate": [
+				50,
+				99,
+				99,
+				60
+			],
+			"EgLevel": [
+				99,
+				99,
+				99,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 3,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 70,
+			"OscMode": true,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 33,
+			"OscDetune": 8
+		},
+		{
+			"EgRate": [
+				60,
+				99,
+				99,
+				60
+			],
+			"EgLevel": [
+				99,
+				99,
+				99,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": true,
+			"OscFreqCoarse": 8,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				40,
+				46,
+				7,
+				60
+			],
+			"EgLevel": [
+				70,
+				99,
+				96,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 3,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 86,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 8
+		},
+		{
+			"EgRate": [
+				31,
+				30,
+				99,
+				60
+			],
+			"EgLevel": [
+				60,
+				99,
+				99,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": true,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 36,
+			"OscDetune": 6
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 14,
+	"Feedback": 6,
+	"OscSync": true,
+	"LfoSpeed": 16,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 0,
+	"LfoSync": false,
+	"Waveform": 12,
+	"PitchModSensitivity": 0,
+	"Transpose": 12,
+	"VoiceName": "Phasers   "
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				99,
+				99,
+				99,
+				99
+			],
+			"EgLevel": [
+				99,
+				99,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 96,
+			"OscMode": false,
+			"OscFreqCoarse": 8,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				46,
+				99,
+				55
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 49,
+			"KeyLevelScalingLeftDepth": 14,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 60,
+			"OscMode": false,
+			"OscFreqCoarse": 31,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				73,
+				99,
+				49
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 4,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				48,
+				99,
+				44
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 48,
+			"KeyLevelScalingLeftDepth": 98,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 2,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 73,
+			"OscMode": false,
+			"OscFreqCoarse": 14,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				31,
+				99,
+				44
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 4,
+			"OscFreqFine": 0,
+			"OscDetune": 14
+		},
+		{
+			"EgRate": [
+				99,
+				25,
+				99,
+				42
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 26,
+	"Feedback": 0,
+	"OscSync": true,
+	"LfoSpeed": 21,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 4,
+	"LfoAmpModDepth": 99,
+	"LfoSync": true,
+	"Waveform": 12,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "VibraPhone"
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				70,
+				27,
+				16,
+				31
+			],
+			"EgLevel": [
+				90,
+				99,
+				94,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 17,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 2,
+			"OscFreqFine": 0,
+			"OscDetune": 1
+		},
+		{
+			"EgRate": [
+				70,
+				27,
+				16,
+				40
+			],
+			"EgLevel": [
+				90,
+				99,
+				95,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 3,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 65,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 14
+		},
+		{
+			"EgRate": [
+				60,
+				27,
+				16,
+				39
+			],
+			"EgLevel": [
+				90,
+				99,
+				94,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 3,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 82,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 1
+		},
+		{
+			"EgRate": [
+				64,
+				40,
+				23,
+				50
+			],
+			"EgLevel": [
+				99,
+				97,
+				94,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 95,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				50,
+				26,
+				9,
+				36
+			],
+			"EgLevel": [
+				94,
+				99,
+				94,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 24,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 5,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 3,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 87,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 14
+		},
+		{
+			"EgRate": [
+				65,
+				79,
+				69,
+				50
+			],
+			"EgLevel": [
+				99,
+				99,
+				99,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 95,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 13
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 8,
+	"Feedback": 6,
+	"OscSync": true,
+	"LfoSpeed": 27,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 5,
+	"LfoAmpModDepth": 0,
+	"LfoSync": true,
+	"Waveform": 8,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "Ensemble  "
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				99,
+				10,
+				0,
+				0
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 58,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 3,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 92,
+			"OscMode": true,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 49,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				50,
+				25,
+				0,
+				40
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 56,
+			"KeyLevelScalingRightDepth": 40,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 2,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 75,
+			"OscMode": false,
+			"OscFreqCoarse": 5,
+			"OscFreqFine": 1,
+			"OscDetune": 6
+		},
+		{
+			"EgRate": [
+				49,
+				98,
+				20,
+				40
+			],
+			"EgLevel": [
+				90,
+				98,
+				20,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 81,
+			"KeyLevelScalingLeftDepth": 10,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 70,
+			"OscMode": false,
+			"OscFreqCoarse": 10,
+			"OscFreqFine": 1,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				50,
+				31,
+				30,
+				50
+			],
+			"EgLevel": [
+				99,
+				75,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 51,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 9,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 1,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 95,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				49,
+				98,
+				20,
+				40
+			],
+			"EgLevel": [
+				90,
+				98,
+				20,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 81,
+			"KeyLevelScalingLeftDepth": 10,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 70,
+			"OscMode": false,
+			"OscFreqCoarse": 10,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				50,
+				31,
+				30,
+				50
+			],
+			"EgLevel": [
+				99,
+				75,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 51,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 9,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 1,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 95,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 1,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 4,
+	"Feedback": 7,
+	"OscSync": true,
+	"LfoSpeed": 19,
+	"LfoDelay": 1,
+	"LfoPitchModDepth": 18,
+	"LfoAmpModDepth": 0,
+	"LfoSync": false,
+	"Waveform": 0,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "St.Elmo's "
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				99,
+				99,
+				59,
+				99
+			],
+			"EgLevel": [
+				99,
+				99,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 80,
+			"OscMode": false,
+			"OscFreqCoarse": 4,
+			"OscFreqFine": 0,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				99,
+				39,
+				43,
+				60
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				99,
+				68,
+				99
+			],
+			"EgLevel": [
+				99,
+				99,
+				77,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": true,
+			"OscFreqCoarse": 11,
+			"OscFreqFine": 51,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				25,
+				99,
+				50,
+				49
+			],
+			"EgLevel": [
+				50,
+				99,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 2,
+			"OscFreqFine": 0,
+			"OscDetune": 14
+		},
+		{
+			"EgRate": [
+				71,
+				99,
+				0,
+				91
+			],
+			"EgLevel": [
+				0,
+				99,
+				68,
+				98
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 71,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 8,
+			"OscDetune": 14
+		},
+		{
+			"EgRate": [
+				28,
+				99,
+				47,
+				55
+			],
+			"EgLevel": [
+				50,
+				99,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 0
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 4,
+	"Feedback": 7,
+	"OscSync": true,
+	"LfoSpeed": 35,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 0,
+	"LfoSync": true,
+	"Waveform": 0,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "EchoMallet"
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				85,
+				65,
+				20,
+				99
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				99
+			],
+			"KeyLevelScalingBreakPoint": 41,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 75,
+			"OscMode": false,
+			"OscFreqCoarse": 21,
+			"OscFreqFine": 3,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				94,
+				20,
+				20,
+				99
+			],
+			"EgLevel": [
+				99,
+				95,
+				0,
+				99
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 85,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				95,
+				29,
+				20,
+				50
+			],
+			"EgLevel": [
+				99,
+				95,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 8,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 80,
+			"OscMode": false,
+			"OscFreqCoarse": 7,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				95,
+				25,
+				30,
+				50
+			],
+			"EgLevel": [
+				99,
+				95,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 87,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				95,
+				29,
+				20,
+				50
+			],
+			"EgLevel": [
+				99,
+				95,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 5,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 85,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				85,
+				25,
+				25,
+				67
+			],
+			"EgLevel": [
+				99,
+				75,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": true,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 13,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 17,
+	"Feedback": 6,
+	"OscSync": false,
+	"LfoSpeed": 34,
+	"LfoDelay": 33,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 0,
+	"LfoSync": true,
+	"Waveform": 8,
+	"PitchModSensitivity": 1,
+	"Transpose": 12,
+	"VoiceName": "ClaviStuff"
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				90,
+				38,
+				0,
+				0
+			],
+			"EgLevel": [
+				99,
+				24,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 6,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 80,
+			"OscMode": false,
+			"OscFreqCoarse": 4,
+			"OscFreqFine": 1,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				99,
+				76,
+				99
+			],
+			"EgLevel": [
+				99,
+				99,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 2,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				80,
+				47,
+				85
+			],
+			"EgLevel": [
+				99,
+				64,
+				38,
+				50
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 93,
+			"OscMode": false,
+			"OscFreqCoarse": 5,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				99,
+				64,
+				35,
+				37
+			],
+			"EgLevel": [
+				90,
+				85,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				84,
+				73,
+				33,
+				46
+			],
+			"EgLevel": [
+				99,
+				85,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 5,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 87,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 23,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				84,
+				64,
+				37,
+				47
+			],
+			"EgLevel": [
+				99,
+				94,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 5,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 4,
+	"Feedback": 0,
+	"OscSync": true,
+	"LfoSpeed": 35,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 0,
+	"LfoSync": true,
+	"Waveform": 8,
+	"PitchModSensitivity": 0,
+	"Transpose": 36,
+	"VoiceName": "MultiPerc "
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				90,
+				44,
+				22,
+				50
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 1,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 52,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 3,
+			"OscDetune": 14
+		},
+		{
+			"EgRate": [
+				80,
+				47,
+				22,
+				50
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 10,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 85,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 4,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				55,
+				25,
+				22,
+				50
+			],
+			"EgLevel": [
+				99,
+				80,
+				80,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 65,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				48,
+				31,
+				15,
+				65
+			],
+			"EgLevel": [
+				99,
+				99,
+				99,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 1,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 2,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 85,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				48,
+				55,
+				15,
+				60
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 10,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 65,
+			"OscMode": false,
+			"OscFreqCoarse": 2,
+			"OscFreqFine": 6,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				61,
+				25,
+				19,
+				68
+			],
+			"EgLevel": [
+				99,
+				90,
+				90,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		95,
+		69,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		45,
+		52,
+		50,
+		50
+	],
+	"Algorithm": 17,
+	"Feedback": 6,
+	"OscSync": false,
+	"LfoSpeed": 32,
+	"LfoDelay": 50,
+	"LfoPitchModDepth": 10,
+	"LfoAmpModDepth": 0,
+	"LfoSync": false,
+	"Waveform": 8,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "Trumpet  B"
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				99,
+				38,
+				25,
+				54
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 48,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 2,
+			"KeyLevelScalingRightCurve": 2,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 26,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				95,
+				74,
+				20,
+				60
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 32,
+			"KeyLevelScalingLeftDepth": 75,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 1,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 14,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				50,
+				34,
+				13,
+				54
+			],
+			"EgLevel": [
+				99,
+				81,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 30,
+			"KeyLevelScalingLeftDepth": 99,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 2,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 90,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				53,
+				36,
+				20,
+				46
+			],
+			"EgLevel": [
+				99,
+				90,
+				90,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 30,
+			"KeyLevelScalingLeftDepth": 20,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 2,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 85,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				99,
+				70,
+				71,
+				64
+			],
+			"EgLevel": [
+				99,
+				17,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 28,
+			"KeyLevelScalingLeftDepth": 99,
+			"KeyLevelScalingRightDepth": 40,
+			"KeyLevelScalingLeftCurve": 2,
+			"KeyLevelScalingRightCurve": 1,
+			"KeyRateScaling": 1,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 93,
+			"OscMode": false,
+			"OscFreqCoarse": 5,
+			"OscFreqFine": 1,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				96,
+				14,
+				14,
+				52
+			],
+			"EgLevel": [
+				99,
+				90,
+				90,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 27,
+			"KeyLevelScalingLeftDepth": 99,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 2,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		51,
+		50,
+		50,
+		49
+	],
+	"Algorithm": 17,
+	"Feedback": 7,
+	"OscSync": false,
+	"LfoSpeed": 39,
+	"LfoDelay": 33,
+	"LfoPitchModDepth": 6,
+	"LfoAmpModDepth": 0,
+	"LfoSync": false,
+	"Waveform": 8,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "MalletHorn"
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				95,
+				78,
+				69,
+				10
+			],
+			"EgLevel": [
+				99,
+				0,
+				99,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 59,
+			"KeyLevelScalingRightDepth": 69,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 1,
+			"KeyRateScaling": 5,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 74,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				95,
+				79,
+				99,
+				10
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 59,
+			"KeyLevelScalingRightDepth": 69,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 1,
+			"KeyRateScaling": 1,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 36,
+			"OscDetune": 3
+		},
+		{
+			"EgRate": [
+				99,
+				26,
+				34,
+				25
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 27,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 64,
+			"KeyLevelScalingLeftCurve": 2,
+			"KeyLevelScalingRightCurve": 1,
+			"KeyRateScaling": 5,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 77,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 36,
+			"OscDetune": 4
+		},
+		{
+			"EgRate": [
+				99,
+				38,
+				94,
+				41
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 64,
+			"KeyLevelScalingLeftCurve": 2,
+			"KeyLevelScalingRightCurve": 1,
+			"KeyRateScaling": 5,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				63,
+				97,
+				54,
+				98
+			],
+			"EgLevel": [
+				49,
+				99,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 27,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 69,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 56,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				94,
+				37,
+				57,
+				54
+			],
+			"EgLevel": [
+				99,
+				46,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 2,
+			"KeyLevelScalingRightCurve": 1,
+			"KeyRateScaling": 5,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 4,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		54,
+		99,
+		15,
+		7
+	],
+	"PitchEgLevel": [
+		52,
+		50,
+		59,
+		51
+	],
+	"Algorithm": 0,
+	"Feedback": 6,
+	"OscSync": true,
+	"LfoSpeed": 0,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 0,
+	"LfoSync": true,
+	"Waveform": 13,
+	"PitchModSensitivity": 1,
+	"Transpose": 12,
+	"VoiceName": "CongaDrum "
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				86,
+				52,
+				23,
+				32
+			],
+			"EgLevel": [
+				80,
+				64,
+				79,
+				99
+			],
+			"KeyLevelScalingBreakPoint": 42,
+			"KeyLevelScalingLeftDepth": 4,
+			"KeyLevelScalingRightDepth": 2,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 1,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 94,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				80,
+				50,
+				34,
+				82
+			],
+			"EgLevel": [
+				97,
+				80,
+				47,
+				87
+			],
+			"KeyLevelScalingBreakPoint": 30,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 14,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 7,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 86,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 0,
+			"OscDetune": 8
+		},
+		{
+			"EgRate": [
+				99,
+				99,
+				61,
+				39
+			],
+			"EgLevel": [
+				82,
+				0,
+				77,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 38,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 20,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 90,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 5
+		},
+		{
+			"EgRate": [
+				82,
+				35,
+				24,
+				56
+			],
+			"EgLevel": [
+				99,
+				70,
+				31,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 46,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 6,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 5,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 10
+		},
+		{
+			"EgRate": [
+				69,
+				69,
+				25,
+				99
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				64
+			],
+			"KeyLevelScalingBreakPoint": 33,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 20,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 40,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				59,
+				50,
+				35,
+				78
+			],
+			"EgLevel": [
+				99,
+				90,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 36,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 28,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 5,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		38,
+		53,
+		50,
+		25
+	],
+	"PitchEgLevel": [
+		50,
+		51,
+		50,
+		45
+	],
+	"Algorithm": 13,
+	"Feedback": 7,
+	"OscSync": false,
+	"LfoSpeed": 32,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 93,
+	"LfoSync": false,
+	"Waveform": 4,
+	"PitchModSensitivity": 0,
+	"Transpose": 12,
+	"VoiceName": "StringBass"
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				99,
+				25,
+				55,
+				0
+			],
+			"EgLevel": [
+				78,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 41,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 78,
+			"OscMode": false,
+			"OscFreqCoarse": 12,
+			"OscFreqFine": 84,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				74,
+				64,
+				0,
+				43
+			],
+			"EgLevel": [
+				82,
+				48,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 54,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 46,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 5,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				51,
+				27,
+				0,
+				33
+			],
+			"EgLevel": [
+				82,
+				48,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 54,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 91,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 20,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				74,
+				31,
+				50,
+					38
+			],
+			"EgLevel": [
+				99,
+				80,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 2,
+			"OscDetune": 3
+		},
+		{
+			"EgRate": [
+				52,
+				39,
+				46,
+				37
+			],
+			"EgLevel": [
+				99,
+				80,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 54,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 7,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 82,
+			"OscMode": false,
+			"OscFreqCoarse": 4,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				79,
+				34,
+				50,
+				42
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 10
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		52,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 0,
+	"Feedback": 0,
+	"OscSync": true,
+	"LfoSpeed": 35,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 0,
+	"LfoSync": true,
+	"Waveform": 11,
+	"PitchModSensitivity": 0,
+	"Transpose": 12,
+	"VoiceName": "SteelCans "
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				99,
+				80,
+				25,
+				26
+			],
+			"EgLevel": [
+				99,
+				73,
+				60,
+				99
+			],
+			"KeyLevelScalingBreakPoint": 42,
+			"KeyLevelScalingLeftDepth": 4,
+			"KeyLevelScalingRightDepth": 2,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 7,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 10,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				82,
+				23,
+				14,
+				96
+			],
+			"EgLevel": [
+				99,
+				80,
+				45,
+				87
+			],
+			"KeyLevelScalingBreakPoint": 25,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 3,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 3,
+			"KeyRateScaling": 7,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 72,
+			"OscMode": false,
+			"OscFreqCoarse": 5,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				82,
+				23,
+				16,
+				32
+			],
+			"EgLevel": [
+				99,
+				80,
+				70,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 46,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 7,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 92,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				88,
+				28,
+				18,
+				45
+			],
+			"EgLevel": [
+				99,
+				80,
+				31,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 46,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 6,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 7,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 2,
+			"OscFreqFine": 0,
+			"OscDetune": 8
+		},
+		{
+			"EgRate": [
+				99,
+				40,
+				54,
+				99
+			],
+			"EgLevel": [
+				99,
+				70,
+				63,
+				94
+			],
+			"KeyLevelScalingBreakPoint": 33,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 1,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 88,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 14
+		},
+		{
+			"EgRate": [
+				99,
+				51,
+				40,
+				52
+			],
+			"EgLevel": [
+				99,
+				67,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 36,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 1,
+			"OscDetune": 14
+		}
+	],
+	"PitchEgRate": [
+		85,
+		29,
+		2,
+		32
+	],
+	"PitchEgLevel": [
+		50,
+		48,
+		50,
+		49
+	],
+	"Algorithm": 14,
+	"Feedback": 7,
+	"OscSync": false,
+	"LfoSpeed": 36,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 93,
+	"LfoSync": false,
+	"Waveform": 12,
+	"PitchModSensitivity": 0,
+	"Transpose": 12,
+	"VoiceName": "Shami     "
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				15,
+				15,
+				35,
+				25
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 10,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 55,
+			"OscMode": false,
+			"OscFreqCoarse": 6,
+			"OscFreqFine": 0,
+			"OscDetune": 14
+		},
+		{
+			"EgRate": [
+				15,
+				15,
+				35,
+				25
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 10,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 76,
+			"OscMode": false,
+			"OscFreqCoarse": 5,
+			"OscFreqFine": 0,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				15,
+				15,
+				35,
+				25
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 10,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 91,
+			"OscMode": false,
+			"OscFreqCoarse": 4,
+			"OscFreqFine": 0,
+			"OscDetune": 14
+		},
+		{
+			"EgRate": [
+				15,
+				15,
+				35,
+				25
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 10,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 77,
+			"OscMode": false,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 0,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				15,
+				15,
+				35,
+				25
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 10,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 83,
+			"OscMode": false,
+			"OscFreqCoarse": 2,
+			"OscFreqFine": 0,
+			"OscDetune": 14
+		},
+		{
+			"EgRate": [
+				20,
+				99,
+				99,
+				40
+			],
+			"EgLevel": [
+				99,
+				99,
+				99,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 90,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		90,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		43,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 16,
+	"Feedback": 6,
+	"OscSync": true,
+	"LfoSpeed": 20,
+	"LfoDelay": 40,
+	"LfoPitchModDepth": 5,
+	"LfoAmpModDepth": 0,
+	"LfoSync": false,
+	"Waveform": 11,
+	"PitchModSensitivity": 0,
+	"Transpose": 0,
+	"VoiceName": "FM-Growth "
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				95,
+				75,
+				28,
+				80
+			],
+			"EgLevel": [
+				94,
+				79,
+				0,
+				69
+			],
+			"KeyLevelScalingBreakPoint": 60,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 1,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 0,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 20,
+			"OscFreqFine": 0,
+			"OscDetune": 8
+		},
+		{
+			"EgRate": [
+				99,
+				63,
+				42,
+				64
+			],
+			"EgLevel": [
+				99,
+				90,
+				0,
+				99
+			],
+			"KeyLevelScalingBreakPoint": 52,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 35,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 1,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 81,
+			"OscMode": false,
+			"OscFreqCoarse": 8,
+			"OscFreqFine": 0,
+			"OscDetune": 11
+		},
+		{
+			"EgRate": [
+				99,
+				26,
+				14,
+				99
+			],
+			"EgLevel": [
+				99,
+				90,
+				0,
+				99
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 3
+		},
+		{
+			"EgRate": [
+				99,
+				29,
+				0,
+				51
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 3,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 0
+		},
+		{
+			"EgRate": [
+				99,
+				25,
+				11,
+				43
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 52,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 40,
+			"KeyLevelScalingLeftCurve": 3,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 93,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 5
+		},
+		{
+			"EgRate": [
+				99,
+				25,
+				0,
+				37
+			],
+			"EgLevel": [
+				99,
+				0,
+				0,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 4,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 2,
+			"OperatorOutputLevel": 99,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 13
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 8,
+	"Feedback": 5,
+	"OscSync": true,
+	"LfoSpeed": 7,
+	"LfoDelay": 25,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 0,
+	"LfoSync": true,
+	"Waveform": 12,
+	"PitchModSensitivity": 0,
+	"Transpose": 12,
+	"VoiceName": "WireStrung"
+},{
+	"Osc": [
+		{
+			"EgRate": [
+				66,
+				75,
+				49,
+				71
+			],
+			"EgLevel": [
+				51,
+				90,
+				78,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 43,
+			"KeyLevelScalingLeftDepth": 10,
+			"KeyLevelScalingRightDepth": 8,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 67,
+			"OscMode": true,
+			"OscFreqCoarse": 23,
+			"OscFreqFine": 32,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				50,
+				57,
+				47,
+				71
+			],
+			"EgLevel": [
+				70,
+				99,
+				94,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 10,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 3,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 95,
+			"OscMode": false,
+			"OscFreqCoarse": 1,
+			"OscFreqFine": 0,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				54,
+				60,
+				25,
+				71
+			],
+			"EgLevel": [
+				70,
+				99,
+				88,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": true,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 3,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				54,
+				75,
+				25,
+				71
+			],
+			"EgLevel": [
+				51,
+				83,
+				78,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 43,
+			"KeyLevelScalingLeftDepth": 18,
+			"KeyLevelScalingRightDepth": 1,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 2,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 55,
+			"OscMode": true,
+			"OscFreqCoarse": 3,
+			"OscFreqFine": 29,
+			"OscDetune": 7
+		},
+		{
+			"EgRate": [
+				55,
+				61,
+				42,
+				71
+			],
+			"EgLevel": [
+				70,
+				99,
+				98,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 39,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 10,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 0,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 91,
+			"OscMode": false,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 0,
+			"OscDetune": 5
+		},
+		{
+			"EgRate": [
+				59,
+				63,
+				28,
+				66
+			],
+			"EgLevel": [
+				70,
+				99,
+				95,
+				0
+			],
+			"KeyLevelScalingBreakPoint": 0,
+			"KeyLevelScalingLeftDepth": 0,
+			"KeyLevelScalingRightDepth": 0,
+			"KeyLevelScalingLeftCurve": 0,
+			"KeyLevelScalingRightCurve": 0,
+			"KeyRateScaling": 1,
+			"AmpModSensitivity": 0,
+			"KeyVelocitySensitivity": 1,
+			"OperatorOutputLevel": 99,
+			"OscMode": true,
+			"OscFreqCoarse": 0,
+			"OscFreqFine": 2,
+			"OscDetune": 7
+		}
+	],
+	"PitchEgRate": [
+		99,
+		99,
+		99,
+		99
+	],
+	"PitchEgLevel": [
+		50,
+		50,
+		50,
+		50
+	],
+	"Algorithm": 2,
+	"Feedback": 0,
+	"OscSync": false,
+	"LfoSpeed": 99,
+	"LfoDelay": 0,
+	"LfoPitchModDepth": 0,
+	"LfoAmpModDepth": 0,
+	"LfoSync": true,
+	"Waveform": 9,
+	"PitchModSensitivity": 0,
+	"Transpose": 24,
+	"VoiceName": "Shorgan   "
+}]}
+

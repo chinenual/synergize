@@ -390,6 +390,12 @@ func ReadDx7Sysex(pathname string) (sysex Dx7Sysex, err error) {
 	return
 }
 
+func Dx7SysxToJSON(v Dx7Sysex) (result string) {
+	b, _ := json.MarshalIndent(v, "", "\t")
+	result = string(b)
+	return
+}
+
 func Dx7VoiceToJSON(v Dx7Voice) (result string) {
 	b, _ := json.MarshalIndent(v, "", "\t")
 	result = string(b)

@@ -91,7 +91,7 @@ test:
 	cd data && go test
 	cd osc && go test
 	cd synio && go test
-	go test
+	cd dx2syn && go test
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
