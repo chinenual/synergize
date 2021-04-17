@@ -18,8 +18,11 @@ func diffOsc(voiceNum, oscNum int, v, expected Dx7Osc) bool {
 		// Osc special cased above
 		fv := vv.Field(i)
 		fexpected := vexpected.FieldByName(sf.Name)
-		if fv.String() != fexpected.String() {
-			fmt.Printf("Voice %d, Osc %d, field %s: Saw %v expected %v\n", voiceNum, oscNum, sf.Name, fv, fexpected)
+		sv := fmt.Sprint(fv)
+		sexpected := fmt.Sprint(fexpected)
+		//fmt.Printf("OSC %d %d %s '%s' '%s'\n", voiceNum, oscNum, sf.Name, sv, sexpected)
+		if sv != sexpected {
+			fmt.Printf("Voice %d, Osc %d, field %s: Saw %v expected %v\n", voiceNum, oscNum, sf.Name, sv, sexpected)
 			result = false
 		}
 	}
@@ -43,8 +46,10 @@ func diffVoice(voiceNum int, v, expected Dx7Voice) bool {
 			// Osc special cased above
 			fv := vv.Field(i)
 			fexpected := vexpected.FieldByName(sf.Name)
-			if fv.String() != fexpected.String() {
-				fmt.Printf("Voice %d, field %s: Saw %v expected %v\n", voiceNum, sf.Name, fv, fexpected)
+			sv := fmt.Sprint(fv)
+			sexpected := fmt.Sprint(fexpected)
+			if sv != sexpected {
+				fmt.Printf("Voice %d, field %s: Saw %v expected %v\n", voiceNum, sf.Name, sv, sexpected)
 				result = false
 			}
 		}
