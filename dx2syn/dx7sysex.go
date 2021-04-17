@@ -77,15 +77,15 @@ func readDx7Osc(reader *bytes.Reader, packed bool) (osc Dx7Osc, err error) {
 		osc.EgLevel[a] = osc.EgLevel[a] & 0x7f
 	}
 
-	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //osc.KeyLevelScalingBreakPoint
+	if err = binary.Read(reader, binary.LittleEndian, &osc.KeyLevelScalingBreakPoint); err != nil { //osc.KeyLevelScalingBreakPoint
 		return
 	}
 
-	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //osc.KeyLevelScalingLeftDepth
+	if err = binary.Read(reader, binary.LittleEndian, &osc.KeyLevelScalingLeftDepth); err != nil { //osc.KeyLevelScalingLeftDepth
 		return
 	}
 
-	if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //osc.KeyLevelScalingRightDepth
+	if err = binary.Read(reader, binary.LittleEndian, &osc.KeyLevelScalingRightDepth); err != nil { //osc.KeyLevelScalingRightDepth
 		return
 	}
 
@@ -118,7 +118,7 @@ func readDx7Osc(reader *bytes.Reader, packed bool) (osc Dx7Osc, err error) {
 		osc.AmpModSensitivity = v & 0x03
 		osc.KeyVelocitySensitivity = (v & 0x1C) >> 3
 
-		if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //&osc.OperatorOutputLevel
+		if err = binary.Read(reader, binary.LittleEndian, &osc.OperatorOutputLevel); err != nil { //&osc.OperatorOutputLevel
 			return
 		}
 
@@ -128,7 +128,7 @@ func readDx7Osc(reader *bytes.Reader, packed bool) (osc Dx7Osc, err error) {
 		osc.OscMode = (v & 0x01) != 0
 		osc.OscFreqCoarse = int8((v & 0x7E) >> 1)
 
-		if err = binary.Read(reader, binary.LittleEndian, &v); err != nil { //&osc.OscFreqFine
+		if err = binary.Read(reader, binary.LittleEndian, &osc.OscFreqFine); err != nil { //&osc.OscFreqFine
 			return
 		}
 	} else {
