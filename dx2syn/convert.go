@@ -396,7 +396,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		fb = fbOsc[dx7Voice.Algorithm+1] - 1
 		logger.Debugf(" %s %d %d  \n", " Algo =   ", oscIndex, dx7Voice.Algorithm)
 		//  If OSC is FB OSC, set as Triangle waveform else set as SIN waveform
-		if oscIndex == fb { //&& dx7Voice.Feedback > 0 {
+		if oscIndex == fb && dx7Voice.Feedback > 0 {
 			logger.Debugf(" %s %d \n \n", " oscIndex = ", oscIndex)
 			//  increase FB OSC level by 'dx7Voice.Feedback'
 			osclevelPercent = osclevelPercent + float64(float64(dx7Voice.Feedback)*0.02)
@@ -433,16 +433,24 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		}
 
 		//    DX7 3 & 4   OSCs 1(0) & 4(3)
-		if (dx7Voice.Algorithm == 3 || dx7Voice.Algorithm == 2) && oscIndex == 0 {
+		if (dx7Voice.Algorithm == 2 || dx7Voice.Algorithm == 3) && oscIndex == 0 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
 
 				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
-		if (dx7Voice.Algorithm == 3 || dx7Voice.Algorithm == 2) && oscIndex == 3 {
+		if (dx7Voice.Algorithm == 2 || dx7Voice.Algorithm == 3) && oscIndex == 3 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+			}
+		}
+		//   DX7 7, 8, 9             OSC 1 (0)
+		if (dx7Voice.Algorithm == 6 || dx7Voice.Algorithm == 7 || dx7Voice.Algorithm == 8) && oscIndex == 0 {
+			for k := 0; k < 4; k++ {
+				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
+
 				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
@@ -467,10 +475,29 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
-		//   DX7 16 & 17    CLUSTER F*CK
+		//   DX7 16 & 17    OSCs 1(0) & 3(2)
+		if (dx7Voice.Algorithm == 15 || dx7Voice.Algorithm == 16) && oscIndex == 0 {
+			for k := 0; k < 4; k++ {
+				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
 
-		//   DX7 18             OSC 6 (5)
-		if (dx7Voice.Algorithm == 17) && oscIndex == 5 {
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+			}
+		}
+		if (dx7Voice.Algorithm == 15 || dx7Voice.Algorithm == 16) && oscIndex == 2 {
+			for k := 0; k < 4; k++ {
+				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+			}
+		}
+		//   DX7 18             Osc 1 and OSC 2)
+		if (dx7Voice.Algorithm == 17) && oscIndex == 0 {
+			for k := 0; k < 4; k++ {
+				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
+
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+			}
+		}
+		if (dx7Voice.Algorithm == 17) && oscIndex == 1 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
 
