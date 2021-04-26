@@ -23,8 +23,8 @@ var dxAlgoNoFeedbackPatchTypePerOscTable = [32][16]byte{
 	{100, 76, 76, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},   // DX 13 (algo 12)
 	{100, 76, 97, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},   // DX 14 (algo 13)
 	{100, 76, 97, 1, 100, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},   // DX 15 (algo 14)
-	{100, 97, 100, 73, 76, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},  // DX 16 (algo 15) // can't reproduce the algo due to lack of register in SYN - this is approximation
-	{100, 97, 100, 73, 76, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},  // DX 16 (algo 16) // can't reproduce the algo due to lack of register in SYN - this is approximation
+	{100, 97, 76, 76, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},    // DX 16 (algo 15) // fixed ....can't reproduce the algo due to lack of register in SYN - this is approximation
+	{100, 97, 76, 76, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},    // DX 16 (algo 16) // fixed ....can't reproduce the algo due to lack of register in SYN - this is approximation
 	{100, 97, 97, 76, 76, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},   // DX 18 (algo 17)
 	{100, 1, 1, 100, 97, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},    // DX 19 (algo 18)
 	{100, 76, 1, 100, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},    // DX 20 (algo 19)

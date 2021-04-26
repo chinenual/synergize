@@ -364,6 +364,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			}
 			freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
 			logger.Debugf(" %d %s %d %d %d  \n \n", oscIndex+1, "  Fixed freq = ", dxOsc.OscFreqFine, freqValueInt, freqValueByte)
+
 		}
 
 		// Set OSC detune
@@ -461,32 +462,33 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
-		//   DX7 14 & 15
-		if (dx7Voice.Algorithm == 13 || dx7Voice.Algorithm == 14) && oscIndex == 4 {
+		//   DX7 14 & 15   OSCs 1(0) & 2(1)
+		if (dx7Voice.Algorithm == 13 || dx7Voice.Algorithm == 14) && oscIndex == 0 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
 
 				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
-		if (dx7Voice.Algorithm == 13 || dx7Voice.Algorithm == 14) && oscIndex == 5 {
+		if (dx7Voice.Algorithm == 13 || dx7Voice.Algorithm == 14) && oscIndex == 1 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
 				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
-		//   DX7 16 & 17    OSCs 1(0) & 3(2)
-		if (dx7Voice.Algorithm == 15 || dx7Voice.Algorithm == 16) && oscIndex == 0 {
+		//   DX7 16   OSC 1(0)
+		if dx7Voice.Algorithm == 15 && oscIndex == 0 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
 
-				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*25%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
-		if (dx7Voice.Algorithm == 15 || dx7Voice.Algorithm == 16) && oscIndex == 2 {
+		//   DX7 17    OSC 4(3)
+		if dx7Voice.Algorithm == 16 && oscIndex == 3 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
-				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*25%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
 			}
 		}
 		//   DX7 18             Osc 1 and OSC 2)
@@ -623,6 +625,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			vce.Envelopes[oscIndex].FreqEnvelope.Table[15] = (99 - dx7Voice.PitchEgRate[0]) +
 				(99 - dx7Voice.PitchEgRate[1]) + (99 - dx7Voice.PitchEgRate[2]) + (99 - dx7Voice.PitchEgRate[3])
 		*/
+
 	}
 
 	// if you need to abort, use:
@@ -736,7 +739,7 @@ var fineValues = [100]float64{0.00000, 0.02329, 0.04713, 0.07152, 0.09648, 0.122
 	8.54993, 8.77237}
 
 var fbOsc = [33]int{0, 1, 5, 1, 1, 1, 1, 1, 3,
-	5, 4, 1, 5, 1, 1, 5, 1,
+	5, 4, 1, 5, 1, 1, 4, 1,
 	5, 4, 1, 4, 4, 1, 1, 1,
 	1, 1, 4, 2, 1, 2, 1, 1}
 
