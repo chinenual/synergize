@@ -174,15 +174,32 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		}
 	}
 
+	var skipOscSet = map[int]bool{} // empty set
+
+	switch dx7Voice.Algorithm {
+	case 15, 16:
+		logger.Debugf("Algorithm %d, so skip osc 4\n", dx7Voice.Algorithm)
+		skipOscSet[4] = true
+	default:
+	}
+
 	//***************************************************************************
 
-	for oscIndex, dxOsc := range dx7Voice.Osc {
+	synOscIndex := -1
+	for dxOscIndex, dxOsc := range dx7Voice.Osc {
+		if skipOscSet[dxOscIndex] {
+			// one less osc in the synergy voice
+			vce.Head.VOITAB -= 1
+			// skip the rest of the loop - this osc is ignored
+			break
+		}
+		synOscIndex += 1
 
 		////  fm: y = sin(phase); phase += phaseInc + mod;
 		////  pm: y = sin(phase + mod); phase += phaseInc;
 		//OPTCH
 		//patchOutputDSR = ((patchByte & 0xc0) >> 6)
-		patchOutputDSR = ((vce.Envelopes[oscIndex].FreqEnvelope.OPTCH & 0xc0) >> 6)
+		patchOutputDSR = ((vce.Envelopes[synOscIndex].FreqEnvelope.OPTCH & 0xc0) >> 6)
 
 		//
 		//  ********************  Check if OSC is MODULATOR
@@ -196,7 +213,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			pmFix = 1.0
 			logger.Debugf(" %s %f \n", " pmFix = ", pmFix)
 		}
-		logger.Debugf(" %s %d %d %f \n", " OSC - POdsr= ", oscIndex+1, patchOutputDSR, pmFix)
+		logger.Debugf(" %s %d %d %f \n", " OSC - POdsr= ", synOscIndex+1, patchOutputDSR, pmFix)
 
 		//OPTCH
 		//patchOutputDSR = ((patchByte & 0xc0) >> 6)
@@ -249,17 +266,17 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 
 		if dxOsc.KeyLevelScalingLeftDepth == 0 && dxOsc.KeyLevelScalingRightDepth == 0 {
 			// optimization: if key scaling depths are zero, don't waste space for a filter
-			vce.Head.FILTER[oscIndex] = 0
+			vce.Head.FILTER[synOscIndex] = 0
 		} else {
 			filterIndex++
-			if err = convertKeyLevelScalingToFilters(oscIndex, dxOsc, filterIndex, &vce); err != nil {
+			if err = convertKeyLevelScalingToFilters(synOscIndex, dxOsc, filterIndex, &vce); err != nil {
 				return
 			}
 		}
 
 		// Set OSC mode     false = ratio   true = Fixed
 		if dxOsc.OscMode == false { //Ratio Mode
-			//vce.Envelopes[oscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse
+			//vce.Envelopes[synOscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse
 
 			// ***************************************************************
 			// TO DO  :::::  Add more code to take DX7 Fine into consideration
@@ -276,54 +293,54 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			// Transpose down takes care of that
 
 			if transposedDown == false && dxOsc.OscFreqFine == 0 { //No harmonic changes
-				logger.Debugf(" %d %s  \n", oscIndex, " transdowndown false == 0 Standard Harm")
-				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse
+				logger.Debugf(" %d %s  \n", synOscIndex, " transdowndown false == 0 Standard Harm")
+				vce.Envelopes[synOscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse
 				//freqValueInt = int(math.Round(fineValues[dxOsc.OscFreqFine]))
 				//freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
 
 			} else if transposedDown == false && dxOsc.OscFreqFine != 0 {
-				logger.Debugf(" %d %s  \n", oscIndex, " transdown false !=0      Harm + Fine")
-				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse
+				logger.Debugf(" %d %s  \n", synOscIndex, " transdown false !=0      Harm + Fine")
+				vce.Envelopes[synOscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse
 				freqValueInt = int(math.Round(fineValues[dxOsc.OscFreqFine] * float64(dxOsc.OscFreqCoarse)))
 				freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
 
 			} else if transposedDown == true && dxOsc.OscFreqCoarse == 0 && dxOsc.OscFreqFine == 0 {
-				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = 1
-				logger.Debugf(" %d %s  \n", oscIndex, " true Coarse = 0  Fine 0 so Harm = 1")
+				vce.Envelopes[synOscIndex].FreqEnvelope.OHARM = 1
+				logger.Debugf(" %d %s  \n", synOscIndex, " true Coarse = 0  Fine 0 so Harm = 1")
 			} else if transposedDown == true && dxOsc.OscFreqCoarse == 0 && dxOsc.OscFreqFine == 50 {
-				logger.Debugf(" %d %s  \n", oscIndex, " in true 0 50    +.5 then *2")
+				logger.Debugf(" %d %s  \n", synOscIndex, " in true 0 50    +.5 then *2")
 				harmonic = float64(dxOsc.OscFreqCoarse)
 				harmonic = harmonic + .5
 				harmonic = harmonic * 2
-				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = int8(harmonic)
+				vce.Envelopes[synOscIndex].FreqEnvelope.OHARM = int8(harmonic)
 
 			} else if transposedDown == true && dxOsc.OscFreqCoarse == 0 && dxOsc.OscFreqFine != 50 {
-				logger.Debugf(" %d %s  \n", oscIndex, " in true C=0  Fine!=50")
-				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = 1
+				logger.Debugf(" %d %s  \n", synOscIndex, " in true C=0  Fine!=50")
+				vce.Envelopes[synOscIndex].FreqEnvelope.OHARM = 1
 				freqValueInt = 0
 				freqValueInt = int(math.Round(1 + fineValues[dxOsc.OscFreqFine]*2))
 				freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
 
 			} else if transposedDown == true && dxOsc.OscFreqCoarse != 0 && dxOsc.OscFreqFine == 50 {
-				logger.Debugf(" %d %s  \n", oscIndex, " in true !0 = 50")
+				logger.Debugf(" %d %s  \n", synOscIndex, " in true !0 = 50")
 				harmonic = float64(dxOsc.OscFreqCoarse)
 				harmonic = harmonic + .5
 				harmonic = harmonic * 2
-				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = int8(harmonic)
+				vce.Envelopes[synOscIndex].FreqEnvelope.OHARM = int8(harmonic)
 
 			} else if transposedDown == true && dxOsc.OscFreqCoarse != 0 && dxOsc.OscFreqFine != 50 {
-				logger.Debugf(" %d %s  \n", oscIndex, " in true !0 !50  ")
-				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse * 2
+				logger.Debugf(" %d %s  \n", synOscIndex, " in true !0 !50  ")
+				vce.Envelopes[synOscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse * 2
 				freqValueInt = int(math.Round(fineValues[dxOsc.OscFreqFine] * float64(dxOsc.OscFreqCoarse*2)))
 				freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
 				//  have to add in FINE
 			} else {
-				logger.Debugf(" %d %s  \n", oscIndex, " in else")
-				vce.Envelopes[oscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse * 2
+				logger.Debugf(" %d %s  \n", synOscIndex, " in else")
+				vce.Envelopes[synOscIndex].FreqEnvelope.OHARM = dxOsc.OscFreqCoarse * 2
 			} // Add Coarse <>0  fine = 50
 
 		} else { //Fixed Mode
-			vce.Envelopes[oscIndex].FreqEnvelope.OHARM = -12
+			vce.Envelopes[synOscIndex].FreqEnvelope.OHARM = -12
 
 			// test freq code
 			// for k := -100; k >= -127; k-- {
@@ -363,13 +380,13 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 				}
 			}
 			freqValueByte = byte(helperNearestFreqValueIndex(freqValueInt))
-			logger.Debugf(" %d %s %d %d %d  \n \n", oscIndex+1, "  Fixed freq = ", dxOsc.OscFreqFine, freqValueInt, freqValueByte)
+			logger.Debugf(" %d %s %d %d %d  \n \n", synOscIndex+1, "  Fixed freq = ", dxOsc.OscFreqFine, freqValueInt, freqValueByte)
 
 		}
 
 		// Set OSC detune
-		vce.Envelopes[oscIndex].FreqEnvelope.FDETUN = helperUnscaleDetune(int(dTune[int(dxOsc.OscDetune)]))
-		logger.Debugf(" %s %d %d \n", " Detune = ", dxOsc.OscDetune, vce.Envelopes[oscIndex].FreqEnvelope.FDETUN)
+		vce.Envelopes[synOscIndex].FreqEnvelope.FDETUN = helperUnscaleDetune(int(dTune[int(dxOsc.OscDetune)]))
+		logger.Debugf(" %s %d %d \n", " Detune = ", dxOsc.OscDetune, vce.Envelopes[synOscIndex].FreqEnvelope.FDETUN)
 
 		// type = 1  : no loop (and LOOPPT and SUSTAINPT are accelleration rates not point positions)
 		// type = 2  : S only
@@ -377,15 +394,15 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		// type = 4  : R and S - R must be before S
 		// WARNING: when type1, the LOOPPT and SUSTAINPT values are _acceleration_ rates, not point positions. What a pain.
 		// Set for Sustain point only.
-		vce.Envelopes[oscIndex].AmpEnvelope.ENVTYPE = 2
+		vce.Envelopes[synOscIndex].AmpEnvelope.ENVTYPE = 2
 		//  Always DX7 Sustain Point
-		vce.Envelopes[oscIndex].AmpEnvelope.SUSTAINPT = 3
+		vce.Envelopes[synOscIndex].AmpEnvelope.SUSTAINPT = 3
 		// envelopes: DX amp envelopes always have 4 points
-		vce.Envelopes[oscIndex].AmpEnvelope.NPOINTS = 4
+		vce.Envelopes[synOscIndex].AmpEnvelope.NPOINTS = 4
 		// Freq Env Sustain point for DX7 FINE
-		vce.Envelopes[oscIndex].FreqEnvelope.ENVTYPE = 2
-		vce.Envelopes[oscIndex].FreqEnvelope.SUSTAINPT = 1
-		vce.Envelopes[oscIndex].FreqEnvelope.NPOINTS = 2
+		vce.Envelopes[synOscIndex].FreqEnvelope.ENVTYPE = 2
+		vce.Envelopes[synOscIndex].FreqEnvelope.SUSTAINPT = 1
+		vce.Envelopes[synOscIndex].FreqEnvelope.NPOINTS = 2
 		// set lower Env levels for velocity sensitivity
 		velocityPercent = 1.0 - (float64(dxOsc.KeyVelocitySensitivity) / 10.0)
 		logger.Debugf(" %s %f %d \n", " Vel% = ", velocityPercent, dxOsc.KeyVelocitySensitivity)
@@ -395,15 +412,15 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 
 		// Find is OSC is the FB OSc, if so, look up in array and set to TRI wave
 		fb = fbOsc[dx7Voice.Algorithm+1] - 1
-		logger.Debugf(" %s %d %d  \n", " Algo =   ", oscIndex, dx7Voice.Algorithm)
+		logger.Debugf(" %s %d %d  \n", " Algo =   ", dxOscIndex, dx7Voice.Algorithm)
 		//  If OSC is FB OSC, set as Triangle waveform else set as SIN waveform
-		if oscIndex == fb && dx7Voice.Feedback > 0 {
-			logger.Debugf(" %s %d \n \n", " oscIndex = ", oscIndex)
+		if dxOscIndex == fb && dx7Voice.Feedback > 0 {
+			logger.Debugf(" %s %d \n \n", " dxOscIndex = ", dxOscIndex)
 			//  increase FB OSC level by 'dx7Voice.Feedback'
 			osclevelPercent = osclevelPercent + float64(float64(dx7Voice.Feedback)*0.02)
-			vce.Envelopes[oscIndex].FreqEnvelope.Table[3] = vce.Envelopes[oscIndex].FreqEnvelope.Table[3] | 0x1
+			vce.Envelopes[synOscIndex].FreqEnvelope.Table[3] = vce.Envelopes[synOscIndex].FreqEnvelope.Table[3] | 0x1
 		} else {
-			vce.Envelopes[oscIndex].FreqEnvelope.Table[3] = 0
+			vce.Envelopes[synOscIndex].FreqEnvelope.Table[3] = 0
 		}
 
 		for k := 0; k < 4; k++ {
@@ -418,119 +435,119 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		// User can experiment with levels after conversion
 
 		//    DX7 1 & 2    OSCs 1(0) & 2(1)
-		if (dx7Voice.Algorithm == 0 || dx7Voice.Algorithm == 1) && oscIndex == 0 {
+		if (dx7Voice.Algorithm == 0 || dx7Voice.Algorithm == 1) && dxOscIndex == 0 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
 
-				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for dxOscIndex level*45%", dx7Voice.Algorithm, dxOscIndex, dxOsc.EgLevel[k])
 			}
 		}
-		if (dx7Voice.Algorithm == 0 || dx7Voice.Algorithm == 1) && oscIndex == 1 {
+		if (dx7Voice.Algorithm == 0 || dx7Voice.Algorithm == 1) && dxOscIndex == 1 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
 
-				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for dxOscIndex level*45%", dx7Voice.Algorithm, dxOscIndex, dxOsc.EgLevel[k])
 			}
 		}
 
 		//    DX7 3 & 4   OSCs 1(0) & 4(3)
-		if (dx7Voice.Algorithm == 2 || dx7Voice.Algorithm == 3) && oscIndex == 0 {
+		if (dx7Voice.Algorithm == 2 || dx7Voice.Algorithm == 3) && dxOscIndex == 0 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
 
-				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for dxOscIndex level*45%", dx7Voice.Algorithm, dxOscIndex, dxOsc.EgLevel[k])
 			}
 		}
-		if (dx7Voice.Algorithm == 2 || dx7Voice.Algorithm == 3) && oscIndex == 3 {
+		if (dx7Voice.Algorithm == 2 || dx7Voice.Algorithm == 3) && dxOscIndex == 3 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
-				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for dxOscIndex level*45%", dx7Voice.Algorithm, dxOscIndex, dxOsc.EgLevel[k])
 			}
 		}
 		//   DX7 7, 8, 9             OSC 1 (0)
-		if (dx7Voice.Algorithm == 6 || dx7Voice.Algorithm == 7 || dx7Voice.Algorithm == 8) && oscIndex == 0 {
+		if (dx7Voice.Algorithm == 6 || dx7Voice.Algorithm == 7 || dx7Voice.Algorithm == 8) && dxOscIndex == 0 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
 
-				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for dxOscIndex level*45%", dx7Voice.Algorithm, dxOscIndex, dxOsc.EgLevel[k])
 			}
 		}
 		//   DX7 10 & 11
-		if (dx7Voice.Algorithm == 9 || dx7Voice.Algorithm == 10) && oscIndex == 3 {
+		if (dx7Voice.Algorithm == 9 || dx7Voice.Algorithm == 10) && dxOscIndex == 3 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
-				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for dxOscIndex level*45%", dx7Voice.Algorithm, dxOscIndex, dxOsc.EgLevel[k])
 			}
 		}
 		//   DX7 14 & 15   OSCs 1(0) & 2(1)
-		if (dx7Voice.Algorithm == 13 || dx7Voice.Algorithm == 14) && oscIndex == 0 {
+		if (dx7Voice.Algorithm == 13 || dx7Voice.Algorithm == 14) && dxOscIndex == 0 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
 
-				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for dxOscIndex level*45%", dx7Voice.Algorithm, dxOscIndex, dxOsc.EgLevel[k])
 			}
 		}
-		if (dx7Voice.Algorithm == 13 || dx7Voice.Algorithm == 14) && oscIndex == 1 {
+		if (dx7Voice.Algorithm == 13 || dx7Voice.Algorithm == 14) && dxOscIndex == 1 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
-				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for dxOscIndex level*45%", dx7Voice.Algorithm, dxOscIndex, dxOsc.EgLevel[k])
 			}
 		}
 		//   DX7 16   OSC 1(0)
-		if dx7Voice.Algorithm == 15 && oscIndex == 0 {
+		if dx7Voice.Algorithm == 15 && dxOscIndex == 0 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
 
-				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*25%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for dxOscIndex level*25%", dx7Voice.Algorithm, dxOscIndex, dxOsc.EgLevel[k])
 			}
 		}
 		//   DX7 17    OSC 4(3)
-		if dx7Voice.Algorithm == 16 && oscIndex == 3 {
+		if dx7Voice.Algorithm == 16 && dxOscIndex == 3 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
-				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*25%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for dxOscIndex level*25%", dx7Voice.Algorithm, dxOscIndex, dxOsc.EgLevel[k])
 			}
 		}
 		//   DX7 18             Osc 1 and OSC 2)
-		if (dx7Voice.Algorithm == 17) && oscIndex == 0 {
+		if (dx7Voice.Algorithm == 17) && dxOscIndex == 0 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
 
-				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for dxOscIndex level*45%", dx7Voice.Algorithm, dxOscIndex, dxOsc.EgLevel[k])
 			}
 		}
-		if (dx7Voice.Algorithm == 17) && oscIndex == 1 {
+		if (dx7Voice.Algorithm == 17) && dxOscIndex == 1 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
 
-				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for dxOscIndex level*45%", dx7Voice.Algorithm, dxOscIndex, dxOsc.EgLevel[k])
 			}
 		}
 
 		//   DX7 19             OSC 3 (2)
-		if (dx7Voice.Algorithm == 19) && oscIndex == 2 {
+		if (dx7Voice.Algorithm == 19) && dxOscIndex == 2 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
 
-				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for dxOscIndex level*45%", dx7Voice.Algorithm, dxOscIndex, dxOsc.EgLevel[k])
 			}
 		}
 
 		//   DX7 28             OSC 2 (1)
-		if (dx7Voice.Algorithm == 27) && oscIndex == 1 {
+		if (dx7Voice.Algorithm == 27) && dxOscIndex == 1 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
 
-				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for dxOscIndex level*45%", dx7Voice.Algorithm, dxOscIndex, dxOsc.EgLevel[k])
 			}
 		}
 
 		//   DX7 30             OSC 5 (4)
-		if (dx7Voice.Algorithm == 29) && oscIndex == 4 {
+		if (dx7Voice.Algorithm == 29) && dxOscIndex == 4 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
 
-				logger.Debugf(" %s %d %d %d \n \n", " Algo  for oscIndex level*45%", dx7Voice.Algorithm, oscIndex, dxOsc.EgLevel[k])
+				logger.Debugf(" %s %d %d %d \n \n", " Algo  for dxOscIndex level*45%", dx7Voice.Algorithm, dxOscIndex, dxOsc.EgLevel[k])
 			}
 		}
 
@@ -552,77 +569,77 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		*/
 
 		// point1
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[0] = byte((math.Round(float64(dxOsc.EgLevel[0]) * velocityPercent)) + 55)
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[1] = byte((math.Round(float64(dxOsc.EgLevel[0]))) + 55)
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[2] = byte(helperNearestAmpTimeIndex(attkR))
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[3] = byte(helperNearestAmpTimeIndex(attkR))
+		vce.Envelopes[synOscIndex].AmpEnvelope.Table[0] = byte((math.Round(float64(dxOsc.EgLevel[0]) * velocityPercent)) + 55)
+		vce.Envelopes[synOscIndex].AmpEnvelope.Table[1] = byte((math.Round(float64(dxOsc.EgLevel[0]))) + 55)
+		vce.Envelopes[synOscIndex].AmpEnvelope.Table[2] = byte(helperNearestAmpTimeIndex(attkR))
+		vce.Envelopes[synOscIndex].AmpEnvelope.Table[3] = byte(helperNearestAmpTimeIndex(attkR))
 
 		//point2
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[4] = byte((math.Round(float64(dxOsc.EgLevel[1]) * velocityPercent)) + 55)
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[5] = byte((math.Round(float64(dxOsc.EgLevel[1]))) + 55)
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[6] = byte(helperNearestAmpTimeIndex(decyR))
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[7] = byte(helperNearestAmpTimeIndex(decyR))
+		vce.Envelopes[synOscIndex].AmpEnvelope.Table[4] = byte((math.Round(float64(dxOsc.EgLevel[1]) * velocityPercent)) + 55)
+		vce.Envelopes[synOscIndex].AmpEnvelope.Table[5] = byte((math.Round(float64(dxOsc.EgLevel[1]))) + 55)
+		vce.Envelopes[synOscIndex].AmpEnvelope.Table[6] = byte(helperNearestAmpTimeIndex(decyR))
+		vce.Envelopes[synOscIndex].AmpEnvelope.Table[7] = byte(helperNearestAmpTimeIndex(decyR))
 
 		//point3
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[8] = byte((math.Round(float64(dxOsc.EgLevel[2]) * velocityPercent)) + 55)
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[9] = byte((math.Round(float64(dxOsc.EgLevel[2]))) + 55)
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[10] = byte(helperNearestAmpTimeIndex(sustR))
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[11] = byte(helperNearestAmpTimeIndex(sustR))
+		vce.Envelopes[synOscIndex].AmpEnvelope.Table[8] = byte((math.Round(float64(dxOsc.EgLevel[2]) * velocityPercent)) + 55)
+		vce.Envelopes[synOscIndex].AmpEnvelope.Table[9] = byte((math.Round(float64(dxOsc.EgLevel[2]))) + 55)
+		vce.Envelopes[synOscIndex].AmpEnvelope.Table[10] = byte(helperNearestAmpTimeIndex(sustR))
+		vce.Envelopes[synOscIndex].AmpEnvelope.Table[11] = byte(helperNearestAmpTimeIndex(sustR))
 
 		//point4
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[12] = byte((math.Round(float64(dxOsc.EgLevel[3]) * velocityPercent)) + 55)
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[13] = byte((math.Round(float64(dxOsc.EgLevel[3]))) + 55)
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[14] = byte(helperNearestAmpTimeIndex(relsR))
-		vce.Envelopes[oscIndex].AmpEnvelope.Table[15] = byte(helperNearestAmpTimeIndex(relsR))
+		vce.Envelopes[synOscIndex].AmpEnvelope.Table[12] = byte((math.Round(float64(dxOsc.EgLevel[3]) * velocityPercent)) + 55)
+		vce.Envelopes[synOscIndex].AmpEnvelope.Table[13] = byte((math.Round(float64(dxOsc.EgLevel[3]))) + 55)
+		vce.Envelopes[synOscIndex].AmpEnvelope.Table[14] = byte(helperNearestAmpTimeIndex(relsR))
+		vce.Envelopes[synOscIndex].AmpEnvelope.Table[15] = byte(helperNearestAmpTimeIndex(relsR))
 
 		//TEMPORARY
 		// Freq envelope is commented out for now -- but we need the two control bytes at very minimum: adding that here
 		// point1
 
-		//vce.Envelopes[oscIndex].FreqEnvelope.Table[0] = 93
-		//vce.Envelopes[oscIndex].FreqEnvelope.Table[1] = 93
-		//vce.Envelopes[oscIndex].FreqEnvelope.Table[0] = freqValueByte
-		//vce.Envelopes[oscIndex].FreqEnvelope.Table[1] = freqValueByte
+		//vce.Envelopes[synOscIndex].FreqEnvelope.Table[0] = 93
+		//vce.Envelopes[synOscIndex].FreqEnvelope.Table[1] = 93
+		//vce.Envelopes[synOscIndex].FreqEnvelope.Table[0] = freqValueByte
+		//vce.Envelopes[synOscIndex].FreqEnvelope.Table[1] = freqValueByte
 
 		// special case for point1
-		//vce.Envelopes[oscIndex].FreqEnvelope.Table[2] = 0x80 // matches default from EDATA
-		//vce.Envelopes[oscIndex].FreqEnvelope.Table[3] = 0    // 0 == Sine, octave 0, freq int and amp int disabled
+		//vce.Envelopes[synOscIndex].FreqEnvelope.Table[2] = 0x80 // matches default from EDATA
+		//vce.Envelopes[synOscIndex].FreqEnvelope.Table[3] = 0    // 0 == Sine, octave 0, freq int and amp int disabled
 
 		// DX only has a single frequency envelope - replicate it on each Synergy osc:
 		// NOTE the first point in the Synergy freq table is "special" - it stores a "freq.scale and wavetype" instead of rates
 		// Like the amp table, the values are stored in quads, two values, two rates per point
 		/* ****************************************
 		// envelopes: DX freq envelopes always have 4 points
-		vce.Envelopes[oscIndex].FreqEnvelope.NPOINTS = 4
+		vce.Envelopes[synOscIndex].FreqEnvelope.NPOINTS = 4
 		*/
 		// point1
-		vce.Envelopes[oscIndex].FreqEnvelope.Table[0] = freqValueByte
-		vce.Envelopes[oscIndex].FreqEnvelope.Table[1] = freqValueByte
+		vce.Envelopes[synOscIndex].FreqEnvelope.Table[0] = freqValueByte
+		vce.Envelopes[synOscIndex].FreqEnvelope.Table[1] = freqValueByte
 		// special case for point1
-		vce.Envelopes[oscIndex].FreqEnvelope.Table[2] = 0x80 // matches default from EDATA
+		vce.Envelopes[synOscIndex].FreqEnvelope.Table[2] = 0x80 // matches default from EDATA
 		//  set in Feedback OSC section
-		/////vce.Envelopes[oscIndex].FreqEnvelope.Table[3] = 0    // 0 == Sine, octave 0, freq int and amp int disabled
+		/////vce.Envelopes[synOscIndex].FreqEnvelope.Table[3] = 0    // 0 == Sine, octave 0, freq int and amp int disabled
 
 		// point2
-		vce.Envelopes[oscIndex].FreqEnvelope.Table[4] = freqValueByte
-		vce.Envelopes[oscIndex].FreqEnvelope.Table[5] = freqValueByte
-		vce.Envelopes[oscIndex].FreqEnvelope.Table[6] = 30
-		vce.Envelopes[oscIndex].FreqEnvelope.Table[7] = 30
+		vce.Envelopes[synOscIndex].FreqEnvelope.Table[4] = freqValueByte
+		vce.Envelopes[synOscIndex].FreqEnvelope.Table[5] = freqValueByte
+		vce.Envelopes[synOscIndex].FreqEnvelope.Table[6] = 30
+		vce.Envelopes[synOscIndex].FreqEnvelope.Table[7] = 30
 		/*
 			// point3
-			vce.Envelopes[oscIndex].FreqEnvelope.Table[8] = byte((math.Round(float64(dx7Voice.PitchEgLevel[2]))) + 55)
-			vce.Envelopes[oscIndex].FreqEnvelope.Table[9] = byte((math.Round(float64(dx7Voice.PitchEgLevel[2]))) + 55)
-			vce.Envelopes[oscIndex].FreqEnvelope.Table[10] = (99 - dx7Voice.PitchEgRate[0]) +
+			vce.Envelopes[synOscIndex].FreqEnvelope.Table[8] = byte((math.Round(float64(dx7Voice.PitchEgLevel[2]))) + 55)
+			vce.Envelopes[synOscIndex].FreqEnvelope.Table[9] = byte((math.Round(float64(dx7Voice.PitchEgLevel[2]))) + 55)
+			vce.Envelopes[synOscIndex].FreqEnvelope.Table[10] = (99 - dx7Voice.PitchEgRate[0]) +
 				(99 - dx7Voice.PitchEgRate[1]) + (99 - dx7Voice.PitchEgRate[2])
-			vce.Envelopes[oscIndex].FreqEnvelope.Table[11] = (99 - dx7Voice.PitchEgRate[0]) +
+			vce.Envelopes[synOscIndex].FreqEnvelope.Table[11] = (99 - dx7Voice.PitchEgRate[0]) +
 				(99 - dx7Voice.PitchEgRate[1]) + (99 - dx7Voice.PitchEgRate[2])
 
 			// point4
-			vce.Envelopes[oscIndex].FreqEnvelope.Table[12] = byte((math.Round(float64(dx7Voice.PitchEgLevel[3]))) + 55)
-			vce.Envelopes[oscIndex].FreqEnvelope.Table[13] = byte((math.Round(float64(dx7Voice.PitchEgLevel[3]))) + 55)
-			vce.Envelopes[oscIndex].FreqEnvelope.Table[14] = (99 - dx7Voice.PitchEgRate[0]) +
+			vce.Envelopes[synOscIndex].FreqEnvelope.Table[12] = byte((math.Round(float64(dx7Voice.PitchEgLevel[3]))) + 55)
+			vce.Envelopes[synOscIndex].FreqEnvelope.Table[13] = byte((math.Round(float64(dx7Voice.PitchEgLevel[3]))) + 55)
+			vce.Envelopes[synOscIndex].FreqEnvelope.Table[14] = (99 - dx7Voice.PitchEgRate[0]) +
 				(99 - dx7Voice.PitchEgRate[1]) + (99 - dx7Voice.PitchEgRate[2]) + (99 - dx7Voice.PitchEgRate[3])
-			vce.Envelopes[oscIndex].FreqEnvelope.Table[15] = (99 - dx7Voice.PitchEgRate[0]) +
+			vce.Envelopes[synOscIndex].FreqEnvelope.Table[15] = (99 - dx7Voice.PitchEgRate[0]) +
 				(99 - dx7Voice.PitchEgRate[1]) + (99 - dx7Voice.PitchEgRate[2]) + (99 - dx7Voice.PitchEgRate[3])
 		*/
 
@@ -635,9 +652,9 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 	return
 }
 
-func convertKeyLevelScalingToFilters(oscIndex int, dxOsc Dx7Osc, filterIndex int8, vce *data.VCE) (err error) {
+func convertKeyLevelScalingToFilters(synOscIndex int, dxOsc Dx7Osc, filterIndex int8, vce *data.VCE) (err error) {
 	//set filter B on for voice, b-filters are indicated by the 1-based osc index
-	vce.Head.FILTER[oscIndex] = filterIndex + 1
+	vce.Head.FILTER[synOscIndex] = filterIndex + 1
 
 	// Assumes no A-filter - so B filter for osc 1 (index 0) is always stored at 0:
 	vce.Filters[filterIndex][(breakPoint[dxOsc.KeyLevelScalingBreakPoint])] = 0 //KEY to FREQ Array is breakPoint[] (below)
