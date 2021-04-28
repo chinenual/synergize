@@ -742,6 +742,15 @@ let viewVCE_envs = {
                 return false;
             } else {
                 vce.Envelopes[toOsc - 1] = newEnvelopes
+                
+                // update the floatVal so gains work
+                viewVCE_envs.unsetFloatVals();
+                $('#gainAmpLow').val = viewVCE_envs.computeOscGain(toOsc-1, 0);
+                $('#gainAmpUp').val = viewVCE_envs.computeOscGain(toOsc-1, 1);
+                // update the Voice tab
+                document.getElementById(`OscGain[${toOsc}]`).value = viewVCE_envs.computeOscGain(toOsc - 1, 2)
+                console.log("onchange: setGain: update voice tab: " + toOsc + " " + document.getElementById(`OscGain[${toOsc}]`).value)
+
                 viewVCE_envs.envChartUpdate(toOsc, -1, true);
             }
         });
