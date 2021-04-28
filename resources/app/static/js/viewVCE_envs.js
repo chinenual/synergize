@@ -316,6 +316,7 @@ let viewVCE_envs = {
     },
 
     unsetFloatVals: function() {
+        console.log("unsetFloatVals");
         viewVCE_envs.floatAmpVal = null;
     },
 
@@ -326,6 +327,7 @@ let viewVCE_envs = {
         // the original env shape, even at extreme gain amounts.
 
         if (viewVCE_envs.floatAmpVal === null) {
+            console.log("initFloatVals");
             viewVCE_envs.floatAmpVal = []
             console.log("initFloatVals init: ",viewVCE_envs.floatAmpVal)
             for (osc = 0; osc <= vce.Head.VOITAB; osc++) {
@@ -341,7 +343,7 @@ let viewVCE_envs = {
                     currentOscGain[1] = 1.0;
                 }
 
-                viewVCE_envs.floatAmpVal.push({low: [], up: [], referenceLow: [], referenceUp: []})
+                viewVCE_envs.floatAmpVal.push({low: [], up: [], referenceLow: [], referenceUp: [], origOscGain: currentOscGain})
                 console.log("initFloatVals top: " + osc,viewVCE_envs.floatAmpVal)
 
                 for (eleIndex = 0; eleIndex < vce.Envelopes[osc].AmpEnvelope.NPOINTS; eleIndex++) {
@@ -406,8 +408,11 @@ let viewVCE_envs = {
 
     setOscGain: function (osc /* zero-based */, gain /*0..100*/) { // both low and up change
         // need to recompute the individual gains in terms of the overall gain
-        var gainLow = viewVCE_envs.computeOscGain(osc, 0);
-        var gainUp  = viewVCE_envs.computeOscGain(osc, 1);
+        viewVCE_envs.initFloatVals();
+
+        var gainLow = viewVCE_envs.floatAmpVal[osc].origOscGain[0];
+        var gainUp = viewVCE_envs.floatAmpVal[osc].origOscGain[1];
+
         var origOscGain = Math.max(gainLow, gainUp);
         if (origOscGain <= 0.0) {
             // avoid divide by zero!  when original gain was zero, may as well just set the new
@@ -516,9 +521,14 @@ let viewVCE_envs = {
 
         if (ele.id.match(/Low/)) {
             viewVCE_envs.setGain(osc, gain, 0);
+            // recompute the "original gains" so that osc-level gain can create proportional changes to reflect this latest change
+            viewVCE_envs.floatAmpVal[osc].origOscGain[0] = gain;
         } else {
             viewVCE_envs.setGain(osc, gain, 1);
+            // recompute the "original gains" so that osc-level gain can create proportional changes to reflect this latest change
+            viewVCE_envs.floatAmpVal[osc].origOscGain[1] = gain;
         }
+
         viewVCE_voice.sendToCSurface(null, ele.id, gain);
     },
 

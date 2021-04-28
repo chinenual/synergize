@@ -16,6 +16,16 @@ describe('Test gain', () => {
         app = await hooks.getApp();
     });
 
+    it('voice tab should display', async () => {
+        const tab = await app.client.$(`#vceTabs a[href='#vceVoiceTab']`)
+        await tab.click();
+        (await tab.getAttribute('class')).should.include('active');
+        const paramTable = await app.client.$('#voiceParamTable')
+        const oscTable = await app.client.$('#voiceOscTable') 
+        await oscTable.waitForDisplayed()
+        await paramTable.waitForDisplayed()
+    });
+    
     it('click load G7S', async () => {
         
         const vname = await app.client.$('#VNAME')
@@ -190,5 +200,124 @@ describe('Test gain', () => {
         (await upVal2.getValue()).should.equal('64'); 
     });
 
+    // set osc gain to zero 
+    it('voice tab should display', async () => {
+        const tab = await app.client.$(`#vceTabs a[href='#vceVoiceTab']`)
+        await tab.click();
+        (await tab.getAttribute('class')).should.include('active');
+        const paramTable = await app.client.$('#voiceParamTable')
+        const oscTable = await app.client.$('#voiceOscTable') 
+        await oscTable.waitForDisplayed()
+        await paramTable.waitForDisplayed()
+    });
+
+    it('change osc gains', async() => {
+        // osc1 should now say 90
+        // set it to 0
+        const oscGain1 = await app.client.$(cssQuoteId('#oscGain[1]'));
+        const oscGain2 = await app.client.$(cssQuoteId('#oscGain[2]'));
+        const oscGain3 = await app.client.$(cssQuoteId('#oscGain[3]'));
+        const oscGain4 = await app.client.$(cssQuoteId('#oscGain[4]'));
+
+        (await oscGain1.getValue()).should.equal('90');
+        (await oscGain2.getValue()).should.equal('83');
+        (await oscGain3.getValue()).should.equal('100');
+        (await oscGain4.getValue()).should.equal('100');
+
+        await app.client.pause(TYPING_PAUSE);
+        await oscGain1.setValue('0');
+        await oscGain2.click(); // click off the element to force the onchange event
+        await app.client.pause(REDRAW_ENV_PAUSE);
+        await hooks.waitUntilValueExists(cssQuoteId('#oscGain[1]'), '0');
+        (await oscGain1.getValue()).should.equal('0');        
+    });
+
+    
+    it('env tab should display', async () => {
+        const tab = await app.client.$(`#vceTabs a[href='#vceEnvsTab']`)
+        await tab.click();
+        (await tab.getAttribute('class')).should.include('active');
+        const table = await app.client.$('#envTable')
+        await table.waitForDisplayed();
+        (await table.isDisplayed()).should.equal(true);
+    });
+
+    it('check modified gains', async() => {
+        // osc1: should be 0,0
+
+        const lowGain = await app.client.$(cssQuoteId('#gainAmpLow'));
+        const upGain = await app.client.$(cssQuoteId('#gainAmpUp'));
+        const lowVal1 = await app.client.$(cssQuoteId('#envAmpLowVal[1]'));
+        const lowVal2 = await app.client.$(cssQuoteId('#envAmpLowVal[2]'));
+        const upVal1 = await app.client.$(cssQuoteId('#envAmpUpVal[1]'));
+        const upVal2 = await app.client.$(cssQuoteId('#envAmpUpVal[2]'));
+
+        (await lowGain.getValue()).should.equal('0');
+        (await upGain.getValue()).should.equal('0');
+        (await lowVal1.getValue()).should.equal('0');
+        (await lowVal2.getValue()).should.equal('0'); 
+        (await upVal1.getValue()).should.equal('0');
+        (await upVal2.getValue()).should.equal('0'); 
+    });
+
+    // now change it back via osc gain
+    it('voice tab should display', async () => {
+        const tab = await app.client.$(`#vceTabs a[href='#vceVoiceTab']`)
+        await tab.click();
+        (await tab.getAttribute('class')).should.include('active');
+        const paramTable = await app.client.$('#voiceParamTable')
+        const oscTable = await app.client.$('#voiceOscTable') 
+        await oscTable.waitForDisplayed()
+        await paramTable.waitForDisplayed()
+    });
+
+    it('change osc gains', async() => {
+        // osc1 should now say 0
+        // set it to 90
+        const oscGain1 = await app.client.$(cssQuoteId('#oscGain[1]'));
+        const oscGain2 = await app.client.$(cssQuoteId('#oscGain[2]'));
+        const oscGain3 = await app.client.$(cssQuoteId('#oscGain[3]'));
+        const oscGain4 = await app.client.$(cssQuoteId('#oscGain[4]'));
+
+        (await oscGain1.getValue()).should.equal('0');
+        (await oscGain2.getValue()).should.equal('83');
+        (await oscGain3.getValue()).should.equal('100');
+        (await oscGain4.getValue()).should.equal('100');
+
+        await app.client.pause(TYPING_PAUSE);
+        await oscGain1.setValue('90');
+        await oscGain2.click(); // click off the element to force the onchange event
+        await app.client.pause(REDRAW_ENV_PAUSE);
+        await hooks.waitUntilValueExists(cssQuoteId('#oscGain[1]'), '90');
+        (await oscGain1.getValue()).should.equal('90');        
+    });
+
+    
+    it('env tab should display', async () => {
+        const tab = await app.client.$(`#vceTabs a[href='#vceEnvsTab']`)
+        await tab.click();
+        (await tab.getAttribute('class')).should.include('active');
+        const table = await app.client.$('#envTable')
+        await table.waitForDisplayed();
+        (await table.isDisplayed()).should.equal(true);
+    });
+
+    it('check modified gains', async() => {
+        // osc1: should be 60,90 (low: 43,43, up: 65,64)
+
+        const lowGain = await app.client.$(cssQuoteId('#gainAmpLow'));
+        const upGain = await app.client.$(cssQuoteId('#gainAmpUp'));
+        const lowVal1 = await app.client.$(cssQuoteId('#envAmpLowVal[1]'));
+        const lowVal2 = await app.client.$(cssQuoteId('#envAmpLowVal[2]'));
+        const upVal1 = await app.client.$(cssQuoteId('#envAmpUpVal[1]'));
+        const upVal2 = await app.client.$(cssQuoteId('#envAmpUpVal[2]'));
+
+        (await lowGain.getValue()).should.equal('60');
+        (await upGain.getValue()).should.equal('90');
+        (await lowVal1.getValue()).should.equal('43');
+        (await lowVal2.getValue()).should.equal('43'); 
+        (await upVal1.getValue()).should.equal('65');
+        (await upVal2.getValue()).should.equal('64'); 
+    });
 
 });
