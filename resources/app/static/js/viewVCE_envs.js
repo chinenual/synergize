@@ -742,7 +742,7 @@ let viewVCE_envs = {
                 return false;
             } else {
                 vce.Envelopes[toOsc - 1] = newEnvelopes
-                
+
                 // update the floatVal so gains work
                 viewVCE_envs.unsetFloatVals();
                 $('#gainAmpLow').val = viewVCE_envs.computeOscGain(toOsc-1, 0);
