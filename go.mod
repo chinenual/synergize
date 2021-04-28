@@ -4,9 +4,9 @@ go 1.14
 
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
-	github.com/akavel/rsrc v0.10.1 // indirect
-	github.com/asticode/go-astikit v0.18.0
-	github.com/asticode/go-astilectron v0.22.4
+	github.com/akavel/rsrc v0.10.2 // indirect
+	github.com/asticode/go-astikit v0.20.0
+	github.com/asticode/go-astilectron v0.22.5
 	github.com/asticode/go-astilectron-bootstrap v0.4.10
 	github.com/chinenual/dnssd v1.1.2
 	github.com/davecgh/go-spew v1.1.1 // indirect
