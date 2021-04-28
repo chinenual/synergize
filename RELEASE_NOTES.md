@@ -17,9 +17,16 @@ permalink: /docs/release-notes
 * Adds a new tab to the [Synergize.touchosc](https://github.com/chinenual/synergize/releases/latest/Synergize-v3.touchosc) control surface - "Voice Levels" which 
   provides GDS-like long-throw faders to tune oscillator gain.
   Added by Don Turnock.
-* Fixes [issue #43](https://github.com/chinenual/synergize/issues/43):
+* Fixes [issue #42](https://github.com/chinenual/synergize/issues/42):
+  The new TouchOSC config also fixes an error that caused it to not
+  support the "DC" harmonic value.
+* Fixes [issue #43](https://github.com/chinenual/synergize/issues/
+43):
   The editor did not preserve envelope shape at some gain settings,
   especially once gain was set to zero.
+* Fixes [issue #63](https://github.com/chinenual/synergize/issues/63):
+  Gain was not updated properly after copying an envelope from a
+  different oscillator.  
 * Updates the underlying components, most significantly to Electron 11.
 
 ## 2.4.0
