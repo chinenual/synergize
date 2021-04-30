@@ -33,6 +33,7 @@
 	<script src="static/js/viewVCE_keyprop.js"></script>
 	<script src="static/js/viewVCE_doc.js"></script>
 	<script src="static/js/viewCRT.js"></script>
+	<script src="static/js/dx2syn.js"></script>
 
 	<script>
 		/* https://www.electronjs.org/docs/faq */
@@ -186,6 +187,10 @@ TEST a "more button" design:
 							<a href="#" onclick="index.loadVCEDialog();">Load Voice file (VCE)</a>
 							<a href="#" onclick="index.saveVCEDialog();" class="disabled" id="saveVCEMenuItem">Save
 								Voice file (VCE)</a>
+							<div class="dropdown-divider"></div>
+							<a href="#" id="dx2synEitherMenuItem" onclick="dx2syn.convertEitherDialog();">Convert DX7 SYX or Folder of SYX's </a>
+							<a href="#" id="dx2synFileMenuItem" onclick="dx2syn.convertFileDialog();">Convert DX7 SYX </a>
+							<a href="#" id="dx2synDirMenuItem" onclick="dx2syn.convertFolderDialog();">Convert Folder of DX7 SYX's</a>
 						</div>
 					</div>
 
@@ -229,6 +234,28 @@ TEST a "more button" design:
 			</div>
 		</div>
 
+		<!-- Modal -->
+		<div class="modal fade" id="subprocessModal" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog modal-xl" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="subprocessTitle">Subprocess Title</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body" style="overflow-y: auto; max-height: 700px;">
+						<span id="logOutput"></span>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+								id="subprocessCancelButton">Cancel</button>
+						<button type="button" class="btn btn-primary" data-dismiss="modal"
+								id="subprocessCloseButton" disabled>Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
 		<!-- Modal -->
 		<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-hidden="true">
 			<div class="modal-dialog" role="document">

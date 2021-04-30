@@ -2,12 +2,10 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
 
 	"github.com/chinenual/synergize/logger"
 
-	"github.com/chinenual/synergize/data"
 	"github.com/chinenual/synergize/dx2syn"
 )
 
@@ -17,7 +15,8 @@ var indexFlag = flag.Int("index", -1, "Index of the patch to extract")
 var sysexFlag = flag.String("sysex", "", "Pathname of the sysex file to parse")
 var verboseFlag = flag.Bool("verbose", false, "Verbose debugging")
 var statsFlag = flag.Bool("stats", false, "print statistics about the sysex - dont generate vce")
-var stevealgoFlag = flag.Bool("stevealgo", false, "create 32 different vce's - one for each algo")
+
+//var stevealgoFlag = flag.Bool("stevealgo", false, "create 32 different vce's - one for each algo")
 var makecrtFlag = flag.String("makecrt", "", "Pathname of a directory containing VCEs")
 var algoFlag = flag.Int("algo", -1, "DX Algorithm Number")
 var loglevelFlag = flag.String("loglevel", "INFO", "Set log level (DEBUG,INFO,WARN or ERROR)")
@@ -39,6 +38,7 @@ func main() {
 		}
 		return
 	}
+	/***********
 	if *stevealgoFlag {
 		for a := 0; a < 32; a++ {
 			var vce data.VCE
@@ -59,6 +59,7 @@ func main() {
 		}
 		return
 	}
+	*********/
 
 	if *sysexFlag == "" {
 		usage("must specify a SYSEX file pathname")

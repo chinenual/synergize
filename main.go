@@ -155,7 +155,7 @@ func mainInit() {
 	//    Core:"18.8.0"
 	//      18.* = Mojave
 	//      19.* = Catalina
-	//      20.* = Big Sure
+	//      20.* = Big Sur
 	// for linux, it reports the kernel
 	//    Core:"5.4.0-52-generic"
 	gi := goInfo.GetInfo()
@@ -435,6 +435,10 @@ func main() {
 			prefs_w = ws[2]
 
 			if err = osc.OscRegisterBridge(w); err != nil {
+				logger.Error(err)
+			}
+
+			if err = dx2synRegisterBridge(w); err != nil {
 				logger.Error(err)
 			}
 

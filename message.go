@@ -176,6 +176,30 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			payload = response
 		}
 
+	case "dx2synCancel":
+		if err = dx2SynProcessCancel(); err != nil {
+			payload = err.Error()
+		} else {
+			payload = "Ok"
+		}
+
+	case "dx2synStart":
+		var args struct {
+			Path string
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = dx2synProcessStart(args.Path); err != nil {
+			payload = err.Error()
+		} else {
+			payload = "Ok"
+		}
+
 	case "getCWD":
 		payload, _ = os.Getwd()
 		logger.Infof("CWD: %s\n", payload)

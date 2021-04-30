@@ -7,6 +7,8 @@ const DEBOUNCE_WAIT = 250;
 
 let index = {
 	init: function () {
+		dx2syn.init();
+
 		// make sure external web links open in system browser - not the application:
 		document.addEventListener('click', function (event) {
 			if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
@@ -707,6 +709,17 @@ let index = {
 				case "updateFromCSurface":
 					valueString = viewVCE_voice.updateFromCSurface(message.payload)
 					return { payload: valueString };
+
+				case "dx2synAddProcessLog":
+					console.log("dx2synAddProcessLog  - " + message.payload)
+					dx2syn.addProcessLog(message.payload);
+					return { payload: "ok" };
+
+				case "dx2synFinish":
+					console.log("dx2synFinish  - " + message.payload)
+					dx2syn.finishConvert(message.payload);
+					return { payload: "ok" };
+
 			}
 		});
 	}

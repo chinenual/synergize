@@ -1,19 +1,48 @@
 include VERSION
 
 DOCS=*.md LICENSE
-SRCS=bundler.json [c-z]*.go */*.go resources/app/*html resources/app/static/css/*.css  resources/app/static/js/*js 
+SRCS=bundler.json cmd/*/*.go [c-z]*.go */*.go resources/app/*html resources/app/static/css/*.css  resources/app/static/js/*js 
 EXES=$(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX_AMD64) $(EXE_LINUX_386) $(EXE_LINUX_ARM) ${EXE_WINDOWS_TEST}
 EXE_MAC=output/darwin-amd64/Synergize.app/Contents/MacOS/Synergize 
 EXE_WINDOWS=output/windows-386/Synergize.exe
-EXE_WINDOWS_TEST=output/windows-386/Synergize-cmd.exe
+EXE_WINDOWS_TEST=output/windows-386-cmd/Synergize-cmd.exe
 EXE_LINUX_AMD64=output/linux-amd64/Synergize
 EXE_LINUX_386=output/linux-386/Synergize
 EXE_LINUX_ARM=output/linux-arm/Synergize
 
+DX2SYNS=$(DX2SYN_MAC) $(DX2SYN_WINDOWS) $(DX2SYN_LINUX_AMD64) $(DX2SYN_LINUX_386) $(DX2SYN_LINUX_ARM) 
+DX2SYN_MAC=output/darwin-amd64/Synergize.app/Contents/MacOS/dx2syn 
+DX2SYN_WINDOWS=output/windows-386/dx2syn.exe
+DX2SYN_LINUX_AMD64=output/linux-amd64/dx2syn
+DX2SYN_LINUX_386=output/linux-386/dx2syn
+DX2SYN_LINUX_ARM=output/linux-arm/dx2syn
+
+
 # NOTE: must build the exes before we can run the test since some variables 
 # used in main.go are generated as side-effects of the astielectron-bundler
+# Must build dx2syn after EXEs since astilectron-bundler will nuke the output directory
 .PHONY: all
-all: $(EXES)
+all: $(EXES) $(DX2SYNS)
+
+$(DX2SYN_MAC): $(SRCS)
+	mkdir -p output/darwin-amd64/Synergize.app/Contents/MacOS
+	cd cmd/dx2syn && go build -o ../../output/darwin-amd64/Synergize.app/Contents/MacOS
+
+$(DX2SYN_WINDOWS): $(SRCS)
+	mkdir -p output/windows-386
+	cd cmd/dx2syn && GOOS=windows GOARCH=386 go build -o ../../output/windows-386
+
+$(DX2SYN_LINUX_AMD64):
+	mkdir -p output/linux-amd64
+	cd cmd/dx2syn && GOOS=linux GOARCH=amd64 go build -o ../../output/windows-386
+
+$(DX2SYN_LINUX_386):
+	mkdir -p output/linux-386
+	cd cmd/dx2syn && GOOS=linux GOARCH=386 go build -o ../../output/windows-386
+
+$(DX2SYN_LINUX_ARM):
+	mkdir -p output/linux-arm
+	cd cmd/dx2syn && GOOS=linux GOARCH=arm go build -o ../../output/windows-386
 
 
 $(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX_AMD64) $(EXE_LINUX_386) $(EXE_LINUX_ARM) : $(SRCS)
@@ -22,13 +51,14 @@ $(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX_AMD64) $(EXE_LINUX_386) $(EXE_LINUX_ARM) :
 
 # command line friendly variant for running batch serial comms tests
 $(EXE_WINDOWS_TEST): $(SRCS)
-	mkdir -p output/windows-386
+	mkdir -p output/windows-386-cmd
 	GOOS=windows GOARCH=386 go build -o $(EXE_WINDOWS_TEST)
 
 .PHONY: mac
-mac: version.go
+mac: version.go 
 	rm -rf output/windows* output/linux* 
 	astilectron-bundler -c bundler-mac-only.json
+	$(MAKE) $(DX2SYN_MAC)
 
 .PHONY: cibuild
 cibuild: version.go
@@ -76,15 +106,15 @@ packageLinux: \
 
 packages/Synergize-linux-amd64-$(VERSION).tar.gz: $(EXE_LINUX_AMD64)
 	mkdir -p packages
-	cd output/linux-amd64 && tar czvf ../../packages/Synergize-linux-amd64-$(VERSION).tar.gz Synergize
+	cd output/linux-amd64 && tar czvf ../../packages/Synergize-linux-amd64-$(VERSION).tar.gz Synergize dx2syn
 
 packages/Synergize-linux-386-$(VERSION).tar.gz: $(EXE_LINUX_386)
 	mkdir -p packages
-	cd output/linux-386 && tar czvf ../../packages/Synergize-linux-386-$(VERSION).tar.gz Synergize
+	cd output/linux-386 && tar czvf ../../packages/Synergize-linux-386-$(VERSION).tar.gz Synergize dx2syn
 
 packages/Synergize-linux-arm-$(VERSION).tar.gz: $(EXE_LINUX_ARM)
 	mkdir -p packages
-	cd output/linux-arm && tar czvf ../../packages/Synergize-linux-arm-$(VERSION).tar.gz Synergize
+	cd output/linux-arm && tar czvf ../../packages/Synergize-linux-arm-$(VERSION).tar.gz Synergize dx2syn
 
 .PHONY: test
 test:
