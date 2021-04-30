@@ -20,8 +20,9 @@ DX2SYN_LINUX_ARM=output/linux-arm/dx2syn
 
 # NOTE: must build the exes before we can run the test since some variables 
 # used in main.go are generated as side-effects of the astielectron-bundler
+# Must build dx2syn after EXEs since astilectron-bundler will nuke the output directory
 .PHONY: all
-all: $(DX2SYNS) $(EXES)
+all: $(EXES) $(DX2SYNS)
 
 $(DX2SYN_MAC): $(SRCS)
 	mkdir -p output/darwin-amd64/Synergize.app/Contents/MacOS
@@ -54,9 +55,10 @@ $(EXE_WINDOWS_TEST): $(SRCS)
 	GOOS=windows GOARCH=386 go build -o $(EXE_WINDOWS_TEST)
 
 .PHONY: mac
-mac: version.go
+mac: version.go 
 	rm -rf output/windows* output/linux* 
 	astilectron-bundler -c bundler-mac-only.json
+	$(MAKE) $(DX2SYN_MAC)
 
 .PHONY: cibuild
 cibuild: version.go
@@ -104,15 +106,15 @@ packageLinux: \
 
 packages/Synergize-linux-amd64-$(VERSION).tar.gz: $(EXE_LINUX_AMD64)
 	mkdir -p packages
-	cd output/linux-amd64 && tar czvf ../../packages/Synergize-linux-amd64-$(VERSION).tar.gz Synergize
+	cd output/linux-amd64 && tar czvf ../../packages/Synergize-linux-amd64-$(VERSION).tar.gz Synergize dx2syn
 
 packages/Synergize-linux-386-$(VERSION).tar.gz: $(EXE_LINUX_386)
 	mkdir -p packages
-	cd output/linux-386 && tar czvf ../../packages/Synergize-linux-386-$(VERSION).tar.gz Synergize
+	cd output/linux-386 && tar czvf ../../packages/Synergize-linux-386-$(VERSION).tar.gz Synergize dx2syn
 
 packages/Synergize-linux-arm-$(VERSION).tar.gz: $(EXE_LINUX_ARM)
 	mkdir -p packages
-	cd output/linux-arm && tar czvf ../../packages/Synergize-linux-arm-$(VERSION).tar.gz Synergize
+	cd output/linux-arm && tar czvf ../../packages/Synergize-linux-arm-$(VERSION).tar.gz Synergize dx2syn
 
 .PHONY: test
 test:

@@ -155,7 +155,7 @@ func mainInit() {
 	//    Core:"18.8.0"
 	//      18.* = Mojave
 	//      19.* = Catalina
-	//      20.* = Big Sure
+	//      20.* = Big Sur
 	// for linux, it reports the kernel
 	//    Core:"5.4.0-52-generic"
 	gi := goInfo.GetInfo()
@@ -438,6 +438,10 @@ func main() {
 				logger.Error(err)
 			}
 
+			if err = dx2synRegisterBridge(w); err != nil {
+				logger.Error(err)
+			}
+
 			// Need to explicitly intercept Closed event on the main
 			// window since the about window is never closed - only hidden.
 			w.On(astilectron.EventNameWindowEventClosed, func(e astilectron.Event) (deleteListener bool) {
@@ -459,7 +463,7 @@ func main() {
 				BackgroundColor: astikit.StrPtr("black"),
 				Center:          astikit.BoolPtr(true),
 				Height:          astikit.IntPtr(900),
-				Width:           astikit.IntPtr(1000),
+				Width:           astikit.IntPtr(990),
 				WebPreferences: &astilectron.WebPreferences{
 					EnableRemoteModule: astikit.BoolPtr(true),
 				},

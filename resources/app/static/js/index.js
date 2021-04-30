@@ -707,6 +707,17 @@ let index = {
 				case "updateFromCSurface":
 					valueString = viewVCE_voice.updateFromCSurface(message.payload)
 					return { payload: valueString };
+
+				case "dx2synAddProcessLog":
+					console.log("dx2synAddProcessLog  - " + message.payload)
+					dx2syn.addProcessLog(message.payload);
+					return { payload: "ok" };
+
+				case "dx2synFinish":
+					console.log("dx2synFinish  - " + message.payload)
+					dx2syn.finishConvert(message.payload);
+					return { payload: "ok" };
+
 			}
 		});
 	}

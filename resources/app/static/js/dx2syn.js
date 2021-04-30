@@ -28,20 +28,56 @@ let dx2syn = {
 		console.log("runConvert: " + path)
 		document.getElementById("subprocessTitle").innerHTML = "Convert DX7 Sysex";
 		document.getElementById("logOutput").innerHTML = '';
+		document.getElementById("subprocessCloseButton").setAttribute("disabled", "disabled");
+		document.getElementById("subprocessCancelButton").removeAttribute("disabled");
+
 		document.getElementById("subprocessCancelButton").onclick = function() {
 			console.log("SAW CANCEL");
+			let message = {
+				"name": "dx2synCancel",
+				"payload": "DummyPayload"
+			};
+			// Send message
+			console.log("call dx2synCancel: " + path);
+			astilectron.sendMessage(message, function (message) {
+				// Check error
+				document.getElementById("subprocessCloseButton").removeAttribute("disabled");
+				document.getElementById("subprocessCancelButton").setAttribute("disabled", "disabled");
+				if (message.name === "error") {
+					index.errorNotification(message.payload);
+				}
+			});
 		};
 		$('#subprocessModal').modal({
 			backdrop: "static" // clicking outside the dialog doesnt close the dialog
 		});
-		for (i=0;i<1000;i++) {
-			dx2syn.addDxSubprocessLog(`msg${i}\n`);
-
+		{
+			let message = {
+				"name": "dx2synStart",
+				"payload": {"Path": path}
+			};
+			// Send message
+			console.log("call dx2synStart: " + path);
+			astilectron.sendMessage(message, function (message) {
+				// Check error
+				if (message.name === "error") {
+					index.errorNotification(message.payload);
+				}
+			});
 		}
 	},
 
-	addDxSubprocessLog: function(msgs) {
+	finishConvert: function(msg) {
+		dx2syn.addProcessLog("\n" + msg);
+		document.getElementById("subprocessCloseButton").removeAttribute("disabled");
+		document.getElementById("subprocessCancelButton").setAttribute("disabled", "disabled");
+	},
+
+	addProcessLog: function(msgs) {
 		html = msgs.replaceAll('\n','<br/>\n');
+		if (html[html.length-1] != '\n') {
+			html += "<br/>\n";
+		}
 		document.getElementById("logOutput").innerHTML =
 			document.getElementById("logOutput").innerHTML + html;
 		$('#subprocessModal').modal('handleUpdate')
