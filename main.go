@@ -459,7 +459,7 @@ func main() {
 				BackgroundColor: astikit.StrPtr("black"),
 				Center:          astikit.BoolPtr(true),
 				Height:          astikit.IntPtr(900),
-				Width:           astikit.IntPtr(990),
+				Width:           astikit.IntPtr(1000),
 				WebPreferences: &astilectron.WebPreferences{
 					EnableRemoteModule: astikit.BoolPtr(true),
 				},
