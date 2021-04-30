@@ -79,7 +79,7 @@ var _freqValues = []int{1, 2, 3, 4, 5, 6, 7, 7, 7, 8, 8, 9, 9, 10, 10, 11, 12, 1
 	3402, 3605, 3818, 4046, 4286, 4541, 4811, 5097, 5400, 5722, 6061, 6422, 6804}
 
 func _indexOfNearestValue(val int, array []int) (index int) {
-	bestDiff := math.MaxInt64
+	bestDiff := math.MaxInt32
 	index = -1
 	// brute force - we look at the whole array rather than return as soon as we find a minima
 	// this is fine since the array is known to be short.
