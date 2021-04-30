@@ -26,7 +26,9 @@ permalink: /docs/release-notes
   especially once gain was set to zero.
 * Fixes [issue #63](https://github.com/chinenual/synergize/issues/63):
   Gain was not updated properly after copying an envelope from a
-  different oscillator.  
+  different oscillator.
+* The Windows installer no longer bundles the `Synergize-cmd.exe`
+  command line diagnostics program.  Contact me if you need a copy.
 * Updates the underlying components, most significantly to Electron 11.
 
 ## 2.4.0

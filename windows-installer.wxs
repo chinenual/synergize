@@ -47,13 +47,13 @@
 	      </File>
             </Component>
 	    <!-- constant GUID -->
-            <Component Id="DiagnosticExecutable"
-		       Guid="A1C41EF0-6558-4795-A69B-0AD587CCEE11">
+            <Component Id="DXVoiceConverter"
+		       Guid="A1C41EF0-6558-4795-1234-0AD587CCEE11">
 	      <!-- constant GUID -->
 	      <File
-		  Id="2634660E-DF2D-4479-A9A0-8DC1C714A0D4"
-		  Name="Synergize-cmd.exe"
-		  Source="output/windows-386/Synergize-cmd.exe">
+		  Id="2634660E-DF2D-4479-1234-8DC1C714A0D4"
+		  Name="dx2syn.exe"
+		  Source="output/windows-386/dx2syn.exe">
 	      </File>
             </Component>
           </Directory>
@@ -67,7 +67,7 @@
     <Feature Id="Complete" Level="1">
       <ComponentRef Id="INSTALLDIR_Component"/>
       <ComponentRef Id="MainExecutable"/>
-      <ComponentRef Id="DiagnosticExecutable"/>
+      <ComponentRef Id="DXVoiceConverter"/>
 <!--      <ComponentRef Id="ProgramMenuDir"/>-->
     </Feature>
 

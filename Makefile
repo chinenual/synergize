@@ -5,7 +5,7 @@ SRCS=bundler.json cmd/*/*.go [c-z]*.go */*.go resources/app/*html resources/app/
 EXES=$(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX_AMD64) $(EXE_LINUX_386) $(EXE_LINUX_ARM) ${EXE_WINDOWS_TEST}
 EXE_MAC=output/darwin-amd64/Synergize.app/Contents/MacOS/Synergize 
 EXE_WINDOWS=output/windows-386/Synergize.exe
-EXE_WINDOWS_TEST=output/windows-386/Synergize-cmd.exe
+EXE_WINDOWS_TEST=output/windows-386-cmd/Synergize-cmd.exe
 EXE_LINUX_AMD64=output/linux-amd64/Synergize
 EXE_LINUX_386=output/linux-386/Synergize
 EXE_LINUX_ARM=output/linux-arm/Synergize
@@ -51,7 +51,7 @@ $(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX_AMD64) $(EXE_LINUX_386) $(EXE_LINUX_ARM) :
 
 # command line friendly variant for running batch serial comms tests
 $(EXE_WINDOWS_TEST): $(SRCS)
-	mkdir -p output/windows-386
+	mkdir -p output/windows-386-cmd
 	GOOS=windows GOARCH=386 go build -o $(EXE_WINDOWS_TEST)
 
 .PHONY: mac
