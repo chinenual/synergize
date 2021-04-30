@@ -188,8 +188,9 @@ TEST a "more button" design:
 							<a href="#" onclick="index.saveVCEDialog();" class="disabled" id="saveVCEMenuItem">Save
 								Voice file (VCE)</a>
 							<div class="dropdown-divider"></div>
-							<a href="#" onclick="dx2syn.convertFileDialog();">Convert DX7 SYX </a>
-							<a href="#" onclick="dx2syn.convertFolderDialog();">Convert Folder of DX7 SYX's</a>
+							<a href="#" id="dx2synEitherMenuItem" onclick="dx2syn.convertEitherDialog();">Convert DX7 SYX or Folder of SYX's </a>
+							<a href="#" id="dx2synFileMenuItem" onclick="dx2syn.convertFileDialog();">Convert DX7 SYX </a>
+							<a href="#" id="dx2synDirMenuItem" onclick="dx2syn.convertFolderDialog();">Convert Folder of DX7 SYX's</a>
 						</div>
 					</div>
 

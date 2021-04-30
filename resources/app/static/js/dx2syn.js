@@ -1,11 +1,39 @@
 let dx2syn = {
+	init() {
+		if (process.platform == 'darwin') {
+			// Macos dialog can select both folders and files
+			document.getElementById('dx2synFileMenuItem').hidden = true
+			document.getElementById('dx2synDirMenuItem').hidden = true
+			document.getElementById('dx2synEitherMenuItem').hidden = false
+		} else {
+			// windows and linux need a specific file and directory variant
+			document.getElementById('dx2synFileMenuItem').hidden = false
+			document.getElementById('dx2synDirMenuItem').hidden = false
+			document.getElementById('dx2synEitherMenuItem').hidden = true
+		}
+	},
+
+	convertEitherDialog: function() {
+		path = dialog.showOpenDialogSync({
+			title: "Choose DX7 Sysex or folder containing DX7 Sysex's",
+			filters: [
+				{ name: 'DX Sysex', extensions: ['syx','sysx'] },
+				{ name: 'All Files', extensions: ['*'] }],
+			properties: ['openFile', 'openDirectory']
+		});
+		console.log("in convertFileDialog: " + path);
+		if (path != undefined) {
+			dx2syn.runConvert(path[0]);
+		}
+	},
+
 	convertFileDialog: function() {
 		path = dialog.showOpenDialogSync({
 			title: "Choose DX7 Sysex",
 			filters: [
 				{ name: 'DX Sysex', extensions: ['syx','sysx'] },
 				{ name: 'All Files', extensions: ['*'] }],
-			properties: ['openFile', 'openDirectory']
+			properties: ['openFile']
 		});
 		console.log("in convertFileDialog: " + path);
 		if (path != undefined) {

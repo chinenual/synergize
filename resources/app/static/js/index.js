@@ -7,6 +7,8 @@ const DEBOUNCE_WAIT = 250;
 
 let index = {
 	init: function () {
+		dx2syn.init();
+
 		// make sure external web links open in system browser - not the application:
 		document.addEventListener('click', function (event) {
 			if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
