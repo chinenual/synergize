@@ -35,6 +35,11 @@ find them at a number of locations:
 * Aaron Lanterman's [Synergy Preservation Page](https://lanterman.ece.gatech.edu/synergy/)
 * [Synergy Voice Library at groups.io](https://groups.io/g/synergy-synth/files/SynergyVoiceLibrary.zip)
 
+## DX7 Converter
+
+Thanks to Don Turnock for his work to develop and bring the DX7 SYX to
+Synergy converter to Synergize.
+
 ## Documentation
 
 Thanks also to Tom Piggott for allowing me to reuse portions of his

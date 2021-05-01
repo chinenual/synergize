@@ -181,6 +181,11 @@ installDependencies:
 	go install github.com/asticode/go-astilectron-bundler/astilectron-bundler
 	go install github.com/asticode/go-astilectron-bootstrap
 
+.PHONY: localdoc
+localdoc:
+	echo use http://localhost:4000/synergize/
+	docker compose up
+
 .PHONY: clean
 clean:
 	rm -rf packages output bind_*.go *.log

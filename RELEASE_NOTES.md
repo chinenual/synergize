@@ -11,6 +11,17 @@ permalink: /docs/release-notes
 
 ## 2.5.0
 
+* Adds the ability convert Yamaha DX7 SYX files to Synergy CRT and VCE
+  files. Since the two synthesizers do not share identical synthesis
+  pathways, the conversion is approximate.  Even so, it is possible to
+  mine the great number of available DX voices and convert to useable
+  Synergy voices.  Some can be played without any further tweaking;
+  some can provide a starting point for more Synergy experimentation.  Many
+  thanks to Don Turnock for doing most of the heavy lifting in
+  analyzing the DX voicing algorithms and developing the conversion to
+  Synergy VCE.  See
+  [DX7 to Synergy Converter](https://chinenual.github.io/synergize/docs/dx2syn)
+  in the user manual for details.
 * Adds a new Doc tab to the Voice viewer/editor.  This will display
   the contents of the voices associated .DOC file (if there is one in 
   the same directory as the VCE that is being viewed).
