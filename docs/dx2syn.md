@@ -8,6 +8,16 @@ permalink: /docs/dx2syn
 
 # DX7 to Synergy Converter
 
+## Motivation
+
+As one of the most popular digital synthesizers of all times, there
+are thousands of DX7 voices available on the internet.  The DX7 and
+Synergy share some common characteristics and sounds developed for the
+DX7 can be translated to similar sounds on the Synergy.  The converter
+hopes to make some of those DX7 voices available on the Synergy, or
+more realistically, make some of those voices and inspiration and
+starting point for your own unique Synergy voices.
+
 ## SYX to VCE and CRT
 
 For each SYX file, the converter converts each voice in the sysex and
