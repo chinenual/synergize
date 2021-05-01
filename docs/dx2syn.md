@@ -40,7 +40,7 @@ foo/bar/voice32.VCE
 ```
 
 Synergy voice names attempt to preserve the original DX name, however
-this sometimes involves compressing the 12-character DX name to the
+this sometimes involves compressing the 10-character DX name to the
 available 8-characters on the Synergy. The converter attempts to
 preserve 'significant' characters and prefers to eliminate spaces,
 punctuation and vowels. If more than one voice have the same name
@@ -48,9 +48,9 @@ after such conversion, the converter appends a numeric suffix to
 ensure that each name is unique.  For example,
 
 | *DX name*      | *Synergy Name* |
-| <tt>"---woohoo---"</tt>  |  <tt>"--woohoo"</tt>
-| <tt>"FabVoice1234"</tt>  |  <tt>"FbVc1234"</tt>
-| <tt>"Brass&#9251; &#9251; &#9251; &#9251; &#9251;01"</tt>| <tt>"Brass&#9251;01"</tt> |
+| <tt>"--woohoo--"</tt>  |  <tt>"--woohoo"</tt>
+| <tt>"FabVoice12"</tt>  |  <tt>"FabVoc12"</tt>
+| <tt>"Brass&#9251; &#9251; &#9251;01"</tt>| <tt>"Brass&#9251;01"</tt> |
 
 
 Since a DX7 sysex can contain up to 32 voices and a Synergy CRT can
