@@ -10,7 +10,7 @@ permalink: /docs/dx2syn
 
 ## SYX to VCE and CRT
 
-For each SYSX file, the converter converts each voice in the SYSX and
+For each SYX file, the converter converts each voice in the sysex and
 produces a VCE file and then creates one or more CRT files containing
 all the converted Synergy voices.  VCEs, DOCs and CRTs are created in
 a folder named via the SYX base filename.  For example, given a SYX
@@ -42,7 +42,7 @@ ensure that each name is unique.  For example,
 | <tt>"Brass&#9251; &#9251; &#9251; &#9251; &#9251;01"</tt>| <tt>"Brass&#9251;01"</tt> |
 
 
-Since a DX7 SYSX can contain up to 32 voices and a Synergy CRT can
+Since a DX7 sysex can contain up to 32 voices and a Synergy CRT can
 support only 24 (and depending on their complexity can sometimes 
 fit less into a CRT image), the converter puts the first set of VCE's into the
 `bar.CRT` and then creates a `bar-2.CRT` for any voices that could not
@@ -59,7 +59,7 @@ or selecting an individual SYX file.
 When selecting an individual SYX file, only the voices in that file
 are converted.    When selecting a folder, the converter recursively
 walks that folder's contents (including sub-folders) and converts
-every SYSX it finds.
+every sysex it finds.
 
 ## Conversion Approach
 
