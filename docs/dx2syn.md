@@ -10,8 +10,8 @@ permalink: /docs/dx2syn
 
 ## Motivation
 
-As one of the most popular digital synthesizers of all times, there
-are thousands of DX7 voices available on the internet.  The DX7 and
+As one of the most popular digital synthesizers of all time, there
+are thousands of DX7 voices available online.  The DX7 and
 Synergy share some common characteristics and sounds developed for the
 DX7 can be translated to similar sounds on the Synergy.  The converter
 hopes to make some of those DX7 voices available on the Synergy, or
@@ -49,6 +49,7 @@ ensure that each name is unique.  For example,
 
 | *DX name*      | *Synergy Name* |
 | <tt>"---woohoo---"</tt>  |  <tt>"--woohoo"</tt>
+| <tt>"FabVoice1234"</tt>  |  <tt>"FbVc1234"</tt>
 | <tt>"Brass&#9251; &#9251; &#9251; &#9251; &#9251;01"</tt>| <tt>"Brass&#9251;01"</tt> |
 
 
