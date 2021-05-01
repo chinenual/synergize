@@ -63,11 +63,11 @@ every sysex it finds.
 
 ## Conversion Approach
 
-The DX7 and Synergy synthesis architectures are similar, but not the
-same.  In some cases there is a one-to-one correspondence of a
-parameter in a DX7 patch to a corresponding parameter in a Synergy
-voice.  However, there are some DX7 parameters that have no
-equivalance on the Synergy.
+The DX7 and Synergy synthesis architectures share some
+characteristics, but are not identical.  In some cases there is a
+one-to-one correspondence of a parameter in a DX7 patch to a
+corresponding parameter in a Synergy voice.  However, there are some
+DX7 parameters that have no equivalance on the Synergy.
 
 The Synergy carrier and modulating patches are, for the most part,
 identical to the original DX7 algorithms, subject to the following constraints:
@@ -82,7 +82,7 @@ The Synergy has no way to feed back a signal to an oscillator
 modulation chain.  Oscillators with feedback use the Triangle wave as
 an approximation of of the DX sound.
 
-DX7 pitch and amplitude envelopes are directly converted to Synergy
+DX pitch and amplitude envelopes are directly converted to Synergy
 envelopes.
 
 DX key level scaling are converted to Synergy filters.

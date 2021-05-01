@@ -38,7 +38,8 @@ find them at a number of locations:
 ## DX7 Converter
 
 Thanks to Don Turnock for his work to develop and bring the DX7 SYX to
-Synergy converter to Synergize.
+Synergy converter to Synergize.   Jari Kleimola contributed code which
+was adapted to implement the envelope rate conversion.
 
 ## Documentation
 
