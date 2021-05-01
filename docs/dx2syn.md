@@ -94,3 +94,21 @@ similar sounding voices.
 Modulation levels for carriers have been scaled to emulate the sounds
 of the original DX voices.  Some algorithm-specific adjustments are
 made automatically during the conversion.
+
+
+## Recommendations
+
+While some DX voices convert very accurately to Synergy, do not expect
+a 100% accurate conversion in general.  After creating the Synergy
+voice you may need to tweak it before it sounds right.
+
+Things to try:
+
+* Adjust oscillator gain levels to change frequency modulation and
+  oscilator balance
+* Adjust envelope rates. Add extra envelope points.
+* Tweak filters 
+
+In some cases, the initial Synergy voice may not sound much like the
+DX voice at all -- but may inspire you to create a completely new
+sound for the Synergy.  
