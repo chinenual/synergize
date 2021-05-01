@@ -105,7 +105,7 @@ voice you may need to tweak it before it sounds right.
 Things to try:
 
 * Adjust oscillator gain levels to change frequency modulation and
-  oscilator balance
+  oscillator balance
 * Adjust envelope rates. Add extra envelope points.
 * Tweak filters 
 
