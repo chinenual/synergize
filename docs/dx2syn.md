@@ -82,26 +82,24 @@ DX7 parameters that have no equivalance on the Synergy.
 The Synergy carrier and modulating patches are, for the most part,
 identical to the original DX7 algorithms, subject to the following constraints:
 
-### Differences
-
-Due to the order that oscillators are evaluated by the Synergy osc board,
+* Due to the order that oscillators are evaluated by the Synergy osc board,
 oscillator numbering is reversed in Synergy vs. DX -- DX oscillator 1
 converts to Synergy oscillator 6, DX 2 converts to Synergy 5, etc.
 
-The Synergy has no way to feed back a signal to an oscillator
+* The Synergy has no way to feed back a signal to an oscillator
 modulation chain.  Oscillators with feedback use the Triangle wave as
 an approximation of of the DX sound.
 
-DX pitch and amplitude envelopes are directly converted to Synergy
+* DX pitch and amplitude envelopes are directly converted to Synergy
 envelopes.
 
-DX key level scaling are converted to Synergy filters.
+* DX key level scaling are converted to Synergy filters.
 
-DX algorithm 16 and 17 cannot be implemented directly on the
+* DX algorithm 16 and 17 cannot be implemented directly on the
 Synergy. Instead, we use a special 5-oscillator patch which produces
 similar sounding voices.
 
-Modulation levels for carriers have been scaled to emulate the sounds
+* Modulation levels for carriers have been scaled to emulate the sounds
 of the original DX voices.  Some algorithm-specific adjustments are
 made automatically during the conversion.
 
