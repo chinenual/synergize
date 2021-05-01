@@ -91,6 +91,6 @@ DX algorithm 16 and 17 cannot be implemented directly on the
 Synergy. Instead, we use a special 5-oscillator patch which produces
 similar sounding voices.
 
-Modulation values for carriers have been scaled to emulate the sounds
+Modulation levels for carriers have been scaled to emulate the sounds
 of the original DX voices.  Some algorithm-specific adjustments are
 made automatically during the conversion.
