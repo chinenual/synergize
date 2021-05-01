@@ -79,8 +79,8 @@ oscillator numbering is reversed in Synergy vs. DX -- DX oscillator 1
 converts to Synergy oscillator 6, DX 2 converts to Synergy 5, etc.
 
 The Synergy has no way to feed back a signal to an oscillator
-modulation chain.  This is, however, common on the DX7.  Oscillators
-with feedback use the Triangle wave as an approximation of
+modulation chain.  Oscillators with feedback use the Triangle wave as
+an approximation of of the DX sound.
 
 DX7 pitch and amplitude envelopes are directly converted to Synergy
 envelopes.
