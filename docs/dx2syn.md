@@ -91,12 +91,12 @@ converts to Synergy oscillator 6, DX 2 converts to Synergy 5, etc.
 modulation chain.  Oscillators with feedback use the Triangle wave as
 an approximation of of the DX sound. On the DX, the waveform produced by 
 full feedback level (7) produces a Sawtooth wave, so the Triangle wave is 
-closer than the stabdard SIN wave. 
+closer than the standard Sine wave. 
 
 * DX pitch and amplitude envelopes are directly converted to Synergy
 envelopes. The Key Acceleration value on the DX is translated to the LOW (Yellow) 
 Envelope, to give the sound change from soft to hard key strike.  You may need to
-scale the Lower or Upper Envelope gain to you playing. 
+scale the Lower or Upper Envelope gain to your playing. 
 
 * DX key level scaling are converted to Synergy filters.
 
