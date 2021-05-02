@@ -89,10 +89,14 @@ converts to Synergy oscillator 6, DX 2 converts to Synergy 5, etc.
 
 * The Synergy has no way to feed back a signal to an oscillator
 modulation chain.  Oscillators with feedback use the Triangle wave as
-an approximation of of the DX sound.
+an approximation of of the DX sound. On the DX, the waveform produced by 
+full feedback level (7) produces a Sawtooth wave, so the Triangle wave is 
+closer than the stabdard SIN wave. 
 
 * DX pitch and amplitude envelopes are directly converted to Synergy
-envelopes.
+envelopes. The Key Acceleration value on the DX is translated to the LOW (Yellow) 
+Envelope, to give the sound change from soft to hard key strike.  You may need to
+scale the Lower or Upper Envelope gain to you playing. 
 
 * DX key level scaling are converted to Synergy filters.
 
@@ -104,11 +108,19 @@ similar sounding voices.
 of the original DX voices.  Some algorithm-specific adjustments are
 made automatically during the conversion.
 
+* One of the features on the DX7 that is not on the Synergy is being able
+to set the Harmonic for the Oscillator at 0.5.  This is emulated by setting the Synergy 
+Oscillator at 1, and raising the other Oscillators by 1 octave, then setting the 
+Transpose down 1 octave so it matches the DX7 voice.
+
 
 ## Recommendations
 
 While some DX voices convert very accurately to Synergy, do not expect
-a 100% accurate conversion in general.  After creating the Synergy
+a 100% accurate conversion in general. Although both are considered to be 
+FM Synthesizers, the DX7 is Phase M FM, while the Synergy is 
+Amplitude Modulated FM. The Carriers sound identical in additive mode, 
+but when modulated, the two do sound different. After creating the Synergy
 voice you may need to tweak it before it sounds right.
 
 Things to try:
@@ -120,4 +132,4 @@ Things to try:
 
 In some cases, the initial Synergy voice may not sound much like the
 DX voice at all -- but may inspire you to create a completely new
-sound for the Synergy.  
+sound for the Synergy. 
