@@ -179,7 +179,8 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 	switch dx7Voice.Algorithm {
 	case 15, 16:
 		logger.Debugf("Algorithm %d, so skip osc 4\n", dx7Voice.Algorithm)
-		skipOscSet[4] = true
+
+		skipOscSet[2] = true
 	default:
 	}
 
@@ -191,7 +192,7 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			// one less osc in the synergy voice
 			vce.Head.VOITAB -= 1
 			// skip the rest of the loop - this osc is ignored
-			break
+			continue
 		}
 		synOscIndex += 1
 
@@ -220,15 +221,15 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		if patchOutputDSR == 0 {
 			switch carrier {
 			case 6:
-				levComp = .70
-			case 5:
-				levComp = .75
-			case 4:
-				levComp = .80
-			case 3:
-				levComp = .85
-			case 2:
 				levComp = .90
+			case 5:
+				levComp = .92
+			case 4:
+				levComp = .94
+			case 3:
+				levComp = .96
+			case 2:
+				levComp = .98
 			case 1:
 				levComp = 1.0
 			}
@@ -501,8 +502,8 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 				logger.Debugf(" %s %d %d %d \n \n", " Algo  for dxOscIndex level*25%", dx7Voice.Algorithm, dxOscIndex, dxOsc.EgLevel[k])
 			}
 		}
-		//   DX7 17    OSC 4(3)
-		if dx7Voice.Algorithm == 16 && dxOscIndex == 3 {
+		//   DX7 17    OSC 1(0)
+		if dx7Voice.Algorithm == 16 && dxOscIndex == 0 {
 			for k := 0; k < 4; k++ {
 				dxOsc.EgLevel[k] = byte(float64(dxOsc.EgLevel[k]) * 0.25)
 				logger.Debugf(" %s %d %d %d \n \n", " Algo  for dxOscIndex level*25%", dx7Voice.Algorithm, dxOscIndex, dxOsc.EgLevel[k])
@@ -551,9 +552,9 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 			}
 		}
 
-		// Each Synergy oscillator is voice twice - for low and high key velocity response
+		// Each Synergy oscillator is voiced twice - for low and high key velocity response
 		// Synergy envelopes are represented as quads of ValLow, ValHi, RateLow and RateHi
-		// set both upper and lower envs the same
+		// set lower envs per key velocity
 
 		ms = computeDurationsMs(dxOsc.EgLevel, dxOsc.EgRate)
 		attkR = ms[0]
@@ -561,13 +562,12 @@ func TranslateDx7ToVce(nameMap *map[string]bool, dx7Voice Dx7Voice) (vce data.VC
 		sustR = ms[2]
 		relsR = ms[3]
 		/*
-			fmt.Printf(" %s %f \n", " OSC % = ", osclevelPercent)
-			fmt.Printf(" %s %d \n", " attkR = ", attkR)
-			fmt.Printf(" %s %d \n", " decyR = ", decyR)
-			fmt.Printf(" %s %d \n", " sustR = ", sustR)
-			fmt.Printf(" %s %d \n \n", " relsR = ", relsR)
+			fmt.Printf(" %s %d %s %f ", " OSC % = ", dxOscIndex, dx7Voice.VoiceName, osclevelPercent)
+			fmt.Printf(" %s %d ", "   attkR = ", attkR)
+			fmt.Printf(" %s %d ", "   decyR = ", decyR)
+			fmt.Printf(" %s %d ", "   sustR = ", sustR)
+			fmt.Printf(" %s %d \n \n", "   relsR = ", relsR)
 		*/
-
 		// point1
 		vce.Envelopes[synOscIndex].AmpEnvelope.Table[0] = byte((math.Round(float64(dxOsc.EgLevel[0]) * velocityPercent)) + 55)
 		vce.Envelopes[synOscIndex].AmpEnvelope.Table[1] = byte((math.Round(float64(dxOsc.EgLevel[0]))) + 55)
@@ -755,10 +755,10 @@ var fineValues = [100]float64{0.00000, 0.02329, 0.04713, 0.07152, 0.09648, 0.122
 	7.12831, 7.31764, 7.51138, 7.70964, 7.91251, 8.12011, 8.33254,
 	8.54993, 8.77237}
 
-var fbOsc = [33]int{0, 1, 5, 1, 1, 1, 1, 1, 3,
-	5, 4, 1, 5, 1, 1, 4, 1,
-	5, 4, 1, 4, 4, 1, 1, 1,
-	1, 1, 4, 2, 1, 2, 1, 1}
+var fbOsc = [33]int{0, 1, 5, 1, 1, 1, 1, 1, 3, 5, 4,
+	1, 5, 1, 1, 4, 1, 5, 4, 1, 4,
+	4, 1, 1, 1, 1, 1, 4, 2, 1, 2,
+	1, 1}
 
 var dTune = [16]int8{-81, -75, -69, -60, -42, -30, -24, 0, 9, 21, 24, 33, 45, 66, 72, 81}
 
