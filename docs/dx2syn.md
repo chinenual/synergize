@@ -106,22 +106,25 @@ similar sounding voices.
 
 * Modulation levels for carriers have been scaled to emulate the sounds
 of the original DX voices.  Some algorithm-specific adjustments are
-made automatically during the conversion.
+made automatically during the conversion. One of these is due to the fact that
+3 and 4 Oscillator 'towers', as they are decribed in the DX7 world, are not
+handled the same in the Synergy. The 3rd and 4th upper Oscillators are lowered 
+to about 25% of the original level. Since this isn't a one size fits all fix, 
+some voices may be helped by raising the gain on these Oscillators. 
 
 * One of the features on the DX7 that is not on the Synergy is being able
 to set the Harmonic for the Oscillator at 0.5.  This is emulated by setting the Synergy 
 Oscillator at 1, and raising the other Oscillators by 1 octave, then setting the 
-Transpose down 1 octave so it matches the DX7 voice.
-
+Transpose down 1 octave so it matches the DX7 voice. 
 
 ## Recommendations
 
 While some DX voices convert very accurately to Synergy, do not expect
 a 100% accurate conversion in general. Although both are considered to be 
-FM Synthesizers, the DX7 is Phase M FM, while the Synergy is 
-Amplitude Modulated FM. The Carriers sound identical in additive mode, 
-but when modulated, the two do sound different. After creating the Synergy
-voice you may need to tweak it before it sounds right.
+FM Synthesizers, there are multiple 'flavors' of FM Synthesis. The Carriers 
+sound identical in additive mode, but when modulated, the DX7 and the Synergy
+do sound different.  After creating the Synergy voice you may need to tweak it 
+before it sounds right.
 
 Things to try:
 
