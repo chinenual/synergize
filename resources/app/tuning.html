@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+	<title>Load Alternate Tuning</title>
+	<meta charset="UTF-8">
+
+	<link rel="stylesheet" href="static/css/bootstrap.min-darkly.css">
+	<link rel="stylesheet" href="static/css/base.css">
+
+	<script src="static/js/jquery-3.4.1.min.js" type="text/javascript"
+		onload="window.$ = window.jQuery = module.exports;"></script>
+
+	<script src="static/js/popper.min.js"></script>
+	<script src="static/js/bootstrap.min.js"></script>
+	<script src="static/js/index.js"></script>
+	<script src="static/js/tuning.js"></script>
+</head>
+
+<body>
+
+	<div class="container aboutbox">
+		<form>
+			<div class="form-group row">
+				<label class="col-md-3 col-form-label" for="useStandard">Use Standard Tuning (Even Temperament, 12 Note scale, A440)</label>
+				<div class="col-md-7">
+					<input type="checkbox" class="form-control" id="useStandard" onclick="tuning.toggle();" value="true" />
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-md-3 col-form-label" for="sclPath">Scala Scale file (SCM)</label>
+				<div class="col-md-7">
+					<input type="string" class="form-control" id="sclPath"
+						   onclick="tunings.sclFileDialog(this,this.value);" />
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-md-3 col-form-label" for="useStandardKBM">Use Standard 12 note key mapping </label>
+				<div class="col-md-7">
+					<input type="checkbox" class="form-control" id="useStandardKBM" onclick="tuning.toggle();" value="true" />
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-md-3 col-form-label" for="kbmPath">Scala Keyboard Mapping file (KBM)</label>
+				<div class="col-md-7">
+					<input type="string" class="form-control" id="kbmPath"
+						   onclick="tunings.kbmFileDialog(this,this.value);" />
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-md-3 col-form-label" for="referenceNote">Reference Note (MIDI value)</label>
+				<div class="col-md-7">
+					<input type="integer" class="form-control" id="referenceNote" />
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-md-3 col-form-label" for="referenceFreq">Reference Frequency (Hz)</label>
+				<div class="col-md-7">
+					<input type="integer" class="form-control" id="referenceFreq" />
+				</div>
+			</div>
+
+			<div class="col-md-7 offset-md-3">
+				<button type="cancel" onclick="tuning.cancelAndClose();">Cancel</button>
+				<button type="button" onclick="tuning.showFrequencyTable();">Show Frequencies</button>
+				<button type="submit" class="btn btn-primary" onclick="tuning.saveAndClose();">Send To Synergy</button>
+			</div>
+		</form>
+
+		<div id="freqTableDiv"</div>
+
+	</div>
+
+	<script type="text/javascript">
+		tuning.init();
+	</script>
+	</form>
+</body>

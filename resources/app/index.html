@@ -182,11 +182,14 @@ TEST a "more button" design:
 						<div class="dropdown-content" id="loadSaveDropdown-content">
 							<a href="#" onclick="index.saveSYNDialog();">Save Synergy State (SYN)</a>
 							<a href="#" onclick="index.loadSYNDialog();">Load Synergy State (SYN)</a>
+							<div class="dropdown-divider"></div>
 							<a href="#" onclick="index.loadCRTDialog();" id="loadCRTMenuItem">Load Cartridge file
 								(CRT)</a>
 							<a href="#" onclick="index.loadVCEDialog();">Load Voice file (VCE)</a>
 							<a href="#" onclick="index.saveVCEDialog();" class="disabled" id="saveVCEMenuItem">Save
 								Voice file (VCE)</a>
+							<div class="dropdown-divider"></div>
+							<a href="#" onclick="index.showTunings();" id="tuningMenuItem">Load Alternate Tuning</a>
 							<div class="dropdown-divider"></div>
 							<a href="#" id="dx2synEitherMenuItem" onclick="dx2syn.convertEitherDialog();">Convert DX7 SYX or Folder of SYX's </a>
 							<a href="#" id="dx2synFileMenuItem" onclick="dx2syn.convertFileDialog();">Convert DX7 SYX </a>

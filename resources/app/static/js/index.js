@@ -666,6 +666,13 @@ let index = {
 			// nop
 		});
 	},
+	showTunings: function () {
+		let message = { "name": "showTunings" };
+		//console.log("showTunings javascript");
+		astilectron.sendMessage(message, function (message) {
+			// nop
+		});
+	},
 
 	// debounce a function separately for each "first" argument - we use this
 	// with first argument being the input ele being debounced - this allows

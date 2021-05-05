@@ -762,6 +762,10 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		logger.Infof("Show Preferences (from messages)\n")
 		_ = prefs_w.Show()
 
+	case "showTunings":
+		logger.Infof("Show Tunings (from messages)\n")
+		_ = tunings_w.Show()
+
 	case "getSynergy":
 		var response [2]struct {
 			HasDevice         bool

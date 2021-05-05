@@ -56,13 +56,15 @@ var (
 	savesyn           = flag.String("SAVESYN", "", "save the Synergy state to the named SYN file")
 	loadsyn           = flag.String("LOADSYN", "", "load the named SYN file into Synergy")
 	synver            = flag.Bool("SYNVER", false, "Print the firmware version of the connected Synergy")
+	tuningdump        = flag.Bool("TUNE", false, "dump the tuning tables")
 	//	rawlog            = flag.Bool("RAWLOG", false, "Turn off timestamps to make logs easier to compare")
 	//midiproxy = flag.Bool("MIDIPROXY", false, "present a MIDI interface and use serial IO to control the Synergy")
 
-	w       *astilectron.Window
-	about_w *astilectron.Window
-	prefs_w *astilectron.Window
-	a       *astilectron.Astilectron
+	w         *astilectron.Window
+	about_w   *astilectron.Window
+	prefs_w   *astilectron.Window
+	tunings_w *astilectron.Window
+	a         *astilectron.Astilectron
 	//l          logger.Logger //*log.Logger
 	AppVersion string
 	OsVersion  string
@@ -235,6 +237,10 @@ func main() {
 				logger.Error(err)
 			}
 			os.Exit(code)
+		} else if *tuningdump {
+			GetSynergyConfig()
+			synio.PrintFreqTable()
+			os.Exit(0)
 		} else if *comtst {
 			// nil means use "preferences" config
 			prefsUserPreferences.UseSerial = true
@@ -433,6 +439,7 @@ func main() {
 			w = ws[0]
 			about_w = ws[1]
 			prefs_w = ws[2]
+			tunings_w = ws[3]
 
 			if err = osc.OscRegisterBridge(w); err != nil {
 				logger.Error(err)
@@ -493,6 +500,22 @@ func main() {
 				Show:            astikit.BoolPtr(false),
 				Height:          astikit.IntPtr(680),
 				Width:           astikit.IntPtr(800),
+				Custom: &astilectron.WindowCustomOptions{
+					HideOnClose: astikit.BoolPtr(true),
+				},
+				WebPreferences: &astilectron.WebPreferences{
+					EnableRemoteModule: astikit.BoolPtr(true),
+				},
+			},
+		}, {
+			Homepage:       "tuning.html",
+			MessageHandler: handleMessages,
+			Options: &astilectron.WindowOptions{
+				BackgroundColor: astikit.StrPtr("#ccc"),
+				Center:          astikit.BoolPtr(true),
+				Show:            astikit.BoolPtr(false),
+				Height:          astikit.IntPtr(750),
+				Width:           astikit.IntPtr(1010),
 				Custom: &astilectron.WindowCustomOptions{
 					HideOnClose: astikit.BoolPtr(true),
 				},

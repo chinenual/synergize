@@ -313,6 +313,11 @@ var synAddrs struct {
 	RAM  uint16 // AKA DATA
 	CMOS uint16
 
+	// Fixed address (firmware "tuning" frequency table base address with the WENDY firmware)
+	WENDY_FREQTAB uint16
+	// Fixed address (firmware "tuning" frequency table base address for factory firmware)
+	FACTORY_FREQTAB uint16
+
 	exec_LDGENR uint16 // SUBROUTINE LDGENR - reload note generators
 	exec_REAEQ  uint16 // SUBROUTINE REAEQ - alter amp scale for sounding notes
 	exec_REFIL  uint16 // SUBROUTINE REFIL - recalc filter values
@@ -349,6 +354,9 @@ func getSynergyAddrs() (err error) {
 	synAddrs.VRAM = 0x6000
 	synAddrs.VTAB = 0x6033 // voice table ROM
 	synAddrs.RAM = 0x8000  // aka DATA
+
+	synAddrs.WENDY_FREQTAB = 0xbf00   // from COMMON.Z80
+	synAddrs.FACTORY_FREQTAB = 0x5e00 // from COMMON.Z80
 
 	// Used in many SYNHCS address calculations:
 	synAddrs.FILTAB = synAddrs.VTAB + 173
