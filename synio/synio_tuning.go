@@ -35,16 +35,6 @@ func GetTuningParams() TuningParams {
 	return tuningParams
 }
 
-func SendTuningToSynergy(params TuningParams) (freqs []float64, err error) {
-	if freqs, err = GetTuningFrequencies(params); err != nil {
-		return
-	}
-	if synioVerbose {
-		logger.Infof("SYNIO: ** SendTuningToSynergy\n")
-	}
-	return
-}
-
 func GetTuningFrequencies(params TuningParams) (freqs []float64, err error) {
 	var t scala.Tuning
 	var s scala.Scale
@@ -88,6 +78,39 @@ func GetTuningFrequencies(params TuningParams) (freqs []float64, err error) {
 	return
 }
 
+func SendTuningToSynergy(params TuningParams) (freqs []float64, err error) {
+	c.Lock()
+	defer c.Unlock()
+
+	if freqs, err = GetTuningFrequencies(params); err != nil {
+		return
+	}
+	if synioVerbose {
+		logger.Infof("SYNIO: ** SendTuningToSynergy\n")
+	}
+	// Adjust the frequencies to Synergy format
+	var scale = 1.175
+	var intFreqs []uint16
+	for _, f := range freqs {
+		intFreqs = append(intFreqs, uint16(scale*f))
+	}
+	logger.Debug("Scala freq table: %v\n", freqs)
+	logger.Debug("Synergy freq table: %v\n", intFreqs)
+	var b []byte
+	for _, f := range intFreqs {
+		hob, lob := data.WordToBytes(f)
+		b = append(b, lob, hob)
+	}
+
+	//dumpAddressSpace("DUMP.bin")
+	if err = blockLoad(synAddrs.ROM_FREQTAB, b, "setFreqTable(ROM)"); err != nil {
+		return
+	}
+
+	PrintFreqTable()
+	return
+}
+
 func dumpAddressSpace(path string) {
 	var b []byte
 	var err error
@@ -117,19 +140,13 @@ func dumpAddressSpace(path string) {
 }
 
 func PrintFreqTable() (err error) {
-	c.Lock()
-	defer c.Unlock()
-	if synioVerbose {
-		logger.Infof("SYNIO: ** PrintFreqTable\n")
-	}
-
 	var b []byte
 	if err = getSynergyAddrs(); err != nil {
 		return
 	}
 
 	//dumpAddressSpace("DUMP.bin")
-	if b, err = blockDump(synAddrs.FACTORY_FREQTAB, FREQTAB_LEN, "getFreqTable(Factory)"); err != nil {
+	if b, err = blockDump(synAddrs.ROM_FREQTAB, FREQTAB_LEN, "getFreqTable(ROM)"); err != nil {
 		return
 	}
 

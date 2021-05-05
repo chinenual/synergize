@@ -667,10 +667,12 @@ let index = {
 		});
 	},
 	showTunings: function () {
-		let message = { "name": "showTunings" };
-		//console.log("showTunings javascript");
-		astilectron.sendMessage(message, function (message) {
-			// nop
+		viewVCE_voice.connectSynergy(function () {
+			let message = {"name": "showTunings"};
+			//console.log("showTunings javascript");
+			astilectron.sendMessage(message, function (message) {
+				// nop
+			});
 		});
 	},
 
