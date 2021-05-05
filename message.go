@@ -762,9 +762,49 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		logger.Infof("Show Preferences (from messages)\n")
 		_ = prefs_w.Show()
 
+	case "cancelTunings":
+		_ = tunings_w.Hide()
+
 	case "showTunings":
 		logger.Infof("Show Tunings (from messages)\n")
 		_ = tunings_w.Show()
+
+	case "sendTuningToSynergy":
+		var args synio.TuningParams
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		var freqs []float64
+		if freqs, err = synio.SendTuningToSynergy(args); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = freqs
+
+	case "getTuningFrequencies":
+		var args synio.TuningParams
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		var freqs []float64
+		if freqs, err = synio.GetTuningFrequencies(args); err != nil {
+			payload = err.Error()
+			return
+		}
+		payload = freqs
+
+	case "getTuningParams":
+		payload = synio.GetTuningParams()
+
+	case "setTuning":
 
 	case "getSynergy":
 		var response [2]struct {
