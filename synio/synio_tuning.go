@@ -3,6 +3,7 @@ package synio
 import (
 	"fmt"
 	"io/ioutil"
+	"math"
 	"os"
 
 	"github.com/chinenual/go-scala"
@@ -83,7 +84,7 @@ func GetTuningFrequencies(params TuningParams) (freqs []float64, err error) {
 func scaleFrequencies(freqs []float64) (intFreqs []uint16) {
 	var scale = 1.17671
 	for _, f := range freqs {
-		intFreqs = append(intFreqs, uint16(scale*f))
+		intFreqs = append(intFreqs, uint16(math.Round(scale*f)))
 	}
 	logger.Info("Scala freq table: %v\n", freqs)
 	logger.Info("Synergy freq table: %v\n", intFreqs)
