@@ -121,7 +121,7 @@ Transpose down 1 octave so it matches the DX7 voice.
 
 While some DX voices convert very accurately to Synergy, do not expect
 a 100% accurate conversion in general. Although both are considered to be 
-FM Synthesizers, there are multiple 'flavors' of FM Synthesis. The Carriers 
+FM Synthesizers, there are multiple _flavors_ of FM synthesis. The carriers 
 sound identical in additive mode, but when modulated, the DX7 and the Synergy
 do sound different.  After creating the Synergy voice you may need to tweak it 
 before it sounds right.
