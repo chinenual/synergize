@@ -1,7 +1,7 @@
 ---
 layout: default
 title: DX7 to Synergy Converter
-nav_order: 80
+nav_order: 70
 description: DX7 to Synergy Converter
 permalink: /docs/dx2syn
 ---

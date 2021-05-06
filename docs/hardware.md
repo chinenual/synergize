@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Serial Port / Hardware Setup
-nav_order: 60
+nav_order: 40
 description: Serial Port and Hardware Setup
 has_children: true
 has_toc: false
