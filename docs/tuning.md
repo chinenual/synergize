@@ -32,9 +32,13 @@ To load an alternate tuning into your Synergy, select `Load/Save -> Load Alterna
 
 * `Use Standard Tuning` - when selected, the tuning will be standard 12 note Equal Temperament; the same as the factory tuning.
 
-   * Even if Standard Tuning is selected, you can control the frequencies by specifying alternate values
-     for `Reference Note` and `Reference Frequency`.  For factory tuning, specify
-     `Reference Note = 69` (A4)  and `Reference Frequency = 440` (i.e., A4 == 440Hz). 
+   * Even if Standard Tuning is selected, you can control how the tunings are applied to MIDI notes:
+       * `Middle Note` - the MIDI note of first element of the scale (the "root" of the scale)
+       * `Reference Frequency` - the frequency of a specific note on the keyboard
+       * `Reference Note` - the MIDI note that the reference frequency specifies
+
+       For factory tuning, specify `Middle Note = 60` (C4), `Reference Note = 69` (A4)  and
+       `Reference      Frequency = 440` (i.e., A4 == 440Hz). 
 
 * If `Use Standard Tuning` is unselected, the you must specify an alternate tuning via an SCM file.
 

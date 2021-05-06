@@ -17,6 +17,7 @@ type TuningParams struct {
 	UseStandardKeyboardMapping bool
 	SCLPath                    string
 	KBMPath                    string
+	MiddleNote                 int
 	ReferenceNote              int
 	ReferenceFrequency         float64
 }
@@ -26,6 +27,7 @@ var tuningParams = TuningParams{
 	UseStandardKeyboardMapping: true,
 	SCLPath:                    "",
 	KBMPath:                    "",
+	MiddleNote:                 60,
 	ReferenceNote:              69,
 	ReferenceFrequency:         440.0,
 }
@@ -45,8 +47,8 @@ func GetTuningFrequencies(params TuningParams) (freqs []float64, err error) {
 			logger.Errorf("ScaleEvenTemperment12NoteScale err: %v\n", err)
 			return
 		}
-		if k, err = scala.KeyboardMappingTuneNoteTo(params.ReferenceNote, params.ReferenceFrequency); err != nil {
-			logger.Errorf("KeyboardMappingTuneNoteTo err: %v\n", err)
+		if k, err = scala.KeyboardMappingStartScaleOnAndTuneNoteTo(params.MiddleNote, params.ReferenceNote, params.ReferenceFrequency); err != nil {
+			logger.Errorf("KeyboardMappingStartScaleOnAndTuneNoteTo err: %v\n", err)
 			return
 		}
 	} else {
@@ -55,8 +57,8 @@ func GetTuningFrequencies(params TuningParams) (freqs []float64, err error) {
 			return
 		}
 		if params.UseStandardKeyboardMapping {
-			if k, err = scala.KeyboardMappingTuneNoteTo(params.ReferenceNote, params.ReferenceFrequency); err != nil {
-				logger.Errorf("KeyboardMappingTuneNoteTo err: %v\n", err)
+			if k, err = scala.KeyboardMappingStartScaleOnAndTuneNoteTo(params.MiddleNote, params.ReferenceNote, params.ReferenceFrequency); err != nil {
+				logger.Errorf("KeyboardMappingStartScaleOnAndTuneNoteTo err: %v\n", err)
 				return
 			}
 		} else {
