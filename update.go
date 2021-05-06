@@ -45,7 +45,7 @@ func getLatest(url string) (version string, err error) {
 	return
 }
 
-func CheckForNewVersion(forceRecheck bool, synergyType string, hasCs bool) (newVersion bool) {
+func CheckForNewVersion(forceRecheck bool, synergyType string, hasCs bool, other string) (newVersion bool) {
 	if forceRecheck || (!checkedForVersion) {
 		checkedForVersion = true
 		var latestVersion string
@@ -53,13 +53,18 @@ func CheckForNewVersion(forceRecheck bool, synergyType string, hasCs bool) (newV
 		var url = versionUrl + OsVersion
 		if forceRecheck {
 			url = versionUrl + "&synergy=" + synergyType + "&cs=" + strconv.FormatBool(hasCs)
+			if other != "" {
+				url += "&other=" + other
+			}
 		}
-		logger.Infof("url: %s\n", url)
+		logger.Debugf("url: %s\n", url)
 		if latestVersion, err = getLatest(url); err != nil {
 			logger.Errorf("Error checking for new version: %v", err)
 			return
 		}
-		logger.Infof("Latest version is %s\n", latestVersion)
+		if !forceRecheck {
+			logger.Infof("Latest version is %s\n", latestVersion)
+		}
 		if "v"+Version != latestVersion {
 			newVersionAvailable = true
 		}

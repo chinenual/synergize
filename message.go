@@ -54,7 +54,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			}
 		}
 		if args.SynergyWasDisconnected || (args.ControlSurfaceWasDisconnected && prefsUserPreferences.UseOsc) {
-			CheckForNewVersion(true, io.SynergyConnectionType(), osc.ControlSurfaceConfigured())
+			CheckForNewVersion(true, io.SynergyConnectionType(), osc.ControlSurfaceConfigured(), "")
 		}
 		payload = "ok"
 
@@ -194,6 +194,8 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
+		CheckForNewVersion(true, io.SynergyConnectionType(), osc.ControlSurfaceConfigured(), "dx2syn")
+
 		if err = dx2synProcessStart(args.Path); err != nil {
 			payload = err.Error()
 		} else {
@@ -222,7 +224,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		payload = struct {
 			Version             string
 			NewVersionAvailable bool
-		}{AppVersion, CheckForNewVersion(false, io.SynergyConnectionType(), osc.ControlSurfaceConfigured())}
+		}{AppVersion, CheckForNewVersion(false, io.SynergyConnectionType(), osc.ControlSurfaceConfigured(), "")}
 
 	case "isHTTPDebug":
 		payload = prefsUserPreferences.HTTPDebug
@@ -778,6 +780,7 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
+		CheckForNewVersion(true, io.SynergyConnectionType(), osc.ControlSurfaceConfigured(), "tune")
 		var freqs []float64
 		if freqs, err = synio.SendTuningToSynergy(args); err != nil {
 			payload = err.Error()
