@@ -12,7 +12,7 @@ Many Synergy enthusiasts discovered the instrument due to Wendy Carlos's use of 
 
 ## Synergy firmware supporting alternate tunings
 
-The WENDY firmware can be assembled from Z80 assembly sources by specifying a special macro variable (coincidentally named "WENDY").  This repurposes 256 bytes of the sequencer memory to support runtime-editable frequency tables.   Jari Kleimola has created ROMable images for hardware Synergies, available at XXXXX.   His virtual Synergy emulator, Synergia, also supports runtime tuning changes.
+The WENDY firmware can be assembled from [Z80 assembly sources](https://chinenual.github.io/synergize/docs/acknowledgements#original-z80-firmware-synhcs-source-code-and-voice-libraries) by specifying a special macro variable (coincidentally named "WENDY").  This repurposes 256 bytes of the sequencer memory to support runtime-editable frequency tables.   Jari Kleimola has created ROMable images for hardware Synergies, available at XXXXX.   His virtual Synergy emulator, Synergia, also supports runtime tuning changes.
 
 Synergize can send tuning changes to both Synergia and hardware Synergies running the WENDY firmware.
 
@@ -20,7 +20,8 @@ Synergize can send tuning changes to both Synergia and hardware Synergies runnin
 <b>WARNING:</b> Attempting to send tuning changes to a "factory" hardware Synergy may result in
   corrupted sequencer memory.  If you accidentally send a tuning change to a Synergy that doesn't
   support tuning  changes, you can restore your CMOS settings via a "factory reset" by pressing
-  `RESTORE` then `SAVE` on the Synergy's front panel.
+  <code class="highlighter-rouge">RESTORE</code> then <code class="highlighter-rouge">SAVE</code>
+  on the Synergy's front panel.
 </p>
 
 ## Loading an alternate tuning
