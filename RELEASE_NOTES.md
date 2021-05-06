@@ -11,7 +11,7 @@ permalink: /docs/release-notes
 
 ## 2.5.0
 
-* Adds Support for loading alternate tunings to your Synergy.  See
+* Adds support for loading alternate tunings to your Synergy.  See
   [Alternate Tunings](https://chinenual.github.io/synergize/docs/tunings).
 * Adds the ability convert Yamaha DX7 SYX files to Synergy CRT and VCE
   files. Since the two synthesizers do not share identical synthesis

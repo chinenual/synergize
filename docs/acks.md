@@ -20,7 +20,7 @@ Synergize is free and open source software, which uses a number of other open so
 * Stefan S's [bonjour/zeroconf](https://github.com/grandcat/zeroconf) library.
 * Lodash's [debouncer](https://lodash.com/)
 * The Surge team's [tuning library](https://surge-synth-team.org/tuning-library/)
-  (reimplemented as a Go package by Steve Tynor).
+  ([reimplemented](https://github.com/chinenual/go-scala) in Go by Steve Tynor).
 * [Electron](https://electronjs.org)
 * [Chart.js](https://www.chartjs.org)
 * [JQuery](https://jquery.com/)
