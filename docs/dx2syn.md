@@ -64,7 +64,7 @@ fit in the first one.
 Click the `Load/Save` button and select a `Convert DX7` menu item to
 initiate the conversion.  On Mac, there's a single option since the
 Mac file selector allows either folder or file selection.  On
-WIndows and Linux there are separate menu items for selecting a folder
+Windows and Linux there are separate menu items for selecting a folder
 or selecting an individual SYX file.
 
 When selecting an individual SYX file, only the voices in that file
