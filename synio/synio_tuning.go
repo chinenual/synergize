@@ -6,6 +6,8 @@ import (
 	"math"
 	"os"
 
+	"github.com/chinenual/synergize/io"
+
 	"github.com/chinenual/go-scala"
 	"github.com/chinenual/synergize/data"
 	"github.com/chinenual/synergize/logger"
@@ -109,8 +111,12 @@ func SendTuningToSynergy(params TuningParams) (freqs []float64, err error) {
 		b = append(b, lob, hob)
 	}
 
+	addr := synAddrs.WENDY_FREQTAB
+	if io.SynergyConnectionType() == "vst" {
+		addr = synAddrs.ROM_FREQTAB
+	}
 	//dumpAddressSpace("DUMP.bin")
-	if err = blockLoad(synAddrs.ROM_FREQTAB, b, "setFreqTable(ROM)"); err != nil {
+	if err = blockLoad(addr, b, "setFreqTable(ROM)"); err != nil {
 		return
 	}
 
