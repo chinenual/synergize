@@ -88,8 +88,8 @@ func scaleFrequencies(freqs []float64) (intFreqs []uint16) {
 	for _, f := range freqs {
 		intFreqs = append(intFreqs, uint16(math.Round(scale*f)))
 	}
-	logger.Info("Scala freq table: %v\n", freqs)
-	logger.Info("Synergy freq table: %v\n", intFreqs)
+	logger.Infof("Scala freq table: %v\n", freqs)
+	logger.Infof("Synergy freq table: %v\n", intFreqs)
 	return
 }
 

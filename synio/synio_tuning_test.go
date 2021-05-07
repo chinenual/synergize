@@ -2,6 +2,7 @@ package synio
 
 import (
 	"fmt"
+	"math"
 	"testing"
 
 	"gotest.tools/assert"
@@ -35,6 +36,19 @@ func TestScaleFrequencies(t *testing.T) {
 		if f != factoryROMTableValues[i] {
 			//fmt.Printf("    logs [%d] %v - expect %v (diff: %v)\n", i, math.Log2(float64(f)), math.Log2(float64(factoryROMTableValues[i])), math.Log2(float64(f))-math.Log2(float64(factoryROMTableValues[i])))
 			fmt.Printf("    [%d] %v - expect %v (diff: %v)\n", i, f, factoryROMTableValues[i], int(f)-int(factoryROMTableValues[i]))
+
+			// our scaling formula doesnt _exactly_ reproduce the factory table -- the lowest octave of the factory
+			// table isnt even part of the exponential curve -- and the upper range veers off by up to 4 Hz.
+			// Sanity check that the mapping is tight enough to what we have managed to reverse engineer:
+			if i <= 6 {
+				// no check - this part of the factory ROM is not exponential
+			} else if i < 115 {
+				assert.Check(t, math.Abs(float64(f)-float64(factoryROMTableValues[i])) <= 1.0, "i:%d", i)
+			} else if i < 123 {
+				assert.Check(t, math.Abs(float64(f)-float64(factoryROMTableValues[i])) <= 2.0, "i:%d", i)
+			} else {
+				assert.Check(t, math.Abs(float64(f)-float64(factoryROMTableValues[i])) <= 4.0, "i:%d", i)
+			}
 		}
 	}
 }
