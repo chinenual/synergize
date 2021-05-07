@@ -119,6 +119,9 @@ func SendTuningToSynergy(params TuningParams) (freqs []float64, err error) {
 	if err = blockLoad(addr, b, "setFreqTable(ROM)"); err != nil {
 		return
 	}
+	if err = reloadNoteGenerators(); err != nil {
+		return
+	}
 
 	PrintFreqTable()
 	return
