@@ -9,7 +9,7 @@ require (
 	github.com/asticode/go-astilectron v0.22.5
 	github.com/asticode/go-astilectron-bootstrap v0.4.10
 	github.com/chinenual/dnssd v1.1.2
-	github.com/chinenual/go-scala v1.0.0
+	github.com/chinenual/go-scala v1.1.1
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/hypebeast/go-osc v0.0.0-20200115085105-85fee7fed692

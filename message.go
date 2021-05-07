@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/chinenual/go-scala"
+
 	"github.com/chinenual/synergize/data"
 	"github.com/chinenual/synergize/io"
 	"github.com/chinenual/synergize/logger"
@@ -782,11 +784,22 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 		}
 		CheckForNewVersion(true, io.SynergyConnectionType(), osc.ControlSurfaceConfigured(), "tune")
 		var freqs []float64
-		if freqs, err = synio.SendTuningToSynergy(args); err != nil {
+		var tones []scala.Tone
+		var scalePos []int
+		if freqs, tones, scalePos, err = synio.SendTuningToSynergy(args); err != nil {
 			payload = err.Error()
 			return
 		}
-		payload = freqs
+		var result = struct {
+			Frequencies []float64
+			Tones       []scala.Tone
+			ScalePos    []int
+		}{
+			Frequencies: freqs,
+			Tones:       tones,
+			ScalePos:    scalePos,
+		}
+		payload = result
 
 	case "getTuningFrequencies":
 		var args synio.TuningParams
@@ -798,11 +811,22 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			}
 		}
 		var freqs []float64
-		if freqs, err = synio.GetTuningFrequencies(args); err != nil {
+		var tones []scala.Tone
+		var scalePos []int
+		if freqs, tones, scalePos, err = synio.GetTuningFrequencies(args); err != nil {
 			payload = err.Error()
 			return
 		}
-		payload = freqs
+		var result = struct {
+			Frequencies []float64
+			Tones       []scala.Tone
+			ScalePos    []int
+		}{
+			Frequencies: freqs,
+			Tones:       tones,
+			ScalePos:    scalePos,
+		}
+		payload = result
 
 	case "getTuningParams":
 		payload = synio.GetTuningParams()

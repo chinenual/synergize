@@ -67,11 +67,12 @@
 				</div>
 			</div>
 			<div class="form-group row">
-				<label class="col-md-3 col-form-label" for="middleNote">Middle Note (first note of the scale - MIDI value)</label>
+				<label class="col-md-3 col-form-label" for="middleNote">Root Note (first note of the scale - MIDI value)</label>
 				<div class="col-md-7">
 					<input type="number" min="0" max="127" class="form-control" id="middleNote" />
 				</div>
 			</div>
+			<!--
 			<div class="form-group row">
 				<label class="col-md-3 col-form-label" for="referenceNote">Reference Note (MIDI value)</label>
 				<div class="col-md-7">
@@ -84,15 +85,21 @@
 					<input type="number" pattern="\d+(.\d*)?" min="1.0" max="20000.0" class="form-control" id="referenceFreq" />
 				</div>
 			</div>
-
+			-->
 			<div class="col-md-7 offset-md-3">
 				<button type="cancel" onclick="tuning.cancelAndClose();">Cancel</button>
-				<button type="button" onclick="tuning.showFrequencyTable();">Show Frequencies</button>
+				<button type="button" onclick="tuning.showFrequencyTable();">Show Tuning</button>
 				<button type="button" class="btn btn-primary" onclick="tuning.sendToSynergy();">Send To Synergy</button>
 			</div>
 		</form>
 
-		<div id="freqTableDiv"</div>
+		<table>
+			<tr>
+				<td style="margin:100px; vertical-align:top; border: 3px groove #666;"><div id="scaleTableDiv"></div></td>
+				<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td style="margin:100px; vertical-align:top; border: 3px groove #666;"><div id="freqTableDiv"></div></td>
+			</tr>
+		</table>
 
 	</div>
 

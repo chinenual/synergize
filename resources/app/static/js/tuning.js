@@ -1,7 +1,8 @@
 let tuning = {
 	init: function() {
 		console.log("tuning.init()")
-		document.getElementById("freqTableDiv").hidden = true;
+//		document.getElementById("scaleTableDiv").hidden = true;
+//		document.getElementById("freqTableDiv").hidden = true;
 
 		// Wait for astilectron to be ready
 		document.addEventListener('astilectron-ready', function () {
@@ -26,9 +27,10 @@ let tuning = {
 				document.getElementById("sclPath").value = prefs.SCLPath;
 				document.getElementById("kbmPath").value = prefs.KBMPath;
 				document.getElementById("middleNote").value = prefs.MiddleNote;
+				/*
 				document.getElementById("referenceNote").value = prefs.ReferenceNote;
 				document.getElementById("referenceFreq").value = prefs.ReferenceFrequency;
-
+				*/
 				tuning.toggle();
 
 			});
@@ -82,58 +84,119 @@ let tuning = {
 				console.log("error: ", message)
 				index.errorNotification(message.payload);
 			}
-			var freqs = message.payload
-			tuning.buildFrequencyTable(freqs);
+			var result = message.payload
+			tuning.buildScaleTable(result.Tones);
+			tuning.buildFrequencyTable(result.Frequencies, result.ScalePos);
 		});
 	},
 
-	buildFrequencyTable: function(freqs) {
-			// Table is 8 columns of 16 rows
-
-			var tableEle = $('<table class="valTable"/>')
-			var tableHeadEle = $("<thead/>")
-			tableEle.append(tableHeadEle)
-			var rowEle = $(tableHeadEle[0].insertRow(-1));
-			for (var col = 0; col < 8; col++) {
-				var cell;
-				if (col > 0) {
-					cell  = $('<td rowSpan="16" style="padding:10px;"/>')
-					rowEle.append(cell);
-					cell  = $('<td rowSpan="16" style="border-left:1px solid #666;padding:10px;"/>');
-					rowEle.append(cell);
-				}
-				cell = $('<th>Note</th>')
+	buildScaleTable: function(tones) {
+		var tableEle = $('<table class="valTable"/>')
+		var tableHeadEle = $("<thead/>")
+		tableEle.append(tableHeadEle)
+		var rowEle = $(tableHeadEle[0].insertRow(-1));
+		var cell;
+		cell = $('<th>#</th>')
+		rowEle.append(cell);
+		cell = $('<th class="val">Definition</th>')
+		rowEle.append(cell);
+		cell = $('<th class="val">Cents</th>')
+		rowEle.append(cell);
+		cell = $('<th class="val">Float</th>')
+		rowEle.append(cell);
+		var tableBodyEle = $("<tbody/>")
+		tableEle.append(tableBodyEle)
+		for (row = -1; row < tones.length; row++) {
+			rowEle = $(tableBodyEle[0].insertRow(-1));
+			if (row < 0) {
+				// implicit "root" position of the scale
+				cell  = $('<td>1</td>')
 				rowEle.append(cell);
-				cell = $('<th class="val">Hz</th>')
+				cell  = $('<td class="val">1/1</td>')
+				rowEle.append(cell);
+				cell  = $('<td class="val">0</td>')
+				rowEle.append(cell);
+				cell  = $('<td class="val">1</td>')
+				rowEle.append(cell);
+			} else {
+				cell = $(`<td>${row+2}</td>`)
+				rowEle.append(cell);
+				cell = $(`<td class="val">${tones[row].StringRep}</td>`);
+				rowEle.append(cell);
+				cell = $(`<td class="val">${tones[row].Cents.toFixed(3)}</td>`);
+				rowEle.append(cell);
+				cell = $(`<td class="val">${tones[row].FloatValue.toFixed(3)}</td>`);
 				rowEle.append(cell);
 			}
-			var tableBodyEle = $("<tbody/>")
-			tableEle.append(tableBodyEle)
-			for (row = 0; row < 16; row++) {
-				rowEle = $(tableBodyEle[0].insertRow(-1));
+		}
+		var scaleTableDiv = $('#scaleTableDiv');
+		scaleTableDiv.html("");
+		scaleTableDiv.append(tableEle);
+		scaleTableDiv.show();
+	},
 
-				for (col = 0; col < 8; col++) {
-					note = col * 16 + row;
-					freq = freqs[note].toFixed(1);
+	buildFrequencyTable: function(freqs, scalePos) {
+		// Table is 4 columns of 32 rows
 
-					if (col > 0 && row == 0) {
-						cell  = $('<td rowSpan="16" style="padding:10px;"/>')
-						rowEle.append(cell);
-						cell  = $('<td rowSpan="16" style="border-left:1px solid #666;padding:10px;"/>');
-						rowEle.append(cell);
-					}
-					cell = $('<td/>')
-					cell.html(note);
-					rowEle.append(cell);
-					cell = $('<td class="val"/>');
-					cell.html(freq);
-					rowEle.append(cell);
-				}
+		var tableEle = $('<table class="valTable"/>')
+		var tableHeadEle = $("<thead/>")
+		tableEle.append(tableHeadEle)
+		var rowEle = $(tableHeadEle[0].insertRow(-1));
+		for (var col = 0; col < 4; col++) {
+			var cell;
+			if (col > 0) {
+				//cell  = $('<td rowSpan="32" style="padding:10px;"/>')
+				//rowEle.append(cell);
+				cell  = $('<td rowSpan="32" style="border-left:1px solid #666;padding:10px;"/>');
+				rowEle.append(cell);
+				//cell  = $('<td rowSpan="32" style="border-left:1px solid #666;padding:10px;"/>');
+				//rowEle.append(cell);
 			}
-			var freqTableDiv = $('#freqTableDiv');
-			freqTableDiv.html("");
-			freqTableDiv.append(tableEle);
-			document.getElementById("freqTableDiv").hidden = false;
+			cell = $('<th>Key</th>')
+			rowEle.append(cell);
+			cell = $('<th class="val">Degree</th>')
+			rowEle.append(cell);
+			cell = $('<th class="val">Hz</th>')
+			rowEle.append(cell);
+		}
+		var tableBodyEle = $("<tbody/>")
+		tableEle.append(tableBodyEle)
+
+		midiName = function(i) {
+			var names = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+			var octave = (i / 12) - 2
+			return names[i%12] + octave.toFixed(0)
+		}
+		for (row = 0; row < 32; row++) {
+			rowEle = $(tableBodyEle[0].insertRow(-1));
+
+			for (col = 0; col < 4; col++) {
+				note = col * 32 + row;
+				freq = freqs[note].toFixed(1);
+
+				if (col > 0 && row == 0) {
+					//cell  = $('<td rowSpan="32" style="padding:10px;"/>')
+					//rowEle.append(cell);
+					cell  = $('<td rowSpan="32" style="border-left:1px solid #666;padding:10px;"/>');
+					rowEle.append(cell);
+					//cell  = $('<td rowSpan="32" style="border-left:1px solid #666;padding:10px;"/>');
+					//rowEle.append(cell);
+				}
+				cell = $('<td/>')
+				cell.html(note + "&nbsp;("+midiName(note)+")");
+				rowEle.append(cell);
+				cell = $('<td class="val"/>');
+				cell.html(scalePos[note]+1);
+				rowEle.append(cell);
+				cell = $('<td class="val"/>');
+				cell.html(freq);
+				rowEle.append(cell);
+			}
+		}
+		var freqTableDiv = $('#freqTableDiv');
+		freqTableDiv.html("");
+		freqTableDiv.append(tableEle);
+		freqTableDiv.show();
 	},
 
 	toggle: function () {
@@ -145,7 +208,8 @@ let tuning = {
 		}
 		var useStandardKBMChecked = document.getElementById("useStandardKBM").checked;
 
-		document.getElementById("freqTableDiv").hidden = true;
+//		document.getElementById("scaleTableDiv").hidden = true;
+//		document.getElementById("freqTableDiv").hidden = true;
 
 		document.getElementById("sclPath").disabled = useStandardChecked;
 		document.getElementById("useStandardKBM").disabled = useStandardChecked;
@@ -153,9 +217,10 @@ let tuning = {
 		document.getElementById("kbmPath").disabled = useStandardChecked ||  useStandardKBMChecked;
 
 		document.getElementById("middleNote").disabled = (!useStandardChecked) && (!useStandardKBMChecked);
+		/*
 		document.getElementById("referenceNote").disabled = (!useStandardChecked) && (!useStandardKBMChecked);
 		document.getElementById("referenceFreq").disabled = (!useStandardChecked) &&  (!useStandardKBMChecked);
-
+		*/
 	},
 
 	createParamPayload: function () {
@@ -165,8 +230,10 @@ let tuning = {
 			"SCLPath"                   : document.getElementById("sclPath").value,
 			"KBMPath"                   : document.getElementById("kbmPath").value,
 			"MiddleNote"                : parseInt(document.getElementById("middleNote").value, 10),
+			/*
 			"ReferenceNote"             : parseInt(document.getElementById("referenceNote").value, 10),
-			"ReferenceFrequency"        :parseFloat(document.getElementById("referenceFreq").value)
+			"ReferenceFrequency"        : parseFloat(document.getElementById("referenceFreq").value)
+			 */
 		}
 	},
 
@@ -196,8 +263,9 @@ let tuning = {
 			if (message.name === "error") {
 				index.errorNotification(message.payload);
 			} else {
-				var freqs = message.payload
-				tuning.buildFrequencyTable(freqs);
+				var result = message.payload
+				tuning.buildScaleTable(result.Tones);
+				tuning.buildFrequencyTable(result.Frequencies, result.ScalePos);
 				index.errorNotification("Success!");
 			}
 		});

@@ -19,8 +19,8 @@ github.com/asticode/go-bindata v1.0.0 h1:5whO0unjdx2kbAbzoBMS3307jKAEf3oQ1lJcx5R
 github.com/asticode/go-bindata v1.0.0/go.mod h1:t/Y+/iCLrvaYkv8Y6PscRnyUeYzy9y9+8JC9CMcKdHY=
 github.com/chinenual/dnssd v1.1.2 h1:pdFldvWQQ3wJTKmM9Ucg5IiyFerFk+rIGjvT2O8JyG8=
 github.com/chinenual/dnssd v1.1.2/go.mod h1:i2oV5dVS0/DwlsUomX09LTddb2R85dsTh84MOLz7+eA=
-github.com/chinenual/go-scala v1.0.0 h1:L+Iy0ePzsuqlLpFpNYu3Jl37D4oH+eWgK95S24COpUU=
-github.com/chinenual/go-scala v1.0.0/go.mod h1:Uc09g2xLaUHqx3sK+1h3E0R3hG+ZFMNkVVDtEJhi7F0=
+github.com/chinenual/go-scala v1.1.1 h1:9Jd5sNMFdZ+Mye2BuuO+8Ygd1VcB1zp4raTKpWnJZb4=
+github.com/chinenual/go-scala v1.1.1/go.mod h1:Uc09g2xLaUHqx3sK+1h3E0R3hG+ZFMNkVVDtEJhi7F0=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=

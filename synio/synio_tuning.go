@@ -21,8 +21,10 @@ type TuningParams struct {
 	SCLPath                    string
 	KBMPath                    string
 	MiddleNote                 int
-	ReferenceNote              int
-	ReferenceFrequency         float64
+	/*
+		ReferenceNote              int
+		ReferenceFrequency         float64
+	*/
 }
 
 var tuningParams = TuningParams{
@@ -31,8 +33,33 @@ var tuningParams = TuningParams{
 	SCLPath:                    "",
 	KBMPath:                    "",
 	MiddleNote:                 60,
-	ReferenceNote:              69,
-	ReferenceFrequency:         440.0,
+	/*
+		ReferenceNote:              69,
+		ReferenceFrequency:         440.0,
+	*/
+}
+
+const fixedReferenceNote = 69
+const fixedReferenceFrequency = 440.0
+const midi0Freq = 8.17579891564371 // or 440.0 * pow( 2.0, - (69.0/12.0 ) )
+
+// from COMMON.Z80 "FTAB":
+var factoryROMTableValues = []uint16{0, 2, 4, 6, 8, 10, 12, 14,
+	15, 16, 17, 18, 19, 20, 21, 22,
+	24, 25, 27, 28, 30, 32, 34, 36,
+	38, 40, 43, 45, 48, 51, 54, 57,
+	61, 64, 68, 72, 76, 81, 86, 91,
+	96, 102, 108, 115, 122, 129, 137, 145,
+	153, 163, 172, 183, 193, 205, 217, 230,
+	244, 258, 274, 290, 307, 326, 345, 366,
+	387, 411, 435, 461, 488, 517, 548, 581,
+	615, 652, 691, 732, 775, 822, 870, 922,
+	977, 1035, 1097, 1162, 1231, 1304, 1382, 1464,
+	1551, 1644, 1741, 1845, 1955, 2071, 2194, 2325,
+	2463, 2609, 2765, 2929, 3103, 3288, 3483, 3691,
+	3910, 4143, 4389, 4650, 4926, 5219, 5530, 5859,
+	6207, 6576, 6967, 7382, 7820, 8286, 8778, 9300,
+	9853, 10439, 11060, 11718, 12414, 13153, 13935, 14764,
 }
 
 func GetTuningParams() TuningParams {
@@ -40,7 +67,7 @@ func GetTuningParams() TuningParams {
 	return tuningParams
 }
 
-func GetTuningFrequencies(params TuningParams) (freqs []float64, err error) {
+func GetTuningFrequencies(params TuningParams) (freqs []float64, tones []scala.Tone, scalePos []int, err error) {
 	var t scala.Tuning
 	var s scala.Scale
 	var k scala.KeyboardMapping
@@ -50,7 +77,7 @@ func GetTuningFrequencies(params TuningParams) (freqs []float64, err error) {
 			logger.Errorf("ScaleEvenTemperment12NoteScale err: %v\n", err)
 			return
 		}
-		if k, err = scala.KeyboardMappingStartScaleOnAndTuneNoteTo(params.MiddleNote, params.ReferenceNote, params.ReferenceFrequency); err != nil {
+		if k, err = scala.KeyboardMappingStartScaleOnAndTuneNoteTo(params.MiddleNote, fixedReferenceNote, fixedReferenceFrequency); err != nil {
 			logger.Errorf("KeyboardMappingStartScaleOnAndTuneNoteTo err: %v\n", err)
 			return
 		}
@@ -60,7 +87,7 @@ func GetTuningFrequencies(params TuningParams) (freqs []float64, err error) {
 			return
 		}
 		if params.UseStandardKeyboardMapping {
-			if k, err = scala.KeyboardMappingStartScaleOnAndTuneNoteTo(params.MiddleNote, params.ReferenceNote, params.ReferenceFrequency); err != nil {
+			if k, err = scala.KeyboardMappingStartScaleOnAndTuneNoteTo(params.MiddleNote, fixedReferenceNote, fixedReferenceFrequency); err != nil {
 				logger.Errorf("KeyboardMappingStartScaleOnAndTuneNoteTo err: %v\n", err)
 				return
 			}
@@ -69,13 +96,22 @@ func GetTuningFrequencies(params TuningParams) (freqs []float64, err error) {
 				logger.Errorf("KeyboardMappingFromKBMFile err: %v\n", err)
 				return
 			}
+			// override the reference values since Synergy tables require A440 reference
+			k.TuningFrequency = fixedReferenceFrequency
+			k.TuningConstantNote = fixedReferenceNote
+			k.TuningPitch = fixedReferenceFrequency / midi0Freq
 		}
 	}
 	if t, err = scala.TuningFromSCLAndKBM(s, k); err != nil {
 		logger.Errorf("TuningFromSCLAndKBM err: %v\n", err)
 		return
 	}
-
+	tones = s.Tones
+	for i := 0; i < 128; i++ {
+		scalePos = append(scalePos, t.ScalePositionForMidiNote(i))
+	}
+	logger.Infof("Scale tones: %v\n", tones)
+	logger.Infof("Scale scalePos: %v\n", scalePos)
 	for i := 0; i < 128; i++ {
 		freqs = append(freqs, t.FrequencyForMidiNote(i))
 	}
@@ -83,28 +119,34 @@ func GetTuningFrequencies(params TuningParams) (freqs []float64, err error) {
 	return
 }
 
-func scaleFrequencies(freqs []float64) (intFreqs []uint16) {
-	var scale = 1.17671
-	for _, f := range freqs {
-		intFreqs = append(intFreqs, uint16(math.Round(scale*f)))
+func scaleFrequencies(params TuningParams, freqs []float64) (intFreqs []uint16) {
+	if params.UseStandardTuning {
+		// special case "standard tuning" to mean "factory settings" - which are not identical
+		// to what we compute via scaling.
+		intFreqs = factoryROMTableValues
+	} else {
+		var scale = 1.17671
+		for _, f := range freqs {
+			intFreqs = append(intFreqs, uint16(math.Round(scale*f)))
+		}
 	}
 	logger.Infof("Scala freq table: %v\n", freqs)
 	logger.Infof("Synergy freq table: %v\n", intFreqs)
 	return
 }
 
-func SendTuningToSynergy(params TuningParams) (freqs []float64, err error) {
+func SendTuningToSynergy(params TuningParams) (freqs []float64, tones []scala.Tone, scalePos []int, err error) {
 	c.Lock()
 	defer c.Unlock()
 
-	if freqs, err = GetTuningFrequencies(params); err != nil {
+	if freqs, tones, scalePos, err = GetTuningFrequencies(params); err != nil {
 		return
 	}
 	if synioVerbose {
 		logger.Infof("SYNIO: ** SendTuningToSynergy\n")
 	}
 	// Adjust the frequencies to Synergy format
-	intFreqs := scaleFrequencies(freqs)
+	intFreqs := scaleFrequencies(params, freqs)
 	var b []byte
 	for _, f := range intFreqs {
 		hob, lob := data.WordToBytes(f)
