@@ -2,6 +2,7 @@ package io
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/chinenual/synergize/logger"
 )
@@ -133,9 +134,10 @@ func (c *Conn) GetRecord() (in, out []byte) {
 // HACK: using ugly WithTimeout suffix to keep govet from complaining that ReadByte (et.al.)
 // have different signatures than "standard" Read/Write byte methods
 func (c *Conn) ReadByteWithTimeout(timeoutMS uint, purpose string) (b byte, err error) {
-
+	var start time.Time
 	if c.verbose {
 		logger.Infof("       serial.Read (%d ms) - %s\n", timeoutMS, purpose)
+		start = time.Now()
 	}
 
 	b, err = c.impl.readByte(timeoutMS)
@@ -143,7 +145,8 @@ func (c *Conn) ReadByteWithTimeout(timeoutMS uint, purpose string) (b byte, err 
 		if err != nil {
 			logger.Infof("       read err: %v\n", err)
 		} else {
-			logger.Infof(" %02x <-- serial.Read (%v ms)\n", b, timeoutMS)
+			elapsed := time.Now().Sub(start)
+			logger.Infof(" %02x <-- serial.Read (%v ms)\n", b, elapsed.Milliseconds())
 		}
 	}
 	if c.record {
@@ -153,15 +156,18 @@ func (c *Conn) ReadByteWithTimeout(timeoutMS uint, purpose string) (b byte, err 
 }
 
 func (c *Conn) ReadBytesWithTimeout(timeoutMS uint, num_bytes uint16, purpose string) (bytes []byte, err error) {
+	var start time.Time
 	if c.verbose {
 		logger.Infof("       serial.Read %d bytes (%d ms) - %s\n", num_bytes, timeoutMS, purpose)
+		start = time.Now()
 	}
 	bytes, err = c.impl.readBytes(timeoutMS, num_bytes)
 	if c.verbose {
 		if err != nil {
 			logger.Infof("       read err: %v\n", err)
 		} else {
-			logger.Infof(" %02x <-- serial.Read (%d ms)\n", bytes, timeoutMS)
+			elapsed := time.Now().Sub(start)
+			logger.Infof(" %02x <-- serial.Read (%d ms)\n", bytes, elapsed.Milliseconds())
 		}
 	}
 	if c.record {
