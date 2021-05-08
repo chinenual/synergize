@@ -145,8 +145,7 @@ func (c *Conn) ReadByteWithTimeout(timeoutMS uint, purpose string) (b byte, err 
 		if err != nil {
 			logger.Infof("       read err: %v\n", err)
 		} else {
-			elapsed := time.Now().Sub(start)
-			logger.Infof(" %02x <-- serial.Read (%v ms)\n", b, elapsed.Milliseconds())
+			logger.Infof(" %02x <-- serial.Read (%v ms)\n", b, time.Since(start).Milliseconds())
 		}
 	}
 	if c.record {
@@ -166,8 +165,7 @@ func (c *Conn) ReadBytesWithTimeout(timeoutMS uint, num_bytes uint16, purpose st
 		if err != nil {
 			logger.Infof("       read err: %v\n", err)
 		} else {
-			elapsed := time.Now().Sub(start)
-			logger.Infof(" %02x <-- serial.Read (%d ms)\n", bytes, elapsed.Milliseconds())
+			logger.Infof(" %02x <-- serial.Read (%d ms)\n", bytes, time.Since(start).Milliseconds())
 		}
 	}
 	if c.record {
