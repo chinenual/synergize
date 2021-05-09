@@ -139,6 +139,10 @@ func SendTuningToSynergy(params TuningParams) (freqs []float64, tones []scala.To
 	c.Lock()
 	defer c.Unlock()
 
+	if err = getSynergyAddrs(); err != nil {
+		return
+	}
+
 	if freqs, tones, scalePos, err = GetTuningFrequencies(params); err != nil {
 		return
 	}
@@ -161,11 +165,11 @@ func SendTuningToSynergy(params TuningParams) (freqs []float64, tones []scala.To
 	if err = blockLoad(addr, b, "setFreqTable(ROM)"); err != nil {
 		return
 	}
-	if err = reloadNoteGenerators(); err != nil {
-		return
-	}
+	//if err = reloadNoteGenerators(); err != nil {
+	//	return
+	//}
 
-	PrintFreqTable()
+	//PrintFreqTable()
 	return
 }
 
