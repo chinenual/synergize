@@ -1,8 +1,8 @@
 let tuning = {
 	init: function() {
 		console.log("tuning.init()")
-//		document.getElementById("scaleTableDiv").hidden = true;
-//		document.getElementById("freqTableDiv").hidden = true;
+		console.log("tuning table",document.getElementById("tuningTable"))
+		document.getElementById("tuningTable").hidden = true;
 
 		// Wait for astilectron to be ready
 		document.addEventListener('astilectron-ready', function () {
@@ -85,8 +85,7 @@ let tuning = {
 				index.errorNotification(message.payload);
 			}
 			var result = message.payload
-			tuning.buildScaleTable(result.Tones);
-			tuning.buildFrequencyTable(result.Frequencies, result.ScalePos);
+			tuning.buildTuningDisplay(result)
 		});
 	},
 
@@ -132,7 +131,6 @@ let tuning = {
 		var scaleTableDiv = $('#scaleTableDiv');
 		scaleTableDiv.html("");
 		scaleTableDiv.append(tableEle);
-		scaleTableDiv.show();
 	},
 
 	buildFrequencyTable: function(freqs, scalePos) {
@@ -196,7 +194,6 @@ let tuning = {
 		var freqTableDiv = $('#freqTableDiv');
 		freqTableDiv.html("");
 		freqTableDiv.append(tableEle);
-		freqTableDiv.show();
 	},
 
 	toggle: function () {
@@ -251,6 +248,15 @@ let tuning = {
 		});
 	},
 
+	buildTuningDisplay: function(result) {
+		console.log("buildTuningDisplay",result)
+
+		tuning.buildScaleTable(result.Tones);
+		tuning.buildFrequencyTable(result.Frequencies, result.ScalePos);
+		console.log("tuning table",document.getElementById("tuningTable"))
+		document.getElementById("tuningTable").hidden = false;
+	},
+
 	sendToSynergy: function () {
 		let message = {
 			"name": "sendTuningToSynergy",
@@ -264,8 +270,7 @@ let tuning = {
 				index.errorNotification(message.payload);
 			} else {
 				var result = message.payload
-				tuning.buildScaleTable(result.Tones);
-				tuning.buildFrequencyTable(result.Frequencies, result.ScalePos);
+				tuning.buildTuningDisplay(result)
 				index.errorNotification("Success!");
 			}
 		});
