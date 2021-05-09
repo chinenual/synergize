@@ -34,15 +34,15 @@ $(DX2SYN_WINDOWS): $(SRCS)
 
 $(DX2SYN_LINUX_AMD64):
 	mkdir -p output/linux-amd64
-	cd cmd/dx2syn && GOOS=linux GOARCH=amd64 go build -o ../../output/windows-386
+	cd cmd/dx2syn && GOOS=linux GOARCH=amd64 go build -o ../../output/linux-amd64
 
 $(DX2SYN_LINUX_386):
 	mkdir -p output/linux-386
-	cd cmd/dx2syn && GOOS=linux GOARCH=386 go build -o ../../output/windows-386
+	cd cmd/dx2syn && GOOS=linux GOARCH=386 go build -o ../../output/linux-386
 
 $(DX2SYN_LINUX_ARM):
 	mkdir -p output/linux-arm
-	cd cmd/dx2syn && GOOS=linux GOARCH=arm go build -o ../../output/windows-386
+	cd cmd/dx2syn && GOOS=linux GOARCH=arm go build -o ../../output/linux-arm
 
 
 $(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX_AMD64) $(EXE_LINUX_386) $(EXE_LINUX_ARM) : $(SRCS)
@@ -104,15 +104,15 @@ packageLinux: \
   packages/Synergize-linux-386-$(VERSION).tar.gz \
   packages/Synergize-linux-arm-$(VERSION).tar.gz
 
-packages/Synergize-linux-amd64-$(VERSION).tar.gz: $(EXE_LINUX_AMD64)
+packages/Synergize-linux-amd64-$(VERSION).tar.gz: $(EXE_LINUX_AMD64) $(DX2SYN_LINUX_AMD64)
 	mkdir -p packages
 	cd output/linux-amd64 && tar czvf ../../packages/Synergize-linux-amd64-$(VERSION).tar.gz Synergize dx2syn
 
-packages/Synergize-linux-386-$(VERSION).tar.gz: $(EXE_LINUX_386)
+packages/Synergize-linux-386-$(VERSION).tar.gz: $(EXE_LINUX_386) $(DX2SYN_LINUX_386)
 	mkdir -p packages
 	cd output/linux-386 && tar czvf ../../packages/Synergize-linux-386-$(VERSION).tar.gz Synergize dx2syn
 
-packages/Synergize-linux-arm-$(VERSION).tar.gz: $(EXE_LINUX_ARM)
+packages/Synergize-linux-arm-$(VERSION).tar.gz: $(EXE_LINUX_ARM) $(DX2SYN_LINUX_ARM)
 	mkdir -p packages
 	cd output/linux-arm && tar czvf ../../packages/Synergize-linux-arm-$(VERSION).tar.gz Synergize dx2syn
 
