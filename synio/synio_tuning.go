@@ -125,8 +125,14 @@ func scaleFrequencies(params TuningParams, freqs []float64) (intFreqs []uint16) 
 		intFreqs = factoryROMTableValues
 	} else {
 		var scale = 1.17671
-		for _, f := range freqs {
-			intFreqs = append(intFreqs, uint16(math.Round(scale*f)))
+		for i, f := range freqs {
+			var v uint16
+			if i < 24 {
+				v = factoryROMTableValues[i]
+			} else {
+				v = uint16(math.Round(scale * f))
+			}
+			intFreqs = append(intFreqs, v)
 		}
 	}
 	logger.Infof("Scala freq table: %v\n", freqs)
@@ -213,15 +219,17 @@ func PrintFreqTable() (err error) {
 
 	for i := 0; i < FREQTAB_LEN; i += 2 {
 		w := data.BytesToWord(b[i+1], b[i])
-		fmt.Printf("factory[%d]: %v\n", i/2, w)
+		fmt.Printf("ROM FTAB[%d]: %v\n", i/2, w)
 	}
-	if b, err = blockDump(synAddrs.WENDY_FREQTAB, FREQTAB_LEN, "getFreqTable(WENDY)"); err != nil {
-		return
-	}
+	/*
+		if b, err = blockDump(synAddrs.WENDY_FREQTAB, FREQTAB_LEN, "getFreqTable(WENDY)"); err != nil {
+			return
+		}
 
-	for i := 0; i < FREQTAB_LEN; i += 2 {
-		w := data.BytesToWord(b[i+1], b[i])
-		fmt.Printf("WENDY[%d]: %v\n", i/2, w)
-	}
+		for i := 0; i < FREQTAB_LEN; i += 2 {
+			w := data.BytesToWord(b[i+1], b[i])
+			fmt.Printf("WENDY[%d]: %v\n", i/2, w)
+		}
+	*/
 	return
 }
