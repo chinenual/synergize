@@ -21,10 +21,8 @@ type TuningParams struct {
 	SCLPath                    string
 	KBMPath                    string
 	MiddleNote                 int
-	/*
-		ReferenceNote              int
-		ReferenceFrequency         float64
-	*/
+	ReferenceNote              int
+	ReferenceFrequency         float64
 }
 
 var tuningParams = TuningParams{
@@ -33,15 +31,14 @@ var tuningParams = TuningParams{
 	SCLPath:                    "",
 	KBMPath:                    "",
 	MiddleNote:                 60,
-	/*
-		ReferenceNote:              69,
-		ReferenceFrequency:         440.0,
-	*/
+	ReferenceNote:              69,
+	ReferenceFrequency:         440.0,
 }
 
 const fixedReferenceNote = 69
 const fixedReferenceFrequency = 440.0
-const midi0Freq = 8.17579891564371 // or 440.0 * pow( 2.0, - (69.0/12.0 ) )
+
+//const midi0Freq = 8.17579891564371 // or 440.0 * pow( 2.0, - (69.0/12.0 ) )
 
 // from COMMON.Z80 "FTAB":
 var factoryROMTableValues = []uint16{0, 2, 4, 6, 8, 10, 12, 14,
@@ -96,10 +93,12 @@ func GetTuningFrequencies(params TuningParams) (freqs []float64, tones []scala.T
 				logger.Errorf("KeyboardMappingFromKBMFile err: %v\n", err)
 				return
 			}
-			// override the reference values since Synergy tables require A440 reference
-			k.TuningFrequency = fixedReferenceFrequency
-			k.TuningConstantNote = fixedReferenceNote
-			k.TuningPitch = fixedReferenceFrequency / midi0Freq
+			/*
+				// override the reference values since Synergy tables require A440 reference
+				k.TuningFrequency = fixedReferenceFrequency
+				k.TuningConstantNote = fixedReferenceNote
+				k.TuningPitch = fixedReferenceFrequency / midi0Freq
+			*/
 		}
 	}
 	if t, err = scala.TuningFromSCLAndKBM(s, k); err != nil {

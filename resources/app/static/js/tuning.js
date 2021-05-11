@@ -162,8 +162,8 @@ let tuning = {
 
 		midiName = function(i) {
 			var names = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
-			var octave = (i / 12) - 2
-			return names[i%12] + octave.toFixed(0)
+			var octave = Math.trunc(i / 12) - 1;
+			return names[i%12] + octave
 		}
 		for (row = 0; row < 32; row++) {
 			rowEle = $(tableBodyEle[0].insertRow(-1));
