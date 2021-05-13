@@ -101,7 +101,7 @@ let tuning = {
 		rowEle.append(cell);
 		cell = $('<th class="val">Cents</th>')
 		rowEle.append(cell);
-		cell = $('<th class="val">Float</th>')
+		cell = $('<th class="val">Ratio</th>')
 		rowEle.append(cell);
 		var tableBodyEle = $("<tbody/>")
 		tableEle.append(tableBodyEle)
@@ -170,7 +170,7 @@ let tuning = {
 
 			for (col = 0; col < 4; col++) {
 				note = col * 32 + row;
-				freq = freqs[note].toFixed(1);
+				freq = freqs[note].toFixed(3);
 
 				if (col > 0 && row == 0) {
 					//cell  = $('<td rowSpan="32" style="padding:10px;"/>')
