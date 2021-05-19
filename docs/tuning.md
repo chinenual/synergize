@@ -56,3 +56,18 @@ To load an alternate tuning into your Synergy, select `Load/Save -> Load Alterna
 
 
 
+
+## Synergy 12-note tuning constraint
+
+While it is possible to define arbitrary tunings in Scala with any number of notes in the scale, 
+the Synergy firmware computes frequencies such that, even for alternate tunings octaves are 
+defined every 12 keys.
+
+One way to picture it:  the frequencies defined by the Scala file are mapped to the keyboard 
+octave starting at middle C (C4).   Notes below that octave are computed as octave ratios 
+from whatever was defined in that middle 12 notes (i.e. C3 is C4/2, A3 is A4/2, C2 is C4/4) 
+and octaves above are octave multiples (C5 is C4\*2, C6 is C4\*4).
+
+So, even if you are using a scale with fewer than 12 notes, the Synergy will always repeat 
+the pattern every 12 keys.   Use a KBM file to select a subset of notes for scales longer 
+than 12 notes, or to specify how to reuse/repeat notes for scales with fewer than 12.
