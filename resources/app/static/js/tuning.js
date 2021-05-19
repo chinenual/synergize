@@ -27,10 +27,10 @@ let tuning = {
 				document.getElementById("sclPath").value = prefs.SCLPath;
 				document.getElementById("kbmPath").value = prefs.KBMPath;
 				document.getElementById("middleNote").value = prefs.MiddleNote;
-				/*
+
 				document.getElementById("referenceNote").value = prefs.ReferenceNote;
 				document.getElementById("referenceFreq").value = prefs.ReferenceFrequency;
-				*/
+
 				tuning.toggle();
 
 			});
@@ -205,19 +205,16 @@ let tuning = {
 		}
 		var useStandardKBMChecked = document.getElementById("useStandardKBM").checked;
 
-//		document.getElementById("scaleTableDiv").hidden = true;
-//		document.getElementById("freqTableDiv").hidden = true;
-
 		document.getElementById("sclPath").disabled = useStandardChecked;
 		document.getElementById("useStandardKBM").disabled = useStandardChecked;
 
 		document.getElementById("kbmPath").disabled = useStandardChecked ||  useStandardKBMChecked;
 
 		document.getElementById("middleNote").disabled = (!useStandardChecked) && (!useStandardKBMChecked);
-		/*
+
 		document.getElementById("referenceNote").disabled = (!useStandardChecked) && (!useStandardKBMChecked);
 		document.getElementById("referenceFreq").disabled = (!useStandardChecked) &&  (!useStandardKBMChecked);
-		*/
+
 	},
 
 	createParamPayload: function () {
@@ -227,10 +224,8 @@ let tuning = {
 			"SCLPath"                   : document.getElementById("sclPath").value,
 			"KBMPath"                   : document.getElementById("kbmPath").value,
 			"MiddleNote"                : parseInt(document.getElementById("middleNote").value, 10),
-			/*
 			"ReferenceNote"             : parseInt(document.getElementById("referenceNote").value, 10),
 			"ReferenceFrequency"        : parseFloat(document.getElementById("referenceFreq").value)
-			 */
 		}
 	},
 

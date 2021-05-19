@@ -35,11 +35,6 @@ var tuningParams = TuningParams{
 	ReferenceFrequency:         440.0,
 }
 
-const fixedReferenceNote = 69
-const fixedReferenceFrequency = 440.0
-
-//const midi0Freq = 8.17579891564371 // or 440.0 * pow( 2.0, - (69.0/12.0 ) )
-
 // Indexes are pretty confusing.
 //   Synergy KEY value == MIDI Note - 28 (from MIDI.Z80, line 119)
 //   FTAB index offset = 38 (from KYZ.Z80, line 59) (so SYNKEY+38 == FTAB index)
@@ -125,7 +120,7 @@ func GetTuningFrequencies(params TuningParams) (freqs []float64, tones []scala.T
 			logger.Errorf("ScaleEvenTemperment12NoteScale err: %v\n", err)
 			return
 		}
-		if k, err = scala.KeyboardMappingStartScaleOnAndTuneNoteTo(params.MiddleNote, fixedReferenceNote, fixedReferenceFrequency); err != nil {
+		if k, err = scala.KeyboardMappingStartScaleOnAndTuneNoteTo(params.MiddleNote, params.ReferenceNote, params.ReferenceFrequency); err != nil {
 			logger.Errorf("KeyboardMappingStartScaleOnAndTuneNoteTo err: %v\n", err)
 			return
 		}
@@ -135,7 +130,7 @@ func GetTuningFrequencies(params TuningParams) (freqs []float64, tones []scala.T
 			return
 		}
 		if params.UseStandardKeyboardMapping {
-			if k, err = scala.KeyboardMappingStartScaleOnAndTuneNoteTo(params.MiddleNote, fixedReferenceNote, fixedReferenceFrequency); err != nil {
+			if k, err = scala.KeyboardMappingStartScaleOnAndTuneNoteTo(params.MiddleNote, params.ReferenceNote, params.ReferenceFrequency); err != nil {
 				logger.Errorf("KeyboardMappingStartScaleOnAndTuneNoteTo err: %v\n", err)
 				return
 			}
@@ -144,12 +139,6 @@ func GetTuningFrequencies(params TuningParams) (freqs []float64, tones []scala.T
 				logger.Errorf("KeyboardMappingFromKBMFile err: %v\n", err)
 				return
 			}
-			/*
-				// override the reference values since Synergy tables require A440 reference
-				k.TuningFrequency = fixedReferenceFrequency
-				k.TuningConstantNote = fixedReferenceNote
-				k.TuningPitch = fixedReferenceFrequency / midi0Freq
-			*/
 		}
 	}
 	if MIDI_SYN_OFFSET != 0 {
