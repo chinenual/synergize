@@ -57,7 +57,8 @@ Synergize has been tested on:
 
 ### Mac
 
-The Mac release is packaged as an installable DMG file. Open the DMG and drag Synergize the Applications folder.
+The Mac release is packaged as an installable DMG file. Open the DMG
+and drag Synergize to the Applications folder.
 
 ### Windows
 
