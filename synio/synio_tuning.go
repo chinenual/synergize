@@ -44,12 +44,12 @@ var tuningParams = TuningParams{
 // we update the octave that the synergy will read for scale definition (at index 48) - and that needs to match
 // in the end, I found the offsets empirically by a bit of brute force.
 
-// from COMMON.Z80 "FTAB":
-// NOTE: index is NOT by MIDI note: FTAB index 68 == Middle C (which would be MIDI 60).
+// NOTE: FTAB index is NOT by MIDI note: FTAB index 69 == Middle C (which would be MIDI 60).
 // Index factoryFrequencyValues by MIDI note
 // Index factoryRftabValues by [MIDInote + midiToRftabOffset]
-const midiToRftabOffset = 8
+const midiToRftabOffset = 9
 
+// from COMMON.Z80 "FTAB":
 var factoryRftabValues = []uint16{
 	/*   0 */ 0, 2, 4, 6, 8, 10, 12, 14,
 	/*   8 */ 15, 16, 17, 18, 19, 20, 21, 22,
@@ -106,7 +106,7 @@ var factoryFrequencyValues = []float64{
 	/* 124 */ 10548.081821211832, 11175.303405856139, 11839.821526772304, 12543.853951415987}
 
 func GetTuningParams() TuningParams {
-	logger.Infof("GetTuningParams: %#v\n", tuningParams)
+	logger.Infof("TUNE: GetTuningParams: %#v\n", tuningParams)
 	return tuningParams
 }
 
@@ -114,59 +114,54 @@ func GetTuningFrequencies(params TuningParams) (freqs []float64, tones []scala.T
 	var t scala.Tuning
 	var s scala.Scale
 	var k scala.KeyboardMapping
-	logger.Infof("GetTuningFrequencies for %#v\n", params)
+	logger.Infof("TUNE: GetTuningFrequencies for %#v\n", params)
 	if params.UseStandardTuning {
 		if s, err = scala.ScaleEvenTemperment12NoteScale(); err != nil {
-			logger.Errorf("ScaleEvenTemperment12NoteScale err: %v\n", err)
+			logger.Errorf("TUNE: ScaleEvenTemperment12NoteScale err: %v\n", err)
 			return
 		}
 		if k, err = scala.KeyboardMappingStartScaleOnAndTuneNoteTo(params.MiddleNote, params.ReferenceNote, params.ReferenceFrequency); err != nil {
-			logger.Errorf("KeyboardMappingStartScaleOnAndTuneNoteTo err: %v\n", err)
+			logger.Errorf("TUNE: KeyboardMappingStartScaleOnAndTuneNoteTo err: %v\n", err)
 			return
 		}
 	} else {
 		if s, err = scala.ScaleFromSCLFile(params.SCLPath); err != nil {
-			logger.Errorf("ScaleFromSCLFile err: %v\n", err)
+			logger.Errorf("TUNE: ScaleFromSCLFile err: %v\n", err)
 			return
 		}
 		if params.UseStandardKeyboardMapping {
 			if k, err = scala.KeyboardMappingStartScaleOnAndTuneNoteTo(params.MiddleNote, params.ReferenceNote, params.ReferenceFrequency); err != nil {
-				logger.Errorf("KeyboardMappingStartScaleOnAndTuneNoteTo err: %v\n", err)
+				logger.Errorf("TUNE: KeyboardMappingStartScaleOnAndTuneNoteTo err: %v\n", err)
 				return
 			}
 		} else {
 			if k, err = scala.KeyboardMappingFromKBMFile(params.KBMPath); err != nil {
-				logger.Errorf("KeyboardMappingFromKBMFile err: %v\n", err)
+				logger.Errorf("TUNE: KeyboardMappingFromKBMFile err: %v\n", err)
 				return
 			}
 		}
 	}
-	if MIDI_SYN_OFFSET != 0 {
-		k.MiddleNote -= MIDI_SYN_OFFSET
-		k.Name += " (with MiddleNote override for Synergy)"
-	}
-	logger.Infof("Selected SCL %#v\n", s)
-	logger.Infof("Selected KBM %#v\n", k)
+	logger.Infof("TUNE: Selected SCL %#v\n", s)
+	logger.Infof("TUNE: Selected KBM %#v\n", k)
 	if t, err = scala.TuningFromSCLAndKBM(s, k); err != nil {
-		logger.Errorf("TuningFromSCLAndKBM err: %v\n", err)
+		logger.Errorf("TUNE: TuningFromSCLAndKBM err: %v\n", err)
 		return
 	}
 	tones = s.Tones
 	for i := 0; i < 128; i++ {
 		scalePos = append(scalePos, t.ScalePositionForMidiNote(i))
 	}
-	logger.Infof("Scale tones: %v\n", tones)
-	logger.Infof("Scale scalePos: %v\n", scalePos)
-	for i := 0; i < 128+MIDI_SYN_OFFSET; i++ {
+	logger.Infof("TUNE: Scale tones: %v\n", tones)
+	logger.Infof("TUNE: Scale scalePos: %v\n", scalePos)
+	for i := 0; i < 128; i++ {
 		freqs = append(freqs, t.FrequencyForMidiNote(i))
 	}
 	tuningParams = params
 	return
 }
 
-// Scala note 60 == middle C - that needs to map tp Synergy note 58, so offset by 2
-//const MIDI_SYN_OFFSET = 2
-const MIDI_SYN_OFFSET = 0
+const tuneStartMidi = 60
+const tuneStartRftabIndex = tuneStartMidi + midiToRftabOffset
 
 func scaleFrequencies(params TuningParams, freqs []float64) (rftabValues []uint16) {
 	rftabValues = make([]uint16, 128)
@@ -179,10 +174,14 @@ func scaleFrequencies(params TuningParams, freqs []float64) (rftabValues []uint1
 		// most of the table is identical to the factory settings we only override the 12 notes that
 		// the synergy uses to compute the key center frequencies (reading the Z80, I would have thought 48..59,
 		// but Hal remembers "middle C" and in fact, middle C (60..71) is what works
-		const tuneStartMidi = 60
 		_ = copy(rftabValues, factoryRftabValues)
-		for i := tuneStartMidi; i < tuneStartMidi+12; i++ {
+		for i := tuneStartMidi - 2; i < tuneStartMidi+12+2; i++ {
+			//for i := 24; i < 100; i++ {
 			rftab_i := i + midiToRftabOffset
+
+			// the factory FTAB is an exponential table that looks like frequencies but isnt.  But we can
+			// get the effect we want by using the ratio of the frequency produced by the factory table to the
+			// desired frequency as a scaling factor to get the right value into the table.
 
 			// determine the delta from the factory value as a ratio, then apply that to the ROM table value
 			tgtFreq := freqs[i]
@@ -190,25 +189,11 @@ func scaleFrequencies(params TuningParams, freqs []float64) (rftabValues []uint1
 			ratio := tgtFreq / romFreq
 
 			rftabValues[rftab_i] = uint16(math.Round(ratio * float64(factoryRftabValues[rftab_i])))
-			logger.Infof("ROM delta [%v] midi:%v %v %v (%v)\n", rftab_i, i, rftabValues[rftab_i], factoryRftabValues[rftab_i], ratio)
+			logger.Infof("TUNE: ROM delta [%v] midi:%v %v %v (%v)\n", rftab_i, i, rftabValues[rftab_i], factoryRftabValues[rftab_i], ratio)
 		}
-		/**
-		//var scale = 2.097152 //Synergia
-		var scale = 1.17671
-		for i := 0; i < 128; i++ {
-			var v uint16
-			if i < 24 {
-				// retain the factory linear scale at bottom range
-				v = factoryRftabValues[i]
-			} else {
-				v = uint16(math.Round(scale * freqs[i]))
-			}
-			rftabValues = append(rftabValues, v)
-		}
-		*/
 	}
-	logger.Infof("Scala freq table: %v\n", freqs)
-	logger.Infof("Synergy freq table: %v\n", rftabValues)
+	logger.Infof("TUNE: Scala freq table: %v\n", freqs)
+	logger.Infof("TUNE: Synergy freq table: %v\n", rftabValues)
 	return
 }
 
@@ -224,12 +209,17 @@ func SendTuningToSynergy(params TuningParams) (freqs []float64, tones []scala.To
 		return
 	}
 	if synioVerbose {
-		logger.Infof("SYNIO: ** SendTuningToSynergy\n")
+		logger.Infof("SYNIO: TUNE: ** SendTuningToSynergy\n")
 	}
 	// Adjust the frequencies to Synergy format
 	rftabValues := scaleFrequencies(params, freqs)
+	// we actually only need to send 12 values (so 24 bytes)
+	// ENHANCEME: now that we only send 12 values, should probably change the scaleFrequencies() function to only compute the
+	// 12 we need rather than the whole 0 .. 127 range.
 	var b []byte
-	for _, f := range rftabValues {
+	for i := tuneStartRftabIndex; i < tuneStartRftabIndex+12; i++ {
+		//for i, _ := range rftabValues {
+		f := rftabValues[i]
 		hob, lob := data.WordToBytes(f)
 		b = append(b, lob, hob)
 	}
@@ -238,15 +228,11 @@ func SendTuningToSynergy(params TuningParams) (freqs []float64, tones []scala.To
 	if io.SynergyConnectionType() == "vst" {
 		addr = synAddrs.ROM_FREQTAB
 	}
-	//dumpAddressSpace("DUMP.bin")
-	if err = blockLoad(addr, b, "setFreqTable(ROM)"); err != nil {
+	addr += 2 * tuneStartRftabIndex // (byte addressing, not logical address)
+	if err = blockLoad(addr, b, "setFreqTable"); err != nil {
 		return
 	}
-	//if err = reloadNoteGenerators(); err != nil {
-	//	return
-	//}
 
-	//PrintFreqTable()
 	return
 }
 
