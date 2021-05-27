@@ -266,7 +266,7 @@ let tuning = {
 			} else {
 				var result = message.payload
 				tuning.buildTuningDisplay(result)
-				index.errorNotification("Success!");
+				index.infoNotification("Success!");
 			}
 		});
 	},
