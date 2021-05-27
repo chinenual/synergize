@@ -49,6 +49,18 @@ var tuningParams = TuningParams{
 // Index factoryRftabValues by [MIDInote + midiToRftabOffset]
 const midiToRftabOffset = 9
 
+const scaleViaConstant = false // if false, then scale via ratio
+const scaleConstant = 2.097152
+
+const tuneStartMidi = 20 - midiToRftabOffset
+const tuneEndMidi = 128 - midiToRftabOffset
+
+const tuneStartMidi = 60
+const tuneEndMidi = 60 + 12
+
+//const tuneStartRftabIndex = tuneStartMidi + midiToRftabOffset
+//const tuneEndRftabIndex = tuneEndMidi + midiToRftabOffset
+
 // from COMMON.Z80 "FTAB":
 var factoryRftabValues = []uint16{
 	/*   0 */ 0, 2, 4, 6, 8, 10, 12, 14,
@@ -160,9 +172,6 @@ func GetTuningFrequencies(params TuningParams) (freqs []float64, tones []scala.T
 	return
 }
 
-const tuneStartMidi = 60
-const tuneStartRftabIndex = tuneStartMidi + midiToRftabOffset
-
 func scaleFrequencies(params TuningParams, freqs []float64) (rftabValues []uint16) {
 	rftabValues = make([]uint16, 128)
 	if params.UseStandardTuning {
@@ -175,21 +184,25 @@ func scaleFrequencies(params TuningParams, freqs []float64) (rftabValues []uint1
 		// the synergy uses to compute the key center frequencies (reading the Z80, I would have thought 48..59,
 		// but Hal remembers "middle C" and in fact, middle C (60..71) is what works
 		_ = copy(rftabValues, factoryRftabValues)
-		for i := tuneStartMidi - 2; i < tuneStartMidi+12+2; i++ {
+		for i := tuneStartMidi; i < tuneEndMidi; i++ {
 			//for i := 24; i < 100; i++ {
 			rftab_i := i + midiToRftabOffset
+			if scaleViaConstant {
+				rftabValues[rftab_i] = uint16(math.Round(scaleConstant * float64(factoryRftabValues[rftab_i])))
+			} else {
 
-			// the factory FTAB is an exponential table that looks like frequencies but isnt.  But we can
-			// get the effect we want by using the ratio of the frequency produced by the factory table to the
-			// desired frequency as a scaling factor to get the right value into the table.
+				// the factory FTAB is an exponential table that looks like frequencies but isnt.  But we can
+				// get the effect we want by using the ratio of the frequency produced by the factory table to the
+				// desired frequency as a scaling factor to get the right value into the table.
 
-			// determine the delta from the factory value as a ratio, then apply that to the ROM table value
-			tgtFreq := freqs[i]
-			romFreq := factoryFrequencyValues[i]
-			ratio := tgtFreq / romFreq
+				// determine the delta from the factory value as a ratio, then apply that to the ROM table value
+				tgtFreq := freqs[i]
+				romFreq := factoryFrequencyValues[i]
+				ratio := tgtFreq / romFreq
 
-			rftabValues[rftab_i] = uint16(math.Round(ratio * float64(factoryRftabValues[rftab_i])))
-			logger.Infof("TUNE: ROM delta [%v] midi:%v %v %v (%v)\n", rftab_i, i, rftabValues[rftab_i], factoryRftabValues[rftab_i], ratio)
+				rftabValues[rftab_i] = uint16(math.Round(ratio * float64(factoryRftabValues[rftab_i])))
+			}
+			logger.Infof("TUNE: ROM delta [%v] midi:%v %v %v\n", rftab_i, i, rftabValues[rftab_i], factoryRftabValues[rftab_i])
 		}
 	}
 	logger.Infof("TUNE: Scala freq table: %v\n", freqs)
@@ -217,7 +230,7 @@ func SendTuningToSynergy(params TuningParams) (freqs []float64, tones []scala.To
 	// ENHANCEME: now that we only send 12 values, should probably change the scaleFrequencies() function to only compute the
 	// 12 we need rather than the whole 0 .. 127 range.
 	var b []byte
-	for i := tuneStartRftabIndex; i < tuneStartRftabIndex+12; i++ {
+	for i := tuneStartRftabIndex; i < tuneEndRftabIndex; i++ {
 		//for i, _ := range rftabValues {
 		f := rftabValues[i]
 		hob, lob := data.WordToBytes(f)
