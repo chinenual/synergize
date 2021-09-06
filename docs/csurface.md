@@ -16,7 +16,7 @@ Make your Synergy a little bit more like a GDS. Synergize includes support for a
 At the moment, the only control surface supported is one written especially for Synergize.  It is based on the excellent TouchOSC tablet based control surface application (which is available for both iPad and Android tablets).
 
 Upload the supplied touchosc configuration file,
-[Synergize.touchosc](https://github.com/chinenual/synergize/releases/latest/Synergize.touchosc)
+[Synergize.touchosc](https://github.com/chinenual/synergize/releases/latest/Synergize-v3.touchosc)
 to your tablet following the instructions at [the TouchOSC home site](https://hexler.net/docs/touchosc).
 
 
