@@ -12,6 +12,8 @@ aux_links:
   - /synergize
   "User Manual":
   - /synergize/docs
+  "Download":
+  - https://github.com/chinenual/synergize/releases
   "Github Project":
   - https://github.com/chinenual/synergize
 
