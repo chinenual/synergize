@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"gitlab.com/gomidi/midi"
+	"gitlab.com/gomidi/midi/writer"
+
 	"gitlab.com/gomidi/midi/midimessage/channel"
 
 	"github.com/chinenual/synergize/logger"
@@ -41,17 +44,40 @@ func ConvertSYNToMIDI(path string) (err error) {
 	logger.Debugf("SEQTAB LEN: %v\n", seq_len)
 
 	if seq_len > 0 {
-		//		midiPath := path + ".mid"
-
+		var tracks [][]timestampedEvent
 		// last two bytes of the file are the CRC
-		if err = parseSEQTAB(syn_bytes[seqtab_start+2 : len(syn_bytes)-2]); err != nil {
+		if tracks, err = parseSEQTAB(syn_bytes[seqtab_start+2 : len(syn_bytes)-2]); err != nil {
 			return
 		}
+
+		midiPath := path + ".mid"
+		if err = writer.WriteSMF(midiPath, uint16(len(tracks)), func(wr *writer.SMF) (err error) {
+			time := uint64(0)
+			for _, t := range tracks {
+				for _, e := range t {
+					if e.timeMS >= time {
+						ms := e.timeMS - time
+						ticks := uint32(ms) // FIXME:  ms->ticks conversion needs to be tempo aware
+						wr.SetDelta(ticks)
+					}
+					if err = wr.Write(e.event); err != nil {
+						return
+					}
+				}
+				if err = writer.EndOfTrack(wr); err != nil {
+					return
+				}
+			}
+			return
+		}); err != nil {
+			return
+		}
+
 	}
 	return
 }
 
-func parseSEQTAB(bytes []byte) (err error) {
+func parseSEQTAB(bytes []byte) (tracks [][]timestampedEvent, err error) {
 	//PTVAL:	DS	64			;Current active processed pot value]
 	const NUMTRACKS = 4
 	for i := 0; i < NUMTRACKS; i++ {
@@ -97,6 +123,7 @@ func parseSEQTAB(bytes []byte) (err error) {
 			if events, err = processTrack(i, track_bytes); err != nil {
 				return
 			}
+			tracks = append(tracks, events)
 			logger.Debugf("MIDI EVENTS: %v\n", events)
 		}
 	}
@@ -105,7 +132,26 @@ func parseSEQTAB(bytes []byte) (err error) {
 
 type timestampedEvent struct {
 	timeMS uint64
-	event  interface{}
+	event  midi.Message
+}
+
+var midiChannels = []channel.Channel{
+	channel.Channel0,
+	channel.Channel1,
+	channel.Channel2,
+	channel.Channel3,
+	channel.Channel4,
+	channel.Channel5,
+	channel.Channel6,
+	channel.Channel7,
+	channel.Channel8,
+	channel.Channel9,
+	channel.Channel10,
+	channel.Channel11,
+	channel.Channel12,
+	channel.Channel13,
+	channel.Channel14,
+	channel.Channel15,
 }
 
 func (e timestampedEvent) String() string {
@@ -160,7 +206,9 @@ func processTrack(track int, track_bytes []byte) (events []timestampedEvent, err
 
 	// HACK: this extra +2 is adhoc - doesnt seem to match the firmware comments
 
-	midiChannel := channel.Channel1
+	// FIXME: how to map track/voice usage to MIDI channel?
+	midiChannel := midiChannels[0]
+
 	timeAccumulator := uint64(0)
 	for i := 2; i < len(track_bytes); {
 		time := data.BytesToWord(track_bytes[i+1], track_bytes[i+0])
@@ -194,7 +242,7 @@ func processTrack(track int, track_bytes []byte) (events []timestampedEvent, err
 				// the values stored in the sequencer are compressed to 3-bits (so 0..7 !)
 				// MIDI is 0..127 - so multiply by 18 to scale
 				logger.Debugf("t:%d EVENT [%d] time:%d  KEYDOWN k:%d vel:%d voice:%d\n", track, i, time, -device, velocity, voice)
-				midievent := midiChannel.NoteOn(uint8(device), 18*uint8(velocity))
+				midievent := midiChannel.NoteOn(uint8(-device), 18*uint8(velocity))
 				e := timestampedEvent{timeAccumulator, midievent}
 				events = append(events, e)
 				i += 4
