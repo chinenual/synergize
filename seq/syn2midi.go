@@ -47,10 +47,10 @@ func ConvertSYNToMIDI(path string) (err error) {
 }
 
 func parseSEQTAB(bytes []byte) (err error) {
-	//PTVAL:	DS	64			;Current active processed pot value
-	for i := 0; i < 4; i++ {
+	//PTVAL:	DS	64			;Current active processed pot value]
+	const NUMTRACKS = 4
+	for i := 0; i < NUMTRACKS; i++ {
 		logger.Debugf("SEQ TAB PTVAL[%d]: %x (%d\t%d)\n", i, bytes[i], bytes[i], int8(bytes[i]))
-
 	}
 	//TRANSP:	DS	5			;Sequencer playback transpose factor
 	//SEQCON:	DS	40			;Sequence control table; 20 integers
@@ -63,6 +63,39 @@ func parseSEQTAB(bytes []byte) (err error) {
 		logger.Debugf("SEQ TAB VOIUSE-TRANSP[%d]: %x (%d\t%d)\n", i, bytes[i], bytes[i], int8(bytes[i]))
 
 	}
+	var seqcon [20]uint16
+	for i := 0; i < 20; i++ {
+		offset := 5 /* the 5 TRANSP bytes */ + 2*i
+		seqcon[i] = data.BytesToWord(bytes[offset+1], bytes[offset])
+	}
+	logger.Debugf("SEQCON: %v\n", seqcon)
+	var trackStartStop [NUMTRACKS]struct {
+		start uint16
+		stop  uint16
+	}
+	for i := 0; i < NUMTRACKS; i++ {
+		trackStartStop[i].start = seqcon[i]
+		trackStartStop[i].stop = seqcon[NUMTRACKS+i]
+		logger.Debugf("TRACK %d SEQCON START %d STOP %d\n", i, trackStartStop[i].start, trackStartStop[i].stop)
+	}
+	start_of_seqtab := 12 + 40 + 5
+	for i := start_of_seqtab; i < len(bytes); i++ {
+		logger.Debugf("SEQ TAB[%d]: %x (%d\t%d)\n", i, bytes[i], bytes[i], int8(bytes[i]))
+	}
+
+	for i := 0; i < NUMTRACKS; i++ {
+		if trackStartStop[i].start != 0 {
+			logger.Debugf("TRACK %d START %d STOP %d\n", i, uint16(start_of_seqtab)+trackStartStop[i].start-1, uint16(start_of_seqtab)+trackStartStop[i].stop-1)
+			track_bytes := bytes[uint16(start_of_seqtab)+trackStartStop[i].start-1 : uint16(start_of_seqtab)+trackStartStop[i].stop-1]
+			if err = processTrack(i, track_bytes); err != nil {
+				return
+			}
+		}
+	}
+	return
+}
+
+func processTrack(track int, track_bytes []byte) (err error) {
 	// FROM arithmetic in SEQ.Z80 (near L330B),  "time" appears to be a millisecond clock.
 	// it appears to be a relative time from the previous event
 
@@ -96,18 +129,34 @@ func parseSEQTAB(bytes []byte) (err error) {
 	//;	-126	     = 1 byte of Midi data follows
 	//;	-127	     = 2 bytes of Midi data follows
 	//;	-128	     = 3 bytes of Midi data follows
-	for i := (12 + 40 + 5); i < len(bytes); i++ {
-		logger.Debugf("SEQ TAB[%d]: %x (%d\t%d)\n", i, bytes[i], bytes[i], int8(bytes[i]))
-	}
-	for i := (2 + 12 + 40 + 5); i < len(bytes); {
-		time := data.BytesToWord(bytes[i+1], bytes[i+0])
-		device := int8(bytes[i+2])
+
+	// (SEQCON is in the VOIUSE-TRANSP data above)
+	//
+	// SEQCN1	EQU	0			-- track start offsets
+	// SEQCN2	EQU	2*NUMTRK	-- track end offsets
+	// SEQCN3	EQU	4*NUMTRK	-- current track time (during play or record)
+	// SEQCN4	EQU	6*NUMTRK	-- current track offset (during play or record)
+	// SEQCN5	EQU	8*NUMTRK	-- current pedal state (during play or record)
+	//
+	// Track start is at SEQCON+SEQCN1+<track>
+	// Track end   is at SEQCON+SEQCN2+<track>
+
+	// HACK: this extra +2 is adhoc - doesnt seem to match the firmware comments
+
+	for i := 2; i < len(track_bytes); {
+		time := data.BytesToWord(track_bytes[i+1], track_bytes[i+0])
+		if i+2 > len(track_bytes)-1 {
+			// this was the last timestamp in the sequence - no device data - just "end of sequence" time
+			logger.Debugf("t:%d END OF SEQUENCE [%d] time:%d   \n", track, i, time)
+			break
+		}
+		device := int8(track_bytes[i+2])
 		if device > 0 {
 			if device <= 74 && device >= 1 {
 				// key up
-				logger.Debugf("EVENT [%d] time:%d  KEYUP k:%d \n", i, time, device)
+				logger.Debugf("t:%d EVENT [%d] time:%d  KEYUP k:%d \n", track, i, time, device)
 			} else {
-				logger.Debugf("UNKNOWN +EVENT [%d] time:%d  device:%d)\n", i, time, device)
+				logger.Debugf("t:%d UNKNOWN +EVENT [%d] time:%d  device:%d)\n", track, i, time, device)
 			}
 			// no data byte
 			i += 3
@@ -115,34 +164,37 @@ func parseSEQTAB(bytes []byte) (err error) {
 			// negative device codes have 1-3 data bytes depending on device code
 			if device >= -74 && device <= -1 {
 				// key down
-				v := bytes[i+3]
+				v := track_bytes[i+3]
 				velocity := v >> 5 // top 3 bits == velocity
 				voice := v & 0x1f  // bottom 5 bits = voice
-				logger.Debugf("EVENT [%d] time:%d  KEYDOWN k:%d vel:%d voice:%d\n", i, time, -device, velocity, voice)
+				// Synergy native velocity is 1..32
+				// the values stored in the sequencer are compressed to 3-bits (so 0..7 !)
+				// MIDI is 0..127 - so multiply by 18 to scale
+				logger.Debugf("t:%d EVENT [%d] time:%d  KEYDOWN k:%d vel:%d voice:%d\n", track, i, time, -device, velocity, voice)
 				i += 4
 			} else if device == -116 {
-				v := bytes[i+3]
-				logger.Debugf("EVENT [%d] time:%d  MOD device:%d (%d\t%d)\n", i, time, device, v, v)
+				v := track_bytes[i+3]
+				logger.Debugf("t:%d EVENT [%d] time:%d  MOD device:%d (%d\t%d)\n", track, i, time, device, v, v)
 				i += 4
 			} else if device == -115 {
-				v := bytes[i+3]
-				logger.Debugf("EVENT [%d] time:%d  BEND device:%d (%d\t%d)\n", i, time, device, v, v)
+				v := track_bytes[i+3]
+				logger.Debugf("t:%d EVENT [%d] time:%d  BEND device:%d (%d\t%d)\n", track, i, time, device, v, v)
 				i += 4
 			} else if device == -126 {
-				v := bytes[i+3]
-				logger.Debugf("EVENT [%d] time:%d  MIDI 1-byte: device:%d (%d\t%d)\n", i, time, device, v, v)
+				v := track_bytes[i+3]
+				logger.Debugf("t:%d EVENT [%d] time:%d  MIDI 1-byte: device:%d (%d\t%d)\n", track, i, time, device, v, v)
 				i += 4
 			} else if device == -127 {
-				v := []byte{bytes[i+3], bytes[i+4]}
-				logger.Debugf("EVENT [%d] time:%d  MIDI 2-byte: device:%d (%d\t%d)\t(%d\t%d) \n", i, time, device, v[0], v[0], v[1], v[1])
+				v := []byte{track_bytes[i+3], track_bytes[i+4]}
+				logger.Debugf("t:%d EVENT [%d] time:%d  MIDI 2-byte: device:%d (%d\t%d)\t(%d\t%d) \n", track, i, time, device, v[0], v[0], v[1], v[1])
 				i += 5
 			} else if device == -128 {
-				v := []byte{bytes[i+3], bytes[i+4], bytes[i+5]}
-				logger.Debugf("EVENT [%d] time:%d  MIDI 3-byte: device:%d (%d\t%d)\t(%d\t%d) \t(%d\t%d) \n", i, time, device, v[0], v[0], v[1], v[1], v[2], v[2])
+				v := []byte{track_bytes[i+3], track_bytes[i+4], track_bytes[i+5]}
+				logger.Debugf("t:%d EVENT [%d] time:%d  MIDI 3-byte: device:%d (%d\t%d)\t(%d\t%d) \t(%d\t%d) \n", track, i, time, device, v[0], v[0], v[1], v[1], v[2], v[2])
 				i += 6
 			} else {
-				v := bytes[i+3]
-				logger.Debugf("UNKNOWN -EVENT [%d] time:%d  device:%d (%d\t%d)\n", i, time, device, v, v)
+				v := track_bytes[i+3]
+				logger.Debugf("t:%d UNKNOWN -EVENT [%d] time:%d  device:%d (%d\t%d)\n", track, i, time, device, v, v)
 				i += 4
 			}
 		}
