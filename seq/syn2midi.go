@@ -85,8 +85,8 @@ func parseSEQTAB(bytes []byte) (err error) {
 
 	for i := 0; i < NUMTRACKS; i++ {
 		if trackStartStop[i].start != 0 {
-			logger.Debugf("TRACK %d START %d STOP %d\n", i, uint16(start_of_seqtab)+trackStartStop[i].start-1, uint16(start_of_seqtab)+trackStartStop[i].stop-1)
-			track_bytes := bytes[uint16(start_of_seqtab)+trackStartStop[i].start-1 : uint16(start_of_seqtab)+trackStartStop[i].stop-1]
+			logger.Debugf("TRACK %d START %d STOP %d\n", i, uint16(start_of_seqtab)+trackStartStop[i].start-1, uint16(start_of_seqtab)+trackStartStop[i].stop)
+			track_bytes := bytes[uint16(start_of_seqtab)+trackStartStop[i].start-1 : uint16(start_of_seqtab)+trackStartStop[i].stop]
 			if err = processTrack(i, track_bytes); err != nil {
 				return
 			}
