@@ -32,6 +32,20 @@ NOTE values are snapshots of the values when the SYN file was downloaded from th
 
 ## Conversion to MIDI
 
+### Voices
+
+A Synergy sequencer track can record more than just a single voice (if the player pressed a Voice# button while recording, the notes played after that are played on the new voice).  Similarly, when using multi-voice patches (program #1..#4), a keypress can trigger up to 4 notes at a time.
+
+The converter can handle this in multiple ways, depending on the preference of the user:
+
+* ignore the voice annotation on the event and simply emit note on/off events to one MIDI track (i.e., one Synergy track is exactly one MIDI track).
+
+* distribute voices to separate MIDI tracks.  In this case, for example, if the synergy track contains notes for 2 different voices, the MIDI file will contain two tracks - one for the first voice, one for the second.
+
+* In the case of multi-voice patches, the user may wish to treat the multi-voice notes as a single thing (it's logically a "layered" patch of a single sound), so the converter will combine the separate voice events in the Synergy track to a single event on the MIDI track.
+
+The second and third options may be combined such that the converter creates separate MIDI tracks for each voice, but in the case of a "multi-voice" event, combines that event into a single event, but on its own MIDI track.
+
 ### Key Velocity
 
 The SYN file records velocities in 3-bits, compressing the range to seven values.  The converter maps these seven velocities across the 1..127 values available in MIDI.
