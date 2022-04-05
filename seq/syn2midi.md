@@ -1,7 +1,7 @@
 
 ## Capabilities of the Synergy sequencer
 
-Records the following events:
+The Synergy sequencer records the following events:
 
 * key up / down
 * pitchbend
@@ -38,7 +38,7 @@ The SYN file records velocities in 3-bits, compressing the range to seven values
 
 ### Pitchbend
 
-Similarly, pitchbend is recorded as -127..127 - it is mapped to .
+Pitchbend is recorded as -127..127.
 Depending on the user's preference, these are preserved as-is in the MIDI, or mapped to the full range of MIDI pitchbend (-8192..8191).
 
 ### Modulation
@@ -53,7 +53,7 @@ The left pedal is mapped to MIDI CC65 ("Portamento switch").
 
 ### Track buttons
 
-A future release may support a virtual playback option that renders tracks as the Synergy would (repeating tracks when the track button is flashing, turning then on/off based on events recorded in the sequencer.
+A future release may support a virtual playback option that renders tracks as the Synergy would (repeating tracks when the track button is flashing, turning then on/off based on events recorded in the sequencer).
 
 In this release, track button selection is ignored.   Tracks are rendered once to the MIDI file with the expectation that the user may copy/paste them in a DAW to effect a repeat and to otherwise orchestrate the interaction of each track.
 
@@ -61,11 +61,13 @@ In this release, track button selection is ignored.   Tracks are rendered once t
 
 In this release, transpose events are ignored.  See the discussion above regarding Track buttons. If a virtual playback mode is added to the converted, transpose will be supported.
 
-###
+### Inbound MIDI
+
+Inbound MIDI events are emitted to a separate track since in the original recording, they were intended to control "other" instruments (not the Synergy itself).
 
 ### Tempo
 
-NOTE:  This may change: I am investigating SMPTE mode MIDI format - that may allow millisecond based timing directly in the MIDI file without requiring the user to select a tempo BPM.
+**NOTE**:  The following may change: I am investigating SMPTE mode MIDI format - that may allow millisecond based timing directly in the MIDI file without requiring the user to select a tempo BPM.
 
 The Synergy has no strict concept of "tempo" (there is no metronome or "click").  Events are recorded in terms of clock time (milliseconds since the last event).  The Sequencer Speed can change the rate that events are played back, but there is no inherent "beats per minute" recorded in the sequencer.  Any correspondence between the sequencer speed and a musical tempo is up to the user to make.
 
