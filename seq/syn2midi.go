@@ -52,8 +52,8 @@ func ConvertSYNToMIDI(path string) (err error) {
 
 		midiPath := path + ".mid"
 		if err = writer.WriteSMF(midiPath, uint16(len(tracks)), func(wr *writer.SMF) (err error) {
-			time := uint64(0)
 			for _, t := range tracks {
+				time := uint64(0)
 				for _, e := range t {
 					if e.timeMS >= time {
 						ms := e.timeMS - time
@@ -63,6 +63,7 @@ func ConvertSYNToMIDI(path string) (err error) {
 					if err = wr.Write(e.event); err != nil {
 						return
 					}
+					time = e.timeMS
 				}
 				if err = writer.EndOfTrack(wr); err != nil {
 					return
