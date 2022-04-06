@@ -50,12 +50,11 @@ The SYN file records velocities in 3-bits, compressing the range to seven values
 
 ### Pitchbend
 
-Pitchbend is recorded as -127..127.
-Depending on the user's preference, these are preserved as-is in the MIDI, or mapped to the full range of MIDI pitchbend (-8192..8191).
+Pitchbend is recorded as -127..127 and mapped to the full range of MIDI pitchbend (-8192..8191).
 
 ### Modulation
 
-Modulation is mapped to MIDI CC1 ("mod wheel"), with Synergy values -127..127 mapped to 0..127 MIDI CC values.
+Modulation is mapped to MIDI CC1 ("mod wheel"), with Synergy values 0..64 mapped to 0..127 MIDI CC values.
 
 ### Pedals
 

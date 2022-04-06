@@ -1,7 +1,5 @@
 package seq
 
-import "github.com/chinenual/synergize/logger"
-
 // https://www.davidkaya.com/sets-in-golang/
 
 var exists = struct{}{}
@@ -15,7 +13,6 @@ func (s *trackset) Init() {
 }
 
 func (s *trackset) Add(value int) {
-	logger.Debugf("Add %d to %v\n", value, s)
 	s.m[value] = exists
 }
 
