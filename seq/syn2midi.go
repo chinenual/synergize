@@ -365,8 +365,8 @@ func processTrack(track int, track_bytes []byte) (tracks [][]timestampedMessage,
 			} else if device == -116 {
 				v := track_bytes[i+3]
 				logger.Debugf("t:%d EVENT [%d] time:%d  MOD device:%d (%d\t%d)\n", track, i, time, device, v, v)
-				// SYNERGY value is -0..4 - need to scale to 0..127 MIDI value
-				midi_val := int(v) * 2
+				// SYNERGY value is 0..48 - need to scale to 0..127 MIDI value
+				midi_val := int(float32(v) * 127.0 / 48.0)
 				if midi_val < 0 {
 					midi_val = 0
 				} else if midi_val > 127 {
@@ -377,10 +377,10 @@ func processTrack(track int, track_bytes []byte) (tracks [][]timestampedMessage,
 				add_to_all_active_tracks(tm)
 				i += 4
 			} else if device == -115 {
-				v := track_bytes[i+3]
+				v := int8(track_bytes[i+3])
 				logger.Debugf("t:%d EVENT [%d] time:%d  BEND device:%d (%d\t%d)\n", track, i, time, device, v, v)
 				// SYNERGY value is -127..127 - need to scale to -8192..8191 MIDI value
-				midi_val := int(v) * 64
+				midi_val := int(float32(v) * 8191.0 / 48.0)
 				if midi_val < -8192 {
 					midi_val = -8192
 				} else if midi_val > 8191 {
