@@ -101,7 +101,7 @@ func parseSEQTAB(bytes []byte) (tracks [][]timestampedMessage, err error) {
 	}
 	var seqcon [20]uint16
 	for i := 0; i < 20; i++ {
-		offset := 5 /* the 5 TRANSP bytes */ + 2*i
+		offset := 5 /* the 5 TRANSP bytes */ + 2*i + 2 /* unsure why seqcon seemes to be offset by 2 bytes */
 		seqcon[i] = data.BytesToWord(bytes[offset+1], bytes[offset])
 	}
 	logger.Debugf("SEQCON: %v\n", seqcon)
@@ -245,15 +245,15 @@ func processTrack(track int, track_bytes []byte) (tracks [][]timestampedMessage,
 			var name string
 			switch track_key {
 			case -1:
-				name = fmt.Sprintf("SYN TRK %d EXTMIDI", track)
+				name = fmt.Sprintf("SYN TRK %d EXTMIDI", track+1)
 			case 0:
-				name = fmt.Sprintf("SYN TRK %d", track)
+				name = fmt.Sprintf("SYN TRK %d", track+1)
 			case pedal_r_key:
-				name = fmt.Sprintf("SYN TRK %d", track)
+				name = fmt.Sprintf("SYN TRK %d", track+1)
 			case pedal_l_key:
-				name = fmt.Sprintf("SYN TRK %d", track)
+				name = fmt.Sprintf("SYN TRK %d", track+1)
 			default:
-				name = fmt.Sprintf("SYN TRK %d VOICE %d", track, track_key)
+				name = fmt.Sprintf("SYN TRK %d VOICE %d", track+1, track_key)
 			}
 			midievent := meta.TrackSequenceName(name)
 			e := timestampedMessage{0, midievent}
