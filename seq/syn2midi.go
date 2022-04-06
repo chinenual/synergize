@@ -124,6 +124,10 @@ func parseSEQTAB(bytes []byte) (tracks [][]timestampedMessage, err error) {
 			logger.Debugf("TRACK %d START %d STOP %d\n", i, uint16(start_of_seqtab)+trackStartStop[i].start-1, uint16(start_of_seqtab)+trackStartStop[i].stop)
 			track_bytes := bytes[uint16(start_of_seqtab)+trackStartStop[i].start-1 : uint16(start_of_seqtab)+trackStartStop[i].stop]
 
+			for i, b := range track_bytes {
+				logger.Debugf("TRACK TAB[%d]: %x (%d\t%d)\n", i, b, b, int8(b))
+			}
+
 			var t [][]timestampedMessage
 			if t, err = processTrack(i, track_bytes); err != nil {
 				return
@@ -229,14 +233,21 @@ func processTrack(track int, track_bytes []byte) (tracks [][]timestampedMessage,
 	// key is a voice 1..24, or 0 for "everything on one track" or -1 for "external MIDI"
 	var track_map = make(map[int]*[]timestampedMessage)
 
-	// which track(s) is this key playing (waiting for an UP msg):
-	// pseudo key codes for pedals in the active-key array
-	const pedal_l_key = 128
-	const pedal_r_key = 129
+	var pedal_l_down = false
+	var pedal_r_down = false
+
 	var active_key_tracks [130]trackset
 	for i, _ := range active_key_tracks {
 		active_key_tracks[i].Init()
 	}
+
+	copy_events := func(source *[]timestampedMessage, dest *[]timestampedMessage) {
+		// skip the first event (the TrackSequenceName)
+		for _, e := range (*source)[1:] {
+			*dest = append(*dest, e)
+		}
+	}
+
 	get_track := func(track_key int) (midi_track *[]timestampedMessage) {
 		midi_track = track_map[track_key]
 		if midi_track == nil {
@@ -246,11 +257,10 @@ func processTrack(track int, track_bytes []byte) (tracks [][]timestampedMessage,
 			switch track_key {
 			case -1:
 				name = fmt.Sprintf("SYN TRK %d EXTMIDI", track+1)
+			case -2:
+				// the pseudo track for non-key events recorded before first note
+				name = fmt.Sprintf("SYN TRK %d non-key", track+1)
 			case 0:
-				name = fmt.Sprintf("SYN TRK %d", track+1)
-			case pedal_r_key:
-				name = fmt.Sprintf("SYN TRK %d", track+1)
-			case pedal_l_key:
 				name = fmt.Sprintf("SYN TRK %d", track+1)
 			default:
 				name = fmt.Sprintf("SYN TRK %d VOICE %d", track+1, track_key)
@@ -260,6 +270,10 @@ func processTrack(track int, track_bytes []byte) (tracks [][]timestampedMessage,
 			*midi_track = append(*midi_track, e)
 			track_map[track_key] = midi_track
 
+			if (track_key != -2) && (track_map[-2] != nil) {
+				// copy non-key events into this track (all tracks get copies of pb, mod and pedals)
+				copy_events(track_map[-2], midi_track)
+			}
 			all_tracks = append(all_tracks, midi_track)
 		}
 		return
@@ -288,6 +302,11 @@ func processTrack(track int, track_bytes []byte) (tracks [][]timestampedMessage,
 	}
 
 	add_to_all_active_tracks := func(tm timestampedMessage) {
+		// this is for non-key events (pb. mod, pedals).  If no track already allocated by a note event,
+		// allocate a placeholder '-2th' track for now.
+		if len(all_tracks) == 0 {
+			get_track(-2)
+		}
 		for _, t := range all_tracks {
 			*t = append(*t, tm)
 		}
@@ -295,6 +314,7 @@ func processTrack(track int, track_bytes []byte) (tracks [][]timestampedMessage,
 
 	// HACK: this extra +2 is adhoc - doesnt seem to match the firmware comments
 	for i := 2; i < len(track_bytes); {
+		logger.Debugf("TOP OF LOOP %d < %d\n", i, len(track_bytes))
 		time := data.BytesToWord(track_bytes[i+1], track_bytes[i+0])
 		timeAccumulator += uint64(time)
 		if i+2 > len(track_bytes)-1 {
@@ -307,27 +327,32 @@ func processTrack(track int, track_bytes []byte) (tracks [][]timestampedMessage,
 			if device == 124 {
 				// "any" pedal up
 				logger.Debugf("t:%d EVENT [%d] time:%d  ANY PEDAL UP\n", track, i, time)
-				if len(active_key_tracks[pedal_l_key].Contents()) > 0 {
+				if pedal_l_down {
 					m := midiChannel.ControlChange(uint8(cc.PortamentoSwitch), 0)
 					tm := timestampedMessage{timeAccumulator, m}
-					clear_active_key_event(tm, pedal_l_key)
-				} else if len(active_key_tracks[pedal_r_key].Contents()) > 0 {
+					add_to_all_active_tracks(tm)
+					pedal_l_down = false
+				}
+				if pedal_r_down {
 					m := midiChannel.ControlChange(uint8(cc.HoldPedalSwitch), 0)
 					tm := timestampedMessage{timeAccumulator, m}
-					clear_active_key_event(tm, pedal_r_key)
+					add_to_all_active_tracks(tm)
+					pedal_r_down = false
 				}
 			} else if device == 125 {
 				// "middle" pedal down
 				logger.Debugf("t:%d EVENT [%d] time:%d  LEFT PEDAL DOWN\n", track, i, time)
 				m := midiChannel.ControlChange(uint8(cc.PortamentoSwitch), 127)
 				tm := timestampedMessage{timeAccumulator, m}
-				add_active_key_event(tm, pedal_l_key, pedal_l_key)
+				pedal_l_down = true
+				add_to_all_active_tracks(tm)
 			} else if device == 126 {
 				// "regular" pedal down
-				logger.Debugf("t:%d EVENT [%d] time:%d  LEFT PEDAL DOWN\n", track, i, time)
-				m := midiChannel.ControlChange(uint8(cc.Hold2PedalSwitch), 127)
+				logger.Debugf("t:%d EVENT [%d] time:%d  RIGHT PEDAL DOWN\n", track, i, time)
+				m := midiChannel.ControlChange(uint8(cc.HoldPedalSwitch), 127)
 				tm := timestampedMessage{timeAccumulator, m}
-				add_active_key_event(tm, pedal_r_key, pedal_r_key)
+				pedal_r_down = true
+				add_to_all_active_tracks(tm)
 			} else if device <= 74 && device >= 1 {
 				// key up
 				logger.Debugf("t:%d EVENT [%d] time:%d  KEYUP k:%d \n", track, i, time, device)
