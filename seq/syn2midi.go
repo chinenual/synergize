@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"gitlab.com/gomidi/midi/midimessage/meta"
+
 	"gitlab.com/gomidi/midi"
 	"gitlab.com/gomidi/midi/writer"
 
@@ -120,12 +122,14 @@ func parseSEQTAB(bytes []byte) (tracks [][]timestampedEvent, err error) {
 			logger.Debugf("TRACK %d START %d STOP %d\n", i, uint16(start_of_seqtab)+trackStartStop[i].start-1, uint16(start_of_seqtab)+trackStartStop[i].stop)
 			track_bytes := bytes[uint16(start_of_seqtab)+trackStartStop[i].start-1 : uint16(start_of_seqtab)+trackStartStop[i].stop]
 
-			var events []timestampedEvent
-			if events, err = processTrack(i, track_bytes); err != nil {
+			var t [][]timestampedEvent
+			if t, err = processTrack(i, track_bytes); err != nil {
 				return
 			}
-			tracks = append(tracks, events)
-			logger.Debugf("MIDI EVENTS: %v\n", events)
+			for _, track := range t {
+				tracks = append(tracks, track)
+				logger.Debugf("MIDI EVENTS: %v\n", track)
+			}
 		}
 	}
 	return
@@ -159,7 +163,7 @@ func (e timestampedEvent) String() string {
 	return fmt.Sprintf("{%d: %s}", e.timeMS, e.event)
 }
 
-func processTrack(track int, track_bytes []byte) (events []timestampedEvent, err error) {
+func processTrack(track int, track_bytes []byte) (tracks [][]timestampedEvent, err error) {
 	// FROM arithmetic in SEQ.Z80 (near L330B),  "time" appears to be a millisecond clock.
 	// it appears to be a relative time from the previous event
 
@@ -205,18 +209,51 @@ func processTrack(track int, track_bytes []byte) (events []timestampedEvent, err
 	// Track start is at SEQCON+SEQCN1+<track>
 	// Track end   is at SEQCON+SEQCN2+<track>
 
-	// HACK: this extra +2 is adhoc - doesnt seem to match the firmware comments
-
 	// FIXME: how to map track/voice usage to MIDI channel?
 	midiChannel := midiChannels[0]
-
 	timeAccumulator := uint64(0)
+
+	// key is a voice 1..24, or 0 for "everything on one track" or -1 for "external MIDI"
+	var track_map = make(map[int]*[]timestampedEvent)
+
+	// which track(s) is this key playing (waiting for an UP event):
+	// pseudo key codes for pedals in the active-key array
+	const pedal_l_key = 128
+	const pedal_r_key = 129
+	var active_key_tracks [130]trackset
+	for i, _ := range active_key_tracks {
+		active_key_tracks[i].Init()
+		logger.Debugf("trackset.Init(%d) - now %v\n", i, active_key_tracks[i])
+	}
+	get_track := func(key int) (midi_track *[]timestampedEvent) {
+		midi_track = track_map[-1]
+		if midi_track == nil {
+			midi_track = new([]timestampedEvent)
+			// add meta info to the track to name it:
+			var name string
+			switch key {
+			case -1:
+				name = fmt.Sprintf("SYN TRK %d EXTMIDI", track)
+			case 0:
+				name = fmt.Sprintf("SYN TRK %d", track)
+			default:
+				name = fmt.Sprintf("SYN TRK %d VOICE %d", track, key)
+			}
+			midievent := meta.TrackSequenceName(name)
+			e := timestampedEvent{0, midievent}
+			*midi_track = append(*midi_track, e)
+			track_map[-1] = midi_track
+		}
+		return
+	}
+
+	// HACK: this extra +2 is adhoc - doesnt seem to match the firmware comments
 	for i := 2; i < len(track_bytes); {
 		time := data.BytesToWord(track_bytes[i+1], track_bytes[i+0])
 		timeAccumulator += uint64(time)
 		if i+2 > len(track_bytes)-1 {
 			// this was the last timestamp in the sequence - no device data - just "end of sequence" time
-			logger.Debugf("t:%d END OF SEQUENCE [%d] time:%d   \n", track, i, time)
+			logger.Debugf("t:%d END OF TRACK [%d] time:%d   \n", track, i, time)
 			break
 		}
 		device := int8(track_bytes[i+2])
@@ -226,9 +263,15 @@ func processTrack(track int, track_bytes []byte) (events []timestampedEvent, err
 				logger.Debugf("t:%d EVENT [%d] time:%d  KEYUP k:%d \n", track, i, time, device)
 				midievent := midiChannel.NoteOff(uint8(device))
 				e := timestampedEvent{timeAccumulator, midievent}
-				events = append(events, e)
+				// keyup needs to apply to all the keydown's - there may be more than one when multiple voices
+				// use same event
+				for _, k := range active_key_tracks[device].Contents() {
+					midi_track := get_track(k)
+					*midi_track = append(*midi_track, e)
+				}
+				active_key_tracks[device].Clear()
 			} else {
-				logger.Debugf("t:%d UNKNOWN +EVENT [%d] time:%d  device:%d)\n", track, i, time, device)
+				logger.Errorf("t:%d INVALID +EVENT [%d] time:%d  device:%d)\n", track, i, time, device)
 			}
 			// no data byte
 			i += 3
@@ -239,13 +282,19 @@ func processTrack(track int, track_bytes []byte) (events []timestampedEvent, err
 				v := track_bytes[i+3]
 				velocity := v >> 5 // top 3 bits == velocity
 				voice := v & 0x1f  // bottom 5 bits = voice
+				if velocity == 0 {
+					// MIDI velocity 0 means note off
+					velocity = 1
+				}
 				// Synergy native velocity is 1..32
 				// the values stored in the sequencer are compressed to 3-bits (so 0..7 !)
 				// MIDI is 0..127 - so multiply by 18 to scale
 				logger.Debugf("t:%d EVENT [%d] time:%d  KEYDOWN k:%d vel:%d voice:%d\n", track, i, time, -device, velocity, voice)
 				midievent := midiChannel.NoteOn(uint8(-device), 18*uint8(velocity))
 				e := timestampedEvent{timeAccumulator, midievent}
-				events = append(events, e)
+				midi_track := get_track(0)
+				*midi_track = append(*midi_track, e)
+				active_key_tracks[-device].Add(0)
 				i += 4
 			} else if device == -116 {
 				v := track_bytes[i+3]
@@ -253,7 +302,8 @@ func processTrack(track int, track_bytes []byte) (events []timestampedEvent, err
 				// FIXME: need to scale this
 				midievent := midiChannel.ControlChange(1, uint8(v))
 				e := timestampedEvent{timeAccumulator, midievent}
-				events = append(events, e)
+				midi_track := get_track(0)
+				*midi_track = append(*midi_track, e)
 				i += 4
 			} else if device == -115 {
 				v := track_bytes[i+3]
@@ -261,7 +311,8 @@ func processTrack(track int, track_bytes []byte) (events []timestampedEvent, err
 				// FIXME: need to scale this
 				midievent := midiChannel.Pitchbend(int16(v))
 				e := timestampedEvent{timeAccumulator, midievent}
-				events = append(events, e)
+				midi_track := get_track(0)
+				*midi_track = append(*midi_track, e)
 				i += 4
 			} else if device == -126 {
 				v := track_bytes[i+3]
@@ -277,10 +328,13 @@ func processTrack(track int, track_bytes []byte) (events []timestampedEvent, err
 				i += 6
 			} else {
 				v := track_bytes[i+3]
-				logger.Debugf("t:%d UNKNOWN -EVENT [%d] time:%d  device:%d (%d\t%d)\n", track, i, time, device, v, v)
+				logger.Errorf("t:%d INVALID -EVENT [%d] time:%d  device:%d (%d\t%d)\n", track, i, time, device, v, v)
 				i += 4
 			}
 		}
+	}
+	for _, v := range track_map {
+		tracks = append(tracks, *v)
 	}
 	return
 }

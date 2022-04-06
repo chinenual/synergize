@@ -13,7 +13,7 @@ The Synergy sequencer records the following events:
 
 Limitations in the fidelity of the recorded events:
 
-* While the Synergy's internal key velocity range is 1..32, the sequencer only record 3-bits of the velocity - so the values are 'compressed' to only seven distinct velocities; those are then converted back to the 1..32 range on playback.
+* While the Synergy's internal key velocity range is 1..32, the sequencer only records 3-bits of the velocity - so the values are 'compressed' to only seven distinct velocities; those are then converted back to the 1..32 range on playback.
 
 ## Other data stored in the SYN file
 
@@ -28,7 +28,7 @@ The SYN file also contains a snapshot of the "state" of the CMOS.  This includes
 * voice assign (rolling, 1st available, etc.)
 * channel assign
 
-NOTE values are snapshots of the values when the SYN file was downloaded from the instrument. Except for the events listed above, they are not tracked as events in the sequencer (so changed during a sequence recording are not reflected during playback - only the "final" value of each parameter  is stored in the SYN file.  Since none of these parameters change based on sequencer events, the translator does not emit any of them to the MIDI file.
+NOTE values are snapshots of the values when the SYN file was downloaded from the instrument. Except for the events listed in the previous section, they are not tracked as events in the sequencer (so changed during a sequence recording are not reflected during playback - only the "final" value of each parameter  is stored in the SYN file.  Since none of these parameters change based on sequencer events, the translator does not emit any of them to the MIDI file.
 
 ## Conversion to MIDI
 
@@ -39,9 +39,7 @@ A Synergy sequencer track can record more than just a single voice (if the playe
 The converter can handle this in multiple ways, depending on the preference of the user:
 
 * ignore the voice annotation on the event and simply emit note on/off events to one MIDI track (i.e., one Synergy track is exactly one MIDI track).
-
 * distribute voices to separate MIDI tracks.  In this case, for example, if the synergy track contains notes for 2 different voices, the MIDI file will contain two tracks - one for the first voice, one for the second.
-
 * In the case of multi-voice patches, the user may wish to treat the multi-voice notes as a single thing (it's logically a "layered" patch of a single sound), so the converter will combine the separate voice events in the Synergy track to a single event on the MIDI track.
 
 The second and third options may be combined such that the converter creates separate MIDI tracks for each voice, but in the case of a "multi-voice" event, combines that event into a single event, but on its own MIDI track.
@@ -73,7 +71,7 @@ In this release, track button selection is ignored.   Tracks are rendered once t
 
 ### Transpose
 
-In this release, transpose events are ignored.  See the discussion above regarding Track buttons. If a virtual playback mode is added to the converted, transpose will be supported.
+In this release, transpose events are ignored.  See the discussion above regarding Track buttons. If a virtual playback mode is added to the converter, transpose will be supported.
 
 ### Inbound MIDI
 
