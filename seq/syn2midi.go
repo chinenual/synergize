@@ -236,14 +236,18 @@ func processTrack(track int, trackBytes []byte) (tracks [][]timestampedMessage, 
 	var lPedalDown = false
 	var rPedalDown = false
 
+	const comboTrackKey = 0
+	const extMidiTrackKey = -1
+	const modulationTrackKey = -2
+	var modulationTrack []timestampedMessage
 	var activeKeyTracks [130]trackset
 	for i := range activeKeyTracks {
 		activeKeyTracks[i].Init()
 	}
 
-	copyMessages := func(source *[]timestampedMessage, dest *[]timestampedMessage) {
+	copyMessages := func(source []timestampedMessage, dest *[]timestampedMessage) {
 		// skip the first event (the TrackSequenceName)
-		for _, e := range (*source)[1:] {
+		for _, e := range source[1:] {
 			*dest = append(*dest, e)
 		}
 	}
@@ -255,12 +259,12 @@ func processTrack(track int, trackBytes []byte) (tracks [][]timestampedMessage, 
 			// add meta info to the track to name it:
 			var name string
 			switch trackKey {
-			case -1:
+			case extMidiTrackKey:
 				name = fmt.Sprintf("SYN TRK %d EXTMIDI", track+1)
-			case -2:
+			case modulationTrackKey:
 				// the pseudo track for non-key events recorded before first note
 				name = fmt.Sprintf("SYN TRK %d non-key", track+1)
-			case 0:
+			case comboTrackKey:
 				name = fmt.Sprintf("SYN TRK %d", track+1)
 			default:
 				name = fmt.Sprintf("SYN TRK %d VOICE %d", track+1, trackKey)
@@ -270,11 +274,14 @@ func processTrack(track int, trackBytes []byte) (tracks [][]timestampedMessage, 
 			*midiTrack = append(*midiTrack, e)
 			trackMap[trackKey] = midiTrack
 
-			if (trackKey != -2) && (trackMap[-2] != nil) {
-				// copy non-key events into this track (all tracks get copies of pb, mod and pedals)
-				copyMessages(trackMap[-2], midiTrack)
+			if trackKey != modulationTrackKey {
+				if modulationTrack != nil {
+					// copy non-key events into this track (all tracks get copies of pb, mod and pedals)
+					copyMessages(modulationTrack, midiTrack)
+				}
+				// allTracks does not include the pseudo track
+				allTracks = append(allTracks, midiTrack)
 			}
-			allTracks = append(allTracks, midiTrack)
 		}
 		return
 	}
@@ -282,7 +289,7 @@ func processTrack(track int, trackBytes []byte) (tracks [][]timestampedMessage, 
 	addActiveKeyEvent := func(tm timestampedMessage, voice int, device int) {
 		var trackKey int
 		if trackMode == AllVoicesSameTrack {
-			trackKey = 0
+			trackKey = comboTrackKey
 		} else {
 			trackKey = voice
 		}
@@ -303,10 +310,11 @@ func processTrack(track int, trackBytes []byte) (tracks [][]timestampedMessage, 
 
 	addToAllActiveTracks := func(tm timestampedMessage) {
 		// this is for non-key events (pb. mod, pedals).  If no track already allocated by a note event,
-		// allocate a placeholder '-2th' track for now.
-		if len(allTracks) == 0 {
-			getTrack(-2)
+		// allocate a placeholder
+		if modulationTrack == nil {
+			modulationTrack = getTrack(modulationTrackKey)
 		}
+		modulationTrack = append(modulationTrack, tm)
 		for _, t := range allTracks {
 			*t = append(*t, tm)
 		}
@@ -434,8 +442,14 @@ func processTrack(track int, trackBytes []byte) (tracks [][]timestampedMessage, 
 			}
 		}
 	}
-	for _, t := range allTracks {
-		tracks = append(tracks, *t)
+	if len(allTracks) == 0 {
+		// only modulation events - no notes. So use the modulation track
+		tracks = append(tracks, modulationTrack)
+	} else {
+		// otherwise, modulation events have already been copied into all the note tracks - just use those
+		for _, t := range allTracks {
+			tracks = append(tracks, *t)
+		}
 	}
 	return
 }
