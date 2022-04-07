@@ -31,26 +31,26 @@ import (
 //; 7) CRC
 
 func ConvertSYNToMIDI(path string) (err error) {
-	var syn_bytes []byte
+	var synBytes []byte
 
-	if syn_bytes, err = ioutil.ReadFile(path); err != nil {
+	if synBytes, err = ioutil.ReadFile(path); err != nil {
 		return
 	}
 
-	cmos_len := data.BytesToWord(syn_bytes[1], syn_bytes[0])
-	logger.Debugf("CMOS LEN: %v\n", cmos_len)
+	cmosLen := data.BytesToWord(synBytes[1], synBytes[0])
+	logger.Debugf("CMOS LEN: %v\n", cmosLen)
 
-	seqtab_start := cmos_len*2 + 4
-	logger.Debugf("SEQTAB start: 0x%x\n", seqtab_start)
+	seqtabStart := cmosLen*2 + 4
+	logger.Debugf("SEQTAB start: 0x%x\n", seqtabStart)
 
-	// seqlen is immediately after the cmos bytes - +2 for the header (cmos_len) bytes:
-	seq_len := data.BytesToWord(syn_bytes[seqtab_start-1], syn_bytes[seqtab_start-2])
-	logger.Debugf("SEQTAB LEN: %v\n", seq_len)
+	// seqlen is immediately after the cmos bytes - +2 for the header (cmosLen) bytes:
+	seqLen := data.BytesToWord(synBytes[seqtabStart-1], synBytes[seqtabStart-2])
+	logger.Debugf("SEQTAB LEN: %v\n", seqLen)
 
-	if seq_len > 0 {
+	if seqLen > 0 {
 		var tracks [][]timestampedMessage
 		// last two bytes of the file are the CRC
-		if tracks, err = parseSEQTAB(syn_bytes[seqtab_start+2 : len(syn_bytes)-2]); err != nil {
+		if tracks, err = parseSEQTAB(synBytes[seqtabStart+2 : len(synBytes)-2]); err != nil {
 			return
 		}
 
@@ -114,22 +114,22 @@ func parseSEQTAB(bytes []byte) (tracks [][]timestampedMessage, err error) {
 		trackStartStop[i].stop = seqcon[NUMTRACKS+i]
 		logger.Debugf("TRACK %d SEQCON START %d STOP %d\n", i, trackStartStop[i].start, trackStartStop[i].stop)
 	}
-	start_of_seqtab := 12 + 40 + 5
-	for i := start_of_seqtab; i < len(bytes); i++ {
+	seqtabStart := 12 + 40 + 5
+	for i := seqtabStart; i < len(bytes); i++ {
 		logger.Debugf("SEQ TAB[%d]: %x (%d\t%d)\n", i, bytes[i], bytes[i], int8(bytes[i]))
 	}
 
 	for i := 0; i < NUMTRACKS; i++ {
 		if trackStartStop[i].start != 0 {
-			logger.Debugf("TRACK %d START %d STOP %d\n", i, uint16(start_of_seqtab)+trackStartStop[i].start-1, uint16(start_of_seqtab)+trackStartStop[i].stop)
-			track_bytes := bytes[uint16(start_of_seqtab)+trackStartStop[i].start-1 : uint16(start_of_seqtab)+trackStartStop[i].stop]
+			logger.Debugf("TRACK %d START %d STOP %d\n", i, uint16(seqtabStart)+trackStartStop[i].start-1, uint16(seqtabStart)+trackStartStop[i].stop)
+			trackBytes := bytes[uint16(seqtabStart)+trackStartStop[i].start-1 : uint16(seqtabStart)+trackStartStop[i].stop]
 
-			for i, b := range track_bytes {
+			for i, b := range trackBytes {
 				logger.Debugf("TRACK TAB[%d]: %x (%d\t%d)\n", i, b, b, int8(b))
 			}
 
 			var t [][]timestampedMessage
-			if t, err = processTrack(i, track_bytes); err != nil {
+			if t, err = processTrack(i, trackBytes); err != nil {
 				return
 			}
 			for _, track := range t {
@@ -148,7 +148,7 @@ const (
 	TrackPerVoice
 )
 
-var trackMode TrackMode = TrackPerVoice
+var trackMode = TrackPerVoice
 
 type timestampedMessage struct {
 	timeMS uint64
@@ -178,7 +178,7 @@ func (e timestampedMessage) String() string {
 	return fmt.Sprintf("{%d: %s}", e.timeMS, e.msg)
 }
 
-func processTrack(track int, track_bytes []byte) (tracks [][]timestampedMessage, err error) {
+func processTrack(track int, trackBytes []byte) (tracks [][]timestampedMessage, err error) {
 	// FROM arithmetic in SEQ.Z80 (near L330B),  "time" appears to be a millisecond clock.
 	// it appears to be a relative time from the previous msg
 
@@ -228,33 +228,33 @@ func processTrack(track int, track_bytes []byte) (tracks [][]timestampedMessage,
 	midiChannel := midiChannels[0]
 	timeAccumulator := uint64(0)
 
-	var all_tracks []*[]timestampedMessage
+	var allTracks []*[]timestampedMessage
 
 	// key is a voice 1..24, or 0 for "everything on one track" or -1 for "external MIDI"
-	var track_map = make(map[int]*[]timestampedMessage)
+	var trackMap = make(map[int]*[]timestampedMessage)
 
-	var pedal_l_down = false
-	var pedal_r_down = false
+	var lPedalDown = false
+	var rPedalDown = false
 
-	var active_key_tracks [130]trackset
-	for i, _ := range active_key_tracks {
-		active_key_tracks[i].Init()
+	var activeKeyTracks [130]trackset
+	for i := range activeKeyTracks {
+		activeKeyTracks[i].Init()
 	}
 
-	copy_events := func(source *[]timestampedMessage, dest *[]timestampedMessage) {
+	copyMessages := func(source *[]timestampedMessage, dest *[]timestampedMessage) {
 		// skip the first event (the TrackSequenceName)
 		for _, e := range (*source)[1:] {
 			*dest = append(*dest, e)
 		}
 	}
 
-	get_track := func(track_key int) (midi_track *[]timestampedMessage) {
-		midi_track = track_map[track_key]
-		if midi_track == nil {
-			midi_track = new([]timestampedMessage)
+	getTrack := func(trackKey int) (midiTrack *[]timestampedMessage) {
+		midiTrack = trackMap[trackKey]
+		if midiTrack == nil {
+			midiTrack = new([]timestampedMessage)
 			// add meta info to the track to name it:
 			var name string
-			switch track_key {
+			switch trackKey {
 			case -1:
 				name = fmt.Sprintf("SYN TRK %d EXTMIDI", track+1)
 			case -2:
@@ -263,96 +263,96 @@ func processTrack(track int, track_bytes []byte) (tracks [][]timestampedMessage,
 			case 0:
 				name = fmt.Sprintf("SYN TRK %d", track+1)
 			default:
-				name = fmt.Sprintf("SYN TRK %d VOICE %d", track+1, track_key)
+				name = fmt.Sprintf("SYN TRK %d VOICE %d", track+1, trackKey)
 			}
 			midievent := meta.TrackSequenceName(name)
 			e := timestampedMessage{0, midievent}
-			*midi_track = append(*midi_track, e)
-			track_map[track_key] = midi_track
+			*midiTrack = append(*midiTrack, e)
+			trackMap[trackKey] = midiTrack
 
-			if (track_key != -2) && (track_map[-2] != nil) {
+			if (trackKey != -2) && (trackMap[-2] != nil) {
 				// copy non-key events into this track (all tracks get copies of pb, mod and pedals)
-				copy_events(track_map[-2], midi_track)
+				copyMessages(trackMap[-2], midiTrack)
 			}
-			all_tracks = append(all_tracks, midi_track)
+			allTracks = append(allTracks, midiTrack)
 		}
 		return
 	}
 
-	add_active_key_event := func(tm timestampedMessage, voice int, device int) {
-		var track_key int
+	addActiveKeyEvent := func(tm timestampedMessage, voice int, device int) {
+		var trackKey int
 		if trackMode == AllVoicesSameTrack {
-			track_key = 0
+			trackKey = 0
 		} else {
-			track_key = voice
+			trackKey = voice
 		}
-		midi_track := get_track(track_key)
-		*midi_track = append(*midi_track, tm)
-		active_key_tracks[device].Add(track_key)
+		midiTrack := getTrack(trackKey)
+		*midiTrack = append(*midiTrack, tm)
+		activeKeyTracks[device].Add(trackKey)
 	}
 
-	clear_active_key_event := func(tm timestampedMessage, device int) {
+	clearActiveKeyEvent := func(tm timestampedMessage, device int) {
 		// for any track this event may have been written to:
-		for _, k := range active_key_tracks[device].Contents() {
+		for _, k := range activeKeyTracks[device].Contents() {
 			logger.Debugf("Clearing event %d from track_key %d", device, k)
-			midi_track := get_track(k)
-			*midi_track = append(*midi_track, tm)
+			midiTrack := getTrack(k)
+			*midiTrack = append(*midiTrack, tm)
 		}
-		active_key_tracks[device].Clear()
+		activeKeyTracks[device].Clear()
 	}
 
-	add_to_all_active_tracks := func(tm timestampedMessage) {
+	addToAllActiveTracks := func(tm timestampedMessage) {
 		// this is for non-key events (pb. mod, pedals).  If no track already allocated by a note event,
 		// allocate a placeholder '-2th' track for now.
-		if len(all_tracks) == 0 {
-			get_track(-2)
+		if len(allTracks) == 0 {
+			getTrack(-2)
 		}
-		for _, t := range all_tracks {
+		for _, t := range allTracks {
 			*t = append(*t, tm)
 		}
 	}
 
 	// HACK: this extra +2 is adhoc - doesnt seem to match the firmware comments
-	for i := 2; i < len(track_bytes); {
-		logger.Debugf("TOP OF LOOP %d < %d\n", i, len(track_bytes))
-		time := data.BytesToWord(track_bytes[i+1], track_bytes[i+0])
+	for i := 2; i < len(trackBytes); {
+		logger.Debugf("TOP OF LOOP %d < %d\n", i, len(trackBytes))
+		time := data.BytesToWord(trackBytes[i+1], trackBytes[i+0])
 		timeAccumulator += uint64(time)
-		if i+2 > len(track_bytes)-1 {
+		if i+2 > len(trackBytes)-1 {
 			// this was the last timestamp in the sequence - no device data - just "end of sequence" time
 			logger.Debugf("t:%d END OF TRACK [%d] time:%d   \n", track, i, time)
 			break
 		}
-		device := int8(track_bytes[i+2])
+		device := int8(trackBytes[i+2])
 		if device > 0 {
 			if device == 124 {
 				// "any" pedal up
 				logger.Debugf("t:%d EVENT [%d] time:%d  ANY PEDAL UP\n", track, i, time)
-				if pedal_l_down {
-					m := midiChannel.ControlChange(uint8(cc.PortamentoSwitch), 0)
+				if lPedalDown {
+					m := midiChannel.ControlChange(cc.PortamentoSwitch, 0)
 					tm := timestampedMessage{timeAccumulator, m}
-					add_to_all_active_tracks(tm)
-					pedal_l_down = false
+					addToAllActiveTracks(tm)
+					lPedalDown = false
 				}
-				if pedal_r_down {
-					m := midiChannel.ControlChange(uint8(cc.HoldPedalSwitch), 0)
+				if rPedalDown {
+					m := midiChannel.ControlChange(cc.HoldPedalSwitch, 0)
 					tm := timestampedMessage{timeAccumulator, m}
-					add_to_all_active_tracks(tm)
-					pedal_r_down = false
+					addToAllActiveTracks(tm)
+					rPedalDown = false
 				}
 			} else if device == 125 {
 				// "middle" pedal down
 				logger.Debugf("t:%d EVENT [%d] time:%d  LEFT PEDAL DOWN\n", track, i, time)
-				m := midiChannel.ControlChange(uint8(cc.PortamentoSwitch), 127)
+				m := midiChannel.ControlChange(cc.PortamentoSwitch, 127)
 				tm := timestampedMessage{timeAccumulator, m}
-				pedal_l_down = true
-				add_to_all_active_tracks(tm)
+				lPedalDown = true
+				addToAllActiveTracks(tm)
 			} else if device == 126 {
 				// "regular" pedal down
 				logger.Debugf("t:%d EVENT [%d] time:%d  RIGHT PEDAL DOWN\n", track, i, time)
-				m := midiChannel.ControlChange(uint8(cc.HoldPedalSwitch), 127)
+				m := midiChannel.ControlChange(cc.HoldPedalSwitch, 127)
 				tm := timestampedMessage{timeAccumulator, m}
-				pedal_r_down = true
-				add_to_all_active_tracks(tm)
+				rPedalDown = true
+				addToAllActiveTracks(tm)
 			} else if device <= 74 && device >= 1 {
 				// key up
 				logger.Debugf("t:%d EVENT [%d] time:%d  KEYUP k:%d \n", track, i, time, device)
@@ -360,7 +360,7 @@ func processTrack(track int, track_bytes []byte) (tracks [][]timestampedMessage,
 				tm := timestampedMessage{timeAccumulator, m}
 				// keyup needs to apply to all the keydown's - there may be more than one when multiple voices
 				// use same msg
-				clear_active_key_event(tm, int(device))
+				clearActiveKeyEvent(tm, int(device))
 			} else {
 				logger.Errorf("t:%d INVALID +EVENT [%d] time:%d  device:%d)\n", track, i, time, device)
 			}
@@ -370,7 +370,7 @@ func processTrack(track int, track_bytes []byte) (tracks [][]timestampedMessage,
 			// negative device codes have 1-3 data bytes depending on device code
 			if device >= -74 && device <= -1 {
 				// key down
-				v := track_bytes[i+3]
+				v := trackBytes[i+3]
 				velocity := v >> 5 // top 3 bits == velocity
 				voice := v & 0x1f  // bottom 5 bits = voice
 				if velocity == 0 {
@@ -383,58 +383,58 @@ func processTrack(track int, track_bytes []byte) (tracks [][]timestampedMessage,
 				logger.Debugf("t:%d EVENT [%d] time:%d  KEYDOWN k:%d vel:%d voice:%d\n", track, i, time, -device, velocity, voice)
 				m := midiChannel.NoteOn(uint8(-device), 18*uint8(velocity))
 				tm := timestampedMessage{timeAccumulator, m}
-				add_active_key_event(tm, int(voice), int(-device))
-				logger.Debugf("ADD ACTIVE - map %d now %v\n", voice, active_key_tracks[-device])
+				addActiveKeyEvent(tm, int(voice), int(-device))
+				logger.Debugf("ADD ACTIVE - map %d now %v\n", voice, activeKeyTracks[-device])
 
 				i += 4
 			} else if device == -116 {
-				v := track_bytes[i+3]
+				v := trackBytes[i+3]
 				logger.Debugf("t:%d EVENT [%d] time:%d  MOD device:%d (%d\t%d)\n", track, i, time, device, v, v)
 				// SYNERGY value is 0..48 - need to scale to 0..127 MIDI value
-				midi_val := int(float32(v) * 127.0 / 48.0)
-				if midi_val < 0 {
-					midi_val = 0
-				} else if midi_val > 127 {
-					midi_val = 127
+				midiVal := int(float32(v) * 127.0 / 48.0)
+				if midiVal < 0 {
+					midiVal = 0
+				} else if midiVal > 127 {
+					midiVal = 127
 				}
-				m := midiChannel.ControlChange(1, uint8(midi_val))
+				m := midiChannel.ControlChange(1, uint8(midiVal))
 				tm := timestampedMessage{timeAccumulator, m}
-				add_to_all_active_tracks(tm)
+				addToAllActiveTracks(tm)
 				i += 4
 			} else if device == -115 {
-				v := int8(track_bytes[i+3])
+				v := int8(trackBytes[i+3])
 				logger.Debugf("t:%d EVENT [%d] time:%d  BEND device:%d (%d\t%d)\n", track, i, time, device, v, v)
 				// SYNERGY value is -127..127 - need to scale to -8192..8191 MIDI value
-				midi_val := int(float32(v) * 8191.0 / 48.0)
-				if midi_val < -8192 {
-					midi_val = -8192
-				} else if midi_val > 8191 {
-					midi_val = 8191
+				midiVal := int(float32(v) * 8191.0 / 48.0)
+				if midiVal < -8192 {
+					midiVal = -8192
+				} else if midiVal > 8191 {
+					midiVal = 8191
 				}
-				m := midiChannel.Pitchbend(int16(midi_val))
+				m := midiChannel.Pitchbend(int16(midiVal))
 				tm := timestampedMessage{timeAccumulator, m}
-				add_to_all_active_tracks(tm)
+				addToAllActiveTracks(tm)
 				i += 4
 			} else if device == -126 {
-				v := track_bytes[i+3]
+				v := trackBytes[i+3]
 				logger.Debugf("t:%d EVENT [%d] time:%d  MIDI 1-byte: device:%d (%d\t%d)\n", track, i, time, device, v, v)
 				i += 4
 			} else if device == -127 {
-				v := []byte{track_bytes[i+3], track_bytes[i+4]}
+				v := []byte{trackBytes[i+3], trackBytes[i+4]}
 				logger.Debugf("t:%d EVENT [%d] time:%d  MIDI 2-byte: device:%d (%d\t%d)\t(%d\t%d) \n", track, i, time, device, v[0], v[0], v[1], v[1])
 				i += 5
 			} else if device == -128 {
-				v := []byte{track_bytes[i+3], track_bytes[i+4], track_bytes[i+5]}
+				v := []byte{trackBytes[i+3], trackBytes[i+4], trackBytes[i+5]}
 				logger.Debugf("t:%d EVENT [%d] time:%d  MIDI 3-byte: device:%d (%d\t%d)\t(%d\t%d) \t(%d\t%d) \n", track, i, time, device, v[0], v[0], v[1], v[1], v[2], v[2])
 				i += 6
 			} else {
-				v := track_bytes[i+3]
+				v := trackBytes[i+3]
 				logger.Errorf("t:%d INVALID -EVENT [%d] time:%d  device:%d (%d\t%d)\n", track, i, time, device, v, v)
 				i += 4
 			}
 		}
 	}
-	for _, t := range all_tracks {
+	for _, t := range allTracks {
 		tracks = append(tracks, *t)
 	}
 	return
