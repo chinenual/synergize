@@ -295,7 +295,7 @@ func main() {
 			os.Exit(code)
 		} else if *convertsyn != "" {
 			logger.Error("TEST")
-			var trackMode TrackMode
+			var trackMode seq.TrackMode
 			if true { //*convertsynMode == "" {
 				trackMode = seq.TrackPerVoice
 			} else {
