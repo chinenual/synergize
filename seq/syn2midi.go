@@ -199,7 +199,7 @@ func processTrack(track int, trackBytes []byte, trackMode TrackMode) (tracks [][
 	// Track end   is at SEQCON+SEQCN2+<track>
 
 	// FIXME: how to map track/voice usage to MIDI channel?
-	midiChannel := uint8(1)
+	midiChannel := uint8(0)
 	timeAccumulator := uint32(0)
 
 	var allTracks []*[]timestampedMessage
