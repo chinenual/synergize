@@ -295,7 +295,13 @@ func main() {
 			os.Exit(code)
 		} else if *convertsyn != "" {
 			logger.Error("TEST")
-			if err = seq.ConvertSYNToMIDI(*convertsyn); err != nil {
+			var trackMode TrackMode
+			if true { //*convertsynMode == "" {
+				trackMode = seq.TrackPerVoice
+			} else {
+				trackMode = seq.AllVoicesSameTrack
+			}
+			if err = seq.ConvertSYNToMIDI(*convertsyn, trackMode); err != nil {
 				code = 1
 				logger.Error(err)
 			}

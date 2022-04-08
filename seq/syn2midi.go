@@ -30,7 +30,7 @@ import (
 //;	6) seq. data table
 //; 7) CRC
 
-func ConvertSYNToMIDI(path string) (err error) {
+func ConvertSYNToMIDI(path string, trackMode TrackMode) (err error) {
 	var synBytes []byte
 
 	if synBytes, err = ioutil.ReadFile(path); err != nil {
@@ -50,7 +50,7 @@ func ConvertSYNToMIDI(path string) (err error) {
 	if seqLen > 0 {
 		var tracks [][]timestampedMessage
 		// last two bytes of the file are the CRC
-		if tracks, err = parseSEQTAB(synBytes[seqtabStart+2 : len(synBytes)-2]); err != nil {
+		if tracks, err = parseSEQTAB(synBytes[seqtabStart+2:len(synBytes)-2], trackMode); err != nil {
 			return
 		}
 
@@ -82,7 +82,7 @@ func ConvertSYNToMIDI(path string) (err error) {
 	return
 }
 
-func parseSEQTAB(bytes []byte) (tracks [][]timestampedMessage, err error) {
+func parseSEQTAB(bytes []byte, trackMode TrackMode) (tracks [][]timestampedMessage, err error) {
 	//PTVAL:	DS	64			;Current active processed pot value]
 	const NUMTRACKS = 4
 	for i := 0; i < NUMTRACKS; i++ {
@@ -129,7 +129,7 @@ func parseSEQTAB(bytes []byte) (tracks [][]timestampedMessage, err error) {
 			}
 
 			var t [][]timestampedMessage
-			if t, err = processTrack(i, trackBytes); err != nil {
+			if t, err = processTrack(i, trackBytes, trackMode); err != nil {
 				return
 			}
 			for _, track := range t {
@@ -147,8 +147,6 @@ const (
 	AllVoicesSameTrack TrackMode = iota
 	TrackPerVoice
 )
-
-var trackMode = TrackPerVoice
 
 type timestampedMessage struct {
 	timeMS uint64
@@ -178,7 +176,7 @@ func (e timestampedMessage) String() string {
 	return fmt.Sprintf("{%d: %s}", e.timeMS, e.msg)
 }
 
-func processTrack(track int, trackBytes []byte) (tracks [][]timestampedMessage, err error) {
+func processTrack(track int, trackBytes []byte, trackMode TrackMode) (tracks [][]timestampedMessage, err error) {
 	// FROM arithmetic in SEQ.Z80 (near L330B),  "time" appears to be a millisecond clock.
 	// it appears to be a relative time from the previous msg
 
