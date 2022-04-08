@@ -213,6 +213,7 @@ func processTrack(track int, trackBytes []byte, trackMode TrackMode) (tracks [][
 	const comboTrackKey = 0
 	const extMidiTrackKey = -1
 	const modulationTrackKey = -2
+	var extMidiTrackIndex = -1 // init to a non-usable index - set during getTrack() if there's any external midi data
 	var modulationTrack []timestampedMessage
 	var activeKeyTracks [130]trackset
 	for i := range activeKeyTracks {
@@ -249,12 +250,15 @@ func processTrack(track int, trackBytes []byte, trackMode TrackMode) (tracks [][
 			trackMap[trackKey] = midiTrack
 
 			if trackKey != modulationTrackKey {
-				if modulationTrack != nil {
-					// copy non-key events into this track (all tracks get copies of pb, mod and pedals)
+				if modulationTrack != nil && trackKey != extMidiTrackKey {
+					// copy non-key events into this track (all tracks except the extMidiTrack get copies of pb, mod and pedals)
 					copyMessages(modulationTrack, midiTrack)
 				}
 				// allTracks does not include the pseudo track
 				allTracks = append(allTracks, midiTrack)
+				if trackKey == extMidiTrackKey {
+					extMidiTrackIndex = len(allTracks) - 1
+				}
 			}
 		}
 		return
@@ -289,8 +293,10 @@ func processTrack(track int, trackBytes []byte, trackMode TrackMode) (tracks [][
 			modulationTrack = *getTrack(modulationTrackKey)
 		}
 		modulationTrack = append(modulationTrack, tm)
-		for _, t := range allTracks {
-			*t = append(*t, tm)
+		for i, t := range allTracks {
+			if i != extMidiTrackIndex {
+				*t = append(*t, tm)
+			}
 		}
 	}
 
@@ -398,15 +404,28 @@ func processTrack(track int, trackBytes []byte, trackMode TrackMode) (tracks [][
 				addToAllActiveTracks(tm)
 				i += 4
 			} else if device == -126 {
-				v := trackBytes[i+3]
+				v := []byte{trackBytes[i+3]}
+				m := (midi.Message(v))
+				tm := timestampedMessage{timeAccumulator, m}
+				midiTrack := getTrack(extMidiTrackKey)
+				*midiTrack = append(*midiTrack, tm)
 				logger.Debugf("t:%d EVENT [%d] time:%d  MIDI 1-byte: device:%d (%d\t%d)\n", track, i, time, device, v, v)
+
 				i += 4
 			} else if device == -127 {
 				v := []byte{trackBytes[i+3], trackBytes[i+4]}
+				m := (midi.Message(v))
+				tm := timestampedMessage{timeAccumulator, m}
+				midiTrack := getTrack(extMidiTrackKey)
+				*midiTrack = append(*midiTrack, tm)
 				logger.Debugf("t:%d EVENT [%d] time:%d  MIDI 2-byte: device:%d (%d\t%d)\t(%d\t%d) \n", track, i, time, device, v[0], v[0], v[1], v[1])
 				i += 5
 			} else if device == -128 {
 				v := []byte{trackBytes[i+3], trackBytes[i+4], trackBytes[i+5]}
+				m := (midi.Message(v))
+				tm := timestampedMessage{timeAccumulator, m}
+				midiTrack := getTrack(extMidiTrackKey)
+				*midiTrack = append(*midiTrack, tm)
 				logger.Debugf("t:%d EVENT [%d] time:%d  MIDI 3-byte: device:%d (%d\t%d)\t(%d\t%d) \t(%d\t%d) \n", track, i, time, device, v[0], v[0], v[1], v[1], v[2], v[2])
 				i += 6
 			} else {
