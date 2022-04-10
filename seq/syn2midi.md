@@ -74,8 +74,6 @@ Inbound MIDI events are emitted to a separate track since in the original record
 
 ### Tempo
 
-**NOTE**:  The following may change: I am investigating SMPTE mode MIDI format - that may allow millisecond based timing directly in the MIDI file without requiring the user to select a tempo BPM.
-
-The Synergy has no strict concept of "tempo" (there is no metronome or "click").  Events are recorded in terms of clock time (milliseconds since the last event).  The Sequencer Speed can change the rate that events are played back, but there is no inherent "beats per minute" recorded in the sequencer.  Any correspondence between the sequencer speed and a musical tempo is up to the user to make.
+The Synergy has no strict concept of "tempo" (there is no metronome or "click").  Events are recorded in terms of clock time (milliseconds since the last event).  The Sequencer Speed can change the rate that events are played back, but there is no inherent "beats per minute" recorded in the sequencer.  Any correspondence between the sequencer speed and a musical tempo is up to the user to determine.
 
 MIDI, on the other hand, has a definite notion of musical tempo.  Time in a MIDI stream is measured in pulses-per-quarter-note (PPQ).  In order for the converter to convert a Synergy event timestamp to MIDI PPQ, the user must supply a tempo (in beats per minute).  The accuracy of how the translated events line up to measures or beats in a DAW will depend on 1) how accurately the supplied tempo BPM matches the sequenced recording and 2) how close the original recording was to a strict click.
