@@ -301,13 +301,14 @@ func processTrack(track int, trackBytes []byte, trackMode TrackMode) (tracks [][
 	}
 
 	// HACK: this extra +2 is adhoc - doesnt seem to match the firmware comments
-	for i := 2; i < len(trackBytes); {
+	for i := 2; i < len(trackBytes)-1; {
 		logger.Debugf("TOP OF LOOP %d < %d\n", i, len(trackBytes))
 		time := data.BytesToWord(trackBytes[i+1], trackBytes[i+0])
 		timeAccumulator += uint32(time)
-		if i+2 > len(trackBytes)-1 {
+		if i+2 >= len(trackBytes)-1 {
 			// this was the last timestamp in the sequence - no device data - just "end of sequence" time
 			logger.Debugf("t:%d END OF TRACK [%d] time:%d   \n", track, i, time)
+			// FIXME: add a MetaEndOfTrack message?
 			break
 		}
 		device := int8(trackBytes[i+2])
