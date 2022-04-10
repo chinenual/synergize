@@ -296,12 +296,15 @@ func main() {
 		} else if *convertsyn != "" {
 			logger.Error("TEST")
 			var trackMode seq.TrackMode
+			var tempoBPM float64
 			if true { //*convertsynMode == "" {
 				trackMode = seq.TrackPerVoice
+				tempoBPM = 120.0
 			} else {
 				trackMode = seq.AllVoicesSameTrack
+				tempoBPM = 120.0
 			}
-			if err = seq.ConvertSYNToMIDI(*convertsyn, trackMode); err != nil {
+			if err = seq.ConvertSYNToMIDI(*convertsyn, trackMode, tempoBPM); err != nil {
 				code = 1
 				logger.Error(err)
 			}

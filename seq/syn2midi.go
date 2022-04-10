@@ -3,6 +3,7 @@ package seq
 import (
 	"fmt"
 	"io/ioutil"
+	"time"
 
 	"gitlab.com/gomidi/midi/v2"
 	"gitlab.com/gomidi/midi/v2/smf"
@@ -24,7 +25,7 @@ import (
 //;	6) seq. data table
 //; 7) CRC
 
-func ConvertSYNToMIDI(path string, trackMode TrackMode) (err error) {
+func ConvertSYNToMIDI(path string, trackMode TrackMode, tempoBPM float64) (err error) {
 	var synBytes []byte
 
 	if synBytes, err = ioutil.ReadFile(path); err != nil {
@@ -52,14 +53,25 @@ func ConvertSYNToMIDI(path string, trackMode TrackMode) (err error) {
 
 		s := smf.New()
 		//s.TimeFormat = smf.SMPTE25(40)
-		s.TimeFormat = smf.MetricTicks(960)
+		// 960 ppm is a widely supported format; SMPTE silently fails to load in Logic, so just stick with 960 ppm for now
+		tempo := smf.MetricTicks(960)
+		s.TimeFormat = tempo
 
-		for _, t := range tracks {
+		// convert ms to "ticks" in the current tempo
+		msToTick := func(ms uint32) uint32 {
+			return tempo.Ticks(tempoBPM, time.Duration(ms)*time.Millisecond)
+		}
+
+		for i, t := range tracks {
 			var tr smf.Track
 
+			if i == 0 {
+				// first track gets tempo metadata:
+				tr.Add(0, smf.MetaTempo(tempoBPM))
+			}
 			time := uint32(0)
 			for _, e := range t {
-				deltaT := e.timeMS - time
+				deltaT := msToTick(e.timeMS - time)
 				tr.Add(deltaT, e.msg)
 				time = e.timeMS
 			}
