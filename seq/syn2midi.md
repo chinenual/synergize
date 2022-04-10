@@ -44,7 +44,7 @@ The converter can handle this in multiple ways, depending on the preference of t
 
 The second and third options may be combined such that the converter creates separate MIDI tracks for each voice, but in the case of a "multi-voice" event, combines that event into a single event, but on its own MIDI track.  
 
-NOTE: in this release, the 3rd option is not implemented; multivoice events will render to a single track  (if option 1 is in force) or two multiple separate tracks (for option 2).   The user can delete the redundant tracks from the resulting MIDI file in his/her DAW.
+NOTE: in this release, the 3rd option is not implemented; multivoice events will render to a single track  (if option 1 is in force) or to multiple separate tracks (for option 2).   The user can delete the redundant tracks from the resulting MIDI file in his/her DAW.
 
 ### Key Velocity
 
