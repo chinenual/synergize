@@ -36,15 +36,9 @@ NOTE values are snapshots of the values when the SYN file was downloaded from th
 
 A Synergy sequencer track can record more than just a single voice (if the player pressed a Voice# button while recording, the notes played after that are played on the new voice).  Similarly, when using multi-voice patches (program #1..#4), a keypress can trigger up to 4 notes at a time.
 
-The converter can handle this in multiple ways, depending on the preference of the user:
+The converter creates a separate output MIDI track for each distinct voice used on the Synergy track.
 
-* ignore the voice annotation on the event and simply emit note on/off events to one MIDI track (i.e., one Synergy track is exactly one MIDI track).
-* distribute voices to separate MIDI tracks.  In this case, for example, if the synergy track contains notes for 2 different voices, the MIDI file will contain two tracks - one for the first voice, one for the second.
-* In the case of multi-voice patches, the user may wish to treat the multi-voice notes as a single thing (it's logically a "layered" patch of a single key on/off event), so the converter will combine the separate voice events in the Synergy track to a single event on the MIDI track.
-
-The second and third options may be combined such that the converter creates separate MIDI tracks for each voice, but in the case of a "multi-voice" event, combines that event into a single event, but on its own MIDI track.  
-
-NOTE: in this release, the 3rd option is not implemented; multivoice events will render to a single track  (if option 1 is in force) or to multiple separate tracks (for option 2).   The user can delete the redundant tracks from the resulting MIDI file in his/her DAW.
+In the case of multi-voice patches, the user may wish to treat the multi-voice notes as a single thing (it's logically a "layered" patch of a single key on/off event), and combine the separate voice events in the Synergy track to a single event on the MIDI track.  The converter, however does not attempt to recognize such multi-voice events and compress them to a single track.  A multi-voice event creates multiple output tracks.  The user can delete the redundant tracks from the resulting MIDI file in his/her DAW.
 
 ### Key Velocity
 
