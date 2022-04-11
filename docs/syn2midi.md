@@ -1,3 +1,10 @@
+---
+layout: default
+title: SYN Sequencer to MIDI Converter
+nav_order: 81
+description: SYN Sequencer to MIDI Converter
+permalink: /docs/syn2midi
+---
 
 ## Capabilities of the Synergy sequencer
 
