@@ -18,6 +18,7 @@ Synergize is free and open source software, which uses a number of other open so
 * István Ujj-Mészáros's [Touchspin](https://github.com/istvan-ujjmeszaros/bootstrap-touchspin).
 * Daniel Kallin's  [nomnoml](https://github.com/skanaar/nomnoml) diagram library.
 * Stefan S's [bonjour/zeroconf](https://github.com/grandcat/zeroconf) library.
+* Marc Rene Arns' [Go-MIDI](https://gitlab.com/gomidi/midi) library
 * Lodash's [debouncer](https://lodash.com/)
 * [Electron](https://electronjs.org)
 * [Chart.js](https://www.chartjs.org)

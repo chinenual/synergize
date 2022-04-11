@@ -34,6 +34,7 @@
 	<script src="static/js/viewVCE_doc.js"></script>
 	<script src="static/js/viewCRT.js"></script>
 	<script src="static/js/dx2syn.js"></script>
+	<script src="static/js/syn2midi.js"></script>
 
 	<script>
 		/* https://www.electronjs.org/docs/faq */
@@ -191,6 +192,8 @@ TEST a "more button" design:
 							<a href="#" id="dx2synEitherMenuItem" onclick="dx2syn.convertEitherDialog();">Convert DX7 SYX or Folder of SYX's </a>
 							<a href="#" id="dx2synFileMenuItem" onclick="dx2syn.convertFileDialog();">Convert DX7 SYX </a>
 							<a href="#" id="dx2synDirMenuItem" onclick="dx2syn.convertFolderDialog();">Convert Folder of DX7 SYX's</a>
+							<div class="dropdown-divider"></div>
+							<a href="#" id="syn2midi" onclick="syn2midi.convertDialog();">Convert SYN file sequencer events to MIDI</a>
 						</div>
 					</div>
 
@@ -252,6 +255,43 @@ TEST a "more button" design:
 								id="subprocessCancelButton">Cancel</button>
 						<button type="button" class="btn btn-primary" data-dismiss="modal"
 								id="subprocessCloseButton" disabled>Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Modal -->
+		<div class="modal fade" id="syn2midiModal" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog modal-xl" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" >SYN Sequence to MIDI</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="container syn2midiform">
+						<form>
+							<div class="form-group row">
+								<label class="col-md-3 col-form-label" for="synPath">SYN file</label>
+								<div class="col-md-7">
+									<input type="string" class="form-control" id="synPath"
+										   onclick="syn2midi.synpathDialog(this)"/>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-md-3 col-form-label" for="tempo">Tempo (BPM)</label>
+								<div class="col-md-7">
+									<input type="number" class="form-control" id="tempo"/>
+								</div>
+							</div>
+
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal"
+								id="syn2midiCancelButton">Cancel</button>
+						<button type="button" class="btn btn-primary" data-dismiss="modal"
+								id="syn2midiConvertButton">Convert</button>
 					</div>
 				</div>
 			</div>

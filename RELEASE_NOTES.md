@@ -9,6 +9,11 @@ permalink: /docs/release-notes
 
 # Release Notes
 
+## 2.6.0
+
+* Adds the ability to convert the sequencer events from a SYN file into a MIDI file.  See
+ [SYN to MIDI Converter](https://chinenual.github.io/synergize/docs/syn2midi)
+
 ## 2.5.0
 
 * Adds the ability convert Yamaha DX7 SYX files to Synergy CRT and VCE
