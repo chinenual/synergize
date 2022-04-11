@@ -85,6 +85,7 @@ func ConvertSYNToMIDI(path string, trackMode TrackMode, tempoBPM float64) (err e
 		if err = s.WriteFile(midiPath); err != nil {
 			return
 		}
+		logger.Infof("Converted SYN %s to MIDI %s at %v BPM : %d MIDI tracks\n", path, midiPath, tempoBPM, len(tracks))
 	}
 	return
 }
