@@ -89,3 +89,7 @@ See [Control Surface](csurface.md) for details.
   * Filter control
   * Keyboard equalization
   * Keyboard proportionality
+
+### Extras
+  * A DX7 patch converter for creating Synergy patches from DX7 SYSX files
+  * A SYN Sequencer to MIDI converter to extract sequencer event data from a SYN file as MIDI data
