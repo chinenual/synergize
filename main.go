@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"github.com/chinenual/synergize/seq"
+
 	"github.com/matishsiao/goInfo"
 
 	"os"
@@ -55,7 +57,10 @@ var (
 	loadcrt           = flag.String("LOADCRT", "", "load the named CRT file into Synergy")
 	savesyn           = flag.String("SAVESYN", "", "save the Synergy state to the named SYN file")
 	loadsyn           = flag.String("LOADSYN", "", "load the named SYN file into Synergy")
-	synver            = flag.Bool("SYNVER", false, "Print the firmware version of the connected Synergy")
+	convertsyn        = flag.String("SYN2MIDI", "", "Convert sequencer events from the named SYN file to MIDI")
+	tempoBPM          = flag.Float64("SYN2MIDI-BPM", 120.0, "Tempo for converted MIDI files")
+
+	synver = flag.Bool("SYNVER", false, "Print the firmware version of the connected Synergy")
 	//	rawlog            = flag.Bool("RAWLOG", false, "Turn off timestamps to make logs easier to compare")
 	//midiproxy = flag.Bool("MIDIPROXY", false, "present a MIDI interface and use serial IO to control the Synergy")
 
@@ -285,6 +290,14 @@ func main() {
 			os.Exit(code)
 		} else if *loadsyn != "" {
 			if err = recordIo(diagLoadSYN, *loadsyn); err != nil {
+				code = 1
+				logger.Error(err)
+			}
+			os.Exit(code)
+		} else if *convertsyn != "" {
+			// the trackmode choice is not exposed to the user - multi-voice handling is complicated and
+			// not worth the effort unless enough users complain :)
+			if err = seq.ConvertSYNToMIDI(*convertsyn, seq.TrackPerVoice, *tempoBPM); err != nil {
 				code = 1
 				logger.Error(err)
 			}

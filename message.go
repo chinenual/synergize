@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/chinenual/synergize/seq"
+
 	"github.com/chinenual/synergize/data"
 	"github.com/chinenual/synergize/io"
 	"github.com/chinenual/synergize/logger"
@@ -195,6 +197,24 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			}
 		}
 		if err = dx2synProcessStart(args.Path); err != nil {
+			payload = err.Error()
+		} else {
+			payload = "Ok"
+		}
+
+	case "syn2midi":
+		var args struct {
+			Path  string
+			Tempo float64
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if err = seq.ConvertSYNToMIDI(args.Path, seq.TrackPerVoice, args.Tempo); err != nil {
 			payload = err.Error()
 		} else {
 			payload = "Ok"

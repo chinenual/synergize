@@ -22,6 +22,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/sasha-s/go-deadlock v0.2.0
 	github.com/snksoft/crc v1.1.0
+	gitlab.com/gomidi/midi/v2 v2.0.2
 	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad
 	golang.org/x/sys v0.0.0-20220408201424-a24fb2fb8a0f // indirect
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
