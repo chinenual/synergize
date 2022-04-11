@@ -5,6 +5,12 @@ nav_order: 81
 description: SYN Sequencer to MIDI Converter
 permalink: /docs/syn2midi
 ---
+# SYN Sequencer to MIDI Converter
+
+## User Interface
+
+Click the `Load/Save` button and select the `Convert SYN Sequencer to MIDI` menu item to
+initiate the conversion. From the dialog, specify the SYN file to be converted and its [tempo](syn2midi.md#tempo).  The resulting MIDI file will be in the same folder as the original SYN file, with a .MID suffix appened to the SYN file name.
 
 ## Capabilities of the Synergy sequencer
 
