@@ -65,7 +65,7 @@ cibuild: version.go
 	astilectron-bundler -c bundler-ci.json
 
 .PHONY: package
-package: test packageMac packageWindows packageLinux
+package: test all packageMac packageWindows packageLinux
 	cp osc/touchosc/Synergize-v*.touchosc packages
 
 
