@@ -213,7 +213,7 @@ func processTrack(track int, trackBytes []byte, trackMode TrackMode) (tracks [][
 
 	// FIXME: how to map track/voice usage to MIDI channel?
 	midiChannel := uint8(0)
-	timeAccumulator := uint32(0)
+	absTime := uint32(0)
 
 	var allTracks []*[]timestampedMessage
 
@@ -313,58 +313,99 @@ func processTrack(track int, trackBytes []byte, trackMode TrackMode) (tracks [][
 		}
 	}
 
+	keyUp := func(absTime uint32, key int8) {
+		m := midi.NoteOff(midiChannel, uint8(key))
+		tm := timestampedMessage{absTime, m}
+		// keyup needs to apply to all the keydown's - there may be more than one when multiple voices
+		// use same msg
+		clearActiveKeyEvent(tm, int(key))
+	}
+
+	pedalUp := func(absTime uint32) {
+		if lPedalDown {
+			m := midi.ControlChange(midiChannel, midi.PortamentoSwitch, 0)
+			tm := timestampedMessage{absTime, m}
+			addToAllActiveTracks(tm)
+			lPedalDown = false
+		}
+		if rPedalDown {
+			m := midi.ControlChange(midiChannel, midi.HoldPedalSwitch, 0)
+			tm := timestampedMessage{absTime, m}
+			addToAllActiveTracks(tm)
+			rPedalDown = false
+		}
+	}
+
+	const fakeStartOfTrackCC = uint8(104) // a CC value that is documented as "unused" - so unlikely to get misinterpreted by DAW
+	const fakeEndOfTrackCC = uint8(105)   // a CC value that is documented as "unused" - so unlikely to get misinterpreted by DAW
+
 	// HACK: this extra +2 is adhoc - doesnt seem to match the firmware comments
+	isFirstEvent := true
 	for i := 2; i < len(trackBytes)-1; {
 		logger.Debugf("TOP OF LOOP %d < %d\n", i, len(trackBytes))
-		time := data.BytesToWord(trackBytes[i+1], trackBytes[i+0])
-		timeAccumulator += uint32(time)
+		dTime := data.BytesToWord(trackBytes[i+1], trackBytes[i+0])
+		absTime += uint32(dTime)
+		if isFirstEvent {
+			// Explicitly mark the start of track in case user wants to create a repeat:
+			// FIXME: investigate other SMF meta events?
+			m := midi.ControlChange(midiChannel, fakeStartOfTrackCC, 0)
+			tm := timestampedMessage{absTime, m}
+			addToAllActiveTracks(tm)
+
+			isFirstEvent = false
+		}
 		if i+2 >= len(trackBytes)-1 {
-			// this was the last timestamp in the sequence - no device data - just "end of sequence" time
-			logger.Debugf("t:%d END OF TRACK [%d] time:%d   \n", track, i, time)
-			// FIXME: add a MetaEndOfTrack message?
+			// this was the last timestamp in the sequence - no device data - just "end of sequence" dTime
+			logger.Debugf("t:%d END OF TRACK [%d] time:%d/%d   \n", track, i, dTime, absTime)
+			{
+				// HACK: send key-up for any playing keys (Synergy sometimes records a key-down and never records the
+				// key-up (or pedal up) at end of track).
+				for k := int8(0); k < 127; k++ {
+					if !activeKeyTracks[k].Empty() {
+						keyUp(absTime, k)
+					}
+				}
+				// similarly for pedals:
+				pedalUp(absTime)
+			}
+			{
+				// Now explicitly mark the end of track in case user wants to create a repeat:
+				// Can't directly add MetaEndOfTrack since that's done behind the scenes in the midi library's Close()
+				// function.  So we add a CC event:
+				m := midi.ControlChange(midiChannel, fakeEndOfTrackCC, 0)
+				tm := timestampedMessage{absTime, m}
+				addToAllActiveTracks(tm)
+			}
 			break
 		}
 		device := int8(trackBytes[i+2])
 		if device > 0 {
 			if device == 124 {
 				// "any" pedal up
-				logger.Debugf("t:%d EVENT [%d] time:%d  ANY PEDAL UP\n", track, i, time)
-				if lPedalDown {
-					m := midi.ControlChange(midiChannel, midi.PortamentoSwitch, 0)
-					tm := timestampedMessage{timeAccumulator, m}
-					addToAllActiveTracks(tm)
-					lPedalDown = false
-				}
-				if rPedalDown {
-					m := midi.ControlChange(midiChannel, midi.HoldPedalSwitch, 0)
-					tm := timestampedMessage{timeAccumulator, m}
-					addToAllActiveTracks(tm)
-					rPedalDown = false
-				}
+				logger.Debugf("t:%d EVENT [%d] time:%d/%d  ANY PEDAL UP\n", track, i, dTime, absTime)
+				pedalUp(absTime)
 			} else if device == 125 {
 				// "middle" pedal down
-				logger.Debugf("t:%d EVENT [%d] time:%d  LEFT PEDAL DOWN\n", track, i, time)
+				logger.Debugf("t:%d EVENT [%d] time:%d/%d  LEFT PEDAL DOWN\n", track, absTime, i, dTime)
 				m := midi.ControlChange(midiChannel, midi.PortamentoSwitch, 127)
-				tm := timestampedMessage{timeAccumulator, m}
+				tm := timestampedMessage{absTime, m}
 				lPedalDown = true
 				addToAllActiveTracks(tm)
 			} else if device == 126 {
 				// "regular" pedal down
-				logger.Debugf("t:%d EVENT [%d] time:%d  RIGHT PEDAL DOWN\n", track, i, time)
+				logger.Debugf("t:%d EVENT [%d] time:%d/%d  RIGHT PEDAL DOWN\n", track, i, dTime, absTime)
 				m := midi.ControlChange(midiChannel, midi.HoldPedalSwitch, 127)
-				tm := timestampedMessage{timeAccumulator, m}
+				tm := timestampedMessage{absTime, m}
 				rPedalDown = true
 				addToAllActiveTracks(tm)
 			} else if device <= 74 && device >= 1 {
 				// key up
-				logger.Debugf("t:%d EVENT [%d] time:%d  KEYUP k:%d \n", track, i, time, device)
-				m := midi.NoteOff(midiChannel, uint8(device))
-				tm := timestampedMessage{timeAccumulator, m}
-				// keyup needs to apply to all the keydown's - there may be more than one when multiple voices
-				// use same msg
-				clearActiveKeyEvent(tm, int(device))
+				key := device + 28 // MIDI key is offset from internal SYNERGY key code
+				logger.Debugf("t:%d EVENT [%d] time:%d/%d  KEYUP k:%d \n", track, i, dTime, absTime, key)
+				keyUp(absTime, key)
+
 			} else {
-				logger.Errorf("t:%d INVALID +EVENT [%d] time:%d  device:%d)\n", track, i, time, device)
+				logger.Errorf("t:%d INVALID +EVENT [%d] time:%d/%d  device:%d)\n", track, i, dTime, absTime, device)
 			}
 			// no data byte
 			i += 3
@@ -372,6 +413,7 @@ func processTrack(track int, trackBytes []byte, trackMode TrackMode) (tracks [][
 			// negative device codes have 1-3 data bytes depending on device code
 			if device >= -74 && device <= -1 {
 				// key down
+				key := -device + 28 // MIDI key is offset from internal SYNERGY key code
 				v := trackBytes[i+3]
 				velocity := v >> 5 // top 3 bits == velocity
 				voice := v & 0x1f  // bottom 5 bits = voice
@@ -382,16 +424,16 @@ func processTrack(track int, trackBytes []byte, trackMode TrackMode) (tracks [][
 				// Synergy native velocity is 1..32
 				// the values stored in the sequencer are compressed to 3-bits (so 0..7 !)
 				// MIDI is 0..127 - so multiply by 18 to scale
-				logger.Debugf("t:%d EVENT [%d] time:%d  KEYDOWN k:%d vel:%d voice:%d\n", track, i, time, -device, velocity, voice)
-				m := midi.NoteOn(midiChannel, uint8(-device), 18*uint8(velocity))
-				tm := timestampedMessage{timeAccumulator, m}
-				addActiveKeyEvent(tm, int(voice), int(-device))
-				logger.Debugf("ADD ACTIVE - map %d now %v\n", voice, activeKeyTracks[-device])
+				logger.Debugf("t:%d EVENT [%d] time:%d/%d  KEYDOWN k:%d vel:%d voice:%d\n", track, i, dTime, absTime, key, velocity, voice)
+				m := midi.NoteOn(midiChannel, uint8(key), 18*uint8(velocity))
+				tm := timestampedMessage{absTime, m}
+				addActiveKeyEvent(tm, int(voice), int(key))
+				logger.Debugf("ADD ACTIVE - map %d now %v\n", voice, activeKeyTracks[key])
 
 				i += 4
 			} else if device == -116 {
 				v := trackBytes[i+3]
-				logger.Debugf("t:%d EVENT [%d] time:%d  MOD device:%d (%d\t%d)\n", track, i, time, device, v, v)
+				logger.Debugf("t:%d EVENT [%d] time:%d/%d  MOD device:%d (%d\t%d)\n", track, i, dTime, absTime, device, v, v)
 				// SYNERGY value is 0..48 - need to scale to 0..127 MIDI value
 				midiVal := int(float32(v) * 127.0 / 48.0)
 				if midiVal < 0 {
@@ -400,12 +442,12 @@ func processTrack(track int, trackBytes []byte, trackMode TrackMode) (tracks [][
 					midiVal = 127
 				}
 				m := midi.ControlChange(midiChannel, midi.ModulationWheelMSB, uint8(midiVal))
-				tm := timestampedMessage{timeAccumulator, m}
+				tm := timestampedMessage{absTime, m}
 				addToAllActiveTracks(tm)
 				i += 4
 			} else if device == -115 {
 				v := int8(trackBytes[i+3])
-				logger.Debugf("t:%d EVENT [%d] time:%d  BEND device:%d (%d\t%d)\n", track, i, time, device, v, v)
+				logger.Debugf("t:%d EVENT [%d] time:%d/%d  BEND device:%d (%d\t%d)\n", track, i, dTime, absTime, device, v, v)
 				// SYNERGY value is -127..127 - need to scale to -8192..8191 MIDI value
 				midiVal := int(float32(v) * 8191.0 / 48.0)
 				if midiVal < -8192 {
@@ -414,37 +456,37 @@ func processTrack(track int, trackBytes []byte, trackMode TrackMode) (tracks [][
 					midiVal = 8191
 				}
 				m := midi.Pitchbend(midiChannel, int16(midiVal))
-				tm := timestampedMessage{timeAccumulator, m}
+				tm := timestampedMessage{absTime, m}
 				addToAllActiveTracks(tm)
 				i += 4
 			} else if device == -126 {
 				v := []byte{trackBytes[i+3]}
 				m := (midi.Message(v))
-				tm := timestampedMessage{timeAccumulator, m}
+				tm := timestampedMessage{absTime, m}
 				midiTrack := getTrack(extMidiTrackKey)
 				*midiTrack = append(*midiTrack, tm)
-				logger.Debugf("t:%d EVENT [%d] time:%d  MIDI 1-byte: device:%d (%d\t%d)\n", track, i, time, device, v, v)
+				logger.Debugf("t:%d EVENT [%d] time:%d/%d  MIDI 1-byte: device:%d (%d\t%d)\n", track, i, dTime, absTime, device, v, v)
 
 				i += 4
 			} else if device == -127 {
 				v := []byte{trackBytes[i+3], trackBytes[i+4]}
 				m := (midi.Message(v))
-				tm := timestampedMessage{timeAccumulator, m}
+				tm := timestampedMessage{absTime, m}
 				midiTrack := getTrack(extMidiTrackKey)
 				*midiTrack = append(*midiTrack, tm)
-				logger.Debugf("t:%d EVENT [%d] time:%d  MIDI 2-byte: device:%d (%d\t%d)\t(%d\t%d) \n", track, i, time, device, v[0], v[0], v[1], v[1])
+				logger.Debugf("t:%d EVENT [%d] time:%d/%d  MIDI 2-byte: device:%d (%d\t%d)\t(%d\t%d) \n", track, i, dTime, absTime, device, v[0], v[0], v[1], v[1])
 				i += 5
 			} else if device == -128 {
 				v := []byte{trackBytes[i+3], trackBytes[i+4], trackBytes[i+5]}
 				m := (midi.Message(v))
-				tm := timestampedMessage{timeAccumulator, m}
+				tm := timestampedMessage{absTime, m}
 				midiTrack := getTrack(extMidiTrackKey)
 				*midiTrack = append(*midiTrack, tm)
-				logger.Debugf("t:%d EVENT [%d] time:%d  MIDI 3-byte: device:%d (%d\t%d)\t(%d\t%d) \t(%d\t%d) \n", track, i, time, device, v[0], v[0], v[1], v[1], v[2], v[2])
+				logger.Debugf("t:%d EVENT [%d] time:%d/%d  MIDI 3-byte: device:%d (%d\t%d)\t(%d\t%d) \t(%d\t%d) \n", track, i, dTime, absTime, device, v[0], v[0], v[1], v[1], v[2], v[2])
 				i += 6
 			} else {
 				v := trackBytes[i+3]
-				logger.Errorf("t:%d INVALID -EVENT [%d] time:%d  device:%d (%d\t%d)\n", track, i, time, device, v, v)
+				logger.Errorf("t:%d INVALID -EVENT [%d] time:%d/%d  device:%d (%d\t%d)\n", track, i, dTime, absTime, device, v, v)
 				i += 4
 			}
 		}

@@ -31,6 +31,10 @@ func (s *trackset) Clear() {
 	}
 }
 
+func (s *trackset) Empty() bool {
+	return len(s.m) == 0
+}
+
 func (s *trackset) Contents() (result []int) {
 	for k, _ := range s.m {
 		result = append(result, k)
