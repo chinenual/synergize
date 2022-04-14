@@ -417,7 +417,7 @@ func processTrack(track int, trackBytes []byte, trackMode TrackMode) (tracks [][
 				// nop for us except if trimming initial rests - see above
 			} else if device <= 74 && device >= 1 {
 				// key up
-				key := device + 28 // MIDI key is offset from internal SYNERGY key code
+				key := device + 27 // MIDI key is offset from internal SYNERGY key code
 				logger.Debugf("t:%d EVENT [%d] time:%d/%d  KEYUP k:%d \n", track, i, dTime, absTime, key)
 				keyUp(absTime, key)
 
@@ -430,7 +430,7 @@ func processTrack(track int, trackBytes []byte, trackMode TrackMode) (tracks [][
 			// negative device codes have 1-3 data bytes depending on device code
 			if device >= -74 && device <= -1 {
 				// key down
-				key := -device + 28 // MIDI key is offset from internal SYNERGY key code
+				key := -device + 27 // MIDI key is offset from internal SYNERGY key code
 				v := trackBytes[i+3]
 				velocity := v >> 5 // top 3 bits == velocity
 				voice := v & 0x1f  // bottom 5 bits = voice
