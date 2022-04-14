@@ -339,13 +339,27 @@ func processTrack(track int, trackBytes []byte, trackMode TrackMode) (tracks [][
 	const fakeStartOfTrackCC = uint8(104) // a CC value that is documented as "unused" - so unlikely to get misinterpreted by DAW
 	const fakeEndOfTrackCC = uint8(105)   // a CC value that is documented as "unused" - so unlikely to get misinterpreted by DAW
 
+	trimInitialRests := true
+
 	// HACK: this extra +2 is adhoc - doesnt seem to match the firmware comments
 	isFirstEvent := true
 	for i := 2; i < len(trackBytes)-1; {
 		logger.Debugf("TOP OF LOOP %d < %d\n", i, len(trackBytes))
 		dTime := data.BytesToWord(trackBytes[i+1], trackBytes[i+0])
 		absTime += uint32(dTime)
-		if isFirstEvent {
+
+		// special case: if first event is the "time code" pseudo event, don't treat this as the first event
+		supressFirstEvent := false
+		if i+2 < len(trackBytes)-1 {
+			device := int8(trackBytes[i+2])
+			if device == 127 {
+				supressFirstEvent = true
+			}
+		}
+		if isFirstEvent && (!supressFirstEvent) {
+			if trimInitialRests {
+				absTime = 0
+			}
 			// Explicitly mark the start of track in case user wants to create a repeat:
 			// FIXME: investigate other SMF meta events?
 			m := midi.ControlChange(midiChannel, fakeStartOfTrackCC, 0)
@@ -398,6 +412,9 @@ func processTrack(track int, trackBytes []byte, trackMode TrackMode) (tracks [][
 				tm := timestampedMessage{absTime, m}
 				rPedalDown = true
 				addToAllActiveTracks(tm)
+			} else if device == 127 {
+				// "time extend code"
+				// nop for us except if trimming initial rests - see above
 			} else if device <= 74 && device >= 1 {
 				// key up
 				key := device + 28 // MIDI key is offset from internal SYNERGY key code
