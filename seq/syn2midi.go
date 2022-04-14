@@ -118,8 +118,9 @@ func parseSEQTAB(bytes []byte, trackMode TrackMode) (tracks [][]timestampedMessa
 		stop  uint16
 	}
 	for i := 0; i < NUMTRACKS; i++ {
-		trackStartStop[i].start = seqcon[i]
-		trackStartStop[i].stop = seqcon[NUMTRACKS+i]
+		// HACK: this +1 and +2 is adhoc and seems to work, but I don't understand why based on what I see in the Z80 code...
+		trackStartStop[i].start = seqcon[i] + 1
+		trackStartStop[i].stop = seqcon[NUMTRACKS+i] + 2
 		logger.Debugf("TRACK %d SEQCON START %d STOP %d\n", i, trackStartStop[i].start, trackStartStop[i].stop)
 	}
 	seqtabStart := 12 + 40 + 5
@@ -129,8 +130,8 @@ func parseSEQTAB(bytes []byte, trackMode TrackMode) (tracks [][]timestampedMessa
 
 	for i := 0; i < NUMTRACKS; i++ {
 		if trackStartStop[i].start != 0 {
-			logger.Debugf("TRACK %d START %d STOP %d\n", i, uint16(seqtabStart)+trackStartStop[i].start-1, uint16(seqtabStart)+trackStartStop[i].stop)
-			trackBytes := bytes[uint16(seqtabStart)+trackStartStop[i].start-1 : uint16(seqtabStart)+trackStartStop[i].stop]
+			logger.Debugf("TRACK %d START %d STOP %d\n", i, uint16(seqtabStart)+trackStartStop[i].start, uint16(seqtabStart)+trackStartStop[i].stop)
+			trackBytes := bytes[uint16(seqtabStart)+trackStartStop[i].start : uint16(seqtabStart)+trackStartStop[i].stop]
 
 			for i, b := range trackBytes {
 				logger.Debugf("TRACK TAB[%d]: %x (%d\t%d)\n", i, b, b, int8(b))
@@ -341,9 +342,8 @@ func processTrack(track int, trackBytes []byte, trackMode TrackMode) (tracks [][
 
 	trimInitialRests := true
 
-	// HACK: this extra +2 is adhoc - doesnt seem to match the firmware comments
 	isFirstEvent := true
-	for i := 2; i < len(trackBytes)-1; {
+	for i := 0; i < len(trackBytes)-1; {
 		logger.Debugf("TOP OF LOOP %d < %d\n", i, len(trackBytes))
 		dTime := data.BytesToWord(trackBytes[i+1], trackBytes[i+0])
 		absTime += uint32(dTime)
