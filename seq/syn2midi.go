@@ -218,9 +218,6 @@ func processTrack(ts *trackState) (tracks [][]timestampedMessage, err error) {
 	// Track start is at SEQCON+SEQCN1+<track>
 	// Track end   is at SEQCON+SEQCN2+<track>
 
-	const fakeStartOfTrackCC = uint8(104) // a CC value that is documented as "unused" - so unlikely to get misinterpreted by DAW
-	const fakeEndOfTrackCC = uint8(105)   // a CC value that is documented as "unused" - so unlikely to get misinterpreted by DAW
-
 	trimInitialRests := true
 
 	isFirstEvent := true
@@ -230,23 +227,18 @@ func processTrack(ts *trackState) (tracks [][]timestampedMessage, err error) {
 		ts.absTime += uint32(dTime)
 
 		// special case: if first event is the "time code" pseudo event, don't treat this as the first event
-		supressFirstEvent := false
+		supressedFirstEvent := false
 		if i+2 < len(ts.trackBytes)-1 {
 			device := int8(ts.trackBytes[i+2])
 			if device == 127 {
-				supressFirstEvent = true
+				supressedFirstEvent = true
 			}
 		}
-		if isFirstEvent && (!supressFirstEvent) {
+		if isFirstEvent && (!supressedFirstEvent) {
 			if trimInitialRests {
 				ts.absTime = 0
 			}
-			// Explicitly mark the start of track in case user wants to create a repeat:
-			// FIXME: investigate other SMF meta events?
-			m := midi.ControlChange(ts.midiChannel, fakeStartOfTrackCC, 0)
-			tm := timestampedMessage{ts.absTime, m}
-			ts.addToAllActiveTracks(tm)
-
+			ts.MarkStartOfTrack()
 			isFirstEvent = false
 		}
 		if i+2 >= len(ts.trackBytes)-1 {
@@ -257,19 +249,15 @@ func processTrack(ts *trackState) (tracks [][]timestampedMessage, err error) {
 				// key-up (or pedal up) at end of track).
 				for k := int8(0); k < 127; k++ {
 					if !ts.activeKeyTracks[k].Empty() {
-						ts.keyUp(ts.absTime, k)
+						ts.AddKeyUp(k)
 					}
 				}
 				// similarly for pedals:
-				ts.pedalUp(ts.absTime)
+				ts.AddPedalUp()
 			}
 			{
 				// Now explicitly mark the end of track in case user wants to create a repeat:
-				// Can't directly add MetaEndOfTrack since that's done behind the scenes in the midi library's Close()
-				// function.  So we add a CC event:
-				m := midi.ControlChange(ts.midiChannel, fakeEndOfTrackCC, 0)
-				tm := timestampedMessage{ts.absTime, m}
-				ts.addToAllActiveTracks(tm)
+				ts.MarkEndOfTrack()
 			}
 			break
 		}
@@ -278,21 +266,15 @@ func processTrack(ts *trackState) (tracks [][]timestampedMessage, err error) {
 			if device == 124 {
 				// "any" pedal up
 				logger.Debugf("t:%d EVENT [%d] time:%d/%d  ANY PEDAL UP\n", ts.trackID, i, dTime, ts.absTime)
-				ts.pedalUp(ts.absTime)
+				ts.AddPedalUp()
 			} else if device == 125 {
 				// "middle" pedal down
 				logger.Debugf("t:%d EVENT [%d] time:%d/%d  LEFT PEDAL DOWN\n", ts.trackID, ts.absTime, i, dTime)
-				m := midi.ControlChange(ts.midiChannel, midi.PortamentoSwitch, 127)
-				tm := timestampedMessage{ts.absTime, m}
-				ts.lPedalDown = true
-				ts.addToAllActiveTracks(tm)
+				ts.AddLeftPedalDown()
 			} else if device == 126 {
 				// "regular" pedal down
 				logger.Debugf("t:%d EVENT [%d] time:%d/%d  RIGHT PEDAL DOWN\n", ts.trackID, i, dTime, ts.absTime)
-				m := midi.ControlChange(ts.midiChannel, midi.HoldPedalSwitch, 127)
-				tm := timestampedMessage{ts.absTime, m}
-				ts.rPedalDown = true
-				ts.addToAllActiveTracks(tm)
+				ts.AddRightPedalDown()
 			} else if device == 127 {
 				// "time extend code"
 				// nop for us except if trimming initial rests - see above
@@ -300,7 +282,7 @@ func processTrack(ts *trackState) (tracks [][]timestampedMessage, err error) {
 				// key up
 				key := device + 27 // MIDI key is offset from internal SYNERGY key code
 				logger.Debugf("t:%d EVENT [%d] time:%d/%d  KEYUP k:%d \n", ts.trackID, i, dTime, ts.absTime, key)
-				ts.keyUp(ts.absTime, key)
+				ts.AddKeyUp(key)
 
 			} else {
 				logger.Errorf("t:%d INVALID +EVENT [%d] time:%d/%d  device:%d)\n", ts.trackID, i, dTime, ts.absTime, device)
@@ -323,10 +305,7 @@ func processTrack(ts *trackState) (tracks [][]timestampedMessage, err error) {
 				// the values stored in the sequencer are compressed to 3-bits (so 0..7 !)
 				// MIDI is 0..127 - so multiply by 18 to scale
 				logger.Debugf("t:%d EVENT [%d] time:%d/%d  KEYDOWN k:%d vel:%d voice:%d\n", ts.trackID, i, dTime, ts.absTime, key, velocity, voice)
-				m := midi.NoteOn(ts.midiChannel, uint8(key), 18*uint8(velocity))
-				tm := timestampedMessage{ts.absTime, m}
-				ts.addActiveKeyEvent(tm, int(voice), int(key))
-				logger.Debugf("ADD ACTIVE - map %d now %v\n", voice, ts.activeKeyTracks[key])
+				ts.AddKeyDown(key, 18*uint8(velocity), voice)
 
 				i += 4
 			} else if device == -116 {
@@ -339,9 +318,7 @@ func processTrack(ts *trackState) (tracks [][]timestampedMessage, err error) {
 				} else if midiVal > 127 {
 					midiVal = 127
 				}
-				m := midi.ControlChange(ts.midiChannel, midi.ModulationWheelMSB, uint8(midiVal))
-				tm := timestampedMessage{ts.absTime, m}
-				ts.addToAllActiveTracks(tm)
+				ts.AddModulation(uint8(midiVal))
 				i += 4
 			} else if device == -115 {
 				v := int8(ts.trackBytes[i+3])
@@ -353,33 +330,22 @@ func processTrack(ts *trackState) (tracks [][]timestampedMessage, err error) {
 				} else if midiVal > 8191 {
 					midiVal = 8191
 				}
-				m := midi.Pitchbend(ts.midiChannel, int16(midiVal))
-				tm := timestampedMessage{ts.absTime, m}
-				ts.addToAllActiveTracks(tm)
+				ts.AddPitchbend(int16(midiVal))
 				i += 4
 			} else if device == -126 {
 				v := []byte{ts.trackBytes[i+3]}
-				m := midi.Message(v)
-				tm := timestampedMessage{ts.absTime, m}
-				midiTrack := ts.getTrack(extMidiTrackKey)
-				*midiTrack = append(*midiTrack, tm)
+				ts.AddExternalMidi(v)
 				logger.Debugf("t:%d EVENT [%d] time:%d/%d  MIDI 1-byte: device:%d (%d\t%d)\n", ts.trackID, i, dTime, ts.absTime, device, v, v)
 
 				i += 4
 			} else if device == -127 {
 				v := []byte{ts.trackBytes[i+3], ts.trackBytes[i+4]}
-				m := midi.Message(v)
-				tm := timestampedMessage{ts.absTime, m}
-				midiTrack := ts.getTrack(extMidiTrackKey)
-				*midiTrack = append(*midiTrack, tm)
+				ts.AddExternalMidi(v)
 				logger.Debugf("t:%d EVENT [%d] time:%d/%d  MIDI 2-byte: device:%d (%d\t%d)\t(%d\t%d) \n", ts.trackID, i, dTime, ts.absTime, device, v[0], v[0], v[1], v[1])
 				i += 5
 			} else if device == -128 {
 				v := []byte{ts.trackBytes[i+3], ts.trackBytes[i+4], ts.trackBytes[i+5]}
-				m := midi.Message(v)
-				tm := timestampedMessage{ts.absTime, m}
-				midiTrack := ts.getTrack(extMidiTrackKey)
-				*midiTrack = append(*midiTrack, tm)
+				ts.AddExternalMidi(v)
 				logger.Debugf("t:%d EVENT [%d] time:%d/%d  MIDI 3-byte: device:%d (%d\t%d)\t(%d\t%d) \t(%d\t%d) \n", ts.trackID, i, dTime, ts.absTime, device, v[0], v[0], v[1], v[1], v[2], v[2])
 				i += 6
 			} else {
