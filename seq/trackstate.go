@@ -29,14 +29,19 @@ type globalState struct {
 }
 
 type trackState struct {
-	trackID        int
-	trackBytes     []byte
-	trackMode      TrackMode
-	evenMode       bool
-	midiChannel    uint8
-	absTime        uint32 // 0 .. 4294967295 ms (4294967.295sec or ~71582 minutes or ~ 1193 hours - don't worry about overflow :))
-	trackStartTime uint32 // first event
-	trackEndTime   uint32 // end of track time
+	trackID int
+
+	byteIndex   int
+	trackBytes  []byte
+	trackMode   TrackMode
+	evenMode    bool
+	midiChannel uint8
+
+	// absolute time (in ms) sync'd to the virtual clock
+	absTime uint32 // 0 .. 4294967295 ms (4294967.295sec or ~71582 minutes or ~ 1193 hours - don't worry about overflow :))
+
+	trackStartRelTime uint32 // first event (in track-relative ms)
+	trackEndRelTime   uint32 // end of track time (in track-relative ms)
 
 	allTracks []*[]timestampedMessage
 
@@ -56,9 +61,12 @@ func (ts *trackState) Init(trackID /*one based*/ int, trackBytes []byte, trackMo
 	ts.trackMode = trackMode
 	ts.evenMode = evenMode
 	ts.trackBytes = trackBytes
+	ts.byteIndex = 0
 
-	ts.trackStartTime = 0
-	ts.trackEndTime = 0
+	// timestamp in (track-relative ms) of the first event
+	ts.trackStartRelTime = 0
+	// timestamp in (track-relative ms) of the end of the track
+	ts.trackEndRelTime = 0
 
 	ts.midiChannel = 0
 	ts.absTime = 0
@@ -73,16 +81,24 @@ func (ts *trackState) Init(trackID /*one based*/ int, trackBytes []byte, trackMo
 	}
 }
 
+func (ts *trackState) ResetClock() {
+	ts.absTime = 0
+}
+
+func (ts *trackState) ArmTrack() {
+	ts.byteIndex = 0
+}
+
 func (ts *trackState) IsCalculatingTrackExtent() bool {
-	return ts.trackEndTime == 0
+	return ts.trackEndRelTime == 0
 }
 
-func (ts *trackState) StartTime() uint32 {
-	return ts.trackStartTime
+func (ts *trackState) StartRelTime() uint32 {
+	return ts.trackStartRelTime
 }
 
-func (ts *trackState) EndTime() uint32 {
-	return ts.trackEndTime
+func (ts *trackState) EndRelTime() uint32 {
+	return ts.trackEndRelTime
 }
 
 func copyMessages(source []timestampedMessage, dest *[]timestampedMessage) {
@@ -253,7 +269,7 @@ func (ts *trackState) MarkStartOfTrack() {
 		tm := timestampedMessage{ts.absTime, m}
 		ts.AddToAllActiveTracks(tm)
 	} else {
-		ts.trackStartTime = ts.absTime
+		ts.trackStartRelTime = ts.absTime
 	}
 }
 
@@ -266,6 +282,19 @@ func (ts *trackState) MarkEndOfTrack() {
 		tm := timestampedMessage{ts.absTime, m}
 		ts.AddToAllActiveTracks(tm)
 	} else {
-		ts.trackEndTime = ts.absTime
+		ts.trackEndRelTime = ts.absTime
 	}
+}
+
+func (ts *trackState) GetResult() (tracks [][]timestampedMessage, err error) {
+	if len(ts.allTracks) == 0 {
+		// only modulation events - no notes. So use the modulation track
+		tracks = append(tracks, ts.modulationTrack)
+	} else {
+		// otherwise, modulation events have already been copied into all the note tracks - just use those
+		for _, t := range ts.allTracks {
+			tracks = append(tracks, *t)
+		}
+	}
+	return
 }

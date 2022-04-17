@@ -143,17 +143,23 @@ func parseSEQTAB(bytes []byte, trackMode TrackMode) (tracks [][]timestampedMessa
 			// first pass over each track does not create MIDI events; it is used to calculate the start and end time
 			// of the first events on the track (which will be used to determine the "longest currently running track"
 			// which drives repeat playback behavior
-			if _, err = processTrack(&trackState[i]); err != nil {
+			if err = processTrack(&trackState[i], 0); err != nil {
 				return
 			}
-			logger.Debugf("TRACK START/END[%d]: START: %d  END:%d)\n", i, trackState[i].StartTime(), trackState[i].EndTime())
+			// Reset the track to start at the beginning when we do the real parsing
+			trackState[i].ResetClock()
+			logger.Debugf("TRACK START/END[%d]: START: %d  END:%d)\n", i, trackState[i].StartRelTime(), trackState[i].EndRelTime())
 		}
 	}
 	for i := 0; i < NUMTRACKS; i++ {
 		if trackStartStop[i].start != 0 {
 
 			var t [][]timestampedMessage
-			if t, err = processTrack(&trackState[i]); err != nil {
+
+			if err = processTrack(&trackState[i], 0); err != nil {
+				return
+			}
+			if t, err = trackState[i].GetResult(); err != nil {
 				return
 			}
 			for _, track := range t {
@@ -199,9 +205,25 @@ func (e timestampedMessage) String() string {
 	return fmt.Sprintf("{%d: %s}", e.timeMS, e.msg)
 }
 
-func processTrack(ts *trackState) (tracks [][]timestampedMessage, err error) {
-	// FROM arithmetic in SEQ.Z80 (near L330B),  "time" appears to be a millisecond clock.
-	// it appears to be a relative time from the previous msg
+func processTrack(ts *trackState, dTimeAdjust uint32) (err error) {
+	var next uint32
+	// time adjustment applies only to the first event (to trim initial rests):
+	ts.ArmTrack()
+	if next, err = processNextEvent(ts, dTimeAdjust); err != nil || next == 0 {
+		return
+	}
+	for {
+		if next, err = processNextEvent(ts, 0); err != nil || next == 0 {
+			return
+		}
+	}
+	return
+}
+
+func processNextEvent(ts *trackState, dTimeAdjust uint32) (nextEventTime uint32, err error) {
+
+	// FROM arithmetic in SEQ.Z80 (near L330B),  "time" is a millisecond clock.
+	// it is a delta time from the previous event
 
 	// (from SEQREQ.Z80
 	//
@@ -245,172 +267,161 @@ func processTrack(ts *trackState) (tracks [][]timestampedMessage, err error) {
 	// Track start is at SEQCON+SEQCN1+<track>
 	// Track end   is at SEQCON+SEQCN2+<track>
 
-	trimInitialRests := false
+	if ts.byteIndex >= len(ts.trackBytes)-1 {
+		nextEventTime = 0
+		return
+	}
+	var dTime uint16
+	if ts.evenMode {
+		// from User Manual:
+		//
+		// When you press the Even switch ... When you play back Track No. 1, all of the notes in this track,
+		// including the initial rests, are evened out so that the notes are evenly spaced. With the Speed knob at
+		// its normal setting, this works out to 1/4 second per note.
+		// ...
+		// There is a built-in chord detector which looks for chords in the track. A "chord" in this case is any
+		// group of notes which have start times very close to each other.  When the Even feature finds a "chord"
+		// in Track 1, it plays the entire chord in one beat , and plays the next note (or chord) on the following
+		// beat.
+		//
+		// From SEQ.Z80, EVEN MODE TIMING (in L310:) uses lookahead and a 40ms threshold to determine if a note is
+		// part of a "chord"
 
-	isFirstEvent := true
-	for i := 0; i < len(ts.trackBytes)-1; {
-		logger.Debugf("TOP OF LOOP %d < %d\n", i, len(ts.trackBytes))
-		var dTime uint16
-		if ts.evenMode {
-			// from User Manual:
-			//
-			// When you press the Even switch ... When you play back Track No. 1, all of the notes in this track,
-			// including the initial rests, are evened out so that the notes are evenly spaced. With the Speed knob at
-			// its normal setting, this works out to 1/4 second per note.
-			// ...
-			// There is a built-in chord detector which looks for chords in the track. A "chord" in this case is any
-			// group of notes which have start times very close to each other.  When the Even feature finds a "chord"
-			// in Track 1, it plays the entire chord in one beat , and plays the next note (or chord) on the following
-			// beat.
-			//
-			// From SEQ.Z80, EVEN MODE TIMING (in L310:) uses lookahead and a 40ms threshold to determine if a note is
-			// part of a "chord"
+		// FIXME: what about non-note events? (pedals, pitchbend, modulation)... Will need to reverse engineer
+		// the playback code in SEQ.Z80...
+		dTime = 250 // 250ms = 1/4 second
+	} else {
+		dTime = data.BytesToWord(ts.trackBytes[ts.byteIndex+1], ts.trackBytes[ts.byteIndex+0])
+	}
+	ts.absTime += uint32(dTime) - dTimeAdjust
 
-			// FIXME: what about non-note events? (pedals, pitchbend, modulation)... Will need to reverse engineer
-			// the playback code in SEQ.Z80...
-			dTime = 250 // 250ms = 1/4 second
+	if ts.byteIndex == 0 {
+		// 'first event'
+		ts.MarkStartOfTrack()
+	}
+	if ts.byteIndex+2 >= len(ts.trackBytes)-1 {
+		// this was the last timestamp in the sequence - no device data - just "end of sequence" dTime
+		logger.Debugf("t:%d END OF TRACK [%d] time:%d/%d   \n", ts.trackID, ts.byteIndex, dTime, ts.absTime)
+		{
+			// HACK: send key-up for any playing keys (Synergy sometimes records a key-down and never records the
+			// key-up (or pedal up) at end of track).
+			for k := int8(0); k < 127; k++ {
+				if !ts.activeKeyTracks[k].Empty() {
+					ts.AddKeyUp(k)
+				}
+			}
+			// similarly for pedals:
+			ts.AddPedalUp()
+		}
+		{
+			// Now explicitly mark the end of track in case user wants to create a repeat:
+			ts.MarkEndOfTrack()
+		}
+		// 'end of loop'
+		nextEventTime = 0
+		return
+	}
+	// Synergy firmware uses term "device" for this value, so we do too
+	device := int8(ts.trackBytes[ts.byteIndex+2])
+	if device > 0 {
+		if device == 124 {
+			// "any" pedal up
+			logger.Debugf("t:%d EVENT [%d] time:%d/%d  ANY PEDAL UP\n", ts.trackID, ts.byteIndex, dTime, ts.absTime)
+			ts.AddPedalUp()
+		} else if device == 125 {
+			// "middle" pedal down
+			logger.Debugf("t:%d EVENT [%d] time:%d/%d  LEFT PEDAL DOWN\n", ts.trackID, ts.absTime, ts.byteIndex, dTime)
+			ts.AddLeftPedalDown()
+		} else if device == 126 {
+			// "regular" pedal down
+			logger.Debugf("t:%d EVENT [%d] time:%d/%d  RIGHT PEDAL DOWN\n", ts.trackID, ts.byteIndex, dTime, ts.absTime)
+			ts.AddRightPedalDown()
+		} else if device == 127 {
+			// "time extend code"
+			// nop for us
+		} else if device <= 74 && device >= 1 {
+			// key up
+			key := device + 27 // MIDI key is offset from internal SYNERGY key code
+			logger.Debugf("t:%d EVENT [%d] time:%d/%d  KEYUP k:%d \n", ts.trackID, ts.byteIndex, dTime, ts.absTime, key)
+			ts.AddKeyUp(key)
+
 		} else {
-			dTime = data.BytesToWord(ts.trackBytes[i+1], ts.trackBytes[i+0])
+			logger.Errorf("t:%d INVALID +EVENT [%d] time:%d/%d  device:%d)\n", ts.trackID, ts.byteIndex, dTime, ts.absTime, device)
 		}
-		ts.absTime += uint32(dTime)
+		// no data byte
+		ts.byteIndex += 3
+	} else {
+		// negative device codes have 1-3 data bytes depending on device code
+		if device >= -74 && device <= -1 {
+			// key down
+			key := -device + 27 // MIDI key is offset from internal SYNERGY key code
+			v := ts.trackBytes[ts.byteIndex+3]
+			velocity := v >> 5 // top 3 bits == velocity
+			voice := v & 0x1f  // bottom 5 bits = voice
+			if velocity == 0 {
+				// MIDI velocity 0 means note off
+				velocity = 1
+			}
+			// Synergy native velocity is 1..32
+			// the values stored in the sequencer are compressed to 3-bits (so 0..7 !)
+			// MIDI is 0..127 - so multiply by 18 to scale
+			logger.Debugf("t:%d EVENT [%d] time:%d/%d  KEYDOWN k:%d vel:%d voice:%d\n", ts.trackID, ts.byteIndex, dTime, ts.absTime, key, velocity, voice)
+			ts.AddKeyDown(key, 18*uint8(velocity), voice)
 
-		// special case: if first event is the "time code" pseudo event, don't treat this as the first event
-		supressedFirstEvent := false
-		if i+2 < len(ts.trackBytes)-1 {
-			device := int8(ts.trackBytes[i+2])
-			if device == 127 {
-				supressedFirstEvent = true
+			ts.byteIndex += 4
+		} else if device == -116 {
+			v := ts.trackBytes[ts.byteIndex+3]
+			logger.Debugf("t:%d EVENT [%d] time:%d/%d  MOD device:%d (%d\t%d)\n", ts.trackID, ts.byteIndex, dTime, ts.absTime, device, v, v)
+			// SYNERGY value is 0..48 - need to scale to 0..127 MIDI value
+			midiVal := int(float32(v) * 127.0 / 48.0)
+			if midiVal < 0 {
+				midiVal = 0
+			} else if midiVal > 127 {
+				midiVal = 127
 			}
-		}
-		if isFirstEvent && (!supressedFirstEvent) {
-			if trimInitialRests {
-				ts.absTime = 0
+			ts.AddModulation(uint8(midiVal))
+			ts.byteIndex += 4
+		} else if device == -115 {
+			v := int8(ts.trackBytes[ts.byteIndex+3])
+			logger.Debugf("t:%d EVENT [%d] time:%d/%d  BEND device:%d (%d\t%d)\n", ts.trackID, ts.byteIndex, dTime, ts.absTime, device, v, v)
+			// SYNERGY value is -127..127 - need to scale to -8192..8191 MIDI value
+			midiVal := int(float32(v) * 8191.0 / 48.0)
+			if midiVal < -8192 {
+				midiVal = -8192
+			} else if midiVal > 8191 {
+				midiVal = 8191
 			}
-			ts.MarkStartOfTrack()
-			isFirstEvent = false
-		}
-		if i+2 >= len(ts.trackBytes)-1 {
-			// this was the last timestamp in the sequence - no device data - just "end of sequence" dTime
-			logger.Debugf("t:%d END OF TRACK [%d] time:%d/%d   \n", ts.trackID, i, dTime, ts.absTime)
-			{
-				// HACK: send key-up for any playing keys (Synergy sometimes records a key-down and never records the
-				// key-up (or pedal up) at end of track).
-				for k := int8(0); k < 127; k++ {
-					if !ts.activeKeyTracks[k].Empty() {
-						ts.AddKeyUp(k)
-					}
-				}
-				// similarly for pedals:
-				ts.AddPedalUp()
-			}
-			{
-				// Now explicitly mark the end of track in case user wants to create a repeat:
-				ts.MarkEndOfTrack()
-			}
-			break
-		}
-		device := int8(ts.trackBytes[i+2])
-		if device > 0 {
-			if device == 124 {
-				// "any" pedal up
-				logger.Debugf("t:%d EVENT [%d] time:%d/%d  ANY PEDAL UP\n", ts.trackID, i, dTime, ts.absTime)
-				ts.AddPedalUp()
-			} else if device == 125 {
-				// "middle" pedal down
-				logger.Debugf("t:%d EVENT [%d] time:%d/%d  LEFT PEDAL DOWN\n", ts.trackID, ts.absTime, i, dTime)
-				ts.AddLeftPedalDown()
-			} else if device == 126 {
-				// "regular" pedal down
-				logger.Debugf("t:%d EVENT [%d] time:%d/%d  RIGHT PEDAL DOWN\n", ts.trackID, i, dTime, ts.absTime)
-				ts.AddRightPedalDown()
-			} else if device == 127 {
-				// "time extend code"
-				// nop for us except if trimming initial rests - see above
-			} else if device <= 74 && device >= 1 {
-				// key up
-				key := device + 27 // MIDI key is offset from internal SYNERGY key code
-				logger.Debugf("t:%d EVENT [%d] time:%d/%d  KEYUP k:%d \n", ts.trackID, i, dTime, ts.absTime, key)
-				ts.AddKeyUp(key)
+			ts.AddPitchbend(int16(midiVal))
+			ts.byteIndex += 4
+		} else if device == -126 {
+			v := []byte{ts.trackBytes[ts.byteIndex+3]}
+			ts.AddExternalMidi(v)
+			logger.Debugf("t:%d EVENT [%d] time:%d/%d  MIDI 1-byte: device:%d (%d\t%d)\n", ts.trackID, ts.byteIndex, dTime, ts.absTime, device, v, v)
 
-			} else {
-				logger.Errorf("t:%d INVALID +EVENT [%d] time:%d/%d  device:%d)\n", ts.trackID, i, dTime, ts.absTime, device)
-			}
-			// no data byte
-			i += 3
+			ts.byteIndex += 4
+		} else if device == -127 {
+			v := []byte{ts.trackBytes[ts.byteIndex+3], ts.trackBytes[ts.byteIndex+4]}
+			ts.AddExternalMidi(v)
+			logger.Debugf("t:%d EVENT [%d] time:%d/%d  MIDI 2-byte: device:%d (%d\t%d)\t(%d\t%d) \n", ts.trackID, ts.byteIndex, dTime, ts.absTime, device, v[0], v[0], v[1], v[1])
+			ts.byteIndex += 5
+		} else if device == -128 {
+			v := []byte{ts.trackBytes[ts.byteIndex+3], ts.trackBytes[ts.byteIndex+4], ts.trackBytes[ts.byteIndex+5]}
+			ts.AddExternalMidi(v)
+			logger.Debugf("t:%d EVENT [%d] time:%d/%d  MIDI 3-byte: device:%d (%d\t%d)\t(%d\t%d) \t(%d\t%d) \n", ts.trackID, ts.byteIndex, dTime, ts.absTime, device, v[0], v[0], v[1], v[1], v[2], v[2])
+			ts.byteIndex += 6
 		} else {
-			// negative device codes have 1-3 data bytes depending on device code
-			if device >= -74 && device <= -1 {
-				// key down
-				key := -device + 27 // MIDI key is offset from internal SYNERGY key code
-				v := ts.trackBytes[i+3]
-				velocity := v >> 5 // top 3 bits == velocity
-				voice := v & 0x1f  // bottom 5 bits = voice
-				if velocity == 0 {
-					// MIDI velocity 0 means note off
-					velocity = 1
-				}
-				// Synergy native velocity is 1..32
-				// the values stored in the sequencer are compressed to 3-bits (so 0..7 !)
-				// MIDI is 0..127 - so multiply by 18 to scale
-				logger.Debugf("t:%d EVENT [%d] time:%d/%d  KEYDOWN k:%d vel:%d voice:%d\n", ts.trackID, i, dTime, ts.absTime, key, velocity, voice)
-				ts.AddKeyDown(key, 18*uint8(velocity), voice)
-
-				i += 4
-			} else if device == -116 {
-				v := ts.trackBytes[i+3]
-				logger.Debugf("t:%d EVENT [%d] time:%d/%d  MOD device:%d (%d\t%d)\n", ts.trackID, i, dTime, ts.absTime, device, v, v)
-				// SYNERGY value is 0..48 - need to scale to 0..127 MIDI value
-				midiVal := int(float32(v) * 127.0 / 48.0)
-				if midiVal < 0 {
-					midiVal = 0
-				} else if midiVal > 127 {
-					midiVal = 127
-				}
-				ts.AddModulation(uint8(midiVal))
-				i += 4
-			} else if device == -115 {
-				v := int8(ts.trackBytes[i+3])
-				logger.Debugf("t:%d EVENT [%d] time:%d/%d  BEND device:%d (%d\t%d)\n", ts.trackID, i, dTime, ts.absTime, device, v, v)
-				// SYNERGY value is -127..127 - need to scale to -8192..8191 MIDI value
-				midiVal := int(float32(v) * 8191.0 / 48.0)
-				if midiVal < -8192 {
-					midiVal = -8192
-				} else if midiVal > 8191 {
-					midiVal = 8191
-				}
-				ts.AddPitchbend(int16(midiVal))
-				i += 4
-			} else if device == -126 {
-				v := []byte{ts.trackBytes[i+3]}
-				ts.AddExternalMidi(v)
-				logger.Debugf("t:%d EVENT [%d] time:%d/%d  MIDI 1-byte: device:%d (%d\t%d)\n", ts.trackID, i, dTime, ts.absTime, device, v, v)
-
-				i += 4
-			} else if device == -127 {
-				v := []byte{ts.trackBytes[i+3], ts.trackBytes[i+4]}
-				ts.AddExternalMidi(v)
-				logger.Debugf("t:%d EVENT [%d] time:%d/%d  MIDI 2-byte: device:%d (%d\t%d)\t(%d\t%d) \n", ts.trackID, i, dTime, ts.absTime, device, v[0], v[0], v[1], v[1])
-				i += 5
-			} else if device == -128 {
-				v := []byte{ts.trackBytes[i+3], ts.trackBytes[i+4], ts.trackBytes[i+5]}
-				ts.AddExternalMidi(v)
-				logger.Debugf("t:%d EVENT [%d] time:%d/%d  MIDI 3-byte: device:%d (%d\t%d)\t(%d\t%d) \t(%d\t%d) \n", ts.trackID, i, dTime, ts.absTime, device, v[0], v[0], v[1], v[1], v[2], v[2])
-				i += 6
-			} else {
-				v := ts.trackBytes[i+3]
-				logger.Errorf("t:%d INVALID -EVENT [%d] time:%d/%d  device:%d (%d\t%d)\n", ts.trackID, i, dTime, ts.absTime, device, v, v)
-				i += 4
-			}
+			v := ts.trackBytes[ts.byteIndex+3]
+			logger.Errorf("t:%d INVALID -EVENT [%d] time:%d/%d  device:%d (%d\t%d)\n", ts.trackID, ts.byteIndex, dTime, ts.absTime, device, v, v)
+			ts.byteIndex += 4
 		}
 	}
-	if len(ts.allTracks) == 0 {
-		// only modulation events - no notes. So use the modulation track
-		tracks = append(tracks, ts.modulationTrack)
+
+	if ts.byteIndex >= len(ts.trackBytes)-1 {
+		nextEventTime = 0
 	} else {
-		// otherwise, modulation events have already been copied into all the note tracks - just use those
-		for _, t := range ts.allTracks {
-			tracks = append(tracks, *t)
-		}
+		var dTime uint16
+		dTime = data.BytesToWord(ts.trackBytes[ts.byteIndex+1], ts.trackBytes[ts.byteIndex+0])
+		nextEventTime = ts.absTime + uint32(dTime)
 	}
 	return
 }
