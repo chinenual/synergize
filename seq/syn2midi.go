@@ -129,15 +129,24 @@ func parseSEQTAB(bytes []byte, trackMode TrackMode) (tracks [][]timestampedMessa
 	}
 
 	var trackState [4]trackState
+	evenMode := false // not yet supported
 
 	for i := 0; i < NUMTRACKS; i++ {
 		if trackStartStop[i].start != 0 {
 			logger.Debugf("TRACK %d START %d STOP %d\n", i, uint16(seqtabStart)+trackStartStop[i].start, uint16(seqtabStart)+trackStartStop[i].stop)
 			trackBytes := bytes[uint16(seqtabStart)+trackStartStop[i].start : uint16(seqtabStart)+trackStartStop[i].stop]
-			trackState[i].Init(i+1, trackBytes, trackMode)
+			// even mode only applies to track1 (i == 0):
+			trackState[i].Init(i+1, trackBytes, trackMode, evenMode && i == 0)
 			for i, b := range trackBytes {
 				logger.Debugf("TRACK TAB[%d]: %x (%d\t%d)\n", i, b, b, int8(b))
 			}
+			// first pass over each track does not create MIDI events; it is used to calculate the start and end time
+			// of the first events on the track (which will be used to determine the "longest currently running track"
+			// which drives repeat playback behavior
+			if _, err = processTrack(&trackState[i]); err != nil {
+				return
+			}
+			logger.Debugf("TRACK START/END[%d]: START: %d  END:%d)\n", i, trackState[i].StartTime(), trackState[i].EndTime())
 		}
 	}
 	for i := 0; i < NUMTRACKS; i++ {
@@ -155,6 +164,24 @@ func parseSEQTAB(bytes []byte, trackMode TrackMode) (tracks [][]timestampedMessa
 	}
 	return
 }
+
+// Track playback algorithm:
+// track buttons are OFF/ON/REPEAT
+// From the user manual:
+//
+//   If you are playing back one track (whether set to Repeat or Playback mode) the initial rest (up to 8 seconds) is
+//   omitted; rests at the end of the track are retained.
+//
+//   If you are playing several tracks in Playback or Repeat mode, the first note across all of the tracks is played as
+//   soon as the Sequencer On/Of switch is pressed. Te initia rests of the other tracks are shorrted accordingly
+//
+//   If there are any Repeat tracks, the longest Repeat track governs the repeat. Rests are inserted after the end of
+//   Playback tracks and other (shorter) Repeat tracks until the longest Repeat track is finished.  Then all of the
+//   tracks repeat together. Initial rests are omitted in repeasts, just like at the beginning of Playback with one track.
+//
+//   If there is a Playback track longer than the longest Repeat track, then it continues playing even though other
+//   tracks have started to repeat.  Rests are inserted at the end of this longer Playback track until the other tracks
+//   repeat again
 
 type TrackMode int
 
@@ -218,12 +245,33 @@ func processTrack(ts *trackState) (tracks [][]timestampedMessage, err error) {
 	// Track start is at SEQCON+SEQCN1+<track>
 	// Track end   is at SEQCON+SEQCN2+<track>
 
-	trimInitialRests := true
+	trimInitialRests := false
 
 	isFirstEvent := true
 	for i := 0; i < len(ts.trackBytes)-1; {
 		logger.Debugf("TOP OF LOOP %d < %d\n", i, len(ts.trackBytes))
-		dTime := data.BytesToWord(ts.trackBytes[i+1], ts.trackBytes[i+0])
+		var dTime uint16
+		if ts.evenMode {
+			// from User Manual:
+			//
+			// When you press the Even switch ... When you play back Track No. 1, all of the notes in this track,
+			// including the initial rests, are evened out so that the notes are evenly spaced. With the Speed knob at
+			// its normal setting, this works out to 1/4 second per note.
+			// ...
+			// There is a built-in chord detector which looks for chords in the track. A "chord" in this case is any
+			// group of notes which have start times very close to each other.  When the Even feature finds a "chord"
+			// in Track 1, it plays the entire chord in one beat , and plays the next note (or chord) on the following
+			// beat.
+			//
+			// From SEQ.Z80, EVEN MODE TIMING (in L310:) uses lookahead and a 40ms threshold to determine if a note is
+			// part of a "chord"
+
+			// FIXME: what about non-note events? (pedals, pitchbend, modulation)... Will need to reverse engineer
+			// the playback code in SEQ.Z80...
+			dTime = 250 // 250ms = 1/4 second
+		} else {
+			dTime = data.BytesToWord(ts.trackBytes[i+1], ts.trackBytes[i+0])
+		}
 		ts.absTime += uint32(dTime)
 
 		// special case: if first event is the "time code" pseudo event, don't treat this as the first event

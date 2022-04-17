@@ -16,12 +16,27 @@ const fakeTrackExtentCC = uint8(105) // a CC value that is documented as "unused
 const fakeTrackExtentStartVal = uint8(64)
 const fakeTrackExtentEndVal = uint8(127)
 
+type TrackPlayMode int
+
+const (
+	PlayModeOff TrackPlayMode = iota
+	PlayModeOn
+	PlayModeRepeat
+)
+
+type globalState struct {
+	trackPlayMode [4]TrackPlayMode
+}
+
 type trackState struct {
-	trackID     int
-	trackBytes  []byte
-	trackMode   TrackMode
-	midiChannel uint8
-	absTime     uint32
+	trackID        int
+	trackBytes     []byte
+	trackMode      TrackMode
+	evenMode       bool
+	midiChannel    uint8
+	absTime        uint32 // 0 .. 4294967295 ms (4294967.295sec or ~71582 minutes or ~ 1193 hours - don't worry about overflow :))
+	trackStartTime uint32 // first event
+	trackEndTime   uint32 // end of track time
 
 	allTracks []*[]timestampedMessage
 
@@ -36,10 +51,15 @@ type trackState struct {
 	activeKeyTracks   [130]trackset
 }
 
-func (ts *trackState) Init(trackID /*one based*/ int, trackBytes []byte, trackMode TrackMode) {
+func (ts *trackState) Init(trackID /*one based*/ int, trackBytes []byte, trackMode TrackMode, evenMode bool) {
 	ts.trackID = trackID
 	ts.trackMode = trackMode
+	ts.evenMode = evenMode
 	ts.trackBytes = trackBytes
+
+	ts.trackStartTime = 0
+	ts.trackEndTime = 0
+
 	ts.midiChannel = 0
 	ts.absTime = 0
 	ts.lPedalDown = false
@@ -51,6 +71,18 @@ func (ts *trackState) Init(trackID /*one based*/ int, trackBytes []byte, trackMo
 	for i := range ts.activeKeyTracks {
 		ts.activeKeyTracks[i].Init()
 	}
+}
+
+func (ts *trackState) IsCalculatingTrackExtent() bool {
+	return ts.trackEndTime == 0
+}
+
+func (ts *trackState) StartTime() uint32 {
+	return ts.trackStartTime
+}
+
+func (ts *trackState) EndTime() uint32 {
+	return ts.trackEndTime
 }
 
 func copyMessages(source []timestampedMessage, dest *[]timestampedMessage) {
@@ -134,84 +166,106 @@ func (ts *trackState) AddToAllActiveTracks(tm timestampedMessage) {
 }
 
 func (ts *trackState) AddModulation(val uint8) {
-	m := midi.ControlChange(ts.midiChannel, midi.ModulationWheelMSB, val)
-	tm := timestampedMessage{ts.absTime, m}
-	ts.AddToAllActiveTracks(tm)
+	if !ts.IsCalculatingTrackExtent() {
+		m := midi.ControlChange(ts.midiChannel, midi.ModulationWheelMSB, val)
+		tm := timestampedMessage{ts.absTime, m}
+		ts.AddToAllActiveTracks(tm)
+	}
 }
 
 func (ts *trackState) AddPitchbend(val int16) {
-	m := midi.Pitchbend(ts.midiChannel, val)
-	tm := timestampedMessage{ts.absTime, m}
-	ts.AddToAllActiveTracks(tm)
+	if !ts.IsCalculatingTrackExtent() {
+		m := midi.Pitchbend(ts.midiChannel, val)
+		tm := timestampedMessage{ts.absTime, m}
+		ts.AddToAllActiveTracks(tm)
+	}
 }
 
 func (ts *trackState) AddKeyDown(key int8, velocity uint8, synVoice uint8) {
-	m := midi.NoteOn(ts.midiChannel, uint8(key), 18*uint8(velocity))
-	tm := timestampedMessage{ts.absTime, m}
-	ts.AddActiveKeyEvent(tm, int(synVoice), int(key))
-	logger.Debugf("ADD ACTIVE - map %d now %v\n", synVoice, ts.activeKeyTracks[key])
-
+	if !ts.IsCalculatingTrackExtent() {
+		m := midi.NoteOn(ts.midiChannel, uint8(key), 18*uint8(velocity))
+		tm := timestampedMessage{ts.absTime, m}
+		ts.AddActiveKeyEvent(tm, int(synVoice), int(key))
+		logger.Debugf("ADD ACTIVE - map %d now %v\n", synVoice, ts.activeKeyTracks[key])
+	}
 }
 
 func (ts *trackState) AddKeyUp(key int8) {
-	m := midi.NoteOff(ts.midiChannel, uint8(key))
-	tm := timestampedMessage{ts.absTime, m}
-	// keyup needs to apply to all the keydown's - there may be more than one when multiple voices
-	// use same msg
-	ts.ClearActiveKeyEvent(tm, int(key))
+	if !ts.IsCalculatingTrackExtent() {
+		m := midi.NoteOff(ts.midiChannel, uint8(key))
+		tm := timestampedMessage{ts.absTime, m}
+		// keyup needs to apply to all the keydown's - there may be more than one when multiple voices
+		// use same msg
+		ts.ClearActiveKeyEvent(tm, int(key))
+	}
 }
 
 func (ts *trackState) AddLeftPedalDown() {
-	m := midi.ControlChange(ts.midiChannel, midi.PortamentoSwitch, 127)
-	tm := timestampedMessage{ts.absTime, m}
-	ts.lPedalDown = true
-	ts.AddToAllActiveTracks(tm)
+	if !ts.IsCalculatingTrackExtent() {
+		m := midi.ControlChange(ts.midiChannel, midi.PortamentoSwitch, 127)
+		tm := timestampedMessage{ts.absTime, m}
+		ts.lPedalDown = true
+		ts.AddToAllActiveTracks(tm)
+	}
 }
 
 func (ts *trackState) AddRightPedalDown() {
-	m := midi.ControlChange(ts.midiChannel, midi.HoldPedalSwitch, 127)
-	tm := timestampedMessage{ts.absTime, m}
-	ts.rPedalDown = true
-	ts.AddToAllActiveTracks(tm)
+	if !ts.IsCalculatingTrackExtent() {
+		m := midi.ControlChange(ts.midiChannel, midi.HoldPedalSwitch, 127)
+		tm := timestampedMessage{ts.absTime, m}
+		ts.rPedalDown = true
+		ts.AddToAllActiveTracks(tm)
+	}
 }
 
 func (ts *trackState) AddPedalUp() {
-	if ts.lPedalDown {
-		m := midi.ControlChange(ts.midiChannel, midi.PortamentoSwitch, 0)
-		tm := timestampedMessage{ts.absTime, m}
-		ts.AddToAllActiveTracks(tm)
-		ts.lPedalDown = false
-	}
-	if ts.rPedalDown {
-		m := midi.ControlChange(ts.midiChannel, midi.HoldPedalSwitch, 0)
-		tm := timestampedMessage{ts.absTime, m}
-		ts.AddToAllActiveTracks(tm)
-		ts.rPedalDown = false
+	if !ts.IsCalculatingTrackExtent() {
+		if ts.lPedalDown {
+			m := midi.ControlChange(ts.midiChannel, midi.PortamentoSwitch, 0)
+			tm := timestampedMessage{ts.absTime, m}
+			ts.AddToAllActiveTracks(tm)
+			ts.lPedalDown = false
+		}
+		if ts.rPedalDown {
+			m := midi.ControlChange(ts.midiChannel, midi.HoldPedalSwitch, 0)
+			tm := timestampedMessage{ts.absTime, m}
+			ts.AddToAllActiveTracks(tm)
+			ts.rPedalDown = false
+		}
 	}
 }
 
 func (ts *trackState) AddExternalMidi(v []byte) {
-	m := midi.Message(v)
-	tm := timestampedMessage{ts.absTime, m}
-	midiTrack := ts.GetTrack(extMidiTrackKey)
-	*midiTrack = append(*midiTrack, tm)
+	if !ts.IsCalculatingTrackExtent() {
+		m := midi.Message(v)
+		tm := timestampedMessage{ts.absTime, m}
+		midiTrack := ts.GetTrack(extMidiTrackKey)
+		*midiTrack = append(*midiTrack, tm)
+	}
 }
 
 func (ts *trackState) MarkStartOfTrack() {
-	// Explicitly mark the start of track in case user wants to create a repeat:
-	// FIXME: investigate other SMF meta events?
-	m := midi.ControlChange(ts.midiChannel, fakeTrackExtentCC, fakeTrackExtentStartVal)
-	tm := timestampedMessage{ts.absTime, m}
-	ts.AddToAllActiveTracks(tm)
+	if !ts.IsCalculatingTrackExtent() {
+
+		// Explicitly mark the start of track in case user wants to create a repeat:
+		// FIXME: investigate other SMF meta events?
+		m := midi.ControlChange(ts.midiChannel, fakeTrackExtentCC, fakeTrackExtentStartVal)
+		tm := timestampedMessage{ts.absTime, m}
+		ts.AddToAllActiveTracks(tm)
+	} else {
+		ts.trackStartTime = ts.absTime
+	}
 }
 
 func (ts *trackState) MarkEndOfTrack() {
+	if !ts.IsCalculatingTrackExtent() {
+		// Can't directly add MetaEndOfTrack since that's done behind the scenes in the midi library's Close()
+		// function.  So we add a CC event:
 
-	// Can't directly add MetaEndOfTrack since that's done behind the scenes in the midi library's Close()
-	// function.  So we add a CC event:
-
-	m := midi.ControlChange(ts.midiChannel, fakeTrackExtentCC, fakeTrackExtentEndVal)
-	tm := timestampedMessage{ts.absTime, m}
-	ts.AddToAllActiveTracks(tm)
-
+		m := midi.ControlChange(ts.midiChannel, fakeTrackExtentCC, fakeTrackExtentEndVal)
+		tm := timestampedMessage{ts.absTime, m}
+		ts.AddToAllActiveTracks(tm)
+	} else {
+		ts.trackEndTime = ts.absTime
+	}
 }
