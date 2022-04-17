@@ -34,7 +34,7 @@ var globalState globalStateType
 type trackStateType struct {
 	trackID int
 
-	enabled     bool
+	hasEvents   bool
 	byteIndex   int
 	trackBytes  []byte
 	trackMode   TrackMode
@@ -60,12 +60,8 @@ type trackStateType struct {
 	activeKeyTracks   [130]trackset
 }
 
-func (ts *trackStateType) Disable() {
-	ts.enabled = false
-}
-
-func (ts *trackStateType) IsEnabled() bool {
-	return ts.enabled
+func (ts *trackStateType) HasEvents() bool {
+	return ts.hasEvents
 }
 
 func (ts *trackStateType) IsFirstEvent() bool {
@@ -74,8 +70,12 @@ func (ts *trackStateType) IsFirstEvent() bool {
 
 const NoNextEvent = uint32(math.MaxUint32)
 
+func (ts *trackStateType) InitNoData() {
+	ts.hasEvents = false
+}
+
 func (ts *trackStateType) Init(trackID /*one based*/ int, trackBytes []byte, trackMode TrackMode, evenMode bool) {
-	ts.enabled = true
+	ts.hasEvents = true
 	ts.trackID = trackID
 	ts.trackMode = trackMode
 	ts.evenMode = evenMode

@@ -34,7 +34,7 @@ func TestNoteOn(t *testing.T) {
 
 		var tracks [][]timestampedMessage
 		var err error
-		if tracks, err = processTrack(0, test.trackBytes, AllVoicesSameTrack); err != nil {
+		if tracks, err = preprocessTrack(0, test.trackBytes, AllVoicesSameTrack); err != nil {
 			t.Errorf("Unexpected error: %v\n", err)
 		}
 		if len(tracks) != 1 {
