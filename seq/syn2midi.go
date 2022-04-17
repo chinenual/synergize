@@ -193,6 +193,7 @@ func preprocessTrack(ts *trackStateType) (err error) {
 	ts.ArmTrack()
 	for {
 		if next, err = processNextEvent(ts, 0); err != nil || next == NoNextEvent {
+			ts.ResetClock()
 			return
 		}
 	}
