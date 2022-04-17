@@ -2,6 +2,7 @@ package seq
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/chinenual/synergize/logger"
 	"gitlab.com/gomidi/midi/v2"
@@ -30,9 +31,10 @@ type globalStateType struct {
 
 var globalState globalStateType
 
-type trackState struct {
+type trackStateType struct {
 	trackID int
 
+	enabled     bool
 	byteIndex   int
 	trackBytes  []byte
 	trackMode   TrackMode
@@ -58,7 +60,22 @@ type trackState struct {
 	activeKeyTracks   [130]trackset
 }
 
-func (ts *trackState) Init(trackID /*one based*/ int, trackBytes []byte, trackMode TrackMode, evenMode bool) {
+func (ts *trackStateType) Disable() {
+	ts.enabled = false
+}
+
+func (ts *trackStateType) IsEnabled() bool {
+	return ts.enabled
+}
+
+func (ts *trackStateType) IsFirstEvent() bool {
+	return ts.byteIndex == 0
+}
+
+const NoNextEvent = uint32(math.MaxUint32)
+
+func (ts *trackStateType) Init(trackID /*one based*/ int, trackBytes []byte, trackMode TrackMode, evenMode bool) {
+	ts.enabled = true
 	ts.trackID = trackID
 	ts.trackMode = trackMode
 	ts.evenMode = evenMode
@@ -83,23 +100,23 @@ func (ts *trackState) Init(trackID /*one based*/ int, trackBytes []byte, trackMo
 	}
 }
 
-func (ts *trackState) ResetClock() {
+func (ts *trackStateType) ResetClock() {
 	ts.absTime = 0
 }
 
-func (ts *trackState) ArmTrack() {
+func (ts *trackStateType) ArmTrack() {
 	ts.byteIndex = 0
 }
 
-func (ts *trackState) IsCalculatingTrackExtent() bool {
+func (ts *trackStateType) IsCalculatingTrackExtent() bool {
 	return ts.trackEndRelTime == 0
 }
 
-func (ts *trackState) StartRelTime() uint32 {
+func (ts *trackStateType) StartRelTime() uint32 {
 	return ts.trackStartRelTime
 }
 
-func (ts *trackState) EndRelTime() uint32 {
+func (ts *trackStateType) EndRelTime() uint32 {
 	return ts.trackEndRelTime
 }
 
@@ -110,7 +127,7 @@ func copyMessages(source []timestampedMessage, dest *[]timestampedMessage) {
 	}
 }
 
-func (ts *trackState) GetTrack(trackKey int) (midiTrack *[]timestampedMessage) {
+func (ts *trackStateType) GetTrack(trackKey int) (midiTrack *[]timestampedMessage) {
 	midiTrack = ts.trackMap[trackKey]
 	if midiTrack == nil {
 		midiTrack = new([]timestampedMessage)
@@ -147,7 +164,7 @@ func (ts *trackState) GetTrack(trackKey int) (midiTrack *[]timestampedMessage) {
 	return
 }
 
-func (ts *trackState) AddActiveKeyEvent(tm timestampedMessage, voice int, device int) {
+func (ts *trackStateType) AddActiveKeyEvent(tm timestampedMessage, voice int, device int) {
 	var trackKey int
 	if ts.trackMode == AllVoicesSameTrack {
 		trackKey = comboTrackKey
@@ -159,7 +176,7 @@ func (ts *trackState) AddActiveKeyEvent(tm timestampedMessage, voice int, device
 	ts.activeKeyTracks[device].Add(trackKey)
 }
 
-func (ts *trackState) ClearActiveKeyEvent(tm timestampedMessage, device int) {
+func (ts *trackStateType) ClearActiveKeyEvent(tm timestampedMessage, device int) {
 	// for any track this event may have been written to:
 	for _, k := range ts.activeKeyTracks[device].Contents() {
 		logger.Debugf("Clearing event %d from track_key %d", device, k)
@@ -169,7 +186,7 @@ func (ts *trackState) ClearActiveKeyEvent(tm timestampedMessage, device int) {
 	ts.activeKeyTracks[device].Clear()
 }
 
-func (ts *trackState) AddToAllActiveTracks(tm timestampedMessage) {
+func (ts *trackStateType) AddToAllActiveTracks(tm timestampedMessage) {
 	// this is for non-key events (pb. mod, pedals).  If no track already allocated by a note event,
 	// allocate a placeholder
 	if ts.modulationTrack == nil {
@@ -183,7 +200,7 @@ func (ts *trackState) AddToAllActiveTracks(tm timestampedMessage) {
 	}
 }
 
-func (ts *trackState) AddModulation(val uint8) {
+func (ts *trackStateType) AddModulation(val uint8) {
 	if !ts.IsCalculatingTrackExtent() {
 		m := midi.ControlChange(ts.midiChannel, midi.ModulationWheelMSB, val)
 		tm := timestampedMessage{ts.absTime, m}
@@ -191,7 +208,7 @@ func (ts *trackState) AddModulation(val uint8) {
 	}
 }
 
-func (ts *trackState) AddPitchbend(val int16) {
+func (ts *trackStateType) AddPitchbend(val int16) {
 	if !ts.IsCalculatingTrackExtent() {
 		m := midi.Pitchbend(ts.midiChannel, val)
 		tm := timestampedMessage{ts.absTime, m}
@@ -199,7 +216,7 @@ func (ts *trackState) AddPitchbend(val int16) {
 	}
 }
 
-func (ts *trackState) AddKeyDown(key int8, velocity uint8, synVoice uint8) {
+func (ts *trackStateType) AddKeyDown(key int8, velocity uint8, synVoice uint8) {
 	if !ts.IsCalculatingTrackExtent() {
 		m := midi.NoteOn(ts.midiChannel, uint8(key), 18*uint8(velocity))
 		tm := timestampedMessage{ts.absTime, m}
@@ -208,7 +225,7 @@ func (ts *trackState) AddKeyDown(key int8, velocity uint8, synVoice uint8) {
 	}
 }
 
-func (ts *trackState) AddKeyUp(key int8) {
+func (ts *trackStateType) AddKeyUp(key int8) {
 	if !ts.IsCalculatingTrackExtent() {
 		m := midi.NoteOff(ts.midiChannel, uint8(key))
 		tm := timestampedMessage{ts.absTime, m}
@@ -218,7 +235,7 @@ func (ts *trackState) AddKeyUp(key int8) {
 	}
 }
 
-func (ts *trackState) AddLeftPedalDown() {
+func (ts *trackStateType) AddLeftPedalDown() {
 	if !ts.IsCalculatingTrackExtent() {
 		m := midi.ControlChange(ts.midiChannel, midi.PortamentoSwitch, 127)
 		tm := timestampedMessage{ts.absTime, m}
@@ -227,7 +244,7 @@ func (ts *trackState) AddLeftPedalDown() {
 	}
 }
 
-func (ts *trackState) AddRightPedalDown() {
+func (ts *trackStateType) AddRightPedalDown() {
 	if !ts.IsCalculatingTrackExtent() {
 		m := midi.ControlChange(ts.midiChannel, midi.HoldPedalSwitch, 127)
 		tm := timestampedMessage{ts.absTime, m}
@@ -236,7 +253,7 @@ func (ts *trackState) AddRightPedalDown() {
 	}
 }
 
-func (ts *trackState) AddPedalUp() {
+func (ts *trackStateType) AddPedalUp() {
 	if !ts.IsCalculatingTrackExtent() {
 		if ts.lPedalDown {
 			m := midi.ControlChange(ts.midiChannel, midi.PortamentoSwitch, 0)
@@ -253,7 +270,7 @@ func (ts *trackState) AddPedalUp() {
 	}
 }
 
-func (ts *trackState) AddExternalMidi(v []byte) {
+func (ts *trackStateType) AddExternalMidi(v []byte) {
 	if !ts.IsCalculatingTrackExtent() {
 		m := midi.Message(v)
 		tm := timestampedMessage{ts.absTime, m}
@@ -262,7 +279,7 @@ func (ts *trackState) AddExternalMidi(v []byte) {
 	}
 }
 
-func (ts *trackState) MarkStartOfTrack() {
+func (ts *trackStateType) MarkStartOfTrack() {
 	if !ts.IsCalculatingTrackExtent() {
 
 		// Explicitly mark the start of track in case user wants to create a repeat:
@@ -275,7 +292,7 @@ func (ts *trackState) MarkStartOfTrack() {
 	}
 }
 
-func (ts *trackState) MarkEndOfTrack() {
+func (ts *trackStateType) MarkEndOfTrack() {
 	if !ts.IsCalculatingTrackExtent() {
 		// Can't directly add MetaEndOfTrack since that's done behind the scenes in the midi library's Close()
 		// function.  So we add a CC event:
@@ -288,7 +305,7 @@ func (ts *trackState) MarkEndOfTrack() {
 	}
 }
 
-func (ts *trackState) GetResult() (tracks [][]timestampedMessage, err error) {
+func (ts *trackStateType) GetResult() (tracks [][]timestampedMessage, err error) {
 	if len(ts.allTracks) == 0 {
 		// only modulation events - no notes. So use the modulation track
 		tracks = append(tracks, ts.modulationTrack)

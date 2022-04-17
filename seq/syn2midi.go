@@ -3,6 +3,7 @@ package seq
 import (
 	"fmt"
 	"io/ioutil"
+	"math"
 	"time"
 
 	"gitlab.com/gomidi/midi/v2"
@@ -90,9 +91,10 @@ func ConvertSYNToMIDI(path string, trackMode TrackMode, tempoBPM float64) (err e
 	return
 }
 
+const NUMTRACKS = 4
+
 func parseSEQTAB(bytes []byte, trackMode TrackMode) (tracks [][]timestampedMessage, err error) {
 	//PTVAL:	DS	64			;Current active processed pot value]
-	const NUMTRACKS = 4
 	for i := 0; i < NUMTRACKS; i++ {
 		logger.Debugf("SEQ TAB PTVAL[%d]: %x (%d\t%d)\n", i, bytes[i], bytes[i], int8(bytes[i]))
 		globalState.trackPlayMode[i] = TrackPlayMode(bytes[i])
@@ -129,11 +131,14 @@ func parseSEQTAB(bytes []byte, trackMode TrackMode) (tracks [][]timestampedMessa
 		logger.Debugf("SEQ TAB[%d]: %x (%d\t%d)\n", i, bytes[i], bytes[i], int8(bytes[i]))
 	}
 
-	var trackState [4]trackState
+	var trackState [4]*trackStateType
 	evenMode := false // not yet supported
 
 	for i := 0; i < NUMTRACKS; i++ {
-		if trackStartStop[i].start != 0 {
+		trackState[i] = new(trackStateType)
+		if trackStartStop[i].start == 0 {
+			trackState[i].Disable()
+		} else {
 			logger.Debugf("TRACK %d START %d STOP %d\n", i, uint16(seqtabStart)+trackStartStop[i].start, uint16(seqtabStart)+trackStartStop[i].stop)
 			trackBytes := bytes[uint16(seqtabStart)+trackStartStop[i].start : uint16(seqtabStart)+trackStartStop[i].stop]
 			// even mode only applies to track1 (i == 0):
@@ -144,7 +149,7 @@ func parseSEQTAB(bytes []byte, trackMode TrackMode) (tracks [][]timestampedMessa
 			// first pass over each track does not create MIDI events; it is used to calculate the start and end time
 			// of the first events on the track (which will be used to determine the "longest currently running track"
 			// which drives repeat playback behavior
-			if err = processTrack(&trackState[i], 0); err != nil {
+			if err = processTrack(trackState[i], 0); err != nil {
 				return
 			}
 			// Reset the track to start at the beginning when we do the real parsing
@@ -152,14 +157,10 @@ func parseSEQTAB(bytes []byte, trackMode TrackMode) (tracks [][]timestampedMessa
 			logger.Debugf("TRACK START/END[%d]: START: %d  END:%d)\n", i, trackState[i].StartRelTime(), trackState[i].EndRelTime())
 		}
 	}
+	processAllTracks(trackState)
 	for i := 0; i < NUMTRACKS; i++ {
-		if trackStartStop[i].start != 0 {
-
+		if trackState[i].IsEnabled() {
 			var t [][]timestampedMessage
-
-			if err = processTrack(&trackState[i], 0); err != nil {
-				return
-			}
 			if t, err = trackState[i].GetResult(); err != nil {
 				return
 			}
@@ -171,24 +172,6 @@ func parseSEQTAB(bytes []byte, trackMode TrackMode) (tracks [][]timestampedMessa
 	}
 	return
 }
-
-// Track playback algorithm:
-// track buttons are OFF/ON/REPEAT
-// From the user manual:
-//
-//   If you are playing back one track (whether set to Repeat or Playback mode) the initial rest (up to 8 seconds) is
-//   omitted; rests at the end of the track are retained.
-//
-//   If you are playing several tracks in Playback or Repeat mode, the first note across all of the tracks is played as
-//   soon as the Sequencer On/Of switch is pressed. Te initia rests of the other tracks are shorrted accordingly
-//
-//   If there are any Repeat tracks, the longest Repeat track governs the repeat. Rests are inserted after the end of
-//   Playback tracks and other (shorter) Repeat tracks until the longest Repeat track is finished.  Then all of the
-//   tracks repeat together. Initial rests are omitted in repeasts, just like at the beginning of Playback with one track.
-//
-//   If there is a Playback track longer than the longest Repeat track, then it continues playing even though other
-//   tracks have started to repeat.  Rests are inserted at the end of this longer Playback track until the other tracks
-//   repeat again
 
 type TrackMode int
 
@@ -206,22 +189,94 @@ func (e timestampedMessage) String() string {
 	return fmt.Sprintf("{%d: %s}", e.timeMS, e.msg)
 }
 
-func processTrack(ts *trackState, dTimeAdjust uint32) (err error) {
+func processTrack(ts *trackStateType, dTimeAdjust uint32) (err error) {
 	var next uint32
 	// time adjustment applies only to the first event (to trim initial rests):
 	ts.ArmTrack()
-	if next, err = processNextEvent(ts, dTimeAdjust); err != nil || next == 0 {
+	if next, err = processNextEvent(ts, dTimeAdjust); err != nil || next == NoNextEvent {
 		return
 	}
 	for {
-		if next, err = processNextEvent(ts, 0); err != nil || next == 0 {
+		if next, err = processNextEvent(ts, 0); err != nil || next == NoNextEvent {
 			return
 		}
 	}
 	return
 }
 
-func processNextEvent(ts *trackState, dTimeAdjust uint32) (nextEventTime uint32, err error) {
+// Track playback algorithm:
+// track buttons are OFF/ON/REPEAT
+// From the user manual:
+//
+//   If you are playing back one track (whether set to Repeat or Playback mode) the initial rest (up to 8 seconds) is
+//   omitted; rests at the end of the track are retained.
+//
+//   If you are playing several tracks in Playback or Repeat mode, the first note across all of the tracks is played as
+//   soon as the Sequencer On/Of switch is pressed. Te initial rests of the other tracks are shorrted accordingly
+//
+//   If there are any Repeat tracks, the longest Repeat track governs the repeat. Rests are inserted after the end of
+//   Playback tracks and other (shorter) Repeat tracks until the longest Repeat track is finished.  Then all of the
+//   tracks repeat together. Initial rests are omitted in repeasts, just like at the beginning of Playback with one track.
+//
+//   If there is a Playback track longer than the longest Repeat track, then it continues playing even though other
+//   tracks have started to repeat.  Rests are inserted at the end of this longer Playback track until the other tracks
+//   repeat again
+
+func processAllTracks(ts [4]*trackStateType) (err error) {
+	var next = [4]uint32{NoNextEvent, NoNextEvent, NoNextEvent, NoNextEvent}
+	minStartTime := uint32(math.MaxUint32)
+	nextTrack := -1
+
+	// First time, determine earliest event in all playing tracks - we'll trim the initial rests with this
+	for i := 0; i < NUMTRACKS; i++ {
+		if ts[i].IsEnabled() && globalState.trackPlayMode[i] != PlayModeOff {
+			ts[i].ArmTrack()
+			if ts[i].StartRelTime() < minStartTime {
+				minStartTime = ts[i].StartRelTime()
+				nextTrack = i
+			}
+		}
+	}
+	logger.Debugf("processAllTracks top - minStartTime = %d, nextTrack = %d\n", minStartTime, nextTrack)
+
+	// First time, set the next event time based on the start time and possible rest trimming
+	for i := 0; i < NUMTRACKS; i++ {
+		if ts[i].IsEnabled() && globalState.trackPlayMode[i] != PlayModeOff {
+			next[i] = ts[i].StartRelTime() - minStartTime
+		}
+	}
+	logger.Debugf("processAllTracks top - next = %v\n", next)
+	clock := uint32(0)
+	for nextTrack >= 0 {
+		offset := uint32(0)
+		if ts[nextTrack].IsFirstEvent() {
+			offset = minStartTime
+		}
+		logger.Debugf("processAllTracks DO TRACK %v offset %v\n", nextTrack, offset)
+		if next[nextTrack], err = processNextEvent(ts[nextTrack], offset); err != nil {
+			return
+		}
+		if ts[nextTrack].absTime > clock {
+			clock = ts[nextTrack].absTime
+		}
+		// now select the track with the earliest next event:
+		nextTrack = -1
+		minNextTime := uint32(math.MaxUint32)
+		for i := 0; i < NUMTRACKS; i++ {
+			if ts[i].IsEnabled() && globalState.trackPlayMode[i] != PlayModeOff {
+				if next[i] != NoNextEvent && next[i] < minNextTime {
+					minNextTime = next[i]
+					nextTrack = i
+				}
+			}
+		}
+		logger.Debugf("processAllTracks now - next = %v\n", next)
+
+	}
+	return
+}
+
+func processNextEvent(ts *trackStateType, dTimeAdjust uint32) (nextEventTime uint32, err error) {
 
 	// FROM arithmetic in SEQ.Z80 (near L330B),  "time" is a millisecond clock.
 	// it is a delta time from the previous event
@@ -269,7 +324,7 @@ func processNextEvent(ts *trackState, dTimeAdjust uint32) (nextEventTime uint32,
 	// Track end   is at SEQCON+SEQCN2+<track>
 
 	if ts.byteIndex >= len(ts.trackBytes)-1 {
-		nextEventTime = 0
+		nextEventTime = NoNextEvent
 		return
 	}
 	var dTime uint16
@@ -319,7 +374,7 @@ func processNextEvent(ts *trackState, dTimeAdjust uint32) (nextEventTime uint32,
 			ts.MarkEndOfTrack()
 		}
 		// 'end of loop'
-		nextEventTime = 0
+		nextEventTime = NoNextEvent
 		return
 	}
 	// Synergy firmware uses term "device" for this value, so we do too
@@ -425,7 +480,7 @@ func processNextEvent(ts *trackState, dTimeAdjust uint32) (nextEventTime uint32,
 	}
 
 	if ts.byteIndex >= len(ts.trackBytes)-1 {
-		nextEventTime = 0
+		nextEventTime = NoNextEvent
 	} else {
 		var dTime uint16
 		dTime = data.BytesToWord(ts.trackBytes[ts.byteIndex+1], ts.trackBytes[ts.byteIndex+0])
