@@ -95,6 +95,7 @@ func parseSEQTAB(bytes []byte, trackMode TrackMode) (tracks [][]timestampedMessa
 	const NUMTRACKS = 4
 	for i := 0; i < NUMTRACKS; i++ {
 		logger.Debugf("SEQ TAB PTVAL[%d]: %x (%d\t%d)\n", i, bytes[i], bytes[i], int8(bytes[i]))
+		globalState.trackPlayMode[i] = TrackPlayMode(bytes[i])
 	}
 	//TRANSP:	DS	5			;Sequencer playback transpose factor
 	//SEQCON:	DS	40			;Sequence control table; 20 integers
@@ -324,7 +325,14 @@ func processNextEvent(ts *trackState, dTimeAdjust uint32) (nextEventTime uint32,
 	// Synergy firmware uses term "device" for this value, so we do too
 	device := int8(ts.trackBytes[ts.byteIndex+2])
 	if device > 0 {
-		if device == 124 {
+		if device >= 120 && device <= 123 {
+			// track switches
+			// current value
+			v := int(globalState.trackPlayMode[device-120])
+			// cycle between 0 .. 1 .. 2 .. 0 .. 1 ...
+			v = (v + 1) % 2
+			globalState.trackPlayMode[device-120] = TrackPlayMode(v)
+		} else if device == 124 {
 			// "any" pedal up
 			logger.Debugf("t:%d EVENT [%d] time:%d/%d  ANY PEDAL UP\n", ts.trackID, ts.byteIndex, dTime, ts.absTime)
 			ts.AddPedalUp()

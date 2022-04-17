@@ -24,9 +24,11 @@ const (
 	PlayModeRepeat
 )
 
-type globalState struct {
+type globalStateType struct {
 	trackPlayMode [4]TrackPlayMode
 }
+
+var globalState globalStateType
 
 type trackState struct {
 	trackID int
