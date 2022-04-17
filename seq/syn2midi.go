@@ -26,7 +26,7 @@ import (
 //;	6) seq. data table
 //; 7) CRC
 
-func ConvertSYNToMIDI(path string, trackMode TrackMode, tempoBPM float64) (err error) {
+func ConvertSYNToMIDI(path string, trackMode TrackMode, tempoBPM float64, maxClock uint32) (err error) {
 	var synBytes []byte
 
 	if synBytes, err = ioutil.ReadFile(path); err != nil {
@@ -46,7 +46,7 @@ func ConvertSYNToMIDI(path string, trackMode TrackMode, tempoBPM float64) (err e
 	if seqLen > 0 {
 		var tracks [][]timestampedMessage
 		// last two bytes of the file are the CRC
-		if tracks, err = parseSEQTAB(synBytes[seqtabStart:len(synBytes)-2], trackMode); err != nil {
+		if tracks, err = parseSEQTAB(synBytes[seqtabStart:len(synBytes)-2], trackMode, maxClock); err != nil {
 			return
 		}
 
@@ -93,7 +93,7 @@ func ConvertSYNToMIDI(path string, trackMode TrackMode, tempoBPM float64) (err e
 
 const NUMTRACKS = 4
 
-func parseSEQTAB(bytes []byte, trackMode TrackMode) (tracks [][]timestampedMessage, err error) {
+func parseSEQTAB(bytes []byte, trackMode TrackMode, maxClock uint32) (tracks [][]timestampedMessage, err error) {
 	//PTVAL:	DS	64			;Current active processed pot value]
 	for i := 0; i < NUMTRACKS; i++ {
 		logger.Debugf("SEQ TAB PTVAL[%d]: %x (%d\t%d)\n", i, bytes[i], bytes[i], int8(bytes[i]))
@@ -155,7 +155,7 @@ func parseSEQTAB(bytes []byte, trackMode TrackMode) (tracks [][]timestampedMessa
 			logger.Debugf("TRACK START/END[%d]: START: %d  END:%d)\n", i, trackState[i].StartRelTime(), trackState[i].EndRelTime())
 		}
 	}
-	processAllTracks(trackState)
+	processAllTracks(trackState, maxClock)
 	for i := 0; i < NUMTRACKS; i++ {
 		if trackState[i].HasEvents() {
 			var t [][]timestampedMessage
@@ -219,8 +219,9 @@ func preprocessTrack(ts *trackStateType) (err error) {
 //   tracks have started to repeat.  Rests are inserted at the end of this longer Playback track until the other tracks
 //   repeat again
 
-func processAllTracks(ts [4]*trackStateType) (err error) {
+func processAllTracks(ts [4]*trackStateType, maxClock uint32) (err error) {
 	var next = [4]uint32{NoNextEvent, NoNextEvent, NoNextEvent, NoNextEvent}
+	var nextOffset = [4]uint32{0, 0, 0, 0}
 	minStartTime := uint32(math.MaxUint32)
 	nextTrack := -1
 
@@ -251,29 +252,48 @@ func processAllTracks(ts [4]*trackStateType) (err error) {
 	for i := 0; i < NUMTRACKS; i++ {
 		if ts[i].HasEvents() && globalState.trackPlayMode[i] != PlayModeOff {
 			next[i] = ts[i].StartRelTime() - minStartTime
+			nextOffset[i] = minStartTime
 		}
 	}
 	logger.Debugf("processAllTracks top - next = %v\n", next)
 	clock := uint32(0)
 	for nextTrack >= 0 {
-		offset := uint32(0)
-		if ts[nextTrack].IsFirstEvent() {
-			offset = minStartTime
-		}
+		offset := nextOffset[nextTrack]
 		logger.Debugf("processAllTracks DO TRACK %v offset %v\n", nextTrack, offset)
 		if next[nextTrack], err = processNextEvent(ts[nextTrack], offset); err != nil {
 			return
 		}
+		nextOffset[nextTrack] = 0
+		if next[nextTrack] == NoNextEvent && clock > maxClock {
+			// we've hit the end of the allowed time; turn this track off - but allow other tracks to continue
+			// playing until they finish
+			globalState.trackPlayMode[nextTrack] = PlayModeOff
+		}
 		if ts[nextTrack].absTime > clock {
 			clock = ts[nextTrack].absTime
-		}
-		if next[nextTrack] == NoNextEvent && globalState.trackPlayMode[nextTrack] == PlayModeRepeat {
-			// we just finished a repeating track.  If there are other repeating tracks still playing,
-			// need to wait for them to end; if not we can start right now
 		}
 		// now select the track with the earliest next event:
 		nextTrack = -1
 		minNextTime := uint32(math.MaxUint32)
+		playingRepeat := false
+		// first determine if there are any playing repeats.  If not and there are some repeats that are ready to repeat
+		// we can now queue them up
+		for i := 0; i < NUMTRACKS; i++ {
+			if ts[i].HasEvents() && next[i] != NoNextEvent && globalState.trackPlayMode[i] == PlayModeRepeat {
+				playingRepeat = true
+			}
+		}
+		if !playingRepeat {
+			// check for repeating tracks that have been waiting to repeat:
+			for i := 0; i < NUMTRACKS; i++ {
+				if ts[i].HasEvents() && next[i] == NoNextEvent && globalState.trackPlayMode[i] == PlayModeRepeat {
+					ts[i].ArmTrack()
+					next[i] = clock
+					ts[i].absTime = clock - ts[i].StartRelTime()
+					nextOffset[i] = 0
+				}
+			}
+		}
 		for i := 0; i < NUMTRACKS; i++ {
 			if ts[i].HasEvents() && globalState.trackPlayMode[i] != PlayModeOff {
 				if next[i] != NoNextEvent && next[i] < minNextTime {

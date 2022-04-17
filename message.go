@@ -214,7 +214,8 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		if err = seq.ConvertSYNToMIDI(args.Path, seq.TrackPerVoice, args.Tempo); err != nil {
+		maxClock := uint32(1000 * 60 * 2) // 2 minutes
+		if err = seq.ConvertSYNToMIDI(args.Path, seq.TrackPerVoice, args.Tempo, maxClock); err != nil {
 			payload = err.Error()
 		} else {
 			payload = "Ok"
