@@ -278,6 +278,11 @@ func processTrackRaw(ts *trackStateType) (err error) {
 //   Playback tracks and other (shorter) Repeat tracks until the longest Repeat track is finished.  Then all of the
 //   tracks repeat together. Initial rests are omitted in repeats, just like at the beginning of Playback with one track.
 //
+//    [SDT:  NOTE: this is misleading: the actual behavior is to preserve the same type of trimming as if there are
+//     several tracks playing - the earliest note plays without delay, but other repeating tracks are trimmed only enough
+//     to keep them playing at the same relative delay - so the controlling track will be trimmed to have no rest, but
+//     other tracks will have a small rest just as they would on the first play ].
+//
 //   If there is a Playback track longer than the longest Repeat track, then it continues playing even though other
 //   tracks have started to repeat.  Rests are inserted at the end of this longer Playback track until the other tracks
 //   repeat again
@@ -348,12 +353,22 @@ func processAllTracks(ts [4]*trackStateType, maxClock uint32) (err error) {
 		}
 		if !playingRepeat {
 			// check for repeating tracks that have been waiting to repeat:
+			// determine the amount of trim all the about to repeat tracks
+			minStartTime = uint32(math.MaxUint32)
+			for i := 0; i < NUMTRACKS; i++ {
+				if ts[i].HasEvents() && globalState.trackPlayMode[i] == PlayModeRepeat {
+					if ts[i].StartRelTime() < minStartTime {
+						minStartTime = ts[i].StartRelTime()
+					}
+				}
+			}
+			// now arm the repeating tracks, trimming each initial rest to sync with the track that will play first
 			for i := 0; i < NUMTRACKS; i++ {
 				if ts[i].HasEvents() && next[i] == NoNextEvent && globalState.trackPlayMode[i] == PlayModeRepeat {
 					ts[i].ArmTrack()
-					next[i] = clock
-					ts[i].absTime = clock - ts[i].StartRelTime()
-					nextOffset[i] = 0
+					next[i] = clock + ts[i].StartRelTime() - minStartTime
+					ts[i].absTime = clock - minStartTime
+					nextOffset[i] = minStartTime
 				}
 			}
 		}
