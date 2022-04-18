@@ -97,6 +97,9 @@ When not using Virtual Playback mode, transpose events are only applied to the t
 
 Inbound MIDI events are emitted to a separate track since in the original recording, they were intended to control "other" instruments (not the Synergy itself).
 
+### Even Mode
+
+This version of the converter does not emulate the EVEN button.  Contact me if this is something you need and I'll bump its priority.
 ### Tempo
 
 The Synergy has no strict concept of "tempo" (there is no metronome or "click").  Events are recorded in terms of clock time (milliseconds since the last event).  The Sequencer Speed can change the rate that events are played back, but there is no inherent "beats per minute" recorded in the sequencer.  Any correspondence between the sequencer speed and a musical tempo is up to the user to determine.
