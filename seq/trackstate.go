@@ -27,6 +27,7 @@ const (
 
 type globalStateType struct {
 	trackPlayMode [4]TrackPlayMode
+	transpose     [4]int8
 }
 
 var globalState globalStateType
@@ -57,7 +58,8 @@ type trackStateType struct {
 
 	extMidiTrackIndex int
 	modulationTrack   []timestampedMessage
-	activeKeyTracks   [130]trackset
+	// indexed by MIDI key code:
+	activeKeyTracks [130]trackset
 }
 
 func (ts *trackStateType) HasEvents() bool {

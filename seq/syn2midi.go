@@ -192,12 +192,18 @@ func parseSEQTAB(bytes []byte, trackMode TrackMode, raw bool, maxClock uint32, t
 		// just render each track once, including any initial rests:
 		for i := 0; i < NUMTRACKS; i++ {
 			if trackState[i].HasEvents() {
+				// reset the transpose since othe track may have changed it
+				globalState.transpose[i] = 0
 				if err = processTrackRaw(trackState[i]); err != nil {
 					return
 				}
 			}
 		}
 	} else {
+		for i := 0; i < NUMTRACKS; i++ {
+			// reset the transpose since preprocess may have changed it
+			globalState.transpose[i] = 0
+		}
 		// virtual playback mode:
 		processAllTracks(trackState, maxClock)
 	}
@@ -493,6 +499,9 @@ func processNextEvent(ts *trackStateType, dTimeAdjust uint32) (nextEventTime uin
 		} else if device <= 74 && device >= 1 {
 			// key up
 			key := device + 27 // MIDI key is offset from internal SYNERGY key code
+			// race condition: if transpose happened after the corresponding key down, we'll be sending a keyup for the
+			// wrong key.
+			key = key + globalState.transpose[ts.trackID-1]
 			logger.Debugf("t:%d EVENT [%d] time:%d/%d  KEYUP k:%d \n", ts.trackID, ts.byteIndex, dTime, ts.absTime, key)
 			ts.AddKeyUp(key)
 
@@ -506,6 +515,7 @@ func processNextEvent(ts *trackStateType, dTimeAdjust uint32) (nextEventTime uin
 		if device >= -74 && device <= -1 {
 			// key down
 			key := -device + 27 // MIDI key is offset from internal SYNERGY key code
+			key = key + globalState.transpose[ts.trackID-1]
 			v := ts.trackBytes[ts.byteIndex+3]
 			velocity := v >> 5 // top 3 bits == velocity
 			voice := v & 0x1f  // bottom 5 bits = voice
@@ -523,8 +533,17 @@ func processNextEvent(ts *trackStateType, dTimeAdjust uint32) (nextEventTime uin
 		} else if device >= -114 && device <= -75 {
 			// TRANSPOSE
 			data := ts.trackBytes[ts.byteIndex+3]
-			logger.Warnf("IGNORED: t:%d EVENT [%d] time:%d/%d  TRANSPOSE k:%d vel:%d voice:%d\n", ts.trackID, ts.byteIndex, dTime, ts.absTime, device, data)
-			logger.Debugf("t:%d EVENT [%d] time:%d/%d  TRANSPOSE k:%d vel:%d voice:%d\n", ts.trackID, ts.byteIndex, dTime, ts.absTime, device, data)
+			// convert keycode to transpose offset:
+			offset := (-device) - 94
+			// data is a bitmap of the tracks that should be affected by the transpose:
+			for i := 0; i < NUMTRACKS; i++ {
+				// either the top bit is set or the track specific bit is set:
+				if (data&(0x1<<i)) != 0 || (data&0x80) != 0 {
+					globalState.transpose[i] = offset
+				}
+			}
+			logger.Debugf("t:%d EVENT [%d] time:%d/%d  TRANSPOSE offset %d trackmap:%d \n", ts.trackID, ts.byteIndex, dTime, ts.absTime, offset, data)
+
 			ts.byteIndex += 4
 		} else if device == -116 {
 			v := ts.trackBytes[ts.byteIndex+3]

@@ -1,7 +1,6 @@
 let syn2midi = {
 
 	init: function() {
-
 	},
 
 	lastTempo : 120.0,
@@ -42,6 +41,7 @@ let syn2midi = {
 		document.getElementById("syn2midiTempo").value = syn2midi.lastTempo;
 		document.getElementById("syn2midiMode").checked = !syn2midi.lastRaw;
 		document.getElementById("syn2midiMaxClock").value = syn2midi.lastMaxClock;
+		syn2midi.modeChange();
 		document.getElementById("syn2midiConvertButton").onclick = function() {
 			if (document.getElementById("syn2midiPath").value != undefined
 				&& document.getElementById("syn2midiTempo").value != undefined) {
