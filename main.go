@@ -298,7 +298,12 @@ func main() {
 			// the trackmode choice is not exposed to the user - multi-voice handling is complicated and
 			// not worth the effort unless enough users complain :)
 			maxClock := uint32(1000 * 60 * 2) // 2 minutes
-			if err = seq.ConvertSYNToMIDI(*convertsyn, seq.TrackPerVoice, *tempoBPM, maxClock); err != nil {
+			raw := false
+			var trackButtons [4]seq.TrackPlayMode
+			if trackButtons, err = seq.GetSYNSequencerState(*convertsyn); err != nil {
+				code = 1
+				logger.Error(err)
+			} else if err = seq.ConvertSYNToMIDI(*convertsyn, seq.TrackPerVoice, *tempoBPM, raw, maxClock, trackButtons); err != nil {
 				code = 1
 				logger.Error(err)
 			}

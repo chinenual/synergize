@@ -26,7 +26,32 @@ import (
 //;	6) seq. data table
 //; 7) CRC
 
-func ConvertSYNToMIDI(path string, trackMode TrackMode, tempoBPM float64, maxClock uint32) (err error) {
+func GetSYNSequencerState(path string) (trackButtons [4]TrackPlayMode, err error) {
+	var synBytes []byte
+
+	if synBytes, err = ioutil.ReadFile(path); err != nil {
+		return
+	}
+
+	cmosLen := data.BytesToWord(synBytes[1], synBytes[0])
+	logger.Debugf("CMOS LEN: %v\n", cmosLen)
+
+	seqtabStart := cmosLen*2 + 4
+	logger.Debugf("SEQTAB start: 0x%x\n", seqtabStart)
+
+	// seqlen is immediately after the cmos bytes - +2 for the header (cmosLen) bytes:
+	seqLen := data.BytesToWord(synBytes[seqtabStart-1], synBytes[seqtabStart-2])
+	logger.Debugf("SEQTAB LEN: %v\n", seqLen)
+
+	if seqLen > 0 {
+		if trackButtons, err = getTrackButtons(synBytes[seqtabStart : len(synBytes)-2]); err != nil {
+			return
+		}
+	}
+	return
+}
+
+func ConvertSYNToMIDI(path string, trackMode TrackMode, tempoBPM float64, raw bool, maxClock uint32, trackButtons [4]TrackPlayMode) (err error) {
 	var synBytes []byte
 
 	if synBytes, err = ioutil.ReadFile(path); err != nil {
@@ -46,7 +71,7 @@ func ConvertSYNToMIDI(path string, trackMode TrackMode, tempoBPM float64, maxClo
 	if seqLen > 0 {
 		var tracks [][]timestampedMessage
 		// last two bytes of the file are the CRC
-		if tracks, err = parseSEQTAB(synBytes[seqtabStart:len(synBytes)-2], trackMode, maxClock); err != nil {
+		if tracks, err = parseSEQTAB(synBytes[seqtabStart:len(synBytes)-2], trackMode, raw, maxClock, trackButtons); err != nil {
 			return
 		}
 
@@ -93,11 +118,19 @@ func ConvertSYNToMIDI(path string, trackMode TrackMode, tempoBPM float64, maxClo
 
 const NUMTRACKS = 4
 
-func parseSEQTAB(bytes []byte, trackMode TrackMode, maxClock uint32) (tracks [][]timestampedMessage, err error) {
-	//PTVAL:	DS	64			;Current active processed pot value]
+func getTrackButtons(bytes []byte) (trackButtons [4]TrackPlayMode, err error) {
 	for i := 0; i < NUMTRACKS; i++ {
 		logger.Debugf("SEQ TAB PTVAL[%d]: %x (%d\t%d)\n", i, bytes[i], bytes[i], int8(bytes[i]))
-		globalState.trackPlayMode[i] = TrackPlayMode(bytes[i])
+		trackButtons[i] = TrackPlayMode(bytes[i])
+	}
+	return
+}
+
+func parseSEQTAB(bytes []byte, trackMode TrackMode, raw bool, maxClock uint32, trackButtons [4]TrackPlayMode) (tracks [][]timestampedMessage, err error) {
+	//PTVAL:	DS	64			;Current active processed pot value]
+	for i := 0; i < NUMTRACKS; i++ {
+		logger.Debugf("SEQ TAB PTVAL[%d]: %x user selected: %x\n", i, bytes[i], trackButtons[i])
+		globalState.trackPlayMode[i] = trackButtons[i]
 	}
 	//TRANSP:	DS	5			;Sequencer playback transpose factor
 	//SEQCON:	DS	40			;Sequence control table; 20 integers
@@ -155,7 +188,19 @@ func parseSEQTAB(bytes []byte, trackMode TrackMode, maxClock uint32) (tracks [][
 			logger.Debugf("TRACK START/END[%d]: START: %d  END:%d)\n", i, trackState[i].StartRelTime(), trackState[i].EndRelTime())
 		}
 	}
-	processAllTracks(trackState, maxClock)
+	if raw {
+		// just render each track once, including any initial rests:
+		for i := 0; i < NUMTRACKS; i++ {
+			if trackState[i].HasEvents() {
+				if err = processTrackRaw(trackState[i]); err != nil {
+					return
+				}
+			}
+		}
+	} else {
+		// virtual playback mode:
+		processAllTracks(trackState, maxClock)
+	}
 	for i := 0; i < NUMTRACKS; i++ {
 		if trackState[i].HasEvents() {
 			var t [][]timestampedMessage
@@ -189,7 +234,19 @@ func (e timestampedMessage) String() string {
 
 func preprocessTrack(ts *trackStateType) (err error) {
 	var next uint32
-	// time adjustment applies only to the first event (to trim initial rests):
+	ts.ArmTrack()
+	for {
+		if next, err = processNextEvent(ts, 0); err != nil || next == NoNextEvent {
+			ts.ResetClock()
+			return
+		}
+	}
+	ts.ResetClock()
+	return
+}
+
+func processTrackRaw(ts *trackStateType) (err error) {
+	var next uint32
 	ts.ArmTrack()
 	for {
 		if next, err = processNextEvent(ts, 0); err != nil || next == NoNextEvent {
@@ -462,6 +519,12 @@ func processNextEvent(ts *trackStateType, dTimeAdjust uint32) (nextEventTime uin
 			logger.Debugf("t:%d EVENT [%d] time:%d/%d  KEYDOWN k:%d vel:%d voice:%d\n", ts.trackID, ts.byteIndex, dTime, ts.absTime, key, velocity, voice)
 			ts.AddKeyDown(key, 18*uint8(velocity), voice)
 
+			ts.byteIndex += 4
+		} else if device >= -114 && device <= -75 {
+			// TRANSPOSE
+			data := ts.trackBytes[ts.byteIndex+3]
+			logger.Warnf("IGNORED: t:%d EVENT [%d] time:%d/%d  TRANSPOSE k:%d vel:%d voice:%d\n", ts.trackID, ts.byteIndex, dTime, ts.absTime, device, data)
+			logger.Debugf("t:%d EVENT [%d] time:%d/%d  TRANSPOSE k:%d vel:%d voice:%d\n", ts.trackID, ts.byteIndex, dTime, ts.absTime, device, data)
 			ts.byteIndex += 4
 		} else if device == -116 {
 			v := ts.trackBytes[ts.byteIndex+3]
