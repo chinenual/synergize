@@ -58,9 +58,15 @@ type trackStateType struct {
 
 	extMidiTrackIndex int
 	modulationTrack   []timestampedMessage
-	// indexed by MIDI key code:
+	// indexed by UNTRANSPOSED MIDI key code:
 	activeKeyTracks [130]trackset
+	// indexed by UNTRANSPOSED MIDI key code, value is the actual MIDI key code sent.  Value will be MIDI_NOKEY if not active
+	// this allows us to handle the race condition where a key down is sent, then a transpose event, later the key up
+	activeKeyTransposed [130]int
 }
+
+// used to store a key code to indicate nothing was active at this point
+const MIDI_NOKEY = -1
 
 func (ts *trackStateType) HasEvents() bool {
 	return ts.hasEvents
@@ -99,6 +105,7 @@ func (ts *trackStateType) Init(trackID /*one based*/ int, trackBytes []byte, tra
 
 	for i := range ts.activeKeyTracks {
 		ts.activeKeyTracks[i].Init()
+		ts.activeKeyTransposed[i] = MIDI_NOKEY
 	}
 }
 
@@ -166,7 +173,7 @@ func (ts *trackStateType) GetTrack(trackKey int) (midiTrack *[]timestampedMessag
 	return
 }
 
-func (ts *trackStateType) AddActiveKeyEvent(tm timestampedMessage, voice int, device int) {
+func (ts *trackStateType) AddActiveKeyEvent(tm timestampedMessage, voice int, untransposedDevice int, device int) {
 	var trackKey int
 	if ts.trackMode == AllVoicesSameTrack {
 		trackKey = comboTrackKey
@@ -175,17 +182,19 @@ func (ts *trackStateType) AddActiveKeyEvent(tm timestampedMessage, voice int, de
 	}
 	midiTrack := ts.GetTrack(trackKey)
 	*midiTrack = append(*midiTrack, tm)
-	ts.activeKeyTracks[device].Add(trackKey)
+	ts.activeKeyTracks[untransposedDevice].Add(trackKey)
+	ts.activeKeyTransposed[untransposedDevice] = device
 }
 
-func (ts *trackStateType) ClearActiveKeyEvent(tm timestampedMessage, device int) {
+func (ts *trackStateType) ClearActiveKeyEvent(tm timestampedMessage, untransposedDevice int) {
 	// for any track this event may have been written to:
-	for _, k := range ts.activeKeyTracks[device].Contents() {
-		logger.Debugf("Clearing event %d from track_key %d", device, k)
+	for _, k := range ts.activeKeyTracks[untransposedDevice].Contents() {
+		logger.Debugf("Clearing event %d from track_key %d", untransposedDevice, k)
 		midiTrack := ts.GetTrack(k)
 		*midiTrack = append(*midiTrack, tm)
 	}
-	ts.activeKeyTracks[device].Clear()
+	ts.activeKeyTracks[untransposedDevice].Clear()
+	ts.activeKeyTransposed[untransposedDevice] = MIDI_NOKEY
 }
 
 func (ts *trackStateType) AddToAllActiveTracks(tm timestampedMessage) {
@@ -218,22 +227,25 @@ func (ts *trackStateType) AddPitchbend(val int16) {
 	}
 }
 
-func (ts *trackStateType) AddKeyDown(key int8, velocity uint8, synVoice uint8) {
+func (ts *trackStateType) AddKeyDown(untransposedKey int8, key int8, velocity uint8, synVoice uint8) {
 	if !ts.IsCalculatingTrackExtent() {
 		m := midi.NoteOn(ts.midiChannel, uint8(key), 18*uint8(velocity))
 		tm := timestampedMessage{ts.absTime, m}
-		ts.AddActiveKeyEvent(tm, int(synVoice), int(key))
-		logger.Debugf("ADD ACTIVE - map %d now %v\n", synVoice, ts.activeKeyTracks[key])
+		ts.AddActiveKeyEvent(tm, int(synVoice), int(untransposedKey), int(key))
+		logger.Debugf("ADD ACTIVE - map %d now %v\n", synVoice, ts.activeKeyTracks[untransposedKey])
 	}
 }
 
-func (ts *trackStateType) AddKeyUp(key int8) {
+func (ts *trackStateType) AddKeyUp(untransposedKey int8, key int8) {
 	if !ts.IsCalculatingTrackExtent() {
-		m := midi.NoteOff(ts.midiChannel, uint8(key))
+		// what was the transposed value of the key when originally pressed?
+		k := ts.activeKeyTransposed[untransposedKey]
+
+		m := midi.NoteOff(ts.midiChannel, uint8(k))
 		tm := timestampedMessage{ts.absTime, m}
 		// keyup needs to apply to all the keydown's - there may be more than one when multiple voices
 		// use same msg
-		ts.ClearActiveKeyEvent(tm, int(key))
+		ts.ClearActiveKeyEvent(tm, int(untransposedKey))
 	}
 }
 

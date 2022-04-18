@@ -457,7 +457,7 @@ func processNextEvent(ts *trackStateType, dTimeAdjust uint32) (nextEventTime uin
 			// key-up (or pedal up) at end of track).
 			for k := int8(0); k < 127; k++ {
 				if !ts.activeKeyTracks[k].Empty() {
-					ts.AddKeyUp(k)
+					ts.AddKeyUp(k, k)
 				}
 			}
 			// similarly for pedals:
@@ -498,12 +498,10 @@ func processNextEvent(ts *trackStateType, dTimeAdjust uint32) (nextEventTime uin
 			// nop for us
 		} else if device <= 74 && device >= 1 {
 			// key up
-			key := device + 27 // MIDI key is offset from internal SYNERGY key code
-			// race condition: if transpose happened after the corresponding key down, we'll be sending a keyup for the
-			// wrong key.
-			key = key + globalState.transpose[ts.trackID-1]
+			untransposedKey := device + 27 // MIDI key is offset from internal SYNERGY key code
+			key := untransposedKey + globalState.transpose[ts.trackID-1]
 			logger.Debugf("t:%d EVENT [%d] time:%d/%d  KEYUP k:%d \n", ts.trackID, ts.byteIndex, dTime, ts.absTime, key)
-			ts.AddKeyUp(key)
+			ts.AddKeyUp(untransposedKey, key)
 
 		} else {
 			logger.Errorf("t:%d INVALID +EVENT [%d] time:%d/%d  device:%d)\n", ts.trackID, ts.byteIndex, dTime, ts.absTime, device)
@@ -514,8 +512,8 @@ func processNextEvent(ts *trackStateType, dTimeAdjust uint32) (nextEventTime uin
 		// negative device codes have 1-3 data bytes depending on device code
 		if device >= -74 && device <= -1 {
 			// key down
-			key := -device + 27 // MIDI key is offset from internal SYNERGY key code
-			key = key + globalState.transpose[ts.trackID-1]
+			untransposedKey := -device + 27 // MIDI key is offset from internal SYNERGY key code
+			key := untransposedKey + globalState.transpose[ts.trackID-1]
 			v := ts.trackBytes[ts.byteIndex+3]
 			velocity := v >> 5 // top 3 bits == velocity
 			voice := v & 0x1f  // bottom 5 bits = voice
@@ -527,7 +525,7 @@ func processNextEvent(ts *trackStateType, dTimeAdjust uint32) (nextEventTime uin
 			// the values stored in the sequencer are compressed to 3-bits (so 0..7 !)
 			// MIDI is 0..127 - so multiply by 18 to scale
 			logger.Debugf("t:%d EVENT [%d] time:%d/%d  KEYDOWN k:%d vel:%d voice:%d\n", ts.trackID, ts.byteIndex, dTime, ts.absTime, key, velocity, voice)
-			ts.AddKeyDown(key, 18*uint8(velocity), voice)
+			ts.AddKeyDown(untransposedKey, key, 18*uint8(velocity), voice)
 
 			ts.byteIndex += 4
 		} else if device >= -114 && device <= -75 {
