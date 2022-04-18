@@ -353,7 +353,8 @@ func processAllTracks(ts [4]*trackStateType, maxClock uint32) (err error) {
 		}
 		if !playingRepeat {
 			// check for repeating tracks that have been waiting to repeat:
-			// determine the amount of trim all the about to repeat tracks
+			// determine the amount of trim for all the about to repeat tracks (just enough so one of the tracks starts
+			// at '0'
 			minStartTime = uint32(math.MaxUint32)
 			for i := 0; i < NUMTRACKS; i++ {
 				if ts[i].HasEvents() && globalState.trackPlayMode[i] == PlayModeRepeat {
@@ -368,7 +369,7 @@ func processAllTracks(ts [4]*trackStateType, maxClock uint32) (err error) {
 					ts[i].ArmTrack()
 					next[i] = clock + ts[i].StartRelTime() - minStartTime
 					ts[i].absTime = clock - minStartTime
-					nextOffset[i] = minStartTime
+					nextOffset[i] = 0
 				}
 			}
 		}
