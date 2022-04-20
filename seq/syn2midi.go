@@ -365,7 +365,7 @@ func processAllTracks(ts [4]*trackStateType, maxClock uint32) (err error) {
 			}
 			// now arm the repeating tracks, trimming each initial rest to sync with the track that will play first
 			for i := 0; i < NUMTRACKS; i++ {
-				if ts[i].HasEvents() && next[i] == NoNextEvent && globalState.trackPlayMode[i] == PlayModeRepeat {
+				if ts[i].HasEvents() && next[i] == NoNextEvent { //&& globalState.trackPlayMode[i] == PlayModeRepeat {
 					ts[i].ArmTrack()
 					next[i] = clock + ts[i].StartRelTime() - minStartTime
 					ts[i].absTime = clock - minStartTime
