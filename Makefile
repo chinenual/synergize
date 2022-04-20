@@ -122,6 +122,7 @@ test:
 	cd osc && go test
 	cd synio && go test
 	cd dx2syn && go test
+	cd syn2midi && go test
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)

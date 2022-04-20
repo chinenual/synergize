@@ -227,11 +227,11 @@ func (ts *trackStateType) AddPitchbend(val int16) {
 	}
 }
 
-func (ts *trackStateType) AddKeyDown(untransposedKey int8, key int8, velocity uint8, synVoice uint8) {
+func (ts *trackStateType) AddKeyDown(untransposedKey int8, midiKey int8, midiVelocity uint8, synVoice uint8) {
 	if !ts.IsCalculatingTrackExtent() {
-		m := midi.NoteOn(ts.midiChannel, uint8(key), 18*uint8(velocity))
+		m := midi.NoteOn(ts.midiChannel, uint8(midiKey), midiVelocity)
 		tm := timestampedMessage{ts.absTime, m}
-		ts.AddActiveKeyEvent(tm, int(synVoice), int(untransposedKey), int(key))
+		ts.AddActiveKeyEvent(tm, int(synVoice), int(untransposedKey), int(midiKey))
 		logger.Debugf("ADD ACTIVE - map %d now %v\n", synVoice, ts.activeKeyTracks[untransposedKey])
 	}
 }

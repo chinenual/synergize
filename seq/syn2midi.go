@@ -533,15 +533,10 @@ func processNextEvent(ts *trackStateType, dTimeAdjust uint32) (nextEventTime uin
 			v := ts.trackBytes[ts.byteIndex+3]
 			velocity := v >> 5 // top 3 bits == velocity
 			voice := v & 0x1f  // bottom 5 bits = voice
-			if velocity == 0 {
-				// MIDI velocity 0 means note off
-				velocity = 1
-			}
-			// Synergy native velocity is 1..32
-			// the values stored in the sequencer are compressed to 3-bits (so 0..7 !)
-			// MIDI is 0..127 - so multiply by 18 to scale
-			logger.Debugf("t:%d EVENT [%d] time:%d/%d  KEYDOWN k:%d vel:%d voice:%d\n", ts.trackID, ts.byteIndex, dTime, ts.absTime, key, velocity, voice)
-			ts.AddKeyDown(untransposedKey, key, 18*uint8(velocity), voice)
+			midiVelocity := seqVelocityToMIDI(velocity)
+
+			logger.Debugf("t:%d EVENT [%d] time:%d/%d  KEYDOWN k:%d vel:%d/%d voice:%d\n", ts.trackID, ts.byteIndex, dTime, ts.absTime, key, velocity, midiVelocity, voice)
+			ts.AddKeyDown(untransposedKey, key, midiVelocity, voice)
 
 			ts.byteIndex += 4
 		} else if device >= -114 && device <= -75 {
@@ -614,4 +609,81 @@ func processNextEvent(ts *trackStateType, dTimeAdjust uint32) (nextEventTime uin
 		nextEventTime = ts.absTime + uint32(dTime)
 	}
 	return
+}
+
+// compressed SYN sequencer velocity to native Synergy velocity (used by unit tests)
+// emulate what the firmware does
+func seqVelocityToSynergy(v uint8) uint8 {
+	// SEQ.Z80 simply masks the 3 high bits and shifts them (v >> 3) to derive native velocity 1..32
+	// 	SPLA30:
+	//	...
+	//				AND	0E0H			;High 3 bits are velocity(resolution?)
+	//				RRCA
+	//				RRCA
+	//				RRCA
+	//				CP	28
+	//				JR	NZ,SPLA32		;If not top value
+	//				LD	A,32			;Set to max velocity
+
+	// VVV-----  ->  ---VVV--
+	// for this function, the value has already been shifted from the high bits to the low bits, so shift back up two
+	// -----VVV  -> ---VVV--
+	//
+	result := (v << 2)
+	if result == 28 {
+		result = 32
+	}
+	return result
+}
+
+// MIDI velocity to native Synergy velocity (used by unit tests)
+// emulate what the firmware does
+func midiVelocityToSynergy(v uint8) uint8 {
+	// MIDI.Z80 convers MIDI velocity in opposite way: (v / 4 + 1)
+	//	YMKEYD:
+	//  ...
+	//				LD	A,(HL)			;Get midi velocity
+	//				LD	B,A
+	//				SRL	A
+	//				SRL	A
+	//				INC	A
+	//				LD	(VALUE),A
+	// NOTE: this is not exactly the reverse of the native->MIDI formula which special cases native 0 as MIDI 1
+	return v>>2 + 1
+}
+
+// Synergy native velocity to MIDI velocity (used by unit tests)
+// emulate what the firmware does
+func synergyVelocityToMIDI(v uint8) uint8 {
+	// MIDI.Z80 converts native velocity by multiplying by 4 then subtracting 1
+	//				LD	A,(VALUE)		;Get velocity
+	//				OR	A
+	//				JR	NZ,XMKYD5		;If not zero
+	//				INC	A			;Send as 1
+	//				JP	XMOUTD
+	//    XMKYD5:	ADD	A,A
+	//   			ADD	A,A
+	//				DEC	A
+	result := uint8(1) // sends MIDI 1 for Native 0
+	if v > 0 {
+		result = v*4 - 1
+	}
+	return result
+}
+
+//Synergy SYN sequencer (3-bit) velocity to MIDI
+func seqVelocityToMIDI(v uint8) uint8 {
+	return synergyVelocityToMIDI(seqVelocityToSynergy(v))
+
+	// Synergy native velocity is 0..32
+	// the values stored in the sequencer are compressed to 3-bits (so 0..7 !)
+	// MIDI is 1..127 - so multiply by 18 to scale
+	//
+	//The Synergy MIDI implementation scales the 1..127 MIDI velocity to native 0..32 with a simple division, so
+	// select a scaling method that preserves the same values in each round trip:
+	//   SYN (0..3) -> native playback (1..32)  as implemented in SEQ.Z80
+	//  and
+	//   SYN (0..3) -> this MIDI conversion (1..127) -> Synergy MIDI conversion to native 0..32
+	//
+
 }
