@@ -10,7 +10,16 @@ permalink: /docs/syn2midi
 ## User Interface
 
 Click the `Load/Save` button and select the `Convert SYN Sequencer to MIDI` menu item to
-initiate the conversion. From the dialog, specify the SYN file to be converted and its [tempo](syn2midi.md#tempo).  The resulting MIDI file will be in the same folder as the original SYN file, with a .MID suffix appened to the SYN file name.
+initiate the conversion. From the dialog, specify the SYN file to be converted and its [tempo](syn2midi.md#tempo).  
+
+Choose `Virtual Playback mode`.  When checked, the converter will emulate the Synergy sequencer playback and repeat tracks and apply transpose settings in the same way that the original sequencer did.
+If unchecked, each track is converted without repeats.  The intent of this mode is to produce raw MIDI data that the user can then slice and dice to reorchestrate in ways unconnected to the original repeat behavior.
+
+If Virtual Playback mode is selected, you must specify `Max Time`.  In case of a sequence that contains looping (repeated) tracks, the converter will stop the "playback" after this aount of time has elapsed (after any running track reaches its end point).  
+
+When Virtual Playback mode is selected, you can also alter the `Track Playback Modes`.  The values default to the settings stored in the SYN file; you can alter them here before initiating the conversion. 
+
+The resulting MIDI file will be in the same folder as the original SYN file, with a `.mid` suffix appened to the SYN file name.
 
 ## Capabilities of the Synergy sequencer
 
@@ -73,18 +82,24 @@ The left pedal is mapped to MIDI CC65 ("Portamento switch").
 
 ### Track buttons
 
-A future release may support a virtual playback option that renders tracks as the Synergy would (repeating tracks when the track button is flashing, turning then on/off based on events recorded in the sequencer).
+When using the Virtual Playback mode, tracks are rendered as the Synergy would play them (repeating tracks when the track button is flashing, turning then on/off based on events recorded in the sequencer).
 
-In this release, track button selection is ignored.   Tracks are rendered once to the MIDI file with the expectation that the user may copy/paste them in a DAW to effect a repeat and to otherwise orchestrate the interaction of each track.
+When not using Virtual Playback mode, the track buttons are ignored.
+Tracks are rendered once to the MIDI file with the expectation that the user may copy/paste them in a DAW to effect a repeat and to otherwise orchestrate the interaction of each track.
 
 ### Transpose
 
-In this release, transpose events are ignored.  See the discussion above regarding Track buttons. If a virtual playback mode is added to the converter, transpose will be supported.
+When using Virtual Playback mode, transpose events are handled in the same way the Synergy sequencer does during playback.
+
+When not using Virtual Playback mode, transpose events are only applied to the track on which they occur.
 
 ### Inbound MIDI
 
 Inbound MIDI events are emitted to a separate track since in the original recording, they were intended to control "other" instruments (not the Synergy itself).
 
+### Even Mode
+
+This version of the converter does not emulate the EVEN button.  Contact me if this is something you need and I'll bump its priority.
 ### Tempo
 
 The Synergy has no strict concept of "tempo" (there is no metronome or "click").  Events are recorded in terms of clock time (milliseconds since the last event).  The Sequencer Speed can change the rate that events are played back, but there is no inherent "beats per minute" recorded in the sequencer.  Any correspondence between the sequencer speed and a musical tempo is up to the user to determine.

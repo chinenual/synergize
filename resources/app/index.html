@@ -272,16 +272,54 @@ TEST a "more button" design:
 					<div class="container syn2midiform">
 						<form>
 							<div class="form-group row">
-								<label class="col-md-3 col-form-label" for="synPath">SYN file</label>
+								<label class="col-md-3 col-form-label" for="syn2midiPath">SYN file</label>
 								<div class="col-md-7">
-									<input type="string" class="form-control" id="synPath"
+									<input type="string" class="form-control" id="syn2midiPath"
 										   onclick="syn2midi.synpathDialog(this)"/>
 								</div>
 							</div>
 							<div class="form-group row">
-								<label class="col-md-3 col-form-label" for="tempo">Tempo (BPM)</label>
+								<label class="col-md-3 col-form-label" for="syn2midiTempo">Tempo (BPM)</label>
 								<div class="col-md-7">
-									<input type="number" class="form-control" id="tempo"/>
+									<input type="number" class="form-control" id="syn2midiTempo"/>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-md-3 col-form-label" for="syn2midiMode">Virtual Playback Mode</label>
+								<div class="col-md-7">
+									<input type="checkbox" class="form-control" id="syn2midiMode"
+										   onclick="syn2midi.modeChange(this)"/>
+								</div>
+							</div>
+							<div class="form-group row" id="syn2midiMaxClockDiv">
+								<label class="col-md-3 col-form-label" for="syn2midiMaxClock">Max Time (seconds)</label>
+								<div class="col-md-7">
+									<input type="number" class="form-control" id="syn2midiMaxClock"/>
+								</div>
+							</div>
+							<div class="form-group row" id="syn2midiTrackModeDiv">
+								<label class="col-md-3 col-form-label" for="syn2midiTrack1">Track Modes</label>
+								<div class="col-md-7">
+									<select type="string" class="form-control" id="syn2midiTrack1">
+										<option value="0">OFF</option>
+										<option value="1">ON</option>
+										<option value="2">REPEAT</option>
+									</select>
+									<select type="string" class="form-control" id="syn2midiTrack2">
+										<option value="0">OFF</option>
+										<option value="1">ON</option>
+										<option value="2">REPEAT</option>
+									</select>
+									<select type="string" class="form-control" id="syn2midiTrack3">
+										<option value="0">OFF</option>
+										<option value="1">ON</option>
+										<option value="2">REPEAT</option>
+									</select>
+									<select type="string" class="form-control" id="syn2midiTrack4">
+										<option value="0">OFF</option>
+										<option value="1">ON</option>
+										<option value="2">REPEAT</option>
+									</select>
 								</div>
 							</div>
 

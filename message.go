@@ -204,8 +204,11 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 
 	case "syn2midi":
 		var args struct {
-			Path  string
-			Tempo float64
+			Path            string
+			Tempo           float64
+			Raw             bool
+			MaxClockSeconds uint32
+			TrackButtons    [4]seq.TrackPlayMode
 		}
 		if len(m.Payload) > 0 {
 			// Unmarshal payload
@@ -214,10 +217,32 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 				return
 			}
 		}
-		if err = seq.ConvertSYNToMIDI(args.Path, seq.TrackPerVoice, args.Tempo); err != nil {
+		logger.Infof("syn2midi: %v\n", args)
+
+		if err = seq.ConvertSYNToMIDI(args.Path, seq.TrackPerVoice, args.Tempo, args.Raw, args.MaxClockSeconds*1000, args.TrackButtons); err != nil {
 			payload = err.Error()
 		} else {
 			payload = "Ok"
+		}
+	case "getSynSequencerState":
+		var args struct {
+			Path string
+		}
+		var response struct {
+			TrackButtons [4]seq.TrackPlayMode
+		}
+		if len(m.Payload) > 0 {
+			// Unmarshal payload
+			if err = json.Unmarshal(m.Payload, &args); err != nil {
+				payload = err.Error()
+				return
+			}
+		}
+		if response.TrackButtons, err = seq.GetSYNSequencerState(args.Path); err != nil {
+			payload = err.Error()
+		} else {
+			logger.Infof("GetSYNSequencerState: %v\n", response)
+			payload = response
 		}
 
 	case "getCWD":
