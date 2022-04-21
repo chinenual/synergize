@@ -15,7 +15,7 @@ initiate the conversion. From the dialog, specify the SYN file to be converted a
 Choose `Virtual Playback mode`.  When checked, the converter will emulate the Synergy sequencer playback and repeat tracks and apply transpose settings in the same way that the original sequencer did.
 If unchecked, each track is converted without repeats.  The intent of this mode is to produce raw MIDI data that the user can then slice and dice to reorchestrate in ways unconnected to the original repeat behavior.
 
-If Virtual Playback mode is selected, you must specify `Max Time`.  In case of a sequence that contains looping (repeated) tracks, the converter will stop the "playback" after this aount of time has elapsed (after any running track reaches its end point).  
+If Virtual Playback mode is selected, you must specify `Max Time`.  In case of a sequence that contains looping (repeated) tracks, the converter will stop the "playback" after this amount of time has elapsed (after any running track reaches its end point).  
 
 When Virtual Playback mode is selected, you can also alter the `Track Playback Modes`.  The values default to the settings stored in the SYN file; you can alter them here before initiating the conversion. 
 
