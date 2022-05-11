@@ -163,8 +163,13 @@ func mainInit() {
 	//      20.* = Big Sur
 	// for linux, it reports the kernel
 	//    Core:"5.4.0-52-generic"
-	gi := goInfo.GetInfo()
-	OsVersion = gi.Core
+	gi, err := goInfo.GetInfo()
+	if err != nil {
+		logger.Errorf("Unable to get operating environment: %v\n", err)
+		OsVersion = gi.Core
+	} else {
+		OsVersion = gi.Core
+	}
 	logger.Infof("Operating environment: %#v\n", gi)
 }
 
