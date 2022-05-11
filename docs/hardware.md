@@ -57,13 +57,13 @@ I've been asked specifically what cables I use. I've been told that FTDI makes t
 * FTDI based USB cable: [Sabrent FTDI USB to Serial](https://www.amazon.com/gp/product/B006AA04K0)
 * Null modem serial cable: [C2G 02019 DB25 to DB9 Null Modem cable](https://www.amazon.com/gp/product/B000083K2R/)
 
-### MacOS (Mojave)
+### MacOS (Monterey)
 
 This is my primary development environment; it's tested natively:
 
 | Environment  		| Device 						| Baud Rate 		| OS Serial Config |
 |:----- |:-----:|:-----|:-----
-| MacOS (Mojave) 	| `/dev/tty.usbserial-AL05OC8S` 	| `9600`				| n/a
+| MacOS (Monterey) 	| `/dev/tty.usbserial-AL05OC8S` 	| `9600`				| n/a
 
 ### Windows 10
 
