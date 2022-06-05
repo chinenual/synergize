@@ -106,16 +106,19 @@ func SetSynergyVst(name string, addr string, port uint, synVerbose bool, serialV
 
 func initializeCRC() {
 
-	// From SYN-V322/CRCSET64.Z80:
-	// ;       CYCLIC REDUNDANCY CHECK CHARACTER CHALCULATOR
-	// ;       BASED ON X**16 + X**15 + X**2 +1 POLYNOMIAL
-	//
-	// which means "1100000000000101" (binary) or 0x8005.
-	// In the Z80 code, I see left shifts which implies CRC16-BUYPASS rather than CRC16-ARC.
+	if crcHash == nil {
+		// From SYN-V322/CRCSET64.Z80:
+		// ;       CYCLIC REDUNDANCY CHECK CHARACTER CHALCULATOR
+		// ;       BASED ON X**16 + X**15 + X**2 +1 POLYNOMIAL
+		//
+		// which means "1100000000000101" (binary) or 0x8005.
+		// In the Z80 code, I see left shifts which implies CRC16-BUYPASS rather than CRC16-ARC.
 
-	CRC16_BUYPASS := &crc.Parameters{Width: 16, Polynomial: 0x8005, Init: 0x0000, ReflectIn: false, ReflectOut: false, FinalXor: 0x0}
+		CRC16_BUYPASS := &crc.Parameters{Width: 16, Polynomial: 0x8005, Init: 0x0000, ReflectIn: false, ReflectOut: false, FinalXor: 0x0}
 
-	crcHash = crc.NewHash(CRC16_BUYPASS)
+		crcHash = crc.NewHash(CRC16_BUYPASS)
+	}
+	crcHash.Reset()
 }
 
 func command(opcode byte, name string) (err error) {
@@ -416,7 +419,7 @@ func DumpVRAM() (bytes []byte, err error) {
 
 	crcFromSynergy := data.BytesToWord(crc_buf[0], crc_buf[1])
 
-	crcHash.Reset()
+	initializeCRC()
 
 	calcCRCBytes(len_buf)
 	calcCRCBytes(bytes)

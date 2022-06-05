@@ -94,7 +94,7 @@ func loadCRTBytes(crt []byte) (err error) {
 		return
 	}
 
-	crcHash.Reset()
+	initializeCRC()
 
 	var length = uint16(len(crt))
 	if synioVerbose {
@@ -264,7 +264,7 @@ func SaveSYN() (bytes []byte, err error) {
 }
 
 func CheckSYNCRC(bytes []byte) (err error) {
-	crcHash.Reset()
+	initializeCRC()
 	calcCRCBytes(bytes[:len(bytes)-2])
 	crc := crcHash.CRC16()
 	crcFromSYN := data.BytesToWord(bytes[len(bytes)-2], bytes[len(bytes)-1])
