@@ -6,12 +6,15 @@ import (
 	"math"
 	"time"
 
+	"github.com/chinenual/synergize/synio"
+
 	"gitlab.com/gomidi/midi/v2"
 	"gitlab.com/gomidi/midi/v2/smf"
 
 	"github.com/chinenual/synergize/logger"
 
 	"github.com/chinenual/synergize/data"
+	"github.com/pkg/errors"
 )
 
 // See INTF.Z80 TSTATE   and SEQREQ.Z80
@@ -30,6 +33,11 @@ func GetSYNSequencerState(path string) (trackButtons [4]TrackPlayMode, err error
 	var synBytes []byte
 
 	if synBytes, err = ioutil.ReadFile(path); err != nil {
+		return
+	}
+
+	if err = synio.CheckSYNCRC(synBytes); err != nil {
+		err = errors.Wrap(err, "Invalid SYN file - invalid checksum")
 		return
 	}
 
@@ -639,7 +647,7 @@ func seqVelocityToSynergy(v uint8) uint8 {
 // MIDI velocity to native Synergy velocity (used by unit tests)
 // emulate what the firmware does
 func midiVelocityToSynergy(v uint8) uint8 {
-	// MIDI.Z80 convers MIDI velocity in opposite way: (v / 4 + 1)
+	// MIDI.Z80 converts MIDI velocity in opposite way: (v / 4 + 1)
 	//	YMKEYD:
 	//  ...
 	//				LD	A,(HL)			;Get midi velocity

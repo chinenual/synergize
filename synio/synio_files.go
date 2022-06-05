@@ -94,7 +94,7 @@ func loadCRTBytes(crt []byte) (err error) {
 		return
 	}
 
-	crcHash.Reset()
+	initializeCRC()
 
 	var length = uint16(len(crt))
 	if synioVerbose {
@@ -167,6 +167,10 @@ func LoadSYN(bytes []byte) (err error) {
 	defer c.Unlock()
 	if synioVerbose {
 		logger.Infof("SYNIO: ** LoadSYN\n")
+	}
+	if err = CheckSYNCRC(bytes); err != nil {
+		err = errors.Wrap(err, "Invalid SYN file - invalid checksum")
+		return
 	}
 	if err = command(OP_STLOAD, "STLOAD"); err != nil {
 		return
@@ -245,31 +249,30 @@ func SaveSYN() (bytes []byte, err error) {
 		return
 	}
 
-	// FIXME: these bytes seem out of order vs the length HOB/LOB yet seem to be transmitted the same
-	// from INTF.Z80 firmware sourcecode - I dont understand something..
-	crcFromSynergy := data.BytesToWord(crc_buf[0], crc_buf[1])
-
-	crcHash.Reset()
-
-	calcCRCBytes(len_buf)
-	calcCRCBytes(cmos_buf)
-	calcCRCBytes(seq_buf)
-	if synioVerbose {
-		logger.Infof("SYNIO: CRC from synergy %04x - our calculation %04x\n", crcFromSynergy, crcHash.CRC16())
-	}
-
-	if crcFromSynergy != crcHash.CRC16() {
-		err = errors.Errorf("STDUMP CRC does not match got %04x, expected %04x",
-			crcFromSynergy, crcHash.CRC16())
-		return
-	}
-	// errors will implicitly show  up in the log but we need to explicitly log success
-	if synioVerbose {
-		logger.Infof("SYNIO: STDUMP Success\n")
-	}
-
 	bytes = append(len_buf, cmos_buf...)
 	bytes = append(bytes, seq_buf...)
 	bytes = append(bytes, crc_buf...)
+
+	err = CheckSYNCRC(bytes)
+	if err == nil {
+		// errors will implicitly show  up in the log but we need to explicitly log success
+		if synioVerbose {
+			logger.Infof("SYNIO: STDUMP Success\n")
+		}
+	}
+	return
+}
+
+func CheckSYNCRC(bytes []byte) (err error) {
+	initializeCRC()
+	calcCRCBytes(bytes[:len(bytes)-2])
+	crc := crcHash.CRC16()
+	crcFromSYN := data.BytesToWord(bytes[len(bytes)-2], bytes[len(bytes)-1])
+	if synioVerbose {
+		logger.Infof("SYNIO: CRC from synergy %04x - our calculation %04x\n", crc, crcHash.CRC16())
+	}
+	if crc != crcFromSYN {
+		err = errors.Errorf("SYN CRC does not match got %04x, expected %04x", crcFromSYN, crc)
+	}
 	return
 }

@@ -47,7 +47,8 @@ it back on, then Rescan from Synergize).
 
 Synergize has been tested on:
 
-* MacOS 10.14.6 (Mojave)
+* MacOS 10.14 (Mojave)
+* MacOS 12 (Monterey)
 * Windows 10
 * Ubuntu Linux 18.04
 * Ubuntu Linux 16.04

@@ -14,7 +14,7 @@ Please report problems via a [github issue](https://github.com/chinenual/synergi
 Synergize logs can often help me determine what went wrong. You can
 find them in the following location (depending on your OS):
 
-* Windows: `%AppData%/Synergize/synergize.log`
+* Windows: `%AppData%\Synergize\synergize.log`
 * Mac: `$HOME/Library/Application Support/Synergize/synergize.log`
 * Linux: `$HOME/.config/Synergize/synergize.log` or `$XDG_CONFIG_HOME/Synergize/synergize.log` 
 
