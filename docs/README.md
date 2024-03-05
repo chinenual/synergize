@@ -46,10 +46,8 @@ Download the release:
 See the [User Manual](voice-library.md) for sites where you can download the original DK/Mulogix voice library.
 
 ## Issues / Bugs / Feature Requests
-
-Please report problems via a [github issue](https://github.com/chinenual/synergize/issues).  If you don't have a github account, send a bug report email to "support at chinenual.com"
-
-If you are a user or are thinking of becoming a user, please join our Slack workspace [https://synergize-app.slack.com](https://synergize-app.slack.com).  Send an email to "support at chinenual.com" for an invitation to the group.
+ 
+Please report problems or suggest new features via a [github issue](https://github.com/chinenual/synergize/issues).  If you don't have a github account, send an email to "support at chinenual.com".
 
 
 ## Screenshots
