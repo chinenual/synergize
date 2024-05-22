@@ -102,7 +102,9 @@ let viewVCE_voice = {
 		if (val == -12) {
 			newStr = "dc";
 		} else if (val < 0) {
-			newStr = "s" + (-val);
+		    	// bug#79:  -1 (ff)  -> s1, -2 (fe) -> s2
+		        // correct: -1 (ff) -> s11, -2 (fe) -> s10
+			newStr = "s" + (12 + val);
 		} else {
 			newStr = str;
 		}
@@ -115,8 +117,11 @@ let viewVCE_voice = {
 		if (str === "dc") {
 			newStr = '-12';
 		} else if (ret = str.match(/s(\d+)/)) {
+		    	// bug#79:  s1 -> -1 (ff), s2 -> -2 (fe)
+		    	// correct: s1 -> -11 (f5), s2 -> -10 (f6)
+		        //          s11 -> -1 (ff),  s10 -> -2 (fe)
 			val = parseInt(ret[1], 10);
-			newStr = '' + (-val);
+			newStr = '' + (val - 12);
 		} else if (ret = str.match(/\d+/)) {
 			newStr = str;
 		} else {

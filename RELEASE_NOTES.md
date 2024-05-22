@@ -9,6 +9,13 @@ permalink: /docs/release-notes
 
 # Release Notes
 
+## 2.6.1
+
+* Fixes [issue #79](https://github.com/chinenual/synergize/issues/79):
+  semitone values for the oscillator HARM values were encoded
+  incorrectly.  "s1" was incorrectly displayed and interpreted for the
+  Synergy value meaning "s11", "s2" displayed for "s10", etc.
+
 ## 2.6.0
 
 * Adds the ability to convert the sequencer events from a SYN file into a MIDI file.  See

@@ -14,8 +14,8 @@
   <!-- Change Product Id GUID for major release or change in components -->
   <!-- Change Product UpgradeCode GUID for major release  -->
   <Product Name="Synergize $(var.VERSION)"
-	   Id="68081C43-F5C9-412F-9A0A-7BF4B5D3AFA7"
-	   UpgradeCode="E4D363A2-2847-47CA-AA16-C9D2B6478A18"
+	   Id="68081C43-F5C9-412F-9A0A-7BF4B5D3AFA8"
+	   UpgradeCode="E4D363A2-2847-47CA-AA16-C9D2B6478A19"
 	   Version="$(var.VERSION)" Language="1033" Manufacturer="Chinenual">
 
     <Package Id="*" Keywords="Installer" Description="Synergize $(var.VERSION) Installer" Comments="MIT License" Manufacturer="Chinenual" InstallScope="perMachine" InstallerVersion="100" Compressed="yes"/>
