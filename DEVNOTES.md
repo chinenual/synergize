@@ -24,7 +24,7 @@ When built for development, use cntl-D to toggle Chrome Developer Tools.
    
    ```
    ~/src/3rdParty/interceptty/interceptty -v /dev/cu.usbserial-AL05OC8S /tmp/tty.proxy
-cc```
+```
 
 * Start DOSBox
 * Start Z80MU
