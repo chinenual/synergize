@@ -1,3 +1,7 @@
+# Synergize
+
+When built for development, use cntl-D to toggle Chrome Developer Tools.
+
 # SYNHCS
 
 ## Setup
