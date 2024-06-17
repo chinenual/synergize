@@ -34,7 +34,7 @@ type CRT struct {
 }
 
 func ReadCrtFile(filename string) (crt CRT, err error) {
-	// A CRT file is a long header containing filter info, followed by a list of CCE fragments (each voice missing the filter params since they are concatenated elsewhere in the file).
+	// A CRT file is a long header containing filter info, followed by a list of VCE fragments (each voice missing the filter params since they are concatenated elsewhere in the file).
 
 	var b []byte
 
@@ -50,7 +50,7 @@ func ReadCrtFile(filename string) (crt CRT, err error) {
 }
 
 func ReadCrt(buf io.ReadSeeker) (crt CRT, err error) {
-	// A CRT file is a long header containing filter info, followed by a list of CCE fragments (each voice missing the filter params since they are concatenated elsewhere in the file).
+	// A CRT file is a long header containing filter info, followed by a list of VCE fragments (each voice missing the filter params since they are concatenated elsewhere in the file).
 
 	if err = binary.Read(buf, binary.LittleEndian, &crt.Head); err != nil {
 		logger.Error("binary.Read failed:", err)

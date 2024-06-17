@@ -115,7 +115,13 @@ func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload inter
 			return
 		} else {
 			logger.Infof("Add vce %s to CRT at slot %d\n", args.VcePath, args.Slot)
-			args.Crt.Voices[args.Slot-1] = &vce
+			if len(args.Crt.Voices) < args.Slot {
+ 				// grow the slice
+				newVoices := make([]*data.VCE, args.Slot)
+				copy(newVoices, args.Crt.Voices)
+				args.Crt.Voices = newVoices
+			}
+ 			args.Crt.Voices[args.Slot-1] = &vce
 			payload = args.Crt
 		}
 
