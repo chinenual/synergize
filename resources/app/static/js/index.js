@@ -95,7 +95,11 @@ let index = {
 		}
 		console.log("INFO NOTIFICATION: " + message)
 		document.getElementById("alertTitle").innerHTML = "Info";
-		document.getElementById("alertText").innerHTML = message;
+	    	document.getElementById("alertText").innerHTML = message;
+	    	// Make alert messages hide themselves after 3s - no need to click
+	        setTimeout(function(){
+		    $('#alertModal').modal('hide');
+		}, 3000);
 		$('#alertModal').modal();
 	},
 
