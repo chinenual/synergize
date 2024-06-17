@@ -9,6 +9,15 @@ permalink: /docs/release-notes
 
 # Release Notes
 
+## 2.6.2
+
+* Fixes [issue #82](https://github.com/chinenual/synergize/issues/82):
+  CRT editor can't add voices to a one-voice CRT.
+* Fixes [issue #83](https://github.com/chinenual/synergize/issues/83):
+  Info dialogs now auto-expire, so you do not need to manually dismiss them.
+* Fixes [issue #84](https://github.com/chinenual/synergize/issues/84):
+  The CRT editor sometimes allowed an empty CRT file to be created.
+  
 ## 2.6.1
 
 * Fixes [issue #79](https://github.com/chinenual/synergize/issues/79):
