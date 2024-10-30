@@ -42,7 +42,6 @@ Note: Synergize does not itself include the original voice libraries -- download
 
 [![YouTube](http://i.ytimg.com/vi/6Ijs1H-cWLo/hqdefault.jpg)](https://www.youtube.com/watch?v=6Ijs1H-cWLo)
 
-
 ## Download
 
 Download the release:
