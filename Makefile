@@ -2,17 +2,19 @@ include VERSION
 
 DOCS=*.md LICENSE
 SRCS=bundler.json cmd/*/*.go [c-z]*.go */*.go resources/app/*html resources/app/static/css/*.css  resources/app/static/js/*js 
-EXES=$(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX_AMD64) $(EXE_LINUX_386) $(EXE_LINUX_ARM) ${EXE_WINDOWS_TEST}
-EXE_MAC=output/darwin-amd64/Synergize.app/Contents/MacOS/Synergize 
-EXE_WINDOWS=output/windows-386/Synergize.exe
+EXES=$(EXE_MAC_ARM64) $(EXE_MAC_AMD64) $(EXE_WINDOWS_386) $(EXE_LINUX_AMD64) $(EXE_LINUX_386) $(EXE_LINUX_ARM) ${EXE_WINDOWS_TEST}
+EXE_MAC_ARM64=output/darwin-arm64/Synergize.app/Contents/MacOS/Synergize 
+EXE_MAC_AMD64=output/darwin-amd64/Synergize.app/Contents/MacOS/Synergize 
+EXE_WINDOWS_386=output/windows-386/Synergize.exe
 EXE_WINDOWS_TEST=output/windows-386-cmd/Synergize-cmd.exe
 EXE_LINUX_AMD64=output/linux-amd64/Synergize
 EXE_LINUX_386=output/linux-386/Synergize
 EXE_LINUX_ARM=output/linux-arm/Synergize
 
-DX2SYNS=$(DX2SYN_MAC) $(DX2SYN_WINDOWS) $(DX2SYN_LINUX_AMD64) $(DX2SYN_LINUX_386) $(DX2SYN_LINUX_ARM) 
-DX2SYN_MAC=output/darwin-amd64/Synergize.app/Contents/MacOS/dx2syn 
-DX2SYN_WINDOWS=output/windows-386/dx2syn.exe
+DX2SYNS=$(DX2SYN_MAC_ARM64) $(DX2SYN_MAC_AMD64) $(DX2SYN_WINDOWS_386) $(DX2SYN_LINUX_AMD64) $(DX2SYN_LINUX_386) $(DX2SYN_LINUX_ARM) 
+DX2SYN_MAC_ARM64=output/darwin-arm64/Synergize.app/Contents/MacOS/dx2syn
+DX2SYN_MAC_AMD64=output/darwin-amd64/Synergize.app/Contents/MacOS/dx2syn 
+DX2SYN_WINDOWS_386=output/windows-386/dx2syn.exe
 DX2SYN_LINUX_AMD64=output/linux-amd64/dx2syn
 DX2SYN_LINUX_386=output/linux-386/dx2syn
 DX2SYN_LINUX_ARM=output/linux-arm/dx2syn
@@ -24,11 +26,15 @@ DX2SYN_LINUX_ARM=output/linux-arm/dx2syn
 .PHONY: all
 all: $(EXES) $(DX2SYNS)
 
-$(DX2SYN_MAC): $(SRCS)
+$(DX2SYN_MAC_ARM64): $(SRCS)
+	mkdir -p output/darwin-arm64/Synergize.app/Contents/MacOS
+	cd cmd/dx2syn && go build -o ../../output/darwin-arm64/Synergize.app/Contents/MacOS
+
+$(DX2SYN_MAC_AMD64): $(SRCS)
 	mkdir -p output/darwin-amd64/Synergize.app/Contents/MacOS
 	cd cmd/dx2syn && go build -o ../../output/darwin-amd64/Synergize.app/Contents/MacOS
 
-$(DX2SYN_WINDOWS): $(SRCS)
+$(DX2SYN_WINDOWS_386): $(SRCS)
 	mkdir -p output/windows-386
 	cd cmd/dx2syn && GOOS=windows GOARCH=386 go build -o ../../output/windows-386
 
@@ -45,7 +51,7 @@ $(DX2SYN_LINUX_ARM):
 	cd cmd/dx2syn && GOOS=linux GOARCH=arm go build -o ../../output/linux-arm
 
 
-$(EXE_MAC) $(EXE_WINDOWS) $(EXE_LINUX_AMD64) $(EXE_LINUX_386) $(EXE_LINUX_ARM) : $(SRCS)
+$(EXE_MAC_AMD64) $(EXE_MAC_ARM64) $(EXE_WINDOWS_386) $(EXE_LINUX_AMD64) $(EXE_LINUX_386) $(EXE_LINUX_ARM) : $(SRCS)
 	rm -f windows.syso # delete temporary file side effect of windows build - linux-arm chokes on it.
 	astilectron-bundler
 
@@ -54,11 +60,17 @@ $(EXE_WINDOWS_TEST): $(SRCS)
 	mkdir -p output/windows-386-cmd
 	GOOS=windows GOARCH=386 go build -o $(EXE_WINDOWS_TEST)
 
-.PHONY: mac
-mac: version.go 
-	rm -rf output/windows* output/linux* 
-	astilectron-bundler -c bundler-mac-only.json
-	$(MAKE) $(DX2SYN_MAC)
+.PHONY: mac_amd64
+mac_amd64: version.go 
+	rm -rf output/windows* output/linux* windows.syso
+	astilectron-bundler -c bundler-mac-amd64-only.json
+	$(MAKE) $(DX2SYN_MAC_AMD64)
+
+.PHONY: mac_arm64
+mac_arm64: version.go 
+	rm -rf output/windows* output/linux* windows.syso
+	astilectron-bundler -c bundler-mac-arm64-only.json
+	$(MAKE) $(DX2SYN_MAC_ARM64)
 
 .PHONY: cibuild
 cibuild: version.go
@@ -70,11 +82,11 @@ package: test all packageMac packageWindows packageLinux
 
 
 # uses create-dmg (installed via "brew install create-dmg"):
-.PHONY: packageMac
-packageMac: packages/Synergize-Installer-mac-$(VERSION).dmg
-packages/Synergize-Installer-mac-$(VERSION).dmg : $(EXE_MAC) 
+.PHONY: packageMac_AMD64
+packageMac_AMD64: packages/Synergize-Installer-mac-amd64-$(VERSION).dmg
+packages/Synergize-Installer-mac-amd64-$(VERSION).dmg : $(EXE_MAC_AMD64) 
 	mkdir -p packages
-	rm -f packages/Synergize-Installer-mac-$(VERSION).dmg
+	rm -f packages/Synergize-Installer-mac-amd64-$(VERSION).dmg
 	create-dmg \
 		--volname "Synergize Installer" \
 		--volicon resources/icon.icns \
@@ -82,13 +94,29 @@ packages/Synergize-Installer-mac-$(VERSION).dmg : $(EXE_MAC)
 		--window-size 450 400 \
 		--icon "Synergize.app" 100 120 \
 		--app-drop-link 300 120 \
-		"packages/Synergize-Installer-mac-$(VERSION).dmg" \
+		"packages/Synergize-Installer-mac-amd64-$(VERSION).dmg" \
 		output/darwin-amd64
+
+# uses create-dmg (installed via "brew install create-dmg"):
+.PHONY: packageMac_ARM
+packageMac_ARM: packages/Synergize-Installer-mac-arm64-$(VERSION).dmg
+packages/Synergize-Installer-mac-arm64-$(VERSION).dmg : $(EXE_MAC_ARM64) 
+	mkdir -p packages
+	rm -f packages/Synergize-Installer-mac-arm64-$(VERSION).dmg
+	create-dmg \
+		--volname "Synergize Installer" \
+		--volicon resources/icon.icns \
+		--icon-size 100 \
+		--window-size 450 400 \
+		--icon "Synergize.app" 100 120 \
+		--app-drop-link 300 120 \
+		"packages/Synergize-Installer-mac-arm64-$(VERSION).dmg" \
+		output/darwin-arm64
 
 # uses msitools (installed via "brew install msitools"):
 .PHONY: packageWindows
-packageWindows: packages/Synergize-Installer-windows-$(VERSION).msi $(EXE_WINDOWS) $(EXE_WINDOWS_TEST)
-packages/Synergize-Installer-windows-$(VERSION).msi : windows-installer.wxs $(EXE_WINDOWS) $(EXE_WINDOWS_TEST)
+packageWindows: packages/Synergize-Installer-windows-$(VERSION).msi $(EXE_WINDOWS_386) $(EXE_WINDOWS_TEST)
+packages/Synergize-Installer-windows-$(VERSION).msi : windows-installer.wxs $(EXE_WINDOWS_386) $(EXE_WINDOWS_TEST)
 	mkdir -p packages
 	rm -f packages/Synergize-Installer-windows-$(VERSION).msi
 	wixl -v \
