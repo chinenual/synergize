@@ -7,10 +7,6 @@ _site
 
 TAGS
 VOICES
-bind*
-output
-packages
-windows.syso
 .DS_Store
 sdt-*md
 *.syn
@@ -44,3 +40,17 @@ preferences.json
 .idea/**/dictionaries
 .idea/**/shelf
 
+## ASTILECTRON:
+#bind*
+#output
+#packages
+#windows.syso
+
+## WAILS:
+
+.task
+bin
+frontend/dist
+frontend/node_modules
+build/linux/appimage/build
+build/windows/nsis/MicrosoftEdgeWebview2Setup.exe

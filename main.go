@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"io/ioutil"
 
 	"github.com/chinenual/synergize/seq"
@@ -10,29 +9,19 @@ import (
 	"github.com/matishsiao/goInfo"
 
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
-	"time"
 
 	"github.com/chinenual/synergize/data"
 	"github.com/chinenual/synergize/logger"
-	"github.com/chinenual/synergize/osc"
 	"github.com/chinenual/synergize/synio"
 	"github.com/chinenual/synergize/zeroconf"
-
-	"github.com/asticode/go-astikit"
-	"github.com/asticode/go-astilectron"
-	bootstrap "github.com/asticode/go-astilectron-bootstrap"
 )
 
-// Vars injected via ldflags by bundler
+// Injected at build time:
 var (
-	AppName            string
-	BuiltAt            string
-	VersionAstilectron string
-	VersionElectron    string
+	BuiltAt string
 )
 
 // Application Vars
@@ -61,16 +50,14 @@ var (
 	tempoBPM          = flag.Float64("SYN2MIDI-BPM", 120.0, "Tempo for converted MIDI files")
 
 	synver = flag.Bool("SYNVER", false, "Print the firmware version of the connected Synergy")
-	//	rawlog            = flag.Bool("RAWLOG", false, "Turn off timestamps to make logs easier to compare")
-	//midiproxy = flag.Bool("MIDIPROXY", false, "present a MIDI interface and use serial IO to control the Synergy")
 
-	w       *astilectron.Window
-	about_w *astilectron.Window
-	prefs_w *astilectron.Window
-	a       *astilectron.Astilectron
-	//l          logger.Logger //*log.Logger
 	AppVersion string
 	OsVersion  string
+)
+
+// link time flags - injected by the linker
+var (
+	BuildAt string
 )
 
 func getDefaultBaud() uint {
@@ -173,10 +160,25 @@ func mainInit() {
 	logger.Infof("Operating environment: %#v\n", gi)
 }
 
+func prefsWindowShow() {
+	panic("FIX")
+}
+func prefsWindowHide() {
+	panic("FIX")
+}
+
+func aboutWindowShow() {
+	panic("FIX")
+}
+func aboutWindowHide() {
+	panic("FIX")
+}
+
 func refreshNavPane(path string) {
-	if err := bootstrap.SendMessage(w, "explore", path, func(m *bootstrap.MessageIn) {}); err != nil {
-		logger.Error(fmt.Errorf("sending refreshNav event failed: %w", err))
-	}
+	panic("FIX")
+	//	if err := bootstrap.SendMessage(w, "explore", path, func(m *bootstrap.MessageIn) {}); err != nil {
+	//		logger.Error(fmt.Errorf("sending refreshNav event failed: %w", err))
+	//	}
 }
 
 func recordIo(f func(string) error, arg string) (err error) {
@@ -327,205 +329,208 @@ func main() {
 		zeroconf.StartListener()
 	}
 
-	macOSMenus := []*astilectron.MenuItemOptions{{
-		Label: astikit.StrPtr("Synergize"),
-		SubMenu: []*astilectron.MenuItemOptions{
-			{
-				Label: astikit.StrPtr("About Synergize"),
-				OnClick: func(e astilectron.Event) (deleteListener bool) {
-					if err := bootstrap.SendMessage(about_w, "setVersion", AppVersion, func(m *bootstrap.MessageIn) {}); err != nil {
-						logger.Errorf("sending about event failed: %w", err)
-					}
-					about_w.Show()
-					return
-				},
-			},
-			{Type: astilectron.MenuItemTypeSeparator},
-			{
-				Label:       astikit.StrPtr("Preferences..."),
-				Accelerator: astilectron.NewAccelerator("CommandOrControl+P"),
-				OnClick: func(e astilectron.Event) (deleteListener bool) {
-					prefs_w.Show()
-					return
-				},
-			},
-			{Role: astilectron.MenuItemRoleServices},
-			{Type: astilectron.MenuItemTypeSeparator},
-			{
-				// Override the "Hide Electron" label
-				Label: astikit.StrPtr("Hide Synergize"),
-				Role:  astilectron.MenuItemRoleHide,
-			},
-			{Role: astilectron.MenuItemRoleHideOthers},
-			{Role: astilectron.MenuItemRoleUnhide},
-			{Type: astilectron.MenuItemTypeSeparator},
-			{
-				// Override the "Quit Electron" label
-				Label: astikit.StrPtr("Quit Synergize"),
-				Role:  astilectron.MenuItemRoleQuit,
-			},
-		},
-	},
+	WailsMain()
 
-		{Role: astilectron.MenuItemRoleEditMenu},
-		{Role: astilectron.MenuItemRoleWindowMenu},
-		/*
-			Label: astikit.StrPtr("Edit"),
-			SubMenu: []*astilectron.MenuItemOptions{
-				{Role: astilectron.MenuItemRoleUndo},
-				{Role: astilectron.MenuItemRoleRedo},
-				{ Type: astilectron.MenuItemTypeSeparator },
-				{Role: astilectron.MenuItemRoleCut},
-				{Role: astilectron.MenuItemRoleCopy},
-				{Role: astilectron.MenuItemRolePaste},
-				{Role: astilectron.MenuItemRoleSelectAll},`
-			},
-		*/
-	}
+	// macOSMenus := []*astilectron.MenuItemOptions{{
+	// 	Label: astikit.StrPtr("Synergize"),
+	// 	SubMenu: []*astilectron.MenuItemOptions{
+	// 		{
+	// 			Label: astikit.StrPtr("About Synergize"),
+	// 			OnClick: func(e astilectron.Event) (deleteListener bool) {
+	// 				if err := bootstrap.SendMessage(about_w, "setVersion", AppVersion, func(m *bootstrap.MessageIn) {}); err != nil {
+	// 					logger.Errorf("sending about event failed: %w", err)
+	// 				}
+	// 				about_w.Show()
+	// 				return
+	// 			},
+	// 		},
+	// 		{Type: astilectron.MenuItemTypeSeparator},
+	// 		{
+	// 			Label:       astikit.StrPtr("Preferences..."),
+	// 			Accelerator: astilectron.NewAccelerator("CommandOrControl+P"),
+	// 			OnClick: func(e astilectron.Event) (deleteListener bool) {
+	// 				prefs_w.Show()
+	// 				return
+	// 			},
+	// 		},
+	// 		{Role: astilectron.MenuItemRoleServices},
+	// 		{Type: astilectron.MenuItemTypeSeparator},
+	// 		{
+	// 			// Override the "Hide Electron" label
+	// 			Label: astikit.StrPtr("Hide Synergize"),
+	// 			Role:  astilectron.MenuItemRoleHide,
+	// 		},
+	// 		{Role: astilectron.MenuItemRoleHideOthers},
+	// 		{Role: astilectron.MenuItemRoleUnhide},
+	// 		{Type: astilectron.MenuItemTypeSeparator},
+	// 		{
+	// 			// Override the "Quit Electron" label
+	// 			Label: astikit.StrPtr("Quit Synergize"),
+	// 			Role:  astilectron.MenuItemRoleQuit,
+	// 		},
+	// 	},
+	// },
 
-	var menuOptions = []*astilectron.MenuItemOptions{}
-	if runtime.GOOS == "darwin" {
-		menuOptions = macOSMenus
-	} else {
-		// leave empty for windows and linux
-		// FIXME: empty menus causes the bootstrap to crash - so add the menus as a workaround
-		//		menuOptions = macOSMenus
-	}
+	// 	{Role: astilectron.MenuItemRoleEditMenu},
+	// 	{Role: astilectron.MenuItemRoleWindowMenu},
+	// 	/*
+	// 		Label: astikit.StrPtr("Edit"),
+	// 		SubMenu: []*astilectron.MenuItemOptions{
+	// 			{Role: astilectron.MenuItemRoleUndo},
+	// 			{Role: astilectron.MenuItemRoleRedo},
+	// 			{ Type: astilectron.MenuItemTypeSeparator },
+	// 			{Role: astilectron.MenuItemRoleCut},
+	// 			{Role: astilectron.MenuItemRoleCopy},
+	// 			{Role: astilectron.MenuItemRolePaste},
+	// 			{Role: astilectron.MenuItemRoleSelectAll},`
+	// 		},
+	// 	*/
+	// }
 
-	var executer = astilectron.DefaultExecuter
-	var acceptTimeout = astilectron.DefaultAcceptTCPTimeout
-	var adapter bootstrap.AstilectronAdapter = nil
-	var astiPort = 0
+	// 	var menuOptions = []*astilectron.MenuItemOptions{}
+	// 	if runtime.GOOS == "darwin" {
+	// 		menuOptions = macOSMenus
+	// 	} else {
+	// 		// leave empty for windows and linux
+	// 		// FIXME: empty menus causes the bootstrap to crash - so add the menus as a workaround
+	// 		//		menuOptions = macOSMenus
+	// 	}
 
-	if *uitest != 0 {
-		astiPort = *uitest
+	// 	var executer = astilectron.DefaultExecuter
+	// 	var acceptTimeout = astilectron.DefaultAcceptTCPTimeout
+	// 	var adapter bootstrap.AstilectronAdapter = nil
+	// 	var astiPort = 0
 
-		executer = func(l astikit.SeverityLogger, a *astilectron.Astilectron, cmd *exec.Cmd) (err error) {
-			l.Infof("======= NOT STARTING CMD %s\n", strings.Join(cmd.Args, " "))
-			return
-		}
+	// 	if *uitest != 0 {
+	// 		astiPort = *uitest
 
-		acceptTimeout = time.Minute * 3
+	// 		executer = func(l astikit.SeverityLogger, a *astilectron.Astilectron, cmd *exec.Cmd) (err error) {
+	// 			l.Infof("======= NOT STARTING CMD %s\n", strings.Join(cmd.Args, " "))
+	// 			return
+	// 		}
 
-		adapter = func(a *astilectron.Astilectron) {
-			logger.Infof("======= In UI Test adapter - suppressing executor\n")
-			a.SetExecuter(executer)
-		}
-	}
+	// 		acceptTimeout = time.Minute * 3
 
-	defer func() {
-		fmt.Printf("Close Event.\n")
-		if err = osc.Quit(); err != nil {
-			logger.Error(err)
-		}
-	}()
+	// 		adapter = func(a *astilectron.Astilectron) {
+	// 			logger.Infof("======= In UI Test adapter - suppressing executor\n")
+	// 			a.SetExecuter(executer)
+	// 		}
+	// 	}
 
-	if err := bootstrap.Run(bootstrap.Options{
-		Asset:    Asset,
-		AssetDir: AssetDir,
-		Adapter:  adapter,
-		AstilectronOptions: astilectron.Options{
-			TCPPort:            &astiPort,
-			AppName:            AppName,
-			AppIconDarwinPath:  "resources/icon.icns",
-			AppIconDefaultPath: "resources/icon.png",
-			SingleInstance:     true,
-			VersionAstilectron: VersionAstilectron,
-			VersionElectron:    VersionElectron,
+	// 	defer func() {
+	// 		fmt.Printf("Close Event.\n")
+	// 		if err = osc.Quit(); err != nil {
+	// 			logger.Error(err)
+	// 		}
+	// 	}()
 
-			AcceptTCPTimeout: acceptTimeout,
+	// 	if err := bootstrap.Run(bootstrap.Options{
+	// 		Asset:    Asset,
+	// 		AssetDir: AssetDir,
+	// 		Adapter:  adapter,
+	// 		AstilectronOptions: astilectron.Options{
+	// 			TCPPort:            &astiPort,
+	// 			AppName:            AppName,
+	// 			AppIconDarwinPath:  "resources/icon.icns",
+	// 			AppIconDefaultPath: "resources/icon.png",
+	// 			SingleInstance:     true,
+	// 			VersionAstilectron: VersionAstilectron,
+	// 			VersionElectron:    VersionElectron,
 
-			//ElectronSwitches: []string{
-			//	"enable-logging",
-			//	"no-sandbox",
-			//	"remote-debugging-port", "9315",
-			//	"host-rules", "MAP * 127.0.0.1",
-			//},
-		},
-		Debug:       prefsUserPreferences.HTTPDebug,
-		Logger:      logger.GetLogger(),
-		MenuOptions: menuOptions,
-		OnWait: func(as *astilectron.Astilectron, ws []*astilectron.Window, _ *astilectron.Menu, _ *astilectron.Tray, _ *astilectron.Menu) error {
-			if *provisionOnly {
-				logger.Infof("Provisioning completed. Exiting.\n")
-				// Quit causes a segv.  Exiting without it sometimes leaves a dialog open
-				// the later is more compatible with github CI
-				//a.Quit();
-				os.Exit(0)
-			}
-			a = as
-			w = ws[0]
-			about_w = ws[1]
-			prefs_w = ws[2]
+	// 			AcceptTCPTimeout: acceptTimeout,
 
-			if err = osc.OscRegisterBridge(w); err != nil {
-				logger.Error(err)
-			}
+	// 			//ElectronSwitches: []string{
+	// 			//	"enable-logging",
+	// 			//	"no-sandbox",
+	// 			//	"remote-debugging-port", "9315",
+	// 			//	"host-rules", "MAP * 127.0.0.1",
+	// 			//},
+	// 		},
+	// 		Debug:       prefsUserPreferences.HTTPDebug,
+	// 		Logger:      logger.GetLogger(),
+	// 		MenuOptions: menuOptions,
+	// 		OnWait: func(as *astilectron.Astilectron, ws []*astilectron.Window, _ *astilectron.Menu, _ *astilectron.Tray, _ *astilectron.Menu) error {
+	// 			if *provisionOnly {
+	// 				logger.Infof("Provisioning completed. Exiting.\n")
+	// 				// Quit causes a segv.  Exiting without it sometimes leaves a dialog open
+	// 				// the later is more compatible with github CI
+	// 				//a.Quit();
+	// 				os.Exit(0)
+	// 			}
+	// 			a = as
+	// 			w = ws[0]
+	// 			about_w = ws[1]
+	// 			prefs_w = ws[2]
 
-			if err = dx2synRegisterBridge(w); err != nil {
-				logger.Error(err)
-			}
+	// 			if err = osc.OscRegisterBridge(w); err != nil {
+	// 				logger.Error(err)
+	// 			}
 
-			// Need to explicitly intercept Closed event on the main
-			// window since the about window is never closed - only hidden.
-			w.On(astilectron.EventNameWindowEventClosed, func(e astilectron.Event) (deleteListener bool) {
-				a.Quit()
-				return true
-			})
-			return nil
-		},
-		RestoreAssets: RestoreAssets,
+	// 			if err = dx2synRegisterBridge(w); err != nil {
+	// 				logger.Error(err)
+	// 			}
 
-		// Suppress warnings about "signal urgent I/O condition"
-		// (https://github.com/asticode/go-astilectron/issues/239):
-		IgnoredSignals: ignoredSignals,
+	// 			// Need to explicitly intercept Closed event on the main
+	// 			// window since the about window is never closed - only hidden.
+	// 			w.On(astilectron.EventNameWindowEventClosed, func(e astilectron.Event) (deleteListener bool) {
+	// 				a.Quit()
+	// 				return true
+	// 			})
+	// 			return nil
+	// 		},
+	// 		RestoreAssets: RestoreAssets,
 
-		Windows: []*bootstrap.Window{{
-			Homepage:       "index.html",
-			MessageHandler: handleMessages,
-			Options: &astilectron.WindowOptions{
-				BackgroundColor: astikit.StrPtr("black"),
-				Center:          astikit.BoolPtr(true),
-				Height:          astikit.IntPtr(900),
-				Width:           astikit.IntPtr(990),
-				WebPreferences: &astilectron.WebPreferences{
-					EnableRemoteModule: astikit.BoolPtr(true),
-				},
-			},
-		}, {
-			Homepage:       "about.html",
-			MessageHandler: handleMessages,
-			Options: &astilectron.WindowOptions{
-				BackgroundColor: astikit.StrPtr("black"),
-				Center:          astikit.BoolPtr(true),
-				Show:            astikit.BoolPtr(false),
-				Height:          astikit.IntPtr(470),
-				Width:           astikit.IntPtr(500),
-				Custom: &astilectron.WindowCustomOptions{
-					HideOnClose: astikit.BoolPtr(true),
-				},
-				WebPreferences: &astilectron.WebPreferences{
-					EnableRemoteModule: astikit.BoolPtr(true),
-				},
-			},
-		}, {
-			Homepage:       "prefs.html",
-			MessageHandler: handleMessages,
-			Options: &astilectron.WindowOptions{
-				BackgroundColor: astikit.StrPtr("#ccc"),
-				Center:          astikit.BoolPtr(true),
-				Show:            astikit.BoolPtr(false),
-				Height:          astikit.IntPtr(680),
-				Width:           astikit.IntPtr(800),
-				Custom: &astilectron.WindowCustomOptions{
-					HideOnClose: astikit.BoolPtr(true),
-				},
-				WebPreferences: &astilectron.WebPreferences{
-					EnableRemoteModule: astikit.BoolPtr(true),
-				},
-			},
-		}},
-	}); err != nil {
-		logger.Errorf("running bootstrap failed: %w", err)
-	}
+	// 		// Suppress warnings about "signal urgent I/O condition"
+	// 		// (https://github.com/asticode/go-astilectron/issues/239):
+	// 		IgnoredSignals: ignoredSignals,
+
+	// 		Windows: []*bootstrap.Window{{
+	// 			Homepage:       "index.html",
+	// 			MessageHandler: handleMessages,
+	// 			Options: &astilectron.WindowOptions{
+	// 				BackgroundColor: astikit.StrPtr("black"),
+	// 				Center:          astikit.BoolPtr(true),
+	// 				Height:          astikit.IntPtr(900),
+	// 				Width:           astikit.IntPtr(990),
+	// 				WebPreferences: &astilectron.WebPreferences{
+	// 					EnableRemoteModule: astikit.BoolPtr(true),
+	// 				},
+	// 			},
+	// 		}, {
+	// 			Homepage:       "about.html",
+	// 			MessageHandler: handleMessages,
+	// 			Options: &astilectron.WindowOptions{
+	// 				BackgroundColor: astikit.StrPtr("black"),
+	// 				Center:          astikit.BoolPtr(true),
+	// 				Show:            astikit.BoolPtr(false),
+	// 				Height:          astikit.IntPtr(470),
+	// 				Width:           astikit.IntPtr(500),
+	// 				Custom: &astilectron.WindowCustomOptions{
+	// 					HideOnClose: astikit.BoolPtr(true),
+	// 				},
+	// 				WebPreferences: &astilectron.WebPreferences{
+	// 					EnableRemoteModule: astikit.BoolPtr(true),
+	// 				},
+	// 			},
+	// 		}, {
+	// 			Homepage:       "prefs.html",
+	// 			MessageHandler: handleMessages,
+	// 			Options: &astilectron.WindowOptions{
+	// 				BackgroundColor: astikit.StrPtr("#ccc"),
+	// 				Center:          astikit.BoolPtr(true),
+	// 				Show:            astikit.BoolPtr(false),
+	// 				Height:          astikit.IntPtr(680),
+	// 				Width:           astikit.IntPtr(800),
+	// 				Custom: &astilectron.WindowCustomOptions{
+	// 					HideOnClose: astikit.BoolPtr(true),
+	// 				},
+	// 				WebPreferences: &astilectron.WebPreferences{
+	// 					EnableRemoteModule: astikit.BoolPtr(true),
+	// 				},
+	// 			},
+	// 		}},
+	// 	}); err != nil {
+	// 		logger.Errorf("running bootstrap failed: %w", err)
+	// 	}
+
 }

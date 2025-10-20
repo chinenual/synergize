@@ -1,19 +1,15 @@
 package osc
 
 import (
-	"encoding/json"
-
-	"github.com/asticode/go-astilectron"
-	bootstrap "github.com/asticode/go-astilectron-bootstrap"
 	"github.com/chinenual/synergize/logger"
 )
 
-var astilectronWindow *astilectron.Window
+// var astilectronWindow *astilectron.Window
 
-func OscRegisterBridge(w *astilectron.Window) (err error) {
-	astilectronWindow = w
-	return
-}
+// func OscRegisterBridge(w *astilectron.Window) (err error) {
+// 	astilectronWindow = w
+// 	return
+// }
 
 type UIMsg struct {
 	Field string
@@ -24,24 +20,25 @@ func sendToUI(field string, value int) (err error) {
 	if verboseOscIn {
 		logger.Infof("OSC: SendToUI: %s %d\n", field, value)
 	}
-	if astilectronWindow == nil {
-		return
-	}
-	var strval string
-	if err = bootstrap.SendMessage(astilectronWindow, "updateFromCSurface", UIMsg{field, value},
-		func(m *bootstrap.MessageIn) {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &strval); err != nil {
-				logger.Errorf(" SendToUI failed to decode json response : %s %d: %v\n", field, value, err)
-				return
-			}
-			// feedback to CSurface:
-			if err = oscSendString("/stringval", strval); err != nil {
-				return
-			}
+	panic("FIX")
+	// if astilectronWindow == nil {
+	// 	return
+	// }
+	// var strval string
+	// if err = bootstrap.SendMessage(astilectronWindow, "updateFromCSurface", UIMsg{field, value},
+	// 	func(m *bootstrap.MessageIn) {
+	// 		// Unmarshal payload
+	// 		if err = json.Unmarshal(m.Payload, &strval); err != nil {
+	// 			logger.Errorf(" SendToUI failed to decode json response : %s %d: %v\n", field, value, err)
+	// 			return
+	// 		}
+	// 		// feedback to CSurface:
+	// 		if err = oscSendString("/stringval", strval); err != nil {
+	// 			return
+	// 		}
 
-		}); err != nil {
-		return
-	}
+	// 	}); err != nil {
+	// 	return
+	//}
 	return
 }

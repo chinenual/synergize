@@ -1,33 +1,75 @@
 module github.com/chinenual/synergize
 
-go 1.14
+go 1.24.0
 
 require (
-	github.com/BurntSushi/toml v0.3.1 // indirect
-	github.com/akavel/rsrc v0.10.2 // indirect
 	github.com/asticode/go-astikit v0.29.1
 	github.com/asticode/go-astilectron v0.27.0
 	github.com/asticode/go-astilectron-bootstrap v0.4.14
 	github.com/chinenual/dnssd v1.1.2
-	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/hypebeast/go-osc v0.0.0-20200115085105-85fee7fed692
 	github.com/jacobsa/go-serial v0.0.0-20180131005756-15cf729a72d4
-	github.com/kr/pretty v0.1.0 // indirect
-	github.com/leodido/go-urn v1.2.1 // indirect
-	github.com/matishsiao/goInfo v0.0.0-20210923090445-da2e3fa8d45f
-	github.com/miekg/dns v1.1.31 // indirect
+	github.com/matishsiao/goInfo v0.0.0-20241216093258-66a9250504d6
 	github.com/orcaman/writerseeker v0.0.0-20180723184025-774071c66cec
-	github.com/petermattis/goid v0.0.0-20180202154549-b0b1615b78e5 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/sasha-s/go-deadlock v0.2.0
 	github.com/snksoft/crc v1.1.0
+	github.com/wailsapp/wails/v3 v3.0.0-alpha.36
 	gitlab.com/gomidi/midi/v2 v2.0.2
-	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad
-	golang.org/x/sys v0.0.0-20220408201424-a24fb2fb8a0f // indirect
-	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
-	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
+	golang.org/x/crypto v0.36.0
 	gopkg.in/go-playground/validator.v9 v9.31.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
-	gopkg.in/yaml.v2 v2.3.0 // indirect
+)
+
+require (
+	// FROM WAILS init:
+	dario.cat/mergo v1.0.1 // indirect
+	github.com/Microsoft/go-winio v0.6.2 // indirect
+	github.com/ProtonMail/go-crypto v1.1.6 // indirect
+	github.com/adrg/xdg v0.5.3 // indirect
+	github.com/akavel/rsrc v0.10.2 // indirect
+	github.com/asticode/go-astilectron-bundler v0.7.12 // indirect
+	github.com/asticode/go-bindata v1.0.0 // indirect
+	github.com/bep/debounce v1.2.1 // indirect
+	github.com/cloudflare/circl v1.6.0 // indirect
+	github.com/cyphar/filepath-securejoin v0.4.1 // indirect
+	github.com/ebitengine/purego v0.8.2 // indirect
+	github.com/emirpasic/gods v1.18.1 // indirect
+	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
+	github.com/go-git/go-billy/v5 v5.6.2 // indirect
+	github.com/go-git/go-git/v5 v5.13.2 // indirect
+	github.com/go-ole/go-ole v1.3.0 // indirect
+	github.com/go-playground/locales v0.13.0 // indirect
+	github.com/go-playground/universal-translator v0.17.0 // indirect
+	github.com/godbus/dbus/v5 v5.1.0 // indirect
+	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
+	github.com/google/uuid v1.6.0 // indirect
+	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
+	github.com/jchv/go-winloader v0.0.0-20210711035445-715c2860da7e // indirect
+	github.com/kevinburke/ssh_config v1.2.0 // indirect
+	github.com/leaanthony/go-ansi-parser v1.6.1 // indirect
+	github.com/leaanthony/u v1.1.1 // indirect
+	github.com/leodido/go-urn v1.2.1 // indirect
+	github.com/lmittmann/tint v1.0.7 // indirect
+	github.com/mattn/go-colorable v0.1.14 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/miekg/dns v1.1.31 // indirect
+	github.com/petermattis/goid v0.0.0-20180202154549-b0b1615b78e5 // indirect
+	github.com/pjbgf/sha1cd v0.3.2 // indirect
+	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c // indirect
+	github.com/rivo/uniseg v0.4.7 // indirect
+	github.com/sam-kamerer/go-plister v1.2.0 // indirect
+	github.com/samber/lo v1.49.1 // indirect
+	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3 // indirect
+	github.com/skeema/knownhosts v1.3.1 // indirect
+	github.com/wailsapp/go-webview2 v1.0.22 // indirect
+	github.com/wailsapp/mimetype v1.4.1 // indirect
+	github.com/xanzy/ssh-agent v0.3.3 // indirect
+	golang.org/x/net v0.37.0 // indirect
+	golang.org/x/sys v0.31.0 // indirect
+	golang.org/x/term v0.30.0 // indirect
+	golang.org/x/text v0.23.0 // indirect
+	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
+	gopkg.in/ini.v1 v1.67.0 // indirect
+	gopkg.in/warnings.v0 v0.1.2 // indirect
 )
