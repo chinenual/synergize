@@ -6,11 +6,36 @@ import (
 	"os/user"
 	"path/filepath"
 	"strings"
+
+	"github.com/chinenual/synergize/io"
+	"github.com/chinenual/synergize/osc"
 )
 
 type connectionStatusResponse struct {
 	SynergyName        string
 	ControlSurfaceName string
+}
+
+type UIService struct {
+	// Your service fields
+}
+
+func NewUIService() *UIService {
+	// Initialize and return your service
+	return new(UIService)
+}
+
+func (s *UIService) GetVersion() (version string, newVersionAvailable bool) {
+	version = AppVersion
+	newVersionAvailable = CheckForNewVersion(false, io.SynergyConnectionType(), osc.ControlSurfaceConfigured())
+	return
+}
+
+func (s *UIService) CheckVersion(synergyWasDisconnected bool, controlSurfaceWasDisconnected bool) {
+	if synergyWasDisconnected || (controlSurfaceWasDisconnected && prefsUserPreferences.UseOsc) {
+		CheckForNewVersion(true, io.SynergyConnectionType(), osc.ControlSurfaceConfigured())
+	}
+	return
 }
 
 // // handleMessages handles messages
