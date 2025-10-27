@@ -56,7 +56,7 @@ table {
     border-radius: 20px 20px 20px 20px;
     -moz-border-radius: 20px 20px 20px 20px;
     -webkit-border-radius: 20px 20px 20px 20px;
-    border: 3px groove #666;
+    border: 3px solid #666;
 }
 
 .headerContainer {
@@ -67,7 +67,7 @@ table {
     border-radius: 20px 20px 20px 20px;
     -moz-border-radius: 20px 20px 20px 20px;
     -webkit-border-radius: 20px 20px 20px 20px;
-    border: 3px groove #666;
+    border: 3px solid #666;
 }
 
 .connectionStatus {
