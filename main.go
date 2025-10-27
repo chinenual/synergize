@@ -160,26 +160,12 @@ func mainInit() {
 	logger.Infof("Operating environment: %#v\n", gi)
 }
 
-func prefsWindowShow() {
-	panic("FIX")
-}
-func prefsWindowHide() {
-	panic("FIX")
-}
-
-func aboutWindowShow() {
-	panic("FIX")
-}
-func aboutWindowHide() {
-	panic("FIX")
-}
-
-func refreshNavPane(path string) {
-	panic("FIX")
-	//	if err := bootstrap.SendMessage(w, "explore", path, func(m *bootstrap.MessageIn) {}); err != nil {
-	//		logger.Error(fmt.Errorf("sending refreshNav event failed: %w", err))
-	//	}
-}
+//func refreshNavPane(path string) {
+//	panic("FIX")
+//	//	if err := bootstrap.SendMessage(w, "explore", path, func(m *bootstrap.MessageIn) {}); err != nil {
+//	//		logger.Error(fmt.Errorf("sending refreshNav event failed: %w", err))
+//	//	}
+//}
 
 func recordIo(f func(string) error, arg string) (err error) {
 	// nil means use "preferences" config

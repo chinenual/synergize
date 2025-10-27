@@ -1,6 +1,6 @@
-const Application = require('spectron').Application;
+//const Application = require('spectron').Application;
 const chai = require('chai');
-const electron = require('electron');
+//const electron = require('electron');
 
 const { exec } = require("child_process");
 const fs = require('fs')
@@ -10,7 +10,7 @@ const PNG = require('pngjs').PNG
 const SCREEN_DIFFS_ARE_FAILURES = false;
 
 const APPNAME = 'Synergize';
-const PORT = 55555; // the port the main process will listen to
+const PORT = 9245; // the port the main process will listen to
 const MOCKSYNIO = "-MOCKSYNIO";
 //const MOCKSYNIO = "-vst 53763";
 //const MOCKSYNIO = ""; // serial port
@@ -24,6 +24,7 @@ global.before(() => {
 // Map nodejs arch to golang arch
 let archMap = {
     "arm": "arm",
+    "arm64": "arm64",
     "ia32": "386",
     "x86": "386",
     "x64": "amd64",
@@ -75,6 +76,7 @@ function astilectronJS() {
 }
 
 module.exports = {
+    /*** 
     async startMainApp() {
         console.log(`node arch: "${process.arch}"   golang arch: "${archMap[process.arch]}"`)
         console.log(`Starting main exe: ${mainExe()} -UITEST ${PORT} ${MOCKSYNIO} ${SERIALVERBOSE}`);
@@ -128,7 +130,7 @@ module.exports = {
             await app.stop();
         }
     },
-
+**/
     trimLogMsgFilePrefix(s) {
         s = s.replace(/^file:.*\//g, '')
         return s;

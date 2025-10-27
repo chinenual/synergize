@@ -4,7 +4,6 @@ import (
 	"embed"
 	_ "embed"
 	"log"
-	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
@@ -17,6 +16,9 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
+var wailsApp *application.App
+var wailsPrefsWindow *application.WebviewWindow
+
 // main function serves as the application's entry point. It initializes the application, creates a window,
 // and starts a goroutine that emits a time-based event every second. It subsequently runs the application and
 // logs any error that might occur.
@@ -27,11 +29,12 @@ func WailsMain() {
 	// 'Assets' configures the asset server with the 'FS' variable pointing to the frontend files.
 	// 'Bind' is a list of Go struct instances. The frontend has access to the methods of these instances.
 	// 'Mac' options tailor the application when running an macOS.
-	app := application.New(application.Options{
+
+	wailsApp = application.New(application.Options{
 		Name:        "Synergize",
 		Description: "A demo of using raw HTML & CSS",
 		Services: []application.Service{
-			application.NewService(&GreetService{}),
+			application.NewService(&UIService{}),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
@@ -46,29 +49,30 @@ func WailsMain() {
 	// 'Mac' options tailor the window when running on macOS.
 	// 'BackgroundColour' is the background colour of the window.
 	// 'URL' is the URL that will be loaded into the webview.
-	app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title: "Window 1",
+	wailsApp.Window.NewWithOptions(application.WebviewWindowOptions{
+		Title: "Synergize",
 		Mac: application.MacWindow{
-			InvisibleTitleBarHeight: 50,
-			Backdrop:                application.MacBackdropTranslucent,
-			TitleBar:                application.MacTitleBarHiddenInset,
+			Backdrop: application.MacBackdropTranslucent,
 		},
-		BackgroundColour: application.NewRGB(27, 38, 54),
+		BackgroundColour: application.NewRGB(0, 0, 0),
 		URL:              "/",
+		Width:            990,
+		Height:           900,
 	})
 
-	// Create a goroutine that emits an event containing the current time every second.
-	// The frontend can listen to this event and update the UI accordingly.
-	go func() {
-		for {
-			now := time.Now().Format(time.RFC1123)
-			app.Event.Emit("time", now)
-			time.Sleep(time.Second)
-		}
-	}()
-
+	/**
+		// Create a goroutine that emits an event containing the current time every second.
+		// The frontend can listen to this event and update the UI accordingly.
+		go func() {
+			for {
+				now := time.Now().Format(time.RFC1123)
+				app.Event.Emit("time", now)
+				time.Sleep(time.Second)
+			}
+		}()
+	**/
 	// Run the application. This blocks until the application has been exited.
-	err := app.Run()
+	err := wailsApp.Run()
 
 	// If an error occurred while running the application, log it and exit.
 	if err != nil {

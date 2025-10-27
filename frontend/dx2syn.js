@@ -1,16 +1,16 @@
-let dx2syn = {
+export let dx2syn = {
 	init() {
-		if (process.platform == 'darwin') {
-			// Macos dialog can select both folders and files
-			document.getElementById('dx2synFileMenuItem').hidden = true
-			document.getElementById('dx2synDirMenuItem').hidden = true
-			document.getElementById('dx2synEitherMenuItem').hidden = false
-		} else {
-			// windows and linux need a specific file and directory variant
-			document.getElementById('dx2synFileMenuItem').hidden = false
-			document.getElementById('dx2synDirMenuItem').hidden = false
-			document.getElementById('dx2synEitherMenuItem').hidden = true
-		}
+		// if (process.platform == 'darwin') {
+		// 	// Macos dialog can select both folders and files
+		// 	document.getElementById('dx2synFileMenuItem').hidden = true
+		// 	document.getElementById('dx2synDirMenuItem').hidden = true
+		// 	document.getElementById('dx2synEitherMenuItem').hidden = false
+		// } else {
+		// 	// windows and linux need a specific file and directory variant
+		// 	document.getElementById('dx2synFileMenuItem').hidden = false
+		// 	document.getElementById('dx2synDirMenuItem').hidden = false
+		// 	document.getElementById('dx2synEitherMenuItem').hidden = true
+		// }
 	},
 
 	convertEitherDialog: function() {
@@ -111,3 +111,5 @@ let dx2syn = {
 		$('#subprocessModal').modal('handleUpdate')
 	},
 };
+
+window.dxsyn = dx2syn;

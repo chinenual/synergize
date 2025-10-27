@@ -1,4 +1,4 @@
-let syn2midi = {
+export let syn2midi = {
 
 	init: function() {
 	},
@@ -117,3 +117,4 @@ let syn2midi = {
 	},
 
 };
+window.syn2midi = syn2midi;

@@ -1,49 +1,37 @@
-const { dialog } = require('electron').remote;
-
-let shell = require('electron').shell
+//const { dialog } = require('electron').remote;
+//
+//let shell = require('electron').shell
+import { UIService }  from "/bindings/github.com/chinenual/synergize";
+import { dx2syn }  from "./dx2syn";
+import { syn2midi }  from "./syn2midi";
+import * as wails from "@wailsio/runtime";
 
 const DEBOUNCE_WAIT_SHORT = 50;
 const DEBOUNCE_WAIT = 250;
 
-let index = {
+export let index = {
 	init: function () {
 		dx2syn.init();
 		syn2midi.init();
-
 		// make sure external web links open in system browser - not the application:
-		document.addEventListener('click', function (event) {
-			if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
-				event.preventDefault()
-				shell.openExternal(event.target.href)
-			}
-		})
-		// Wait for astilectron to be ready
-		document.addEventListener('astilectron-ready', function () {
-			let message = {
-				"name": "isHTTPDebug",
-				"payload": ""
-			};
-			// Send message
-			astilectron.sendMessage(message, function (message) {
-				// Check error
-				if (message.name === "error") {
-					index.errorNotification(message.payload);
-				} else {
-					if (message.payload) {
-						debug.configDebugContextMenu();
-					}
-				}
-			});
-
-			// init menus to default state
-			index.updateConnectionStatus("","")
-			// Listen
-			index.listen();
-			// Explore default path
-			index.explore();
-		})
+		//document.addEventListener('click', function (event) {
+		//	if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
+		//		event.preventDefault()
+		//		shell.openExternal(event.target.href)
+		//	}
+		//})
+		// init menus to default state
+		index.updateConnectionStatus("", "")
+		// Explore default path
+		index.explore();
+		/*})*/
 
 	},
+
+	browserOpenURL: function (url) {
+		wails.Browser.OpenURL(url);
+	},
+
 	checkInputElementValue: function (ele) {
 		if (!ele.value.match(/^-?\d+$/)) {
 			return undefined;
@@ -95,10 +83,10 @@ let index = {
 		}
 		console.log("INFO NOTIFICATION: " + message)
 		document.getElementById("alertTitle").innerHTML = "Info";
-	    	document.getElementById("alertText").innerHTML = message;
-	    	// Make alert messages hide themselves after 3s - no need to click
-	        setTimeout(function(){
-		    $('#alertModal').modal('hide');
+		document.getElementById("alertText").innerHTML = message;
+		// Make alert messages hide themselves after 3s - no need to click
+		setTimeout(function () {
+			$('#alertModal').modal('hide');
 		}, 3000);
 		$('#alertModal').modal();
 	},
@@ -122,7 +110,7 @@ let index = {
 			$('#zeroconf2Div').hide();
 		}
 		var html = "";
-		if (prompt1 != null && choices1  != null) {
+		if (prompt1 != null && choices1 != null) {
 			for (i = 0; i < choices1.length; i++) {
 				var addr = ""
 				if (choices1[i].Port != 0) {
@@ -141,7 +129,7 @@ let index = {
 			console.log("innerHTML now " + document.getElementById("chooseZeroconf1Items").innerHTML);
 		}
 
-		if (prompt2 != null && choices2  != null) {
+		if (prompt2 != null && choices2 != null) {
 			var html = "";
 			for (i = 0; i < choices2.length; i++) {
 				var addr = ""
@@ -412,61 +400,57 @@ let index = {
 		div.innerHTML = `<i class="fa fa-file"></i><span>` + name + `</span>`;
 		document.getElementById("VCEfiles").appendChild(div)
 	},
-	explore: function (path) {
-		// Create message
-		let message = { "name": "explore" };
-		if (typeof path !== "undefined") {
-			message.payload = path
-		}
+	explore: async function (path) {
 
-		// Send message
-		astilectron.sendMessage(message, function (message) {
-			// Check error
-			if (message.name === "error") {
-				index.errorNotification(message.payload);
-				return
-			}
-
+		if (path == undefined) path = "";
+		try {
+			console.log("explore:", path);
+			let exploration = await UIService.Explore(path);
+			console.log("exploration:", exploration);
+			
 			// Process path
-			document.getElementById("path").innerHTML = message.payload.path;
+			document.getElementById("path").innerHTML = exploration.path;
 
 			// Process dirs
 			document.getElementById("dirs").innerHTML = ""
-			for (let i = 0; i < message.payload.dirs.length; i++) {
-				index.addFolder(message.payload.dirs[i].name, message.payload.dirs[i].path);
+			for (let i = 0; i < exploration.dirs.length; i++) {
+				index.addFolder(exploration.dirs[i].name, exploration.dirs[i].path);
 			}
 
 			document.getElementById("CRTfiles").innerHTML = ""
-			if (message.payload.CRTfiles.length > 0) {
+			if (exploration.CRTfiles.length > 0) {
 				let div = document.createElement("div")
 				div.innerHTML = "<div class='horizSeparator'></div><b>Cartridge Files (.CRT)</b>";
 				document.getElementById("CRTfiles").appendChild(div);
 
-				for (let i = 0; i < message.payload.CRTfiles.length; i++) {
-					index.addCRTFile(message.payload.CRTfiles[i].name, message.payload.CRTfiles[i].path);
+				for (let i = 0; i < exploration.CRTfiles.length; i++) {
+					index.addCRTFile(exploration.CRTfiles[i].name, exploration.CRTfiles[i].path);
 				}
 			}
 
 			document.getElementById("SYNfiles").innerHTML = ""
-			if (message.payload.SYNfiles.length > 0) {
+			if (exploration.SYNfiles.length > 0) {
 				let div = document.createElement("div")
 				div.innerHTML = "<div class='horizSeparator'></div><b>Synergy State (.SYN)</b>";
 				document.getElementById("SYNfiles").appendChild(div);
-				for (let i = 0; i < message.payload.SYNfiles.length; i++) {
-					index.addSYNFile(message.payload.SYNfiles[i].name, message.payload.SYNfiles[i].path);
+				for (let i = 0; i < exploration.SYNfiles.length; i++) {
+					index.addSYNFile(exploration.SYNfiles[i].name, exploration.SYNfiles[i].path);
 				}
 			}
 
 			document.getElementById("VCEfiles").innerHTML = ""
-			if (message.payload.VCEfiles.length > 0) {
+			if (exploration.VCEfiles.length > 0) {
 				let div = document.createElement("div")
 				div.innerHTML = "<div class='horizSeparator'></div><b>Voice Files (.VCE)</b>";
 				document.getElementById("VCEfiles").appendChild(div);
-				for (let i = 0; i < message.payload.VCEfiles.length; i++) {
-					index.addVCEFile(message.payload.VCEfiles[i].name, message.payload.VCEfiles[i].path);
+				for (let i = 0; i < exploration.VCEfiles.length; i++) {
+					index.addVCEFile(exploration.VCEfiles[i].name, exploration.VCEfiles[i].path);
 				}
 			}
-		})
+		} catch (err) {
+			index.errorNotification(err);
+			console.log("explore threw err: ", err);
+		}
 	},
 	disconnectSynergy: function () {
 		if (viewVCE_voice.voicingMode) {
@@ -478,7 +462,7 @@ let index = {
 		}
 	},
 
-	raw_disconnectSynergy: function() {
+	raw_disconnectSynergy: function () {
 		let message = { "name": "disconnectSynergy" };
 		index.spinnerOn();
 		astilectron.sendMessage(message, function (message) {
@@ -571,11 +555,12 @@ let index = {
 		}
 	},
 
-	checkVersion: function(synergyWasDisconnected, controlSurfaceWasDisconnected) {
+	checkVersion: function (synergyWasDisconnected, controlSurfaceWasDisconnected) {
 		console.log("checkVersion " + synergyWasDisconnected + " " + controlSurfaceWasDisconnected);
-		let message = { "name": "checkVersion",
+		let message = {
+			"name": "checkVersion",
 			"payload": {
-			"SynergyWasDisconnected" : synergyWasDisconnected,
+				"SynergyWasDisconnected": synergyWasDisconnected,
 				"ControlSurfaceWasDisconnected": controlSurfaceWasDisconnected
 			}
 		};
@@ -664,12 +649,13 @@ let index = {
 			// nop
 		});
 	},
-	showPreferences: function () {
-		let message = { "name": "showPreferences" };
-		//console.log("show preferences javascript");
-		astilectron.sendMessage(message, function (message) {
-			// nop
-		});
+	showPreferences: async function () {
+		try {
+			await UIService.ShowPreferences();
+		} catch (err) {
+			index.errorNotification(err);
+			console.log("show preferecnes threw err: ", err);
+		}
 	},
 
 	// debounce a function separately for each "first" argument - we use this
@@ -681,8 +667,10 @@ let index = {
 			return _.debounce(func, wait, options)
 		});
 		return function () { mem.apply(this, arguments).apply(this, arguments) }
-	},
+	}
+};
 
+		/*** 
 	listen: function () {
 		console.log("index listening...")
 		astilectron.onMessage(function (message) {
@@ -717,18 +705,22 @@ let index = {
 
 				case "dx2synAddProcessLog":
 					console.log("dx2synAddProcessLog  - " + message.payload)
-					dx2syn.addProcessLog(message.payload);
+					//????dx2syn.addProcessLog(message.payload);
 					return { payload: "ok" };
 
 				case "dx2synFinish":
 					console.log("dx2synFinish  - " + message.payload)
-					dx2syn.finishConvert(message.payload);
+					//?????dx2syn.finishConvert(message.payload);
 					return { payload: "ok" };
 
 			}
 		});
 	}
-};
+	**/
+
+
+// make the variable visible to HTML:
+window.index = index;
 
 function inDropbtn(ele) {
 	if (ele == null) {
@@ -758,3 +750,6 @@ window.onclick = function (event) {
 }
 
 
+wails.Events.On('explore', (path) => {
+	index.explore(path)
+});

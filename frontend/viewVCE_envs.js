@@ -1,6 +1,6 @@
-const {lookupService} = require("dns");
-const {env} = require("process");
-const {DH_CHECK_P_NOT_PRIME} = require("constants");
+//const {lookupService} = require("dns");
+//const {env} = require("process");
+//const {DH_CHECK_P_NOT_PRIME} = require("constants");
 
 var dragOldValue = {x: undefined, y: undefined};
 

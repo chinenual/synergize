@@ -5,10 +5,16 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"runtime"
 	"strings"
 
+	"github.com/chinenual/synergize/data"
 	"github.com/chinenual/synergize/io"
+	"github.com/chinenual/synergize/logger"
 	"github.com/chinenual/synergize/osc"
+	"github.com/chinenual/synergize/synio"
+	"github.com/chinenual/synergize/zeroconf"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 type connectionStatusResponse struct {
@@ -25,49 +31,149 @@ func NewUIService() *UIService {
 	return new(UIService)
 }
 
-func (s *UIService) GetVersion() (version string, newVersionAvailable bool) {
+func (s *UIService) GetVersion() (version string, newVersionAvailable bool, err error) {
+	// 	case "getVersion":
+	// 		payload = struct {
+	// 			Version             string
+	// 			NewVersionAvailable bool
+	// 		}{AppVersion, CheckForNewVersion(false, io.SynergyConnectionType(), osc.ControlSurfaceConfigured())}
+
 	version = AppVersion
 	newVersionAvailable = CheckForNewVersion(false, io.SynergyConnectionType(), osc.ControlSurfaceConfigured())
+	err = nil
 	return
 }
 
-func (s *UIService) CheckVersion(synergyWasDisconnected bool, controlSurfaceWasDisconnected bool) {
+func (s *UIService) CheckVersion(synergyWasDisconnected bool, controlSurfaceWasDisconnected bool) (err error) {
+	// 	case "checkVersion":
+	// 		var args struct {
+	// 			SynergyWasDisconnected        bool
+	// 			ControlSurfaceWasDisconnected bool
+	// 		}
+	// 		if len(m.Payload) > 0 {
+	// 			// Unmarshal payload
+	// 			if err = json.Unmarshal(m.Payload, &args); err != nil {
+	// 				payload = err.Error()
+	// 				return
+	// 			}
+	// 		}
+	// 		if args.SynergyWasDisconnected || (args.ControlSurfaceWasDisconnected && prefsUserPreferences.UseOsc) {
+	// 			CheckForNewVersion(true, io.SynergyConnectionType(), osc.ControlSurfaceConfigured())
+	// 		}
+	// 		payload = "ok"
 	if synergyWasDisconnected || (controlSurfaceWasDisconnected && prefsUserPreferences.UseOsc) {
 		CheckForNewVersion(true, io.SynergyConnectionType(), osc.ControlSurfaceConfigured())
 	}
+	err = nil
 	return
 }
 
-// // handleMessages handles messages
-// func handleMessages(_ *astilectron.Window, m bootstrap.MessageIn) (payload interface{}, err error) {
-// 	logger.Debugf("Handle message: %s %s\n", m.Name, string(m.Payload))
+func (s *UIService) ShowPreferences() (err error) {
+	// case "showPreferences":
+	//
+	logger.Infof("Show Preferences (from messages)\n")
+	logger.Errorf("FIXME: create windows in main()\n")
+	wailsPrefsWindow = wailsApp.Window.NewWithOptions(application.WebviewWindowOptions{
+		Title:  "Synergize Preferences",
+		URL:    "/prefs.html",
+		Height: 680,
+		Width:  800,
+	})
 
-// 	defer func() {
-// 		if err != nil {
-// 			logger.Errorf("Error handling message: {Name: %s, Payload: %s}: %v", m.Name, string(m.Payload), err)
-// 		}
-// 	}()
+	//	wailsPrefsWindow.Show()
+	return
+}
 
-// 	switch m.Name {
-// 	case "cancelPreferences":
-// 		_ = prefs_w.Hide()
+func (s *UIService) CancelPreferences() (err error) {
+	// case "cancelPreferences":
+	//
+	//	_ = prefs_w.Hide()
+	wailsPrefsWindow.Close()
+	wailsPrefsWindow = nil
+	return
+}
 
-// 	case "checkVersion":
-// 		var args struct {
-// 			SynergyWasDisconnected        bool
-// 			ControlSurfaceWasDisconnected bool
-// 		}
-// 		if len(m.Payload) > 0 {
-// 			// Unmarshal payload
-// 			if err = json.Unmarshal(m.Payload, &args); err != nil {
-// 				payload = err.Error()
-// 				return
-// 			}
-// 		}
-// 		if args.SynergyWasDisconnected || (args.ControlSurfaceWasDisconnected && prefsUserPreferences.UseOsc) {
-// 			CheckForNewVersion(true, io.SynergyConnectionType(), osc.ControlSurfaceConfigured())
-// 		}
-// 		payload = "ok"
+func (s *UIService) GetPreferences() (Os string, preferences Preferences, err error) {
+	// case "getPreferences":
+	//
+	//	payload = struct {
+	//		Os          string
+	//		Preferences Preferences
+	//	}{runtime.GOOS, prefsUserPreferences}
+	Os = runtime.GOOS
+	preferences = prefsUserPreferences
+	return
+}
+
+func refreshNavPane(path string) {
+	//wailsApp.Event.Emit("explore", path)
+	return
+}
+
+func (s *UIService) SavePreferences(preferences Preferences) (err error) {
+	// 	case "savePreferences":
+	// 		oldPath := prefsUserPreferences.LibraryPath
+	// 		if len(m.Payload) > 0 {
+	// 			// Unmarshal payload
+	// 			if err = json.Unmarshal(m.Payload, &prefsUserPreferences); err != nil {
+	// 				payload = err.Error()
+	// 				return
+	// 			}
+	// 		}
+	// 		if err = prefsSavePreferences(); err != nil {
+	// 			payload = err.Error()
+	// 			return
+	// 		}
+	// 		if oldPath != prefsUserPreferences.LibraryPath {
+	// 			refreshNavPane(prefsUserPreferences.LibraryPath)
+	// 		}
+
+	//	if prefsUserPreferences.UseOsc {
+	//		if err := zeroconf.StartServer(prefsUserPreferences.OscPort, prefsSynergyName()); err != nil {
+	//			logger.Errorf("could not start zeroconf: %v\n", err)
+	//		}
+	//	} else {
+	//
+	//		zeroconf.CloseServer()
+	//	}
+	//
+	// if (!zeroconf.ListenerRunning()) &&
+	//
+	//		(prefsUserPreferences.UseOsc && prefsUserPreferences.OscAutoConfig) {
+	//		zeroconf.StartListener()
+	//	}
+	//
+	// prefsWindowHide()
+	// payload = "ok"
+
+	oldPath := prefsUserPreferences.LibraryPath
+	prefsUserPreferences = preferences
+
+	if err = prefsSavePreferences(); err != nil {
+		return
+	}
+	if oldPath != prefsUserPreferences.LibraryPath {
+		refreshNavPane(prefsUserPreferences.LibraryPath)
+	}
+
+	if prefsUserPreferences.UseOsc {
+		if err := zeroconf.StartServer(prefsUserPreferences.OscPort, prefsSynergyName()); err != nil {
+			logger.Errorf("could not start zeroconf: %v\n", err)
+		}
+	} else {
+		zeroconf.CloseServer()
+	}
+
+	if (!zeroconf.ListenerRunning()) &&
+		(prefsUserPreferences.UseOsc && prefsUserPreferences.OscAutoConfig) {
+		zeroconf.StartListener()
+	}
+
+	wailsPrefsWindow.Close()
+	wailsPrefsWindow = nil
+
+	return
+}
 
 // 	case "connectSynergy":
 // 		var args struct {
@@ -272,18 +378,6 @@ func (s *UIService) CheckVersion(synergyWasDisconnected bool, controlSurfaceWasD
 // 		response := data.PatchTypeNames
 // 		payload = response
 
-// 	case "getPreferences":
-// 		payload = struct {
-// 			Os          string
-// 			Preferences Preferences
-// 		}{runtime.GOOS, prefsUserPreferences}
-
-// 	case "getVersion":
-// 		payload = struct {
-// 			Version             string
-// 			NewVersionAvailable bool
-// 		}{AppVersion, CheckForNewVersion(false, io.SynergyConnectionType(), osc.ControlSurfaceConfigured())}
-
 // 	case "isHTTPDebug":
 // 		payload = prefsUserPreferences.HTTPDebug
 
@@ -384,36 +478,6 @@ func (s *UIService) CheckVersion(synergyWasDisconnected bool, controlSurfaceWasD
 // 		} else {
 // 			payload = "Success!"
 // 		}
-// 	case "savePreferences":
-// 		oldPath := prefsUserPreferences.LibraryPath
-// 		if len(m.Payload) > 0 {
-// 			// Unmarshal payload
-// 			if err = json.Unmarshal(m.Payload, &prefsUserPreferences); err != nil {
-// 				payload = err.Error()
-// 				return
-// 			}
-// 		}
-// 		if err = prefsSavePreferences(); err != nil {
-// 			payload = err.Error()
-// 			return
-// 		}
-// 		if oldPath != prefsUserPreferences.LibraryPath {
-// 			refreshNavPane(prefsUserPreferences.LibraryPath)
-// 		}
-
-// 		if prefsUserPreferences.UseOsc {
-// 			if err := zeroconf.StartServer(prefsUserPreferences.OscPort, prefsSynergyName()); err != nil {
-// 				logger.Errorf("could not start zeroconf: %v\n", err)
-// 			}
-// 		} else {
-// 			zeroconf.CloseServer()
-// 		}
-// 		if (!zeroconf.ListenerRunning()) &&
-// 			(prefsUserPreferences.UseOsc && prefsUserPreferences.OscAutoConfig) {
-// 			zeroconf.StartListener()
-// 		}
-// 		prefsWindowHide()
-// 		payload = "ok"
 
 // 	case "saveSYN":
 // 		var path string
@@ -818,10 +882,6 @@ func (s *UIService) CheckVersion(synergyWasDisconnected bool, controlSurfaceWasD
 // 	case "showAbout":
 // 		aboutWindowShow()
 
-// 	case "showPreferences":
-// 		logger.Infof("Show Preferences (from messages)\n")
-// 		prefsWindowShow()
-
 // 	case "getSynergy":
 // 		var response [2]struct {
 // 			HasDevice         bool
@@ -880,106 +940,88 @@ func (s *UIService) CheckVersion(synergyWasDisconnected bool, controlSurfaceWasD
 // 		time.Sleep(time.Second * 3)
 // 		payload = "ok"
 
-// 	case "toggleVoicingMode":
-// 		var args struct {
-// 			Mode            bool
-// 			Disconnect      bool
-// 			Vce             *data.VCE
-// 			ZeroconfSynergy *zeroconf.Service
-// 			ZeroconfCs      *zeroconf.Service
-// 		}
-// 		if len(m.Payload) > 0 {
-// 			// Unmarshal payload
-// 			if err = json.Unmarshal(m.Payload, &args); err != nil {
-// 				payload = err.Error()
-// 				return
-// 			}
-// 		}
-// 		if args.Mode {
-// 			if args.ZeroconfSynergy != nil {
-// 				logger.Infof("ZEROCONF: config Synergy selected by user: %#v\n", *args.ZeroconfSynergy)
-// 				if err = ConnectSynergy(*args.ZeroconfSynergy); err != nil {
-// 					payload = err.Error()
-// 					return
-// 				}
-// 			}
-// 			if args.ZeroconfCs != nil {
-// 				logger.Infof("ZEROCONF: config Control Surface selected by user: %#v\n", *args.ZeroconfCs)
-// 				osc.SetControlSurface((*args.ZeroconfCs).InstanceName, (*args.ZeroconfCs).HostName, (*args.ZeroconfCs).Port)
-// 			}
-// 			payload = nil
-// 			csEnabled := osc.ControlSurfaceConfigured()
-// 			csName := osc.ControlSurfaceName()
+func (s *UIService) ToggleVoicingMode(
+	mode bool,
+	disconnect bool,
+	useVce *data.VCE,
+	zeroconfSynergy *zeroconf.Service,
+	zeroconfCs *zeroconf.Service) (loaded_vce *data.VCE,
+	csEnabled bool,
+	csName string,
+	synergyName string,
+	err error) {
 
-// 			if csEnabled {
-// 				if err = osc.Init(prefsUserPreferences.OscPort, *verboseOscIn, *verboseOscOut, io.SynergyName()); err != nil {
-// 					payload = err.Error()
-// 					return
-// 				}
-// 			}
-// 			if payload == nil {
-// 				var vce data.VCE
-// 				if vce, err = synio.EnableVoicingMode(args.Vce); err != nil {
-// 					payload = err.Error()
-// 					return
-// 				}
-// 				// NOTE: need to pass reference in order to get the custom JSON marshalling to notice the VNAME
-// 				resultPayload := struct {
-// 					Vce         *data.VCE
-// 					CsEnabled   bool
-// 					CsName      string
-// 					SynergyName string
-// 				}{
-// 					Vce:         &vce,
-// 					CsEnabled:   csEnabled,
-// 					CsName:      csName,
-// 					SynergyName: io.SynergyName(),
-// 				}
-// 				payload = resultPayload
-// 			}
+	// 	case "toggleVoicingMode":
+	// 		var args struct {
+	// 			Mode            bool
+	// 			Disconnect      bool
+	// 			Vce             *data.VCE
+	// 			ZeroconfSynergy *zeroconf.Service
+	// 			ZeroconfCs      *zeroconf.Service
+	// 		}
 
-// 		} else {
-// 			if err = osc.Quit(); err != nil {
-// 				payload = err.Error()
-// 			}
-// 			if err = synio.DisableVoicingMode(); err != nil {
-// 				payload = err.Error()
-// 				return
-// 			}
-// 			if args.Disconnect {
-// 				if err = DisconnectSynergy(); err != nil {
-// 					payload = err.Error()
-// 					return
-// 				}
-// 			}
-// 			response := connectionStatusResponse{io.SynergyName(), osc.ControlSurfaceName()}
-// 			payload = response
-// 		}
+	if mode {
+		if zeroconfSynergy != nil {
+			logger.Infof("ZEROCONF: config Synergy selected by user: %#v\n", *zeroconfSynergy)
+			if err = ConnectSynergy(*zeroconfSynergy); err != nil {
+				return
+			}
+		}
+		if zeroconfCs != nil {
+			logger.Infof("ZEROCONF: config Control Surface selected by user: %#v\n", *zeroconfCs)
+			osc.SetControlSurface((*zeroconfCs).InstanceName, (*zeroconfCs).HostName, (*zeroconfCs).Port)
+		}
+		csEnabled = osc.ControlSurfaceConfigured()
+		csName = osc.ControlSurfaceName()
 
-// 	case "explore":
-// 		// Unmarshal payload
-// 		var path string
-// 		if len(m.Payload) > 0 {
-// 			// Unmarshal payload
-// 			if err = json.Unmarshal(m.Payload, &path); err != nil {
-// 				payload = err.Error()
-// 				return
-// 			}
-// 		}
+		if csEnabled {
+			if err = osc.Init(prefsUserPreferences.OscPort, *verboseOscIn, *verboseOscOut, io.SynergyName()); err != nil {
+				return
+			}
+		}
+		var vce data.VCE
+		if vce, err = synio.EnableVoicingMode(useVce); err != nil {
+			return
+		}
+		loaded_vce = &vce
+		synergyName = io.SynergyName()
 
-// 		// Explore
-// 		if payload, err = explore(path); err != nil {
-// 			payload = err.Error()
-// 			return
-// 		}
+	} else {
+		if err = osc.Quit(); err != nil {
+			return
+		}
+		if err = synio.DisableVoicingMode(); err != nil {
+			return
+		}
+		if disconnect {
+			if err = DisconnectSynergy(); err != nil {
+				return
+			}
+		}
+	}
+	return
+}
 
-// 	default:
-// 		err = errors.New("Unhandled message " + m.Name)
-// 		payload = err.Error()
-// 		logger.Errorf("%v %v\n", payload, err)
-// 	}
-// 	return
-// }
+func (s *UIService) Explore(path string) (exploration Exploration, err error) {
+	// 	case "explore":
+	// 		// Unmarshal payload
+	// 		var path string
+	// 		if len(m.Payload) > 0 {
+	// 			// Unmarshal payload
+	// 			if err = json.Unmarshal(m.Payload, &path); err != nil {
+	// 				payload = err.Error()
+	// 				return
+	// 			}
+	// 		}
+
+	// 		// Explore
+	// 		if payload, err = explore(path); err != nil {
+	// 			payload = err.Error()
+	// 			return
+	// 		}
+	exploration, err = explore(path)
+	return
+}
 
 // Exploration represents the results of an exploration
 type Exploration struct {
