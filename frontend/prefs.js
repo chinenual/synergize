@@ -98,20 +98,19 @@ export let prefs = {
   },
 
   saveAndClose: async function() {
-      preferences = {
-        'UseSerial': document.getElementById('useSerial').checked,
-        'SerialPort': document.getElementById('serialPort').value,
-        'SerialBaud': parseInt(document.getElementById('serialBaud').value, 10),
-        'SerialFlowControl': document.getElementById('flowControl').checked,
-        'LibraryPath': document.getElementById('libraryPath').value,
-        'UseOsc': document.getElementById('useOsc').checked,
-        'OscAutoConfig': document.getElementById('oscAutoConfig').checked,
-        'OscPort': parseInt(document.getElementById('oscPort').value, 10),
-        'OscCSurfaceAddress':
-            document.getElementById('oscCSurfaceAddress').value,
-        'OscCSurfacePort':
-            parseInt(document.getElementById('oscCSurfacePort').value, 10)
-      };
+    preferences = {
+      'UseSerial': document.getElementById('useSerial').checked,
+      'SerialPort': document.getElementById('serialPort').value,
+      'SerialBaud': parseInt(document.getElementById('serialBaud').value, 10),
+      'SerialFlowControl': document.getElementById('flowControl').checked,
+      'LibraryPath': document.getElementById('libraryPath').value,
+      'UseOsc': document.getElementById('useOsc').checked,
+      'OscAutoConfig': document.getElementById('oscAutoConfig').checked,
+      'OscPort': parseInt(document.getElementById('oscPort').value, 10),
+      'OscCSurfaceAddress': document.getElementById('oscCSurfaceAddress').value,
+      'OscCSurfacePort':
+          parseInt(document.getElementById('oscCSurfacePort').value, 10)
+    };
     try {
       console.log('before save');
       await UIService.SavePreferences(preferences);
