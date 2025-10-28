@@ -751,5 +751,6 @@ window.onclick = function (event) {
 
 
 wails.Events.On('explore', (path) => {
-	index.explore(path)
+	console.log("explore event: ", path);
+	index.explore(path[0])
 });

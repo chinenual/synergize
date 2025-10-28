@@ -98,7 +98,7 @@ export let prefs = {
   },
 
   saveAndClose: async function() {
-    preferences = {
+    let preferences = {
       'UseSerial': document.getElementById('useSerial').checked,
       'SerialPort': document.getElementById('serialPort').value,
       'SerialBaud': parseInt(document.getElementById('serialBaud').value, 10),

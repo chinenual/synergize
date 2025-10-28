@@ -8,9 +8,9 @@
 	<link rel="stylesheet" href="static/css/bootstrap.min-darkly.css">
 	<link rel="stylesheet" href="static/css/base.css">
 
-	<script src="./jquery-3.4.1.min.js"></script>
-	<script src="./popper.min.js"></script>
-	<script src="./bootstrap.min.js"></script>
+	<script src="static/js/jquery-3.4.1.min.js"></script>
+	<script src="static/js/popper.min.js"></script>
+	<script src="static/js/bootstrap.min.js"></script>
 	<script type="module" src="./index.js"></script>
 	<script type="module" src="./prefs.js"></script>
 </head>
@@ -97,7 +97,7 @@
 			</div>
 			<div class="col-md-7 offset-md-3">
 				<button type="cancel" onclick="window.prefs.cancelAndClose();">Cancel</button>
-				<button type="submit" class="btn btn-primary" onclick="window.prefs.saveAndClose();">Save</button>
+				<button type="button" class="btn btn-primary" onclick="window.prefs.saveAndClose();">Save</button>
 			</div>
 		</form>
 	</div>

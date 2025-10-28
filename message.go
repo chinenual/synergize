@@ -106,7 +106,7 @@ func (s *UIService) GetPreferences() (Os string, preferences Preferences, err er
 }
 
 func refreshNavPane(path string) {
-	//wailsApp.Event.Emit("explore", path)
+	wailsApp.Event.Emit("explore", path)
 	return
 }
 
@@ -145,7 +145,7 @@ func (s *UIService) SavePreferences(preferences Preferences) (err error) {
 	//
 	// prefsWindowHide()
 	// payload = "ok"
-
+	logger.Info("INFO: SavePreferences called with ", preferences)
 	oldPath := prefsUserPreferences.LibraryPath
 	prefsUserPreferences = preferences
 
