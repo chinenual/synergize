@@ -1,3 +1,5 @@
+import { test, expect } from '@playwright/test';
+import testPrefs  from './test-prefs';
 
 export default function createTests() {
 
@@ -9,7 +11,7 @@ export default function createTests() {
 
     test.describe('Check initial preferences', () => {
 
-        test('click Help/Preferences', async () => {
+        test('click Help/Preferences', async ({ page }) => {
             await page.locator("css=#helpButton").click()
 
             //const item = await page.$('#preferencesMenuItem')
@@ -17,31 +19,25 @@ export default function createTests() {
 
             await page.locator('css=#preferencesMenuItem').click()
 
-            await page.switchWindow('Synergize Preferences');
-            await hooks.screenshotAndCompare(app, 'prefsWindow');
+            await page.goto('/prefs.html')
+            await expect(page).toHaveTitle(/Synergize Preferences/);
 
-            (await page.getTitle()).should.equal('Synergize Preferences')
+            await page.locator('#libraryPath').fill('./data/testfiles')
 
-            const txt = await page.$('#libraryPath')
-            await txt.setValue('../data/testfiles')
-
-            const submit = await page.$('button[type=submit]')
-            await submit.click()
+            await page.locator('#saveButton').click()
 
 
-            await page.switchWindow('Synergize');
-            (await page.getTitle()).should.equal('Synergize')
+            await page.goto('/')
+            await expect(page).toHaveTitle(/Synergize/);
 
-            const txt2 = await page.$('#path');
-
-            (await txt2.getText()).should.equal('testfiles')
+            await expect(page.locator('#path')).toHaveText('testfiles')
         });
 
 
-        test('show main window', async () => {
+        test('show main window', async ({ page }) => {
 
-            await page.switchWindow('Synergize');
-            (await page.getTitle()).should.equal('Synergize')
+            await page.goto('/')
+            await expect(page).toHaveTitle(/Synergize/);
         });
 
     });

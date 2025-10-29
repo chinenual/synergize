@@ -1,4 +1,6 @@
-let viewVCE_voice = {
+"use strict";
+
+export let viewVCE_voice = {
 	voicingMode: false,
 	csEnabled: false,
 
@@ -48,6 +50,7 @@ let viewVCE_voice = {
 	toggleOsc: function (ele) {
 		console.log("toggle " + ele.id);
 		var oscPattern = /([A-Z]+)\[(\d+)\]/;
+		let ret;
 		if (ret = ele.id.match(oscPattern)) {
 			param = ret[1];
 			osc = parseInt(ret[2], 10); /* 1-based */
@@ -83,6 +86,7 @@ let viewVCE_voice = {
 		console.log("filterChanged: " + id + " val: " + ele.value);
 
 		var filterPattern = /FILTER\[(\d+)\]/;
+		let ret;
 		if (ret = id.match(filterPattern)) {
 			osc = parseInt(ret[1])
 		} else {
@@ -114,13 +118,14 @@ let viewVCE_voice = {
 
 	TextToOHARM: function (str) {
 		var newStr;
+		let ret;
 		if (str === "dc") {
 			newStr = '-12';
 		} else if (ret = str.match(/s(\d+)/)) {
 		    	// bug#79:  s1 -> -1 (ff), s2 -> -2 (fe)
 		    	// correct: s1 -> -11 (f5), s2 -> -10 (f6)
 		        //          s11 -> -1 (ff),  s10 -> -2 (fe)
-			val = parseInt(ret[1], 10);
+			let val = parseInt(ret[1], 10);
 			newStr = '' + (val - 12);
 		} else if (ret = str.match(/\d+/)) {
 			newStr = str;
@@ -164,6 +169,7 @@ let viewVCE_voice = {
 	TextToFDETUN: function (str) {
 		// See FDETUNToText.  This "reverses" that attrocity
 		var newStr;
+		let ret;
 		if (ret = str.match(/ran(\d+)/)) {
 			// CASE A
 			var val = parseInt(ret[1], 10);
@@ -1468,3 +1474,5 @@ ${freqDAG}
 		});
 	}
 };
+
+window.viewVCE_voice = viewVCE_voice;

@@ -1,10 +1,12 @@
+"use strict";
+
 //const {lookupService} = require("dns");
 //const {env} = require("process");
 //const {DH_CHECK_P_NOT_PRIME} = require("constants");
 
 var dragOldValue = {x: undefined, y: undefined};
 
-let viewVCE_envs = {
+export let viewVCE_envs = {
 
     chart: null,
 
@@ -315,7 +317,7 @@ let viewVCE_envs = {
         return ok;
     },
 
-    unsetFloatVals: function() {
+    unsetFloatVals: function () {
         console.log("unsetFloatVals");
         viewVCE_envs.floatAmpVal = null;
     },
@@ -329,7 +331,7 @@ let viewVCE_envs = {
         if (viewVCE_envs.floatAmpVal === null) {
             console.log("initFloatVals");
             viewVCE_envs.floatAmpVal = []
-            console.log("initFloatVals init: ",viewVCE_envs.floatAmpVal)
+            console.log("initFloatVals init: ", viewVCE_envs.floatAmpVal)
             for (osc = 0; osc <= vce.Head.VOITAB; osc++) {
                 currentOscGain = viewVCE_envs.raw_computeOscGain(osc);
                 if (currentOscGain[0] <= 0.0) {
@@ -343,8 +345,8 @@ let viewVCE_envs = {
                     currentOscGain[1] = 1.0;
                 }
 
-                viewVCE_envs.floatAmpVal.push({low: [], up: [], referenceLow: [], referenceUp: [], origOscGain: currentOscGain})
-                console.log("initFloatVals top: " + osc,viewVCE_envs.floatAmpVal)
+                viewVCE_envs.floatAmpVal.push({ low: [], up: [], referenceLow: [], referenceUp: [], origOscGain: currentOscGain })
+                console.log("initFloatVals top: " + osc, viewVCE_envs.floatAmpVal)
 
                 for (eleIndex = 0; eleIndex < vce.Envelopes[osc].AmpEnvelope.NPOINTS; eleIndex++) {
                     var v = viewVCE_envs.scaleAmpEnvValue(vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 0]);
@@ -356,7 +358,7 @@ let viewVCE_envs = {
                     v = 100.0 / currentOscGain[1] * v;
                     viewVCE_envs.floatAmpVal[osc].referenceUp.push(v)
                 }
-                console.log("initFloatVals eles: " + osc,viewVCE_envs.floatAmpVal)
+                console.log("initFloatVals eles: " + osc, viewVCE_envs.floatAmpVal)
             }
         }
     },
@@ -367,16 +369,16 @@ let viewVCE_envs = {
         var maxLow = 0;
         var maxUp = 0;
         for (eleIndex = 0; eleIndex < vce.Envelopes[osc].AmpEnvelope.NPOINTS; eleIndex++) {
-                // low
-                var v = viewVCE_envs.scaleAmpEnvValue(vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 0]);
-                maxLow = Math.max(maxLow, v)
-                // up
-                v = viewVCE_envs.scaleAmpEnvValue(vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 1]);
-                maxUp = Math.max(maxUp, v)
+            // low
+            var v = viewVCE_envs.scaleAmpEnvValue(vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 0]);
+            maxLow = Math.max(maxLow, v)
+            // up
+            v = viewVCE_envs.scaleAmpEnvValue(vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 1]);
+            maxUp = Math.max(maxUp, v)
         }
         var result = [
             100.0 * maxLow / 72.0,
-            100.0 * maxUp / 72.0 ]; // 72 == MAX allowed Amp Val
+            100.0 * maxUp / 72.0]; // 72 == MAX allowed Amp Val
         console.log("raw_computeOscGain " + osc + " " + maxLow + " " + maxUp + " -> " + result)
         return result;
     },
@@ -491,12 +493,12 @@ let viewVCE_envs = {
         }
 
         if (osc == visibleOsc) {
-            $('#gainAmpLow').val(viewVCE_envs.computeOscGain(osc,0));
-            $('#gainAmpUp').val(viewVCE_envs.computeOscGain(osc,1));
+            $('#gainAmpLow').val(viewVCE_envs.computeOscGain(osc, 0));
+            $('#gainAmpUp').val(viewVCE_envs.computeOscGain(osc, 1));
         }
         // update the Voice tab
-        document.getElementById(`OscGain[${osc + 1}]`).value = viewVCE_envs.computeOscGain(osc,2)
-        console.log("setGain: update voice tab: " +osc + " " +visibleOsc + " "+ document.getElementById(`OscGain[${osc + 1}]`).value)
+        document.getElementById(`OscGain[${osc + 1}]`).value = viewVCE_envs.computeOscGain(osc, 2)
+        console.log("setGain: update voice tab: " + osc + " " + visibleOsc + " " + document.getElementById(`OscGain[${osc + 1}]`).value)
     },
 
     onchangeGain: function (ele) {
@@ -755,8 +757,8 @@ let viewVCE_envs = {
 
                 // update the floatVal so gains work
                 viewVCE_envs.unsetFloatVals();
-                $('#gainAmpLow').val = viewVCE_envs.computeOscGain(toOsc-1, 0);
-                $('#gainAmpUp').val = viewVCE_envs.computeOscGain(toOsc-1, 1);
+                $('#gainAmpLow').val = viewVCE_envs.computeOscGain(toOsc - 1, 0);
+                $('#gainAmpUp').val = viewVCE_envs.computeOscGain(toOsc - 1, 1);
                 // update the Voice tab
                 document.getElementById(`OscGain[${toOsc}]`).value = viewVCE_envs.computeOscGain(toOsc - 1, 2)
                 console.log("onchange: setGain: update voice tab: " + toOsc + " " + document.getElementById(`OscGain[${toOsc}]`).value)
@@ -914,10 +916,10 @@ let viewVCE_envs = {
                     if (extraarg == undefined) {
                         // update the floatVal so gains work
                         viewVCE_envs.unsetFloatVals();
-                        $('#gainAmpLow').val = viewVCE_envs.computeOscGain(osc-1,0);
+                        $('#gainAmpLow').val = viewVCE_envs.computeOscGain(osc - 1, 0);
                         // update the Voice tab
-                        document.getElementById(`OscGain[${osc}]`).value = viewVCE_envs.computeOscGain(osc-1,2)
-                        console.log("onchange: setGain: update voice tab: " +osc+1 + " "+ document.getElementById(`OscGain[${osc}]`).value)
+                        document.getElementById(`OscGain[${osc}]`).value = viewVCE_envs.computeOscGain(osc - 1, 2)
+                        console.log("onchange: setGain: update voice tab: " + osc + 1 + " " + document.getElementById(`OscGain[${osc}]`).value)
                     }
                     break;
                 case "envAmpUpVal":
@@ -926,9 +928,9 @@ let viewVCE_envs = {
                     if (extraarg == undefined) {
                         // update the floatVal so gains work
                         viewVCE_envs.unsetFloatVals();
-                        $('#gainAmpUp').val = viewVCE_envs.computeOscGain(osc-1,1);
-                        document.getElementById(`OscGain[${osc}]`).value = viewVCE_envs.computeOscGain(osc-1,2)
-                        console.log("onchange: setGain: update voice tab: " +osc+1 + " "+ document.getElementById(`OscGain[${osc}]`).value)
+                        $('#gainAmpUp').val = viewVCE_envs.computeOscGain(osc - 1, 1);
+                        document.getElementById(`OscGain[${osc}]`).value = viewVCE_envs.computeOscGain(osc - 1, 2)
+                        console.log("onchange: setGain: update voice tab: " + osc + 1 + " " + document.getElementById(`OscGain[${osc}]`).value)
                     }
                     break;
                 case "envAmpLowTime":
@@ -1051,12 +1053,12 @@ let viewVCE_envs = {
     },
 
     changeTimeScale: function (val) {
-        this.chart.options.scales.xAxes [0].type = val;
+        this.chart.options.scales.xAxes[0].type = val;
         this.chart.update();
     },
 
     changeFreqScale: function (val) {
-        this.chart.options.scales.yAxes [0].type = val;
+        this.chart.options.scales.yAxes[0].type = val;
         this.chart.update();
     },
 
@@ -1066,7 +1068,7 @@ let viewVCE_envs = {
         //this.chart.update();
     },
 
-// XREF: needs to match the dataset order inside envChangeUpdate()
+    // XREF: needs to match the dataset order inside envChangeUpdate()
     valFieldNameByDatasetIdx: ["envFreqLowVal", "envFreqUpVal", "envAmpLowVal", "envAmpUpVal"],
 
     timeFieldNameByDatasetIdx: ["envFreqLowTime", "envFreqUpTime", "envAmpLowTime", "envAmpUpTime"],
@@ -1296,10 +1298,10 @@ let viewVCE_envs = {
                 viewVCE_voice.sendToCSurface(null, `accelAmpUp`, 0);
             }
         }
-        $('#gainAmpLow').val(viewVCE_envs.computeOscGain(oscIndex,0));
-        $('#gainAmpUp').val(viewVCE_envs.computeOscGain(oscIndex,1));
+        $('#gainAmpLow').val(viewVCE_envs.computeOscGain(oscIndex, 0));
+        $('#gainAmpUp').val(viewVCE_envs.computeOscGain(oscIndex, 1));
         if (animate) {
-            console.log("GAIN TO CS: " + $('#gainAmpLow').val() +" and " + $('#gainAmpUp').val())
+            console.log("GAIN TO CS: " + $('#gainAmpLow').val() + " and " + $('#gainAmpUp').val())
             viewVCE_voice.sendToCSurface(null, `gainAmpLow`, $('#gainAmpLow').val());
             viewVCE_voice.sendToCSurface(null, `gainAmpUp`, $('#gainAmpUp').val());
         }
@@ -1352,8 +1354,8 @@ let viewVCE_envs = {
             totalTimeLow += timeLow;
             totalTimeUp += timeUp;
 
-            datasets[freqLowIdx].data.push({x: totalTimeLow, y: freqLow});
-            datasets[freqUpIdx].data.push({x: totalTimeUp, y: freqUp});
+            datasets[freqLowIdx].data.push({ x: totalTimeLow, y: freqLow });
+            datasets[freqUpIdx].data.push({ x: totalTimeUp, y: freqUp });
 
             document.getElementById(`envFreqLowVal[${i + 1}]`).value = freqLow;
             document.getElementById(`envFreqUpVal[${i + 1}]`).value = freqUp;
@@ -1407,8 +1409,8 @@ let viewVCE_envs = {
         }
 
         // Amp envelopes have an implicit start point at time zero, value zero
-        datasets[ampLowIdx].data.push({x: 0, y: 0});
-        datasets[ampUpIdx].data.push({x: 0, y: 0});
+        datasets[ampLowIdx].data.push({ x: 0, y: 0 });
+        datasets[ampUpIdx].data.push({ x: 0, y: 0 });
 
         for (i = 0; i < envelopes.AmpEnvelope.NPOINTS; i++) {
             var tr = $('#envTable tbody tr:eq(' + i + ')');
@@ -1444,8 +1446,8 @@ let viewVCE_envs = {
             totalTimeLow += timeLow;
             totalTimeUp += timeUp;
 
-            datasets[ampLowIdx].data.push({x: totalTimeLow, y: ampLow});
-            datasets[ampUpIdx].data.push({x: totalTimeUp, y: ampUp});
+            datasets[ampLowIdx].data.push({ x: totalTimeLow, y: ampLow });
+            datasets[ampUpIdx].data.push({ x: totalTimeUp, y: ampUp });
 
             //	    console.dir(datasets[ampLowIdx]);
 
@@ -1632,39 +1634,39 @@ let viewVCE_envs = {
                             display: true
                         }
                     },
-                        {
-                            position: 'right',
-                            id: 'amp-axis',
-                            type: 'linear',
-                            gridLines: {
-                                color: '#666',
-                                display: true,
-                                drawBorder: true,
-                                drawOnChartArea: false
-                            },
-                            scaleLabel: {
-                                display: true,
-                                labelString: "Amplitude dB"
-                            },
+                    {
+                        position: 'right',
+                        id: 'amp-axis',
+                        type: 'linear',
+                        gridLines: {
+                            color: '#666',
+                            display: true,
+                            drawBorder: true,
+                            drawOnChartArea: false
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: "Amplitude dB"
+                        },
 
-                            // after a pan, the graph sometimes shows poorly formatted values for min and max (apparently bypasses the tick callback?)
-                            //Workaround by just not displaying them
-                            afterTickToLabelConversion: function (scaleInstance) {
-                                // set the first and last tick to null so it does not display
-                                // note, ticks[0] is the last tick and ticks[length - 1] is the first
-                                scaleInstance.ticks[0] = null;
-                                scaleInstance.ticks[scaleInstance.ticks.length - 1] = null;
+                        // after a pan, the graph sometimes shows poorly formatted values for min and max (apparently bypasses the tick callback?)
+                        //Workaround by just not displaying them
+                        afterTickToLabelConversion: function (scaleInstance) {
+                            // set the first and last tick to null so it does not display
+                            // note, ticks[0] is the last tick and ticks[length - 1] is the first
+                            scaleInstance.ticks[0] = null;
+                            scaleInstance.ticks[scaleInstance.ticks.length - 1] = null;
 
-                                // need to do the same thing for this similiar array which is used internally
-                                //scaleInstance.ticksAsNumbers[0] = null;
-                                //scaleInstance.ticksAsNumbers[scaleInstance.ticksAsNumbers.length - 1] = null;
-                            },
+                            // need to do the same thing for this similiar array which is used internally
+                            //scaleInstance.ticksAsNumbers[0] = null;
+                            //scaleInstance.ticksAsNumbers[scaleInstance.ticksAsNumbers.length - 1] = null;
+                        },
 
-                            ticks: {
-                                color: '#eee',
-                                display: true
-                            }
-                        }],
+                        ticks: {
+                            color: '#eee',
+                            display: true
+                        }
+                    }],
                 },
                 responsive: true,
                 maintainAspectRatio: false,
@@ -1759,7 +1761,7 @@ let viewVCE_envs = {
                         },
                         pan: {
                             enabled: true,
-                            mode: function ({chart}) {
+                            mode: function ({ chart }) {
                                 if (viewVCE_envs.dragging) {
                                     return '';
                                 }
@@ -1804,8 +1806,8 @@ let viewVCE_envs = {
                     - viewVCE_envs.chart.data.datasets[datasetIndex].data[index - 1].x);
             }
         }
-// last point case is common to both types of env
-// if last point, there's no nextT
+        // last point case is common to both types of env
+        // if last point, there's no nextT
         if (index != viewVCE_envs.chart.data.datasets[datasetIndex].data.length - 1) {
             nextNewT = (viewVCE_envs.chart.data.datasets[datasetIndex].data[index + 1].x
                 - value.x);
@@ -1832,5 +1834,6 @@ let viewVCE_envs = {
         }
     }
 
-}
+};
 
+window.viewVCE_envs = viewVCE_envs;
