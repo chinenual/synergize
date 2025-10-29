@@ -58,6 +58,14 @@ func WailsMain() {
 		URL:              "/",
 		Width:            990,
 		Height:           900,
+		DevToolsEnabled:  true,
+	})
+	wailsPrefsWindow = wailsApp.Window.NewWithOptions(application.WebviewWindowOptions{
+		Title:  "Synergize Preferences",
+		URL:    "/prefs.html",
+		Height: 680,
+		Width:  800,
+		Hidden: true,
 	})
 
 	/**

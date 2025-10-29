@@ -14,7 +14,6 @@ import (
 	"github.com/chinenual/synergize/osc"
 	"github.com/chinenual/synergize/synio"
 	"github.com/chinenual/synergize/zeroconf"
-	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 type connectionStatusResponse struct {
@@ -72,15 +71,7 @@ func (s *UIService) ShowPreferences() (err error) {
 	// case "showPreferences":
 	//
 	logger.Infof("Show Preferences (from messages)\n")
-	logger.Errorf("FIXME: create windows in main()\n")
-	wailsPrefsWindow = wailsApp.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title:  "Synergize Preferences",
-		URL:    "/prefs.html",
-		Height: 680,
-		Width:  800,
-	})
-
-	//	wailsPrefsWindow.Show()
+	wailsPrefsWindow.Show()
 	return
 }
 
@@ -88,8 +79,7 @@ func (s *UIService) CancelPreferences() (err error) {
 	// case "cancelPreferences":
 	//
 	//	_ = prefs_w.Hide()
-	wailsPrefsWindow.Close()
-	wailsPrefsWindow = nil
+	wailsPrefsWindow.Hide()
 	return
 }
 
@@ -169,8 +159,7 @@ func (s *UIService) SavePreferences(preferences Preferences) (err error) {
 		zeroconf.StartListener()
 	}
 
-	wailsPrefsWindow.Close()
-	wailsPrefsWindow = nil
+	wailsPrefsWindow.Hide()
 
 	return
 }
