@@ -100,7 +100,7 @@ export let viewCRT = {
   },
 
   saveCRT: async function(name, path_ignored) {
-   let path = await wails.Dialogs.OpenFile({
+   let path = await wails.Dialogs.SaveFile({
       'CanChooseDirectories': false,
       'CanChooseFiles': true,
       'Title': 'Save CRT',

@@ -1,758 +1,798 @@
-//const { dialog } = require('electron').remote;
+// const { dialog } = require('electron').remote;
 //
-//let shell = require('electron').shell
-import { UIService }  from "/bindings/github.com/chinenual/synergize";
-import * as dx2syn   from "./dx2syn";
-import * as syn2midi   from "./syn2midi";
-import * as viewCRT  from "./viewCRT";
-import * as viewVCE  from "./viewVCE";
-import * as viewVCE_voice  from "./viewVCE_voice";
-import * as wails from "@wailsio/runtime";
-import { $ } from "./jquery-3.4.1.min";
-import { _ } from "./lodash-4.17.15.js";
+// let shell = require('electron').shell
+import {UIService} from '/bindings/github.com/chinenual/synergize';
+import * as wails from '@wailsio/runtime';
+
+import * as dx2syn from './dx2syn';
+import {$} from './jquery-3.4.1.min';
+import {_} from './lodash-4.17.15.js';
+import * as syn2midi from './syn2midi';
+import * as viewCRT from './viewCRT';
+import * as viewVCE from './viewVCE';
+import * as viewVCE_voice from './viewVCE_voice';
 
 
 export let index = {
- 	DEBOUNCE_WAIT_SHORT :  50,
-	DEBOUNCE_WAIT :  250,
- 
-	init: function () {
-		dx2syn.init();
-		syn2midi.init();
-		// make sure external web links open in system browser - not the application:
-		//document.addEventListener('click', function (event) {
-		//	if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
-		//		event.preventDefault()
-		//		shell.openExternal(event.target.href)
-		//	}
-		//})
-		// init menus to default state
-		index.updateConnectionStatus("", "")
-		// Explore default path
-		index.explore();
-		/*})*/
+  DEBOUNCE_WAIT_SHORT: 50,
+  DEBOUNCE_WAIT: 250,
 
-	},
+  init: function() {
+    dx2syn.init();
+    syn2midi.init();
+    // make sure external web links open in system browser - not the
+    // application:
+    // document.addEventListener('click', function (event) {
+    //	if (event.target.tagName === 'A' &&
+    //event.target.href.startsWith('http')) { 		event.preventDefault()
+    //		shell.openExternal(event.target.href)
+    //	}
+    //})
+    // init menus to default state
+    index.updateConnectionStatus('', '')
+    // Explore default path
+    index.explore();
+    /*})*/
+  },
 
-	browserOpenURL: function (url) {
-		wails.Browser.OpenURL(url);
-	},
+  browserOpenURL: function(url) {
+    wails.Browser.OpenURL(url);
+  },
 
-	checkInputElementValue: function (ele) {
-		if (!ele.value.match(/^-?\d+$/)) {
-			return undefined;
-		}
-		let result = parseInt(ele.value, 10);
-		if (ele.hasAttribute("min")) {
-			let min = parseInt(ele.getAttribute("min"), 10);
-			if (result < min) result = min;
-		}
-		if (ele.hasAttribute("max")) {
-			let max = parseInt(ele.getAttribute("max"), 10);
-			if (result > max) result = max;
-		}
-		return result;
-	},
+  checkInputElementValue: function(ele) {
+    if (!ele.value.match(/^-?\d+$/)) {
+      return undefined;
+    }
+    let result = parseInt(ele.value, 10);
+    if (ele.hasAttribute('min')) {
+      let min = parseInt(ele.getAttribute('min'), 10);
+      if (result < min) result = min;
+    }
+    if (ele.hasAttribute('max')) {
+      let max = parseInt(ele.getAttribute('max'), 10);
+      if (result > max) result = max;
+    }
+    return result;
+  },
 
-	spinnerOn: function () {
-		document.getElementById("spinner").style.display = "block";
-	},
-	spinnerOff: function () {
-		document.getElementById("spinner").style.display = "none";
-	},
+  spinnerOn: function() {
+    document.getElementById('spinner').style.display = 'block';
+  },
+  spinnerOff: function() {
+    document.getElementById('spinner').style.display = 'none';
+  },
 
-	confirmDialog: function (message, successCallback) {
-		if (typeof message != 'string') {
-			message = JSON.stringify(message);
-		}
-		console.log("CONFIRM DIALOG: " + message)
-		document.getElementById("confirmTitle").innerHTML = "Confirm";
-		document.getElementById("confirmText").innerHTML = message;
-		document.getElementById("confirmOKButton").onclick = successCallback;
-		$('#confirmModal').modal({
-			backdrop: "static" // clicking outside the dialog doesnt close the dialog
-		});
-	},
+  confirmDialog: function(message, successCallback) {
+    if (typeof message != 'string') {
+      message = JSON.stringify(message);
+    }
+    console.log('CONFIRM DIALOG: ' + message)
+    document.getElementById('confirmTitle').innerHTML = 'Confirm';
+    document.getElementById('confirmText').innerHTML = message;
+    document.getElementById('confirmOKButton').onclick = successCallback;
+    $('#confirmModal').modal({
+      backdrop: 'static'  // clicking outside the dialog doesnt close the dialog
+    });
+  },
 
-	errorNotification: function (message) {
-		if (typeof message != 'string') {
-			message = JSON.stringify(message);
-		}
-		console.log("ERROR NOTIFICATION: " + message)
-		document.getElementById("alertTitle").innerHTML = "Error";
-		document.getElementById("alertText").innerHTML = message;
-		$('#alertModal').modal();
-	},
-	infoNotification: function (message) {
-		if (typeof message != 'string') {
-			message = JSON.stringify(message);
-		}
-		console.log("INFO NOTIFICATION: " + message)
-		document.getElementById("alertTitle").innerHTML = "Info";
-		document.getElementById("alertText").innerHTML = message;
-		// Make alert messages hide themselves after 3s - no need to click
-		setTimeout(function () {
-			$('#alertModal').modal('hide');
-		}, 3000);
-		$('#alertModal').modal();
-	},
+  errorNotification: function(message) {
+    if (typeof message != 'string') {
+      message = JSON.stringify(message);
+    }
+    console.log('ERROR NOTIFICATION: ' + message)
+    document.getElementById('alertTitle').innerHTML = 'Error';
+    document.getElementById('alertText').innerHTML = message;
+    $('#alertModal').modal();
+  },
+  infoNotification: function(message) {
+    if (typeof message != 'string') {
+      message = JSON.stringify(message);
+    }
+    console.log('INFO NOTIFICATION: ' + message)
+    document.getElementById('alertTitle').innerHTML = 'Info';
+    document.getElementById('alertText').innerHTML = message;
+    // Make alert messages hide themselves after 3s - no need to click
+    setTimeout(function() {
+      $('#alertModal').modal('hide');
+    }, 3000);
+    $('#alertModal').modal();
+  },
 
-	chooseZeroconfService: function (prompt1, choices1, prompt2, choices2, onCancel, onOK, onRescan) {
-		console.log("chooseZeroconfService: " + prompt1 + " " + JSON.stringify(choices1) + " " + prompt2 + " " + JSON.stringify(choices2));
-		if (prompt1 != null) {
-			document.getElementById("chooseZeroconf1Prompt").innerHTML = prompt1;
-			$('#zeroconf1Div').show();
-		} else {
-			document.getElementById("chooseZeroconf1Prompt").innerHTML = "";
-			document.getElementById("chooseZeroconf1Items").innerHTML = "";
-			$('#zeroconf1Div').hide();
-		}
-		if (prompt2 != null) {
-			document.getElementById("chooseZeroconf2Prompt").innerHTML = prompt2;
-			$('#zeroconf2Div').show();
-		} else {
-			document.getElementById("chooseZeroconf2Prompt").innerHTML = "";
-			document.getElementById("chooseZeroconf2Items").innerHTML = "";
-			$('#zeroconf2Div').hide();
-		}
-		if (prompt1 != null && choices1 != null) {
-			let html = "";
-			for (let i = 0; i < choices1.length; i++) {
-				let addr = ""
-				if (choices1[i].Port != 0) {
-					addr = ` (${choices1[i].HostName}:${choices1[i].Port})`
-				}
-				html = html + `
+  chooseZeroconfService: function(
+      prompt1, choices1, prompt2, choices2, onCancel, onOK, onRescan) {
+    console.log(
+        'chooseZeroconfService: ' + prompt1 + ' ' + JSON.stringify(choices1) +
+        ' ' + prompt2 + ' ' + JSON.stringify(choices2));
+    if (prompt1 != null) {
+      document.getElementById('chooseZeroconf1Prompt').innerHTML = prompt1;
+      $('#zeroconf1Div').show();
+    } else {
+      document.getElementById('chooseZeroconf1Prompt').innerHTML = '';
+      document.getElementById('chooseZeroconf1Items').innerHTML = '';
+      $('#zeroconf1Div').hide();
+    }
+    if (prompt2 != null) {
+      document.getElementById('chooseZeroconf2Prompt').innerHTML = prompt2;
+      $('#zeroconf2Div').show();
+    } else {
+      document.getElementById('chooseZeroconf2Prompt').innerHTML = '';
+      document.getElementById('chooseZeroconf2Items').innerHTML = '';
+      $('#zeroconf2Div').hide();
+    }
+    if (prompt1 != null && choices1 != null) {
+      let html = '';
+      for (let i = 0; i < choices1.length; i++) {
+        let addr = ''
+        if (choices1[i].Port != 0) {
+          addr = ` (${choices1[i].HostName}:${choices1[i].Port})`
+        }
+        html = html +
+            `
 		    <div class="form-check">
-                <input class="form-check-input" type="radio" name="chooseZeroconf1Radios" id="chooseZeroconf1Radio${i}" value="${i}" ${i == 0 ? "checked" : ""}>
+                <input class="form-check-input" type="radio" name="chooseZeroconf1Radios" id="chooseZeroconf1Radio${
+                   i}" value="${i}" ${i == 0 ? 'checked' : ''}>
                 <label class="form-check-label" for="chooseZeroconf1Radio${i}">
                    ${choices1[i].InstanceName}${addr}
                 </label>
 			</div>`
-				console.log("html now " + html);
-			}
-			document.getElementById("chooseZeroconf1Items").innerHTML = html;
-			console.log("innerHTML now " + document.getElementById("chooseZeroconf1Items").innerHTML);
-		}
+        console.log('html now ' + html);
+      }
+      document.getElementById('chooseZeroconf1Items').innerHTML = html;
+      console.log(
+          'innerHTML now ' +
+          document.getElementById('chooseZeroconf1Items').innerHTML);
+    }
 
-		if (prompt2 != null && choices2 != null) {
-			let html = "";
-			for (let i = 0; i < choices2.length; i++) {
-				let addr = ""
-				if (choices2[i].Port != 0) {
-					addr = ` (${choices2[i].HostName}:${choices2[i].Port})`
-				}
-				html = html + `
+    if (prompt2 != null && choices2 != null) {
+      let html = '';
+      for (let i = 0; i < choices2.length; i++) {
+        let addr = ''
+        if (choices2[i].Port != 0) {
+          addr = ` (${choices2[i].HostName}:${choices2[i].Port})`
+        }
+        html = html +
+            `
 		    <div class="form-check">
-                <input class="form-check-input" type="radio" name="chooseZeroconf2Radios" id="chooseZeroconf2Radio${i}" value="${i}" ${i == 0 ? "checked" : ""}>
+                <input class="form-check-input" type="radio" name="chooseZeroconf2Radios" id="chooseZeroconf2Radio${
+                   i}" value="${i}" ${i == 0 ? 'checked' : ''}>
                 <label class="form-check-label" for="chooseZeroconf2Radio${i}">
                    ${choices2[i].InstanceName}${addr}
                 </label>
 			</div>`
-				console.log("html now " + html);
-			}
-			document.getElementById("chooseZeroconf2Items").innerHTML = html;
-			console.log("innerHTML now " + document.getElementById("chooseZeroconf2Items").innerHTML);
-		}
+        console.log('html now ' + html);
+      }
+      document.getElementById('chooseZeroconf2Items').innerHTML = html;
+      console.log(
+          'innerHTML now ' +
+          document.getElementById('chooseZeroconf2Items').innerHTML);
+    }
 
-		document.getElementById("chooseZeroconfCancelButton").onclick = function () {
-			console.log("Cancelled");
-			onCancel();
-		};
-		document.getElementById("chooseZeroconfOKButton").onclick = function () {
-			let idx1 = null
-			let selected1 = null
-			let idx2 = null
-			let selected2 = null
-			if (choices1 != null && prompt1 != null) {
-				idx1 = parseInt($('#chooseZeroconf1Items input:checked').val(), 10);
-				selected1 = choices1[idx1];
-			}
-			if (choices2 != null && prompt2 != null) {
-				idx2 = parseInt($('#chooseZeroconf2Items input:checked').val(), 10);
-				selected2 = choices2[idx2];
-			}
-			console.log("Selected " + idx1 + " " + idx2);
-			onOK(selected1, selected2);
-		};
-		document.getElementById("chooseZeroconfRescanButton").onclick = function () {
-			console.log("Rescan");
-			onRescan();
-		};
+    document.getElementById('chooseZeroconfCancelButton').onclick = function() {
+      console.log('Cancelled');
+      onCancel();
+    };
+    document.getElementById('chooseZeroconfOKButton').onclick = function() {
+      let idx1 = null
+      let selected1 = null
+      let idx2 = null
+      let selected2 = null
+      if (choices1 != null && prompt1 != null) {
+        idx1 = parseInt($('#chooseZeroconf1Items input:checked').val(), 10);
+        selected1 = choices1[idx1];
+      }
+      if (choices2 != null && prompt2 != null) {
+        idx2 = parseInt($('#chooseZeroconf2Items input:checked').val(), 10);
+        selected2 = choices2[idx2];
+      }
+      console.log('Selected ' + idx1 + ' ' + idx2);
+      onOK(selected1, selected2);
+    };
+    document.getElementById('chooseZeroconfRescanButton').onclick = function() {
+      console.log('Rescan');
+      onRescan();
+    };
 
-		$('#chooseZeroconfModal').modal({
-			backdrop: "static" // clicking outside the dialog doesnt close the dialog
-		});
-	},
+    $('#chooseZeroconfModal').modal({
+      backdrop: 'static'  // clicking outside the dialog doesnt close the dialog
+    });
+  },
 
-	saveSYNDialog: function () {
+  saveSYNDialog: async function() {
+    let path = await wails.Dialogs.SaveFile({
+      'CanChooseDirectories': false,
+      'CanChooseFiles': true,
+      'Title': 'Save state to SYN file',
+      'Filters': [
+        {DisplayName: 'State', Pattern: ['syn']},
+        {DisplayName: 'All Files', Pattern: ['*']}
+      ]
+    });
+    console.log('in fileDialog: ' + path);
 
-		let path = dialog.showSaveDialogSync({
-			filters: [
-				{ name: 'State', extensions: ['syn'] },
-				{ name: 'All Files', extensions: ['*'] }],
-			properties: ['openFile', 'promptToCreate']
-		});
-		console.log("in fileDialog: " + path);
+    if (path != undefined) {
+      viewVCE_voice.connectSynergy(function() {
+        let message = {'name': 'saveSYN', 'payload': path};
+        // Send message
+        index.spinnerOn();
+        astilectron.sendMessage(message, function(message) {
+          index.spinnerOff();
+          // Check error
+          if (message.name === 'error') {
+            index.errorNotification(message.payload);
+          } else {
+            index.infoNotification(
+                'Successfully saved Synergy state to ' + path);
+          }
+          index.refreshConnectionStatus();
+        });
+      });
+    }
+  },
+  loadSYNDialog: async function() {
+    let path = await wails.Dialogs.OpenFile({
+      'CanChooseDirectories': false,
+      'CanChooseFiles': true,
+      'Title': 'Load state from SYN file',
+      'Filters': [
+        {DisplayName: 'State', Pattern: ['syn']},
+        {DisplayName: 'All Files', Pattern: ['*']}
+      ]
+    });
+    console.log('in fileDialog: ' + path);
+    if (path != undefined) {
+      index.loadSYN(path[0], path[0]);
+    }
+  },
+  loadCRTDialog: async function() {
+    let path = await wails.Dialogs.OpenFile({
+      'CanChooseDirectories': false,
+      'CanChooseFiles': true,
+      'Title': 'Load CRT Cartridge file',
+      'Filters': [
+        {DisplayName: 'Cartridge', Pattern: ['crt']},
+        {DisplayName: 'All Files', Pattern: ['*']}
+      ]
+    });
+    console.log('in fileDialog: ' + path);
+    if (path != undefined) {
+      index.viewCRT(path[0], path[0]);
+    }
+  },
+  loadVCEDialog: async function() {
+    let path = await wails.Dialogs.OpenFile({
+      'CanChooseDirectories': false,
+      'CanChooseFiles': true,
+      'Title': 'Load VCE Voice file',
+      'Filters': [
+        {DisplayName: 'Voice', Pattern: ['vce']},
+        {DisplayName: 'All Files', Pattern: ['*']}
+      ]
+    });
+    console.log('in fileDialog: ' + path);
+    if (path != undefined) {
+      index.viewVCE(path[0], path[0]);
+    }
+  },
+  saveVCEDialog: async function() {
+    let path = await wails.Dialogs.SaveFile({
+      'CanChooseDirectories': false,
+      'CanChooseFiles': true,
+      'Title': 'Save VCE Voice file',
+      'Filters': [
+        {DisplayName: 'Voice', Pattern: ['vce']},
+        {DisplayName: 'All Files', Pattern: ['*']}
+      ]
+    });
+    console.log('in saveVCEDialog: ' + path);
+    if (path != undefined) {
+      let message = {'name': 'saveVCE', 'payload': path};
+      // Send message
+      index.spinnerOn();
+      astilectron.sendMessage(message, function(message) {
+        index.spinnerOff();
+        // Check error
+        if (message.name === 'error') {
+          index.errorNotification(message.payload);
+        } else {
+          index.infoNotification(
+              'Successfully saved Synergy voice file to ' + path);
+        }
+        index.refreshConnectionStatus();
+      });
+    }
+  },
+  loadSYN: function(name, path) {
+    viewVCE_voice.connectSynergy(function() {
+      index.confirmDialog('Load Synergy state file ' + path, function() {
+        let message = {'name': 'loadSYN', 'payload': path};
+        // Send message
+        index.spinnerOn();
+        astilectron.sendMessage(message, function(message) {
+          index.spinnerOff();
+          // Check error
+          if (message.name === 'error') {
+            index.errorNotification(message.payload);
+          } else {
+            index.infoNotification(
+                'Successfully loaded ' + name + ' to Synergy')
+          }
+          index.refreshConnectionStatus();
+        });
+      });
+    });
+  },
+  viewCRT: function(name, path) {
+    if (viewVCE_voice.voicingMode) {
+      index.errorNotification('Can\'t load a CRT file while in Voicing mode');
+      return;
+    }
+    let message = {'name': 'readCRT', 'payload': path};
+    astilectron.sendMessage(message, function(message) {
+      // Check error
+      if (message.name === 'error') {
+        index.errorNotification(message.payload);
+        return
+      }
+      viewCRT.setCRT(path, name, message.payload);
+      index.load('viewCRT.html', 'content', function() {
+        viewCRT.init();
+      });
+      index.refreshConnectionStatus();
+    });
+  },
+  viewVCE: function(name, path) {
+    console.log('index.viewVCE ' + name + ' ' + path)
+    if (viewVCE_voice.voicingMode) {
+      index.confirmDialog(
+          'Loading voice file will overwrite any pending edits - continue?',
+          function() {
+            index.raw_viewVCE(name, path);
+          });
+    }
+    else {
+      index.raw_viewVCE(name, path);
+    }
+  },
+  raw_viewVCE: function(name, path) {
+    console.log('index.raw_viewVCE ' + name + ' ' + path)
+    let msgname = 'readVCE';
+    if (viewVCE_voice.voicingMode) {
+      msgname = 'loadVceVoicingMode'
+    }
+    let message = {'name': msgname, 'payload': path};
+    // Send message
+    index.spinnerOn();
+    astilectron.sendMessage(message, function(message) {
+      index.spinnerOff();
+      // Check error
+      if (message.name === 'error') {
+        index.errorNotification(message.payload);
+        return
+      }
+      viewVCE.setVCE(message.payload);
 
-		if (path != undefined) {
-			viewVCE_voice.connectSynergy(function () {
+      viewCRT.setCRT(null, null);
+      index.load('viewVCE.html', 'content', function() {
+        viewVCE.init();
+      });
+      index.refreshConnectionStatus();
+    });
+  },
+  viewVCESlot: function(slot) {
+    viewVCE.setVCE(viewCRT.crt.Voices[slot]);
 
-				let message = {
-					"name": "saveSYN",
-					"payload": path
-				};
-				// Send message
-				index.spinnerOn();
-				astilectron.sendMessage(message, function (message) {
-					index.spinnerOff();
-					// Check error
-					if (message.name === "error") {
-						index.errorNotification(message.payload);
-					} else {
-						index.infoNotification("Successfully saved Synergy state to " + path);
-					}
-					index.refreshConnectionStatus();
-				});
-			});
-		}
-	},
-	loadSYNDialog: function () {
-		let path = dialog.showOpenDialogSync({
-			filters: [
-				{ name: 'State', extensions: ['syn'] },
-				{ name: 'All Files', extensions: ['*'] }],
-			properties: ['openFile']
-		});
-		console.log("in fileDialog: " + path);
-		if (path != undefined) {
-			index.loadSYN(path[0], path[0]);
-		}
-	},
-	loadCRTDialog: function () {
-		let path = dialog.showOpenDialogSync({
-			filters: [
-				{ name: 'Cartridge', extensions: ['crt'] },
-				{ name: 'All Files', extensions: ['*'] }],
-			properties: ['openFile']
-		});
-		console.log("in fileDialog: " + path);
-		if (path != undefined) {
-			index.viewCRT(path[0], path[0]);
-		}
-	},
-	loadVCEDialog: function () {
-		let path = dialog.showOpenDialogSync({
-			filters: [
-				{ name: 'Voice', extensions: ['vce'] },
-				{ name: 'All Files', extensions: ['*'] }],
-			properties: ['openFile']
-		});
-		console.log("in fileDialog: " + path);
-		if (path != undefined) {
-			index.viewVCE(path[0], path[0]);
-		}
-	},
-	saveVCEDialog: function () {
-		let path = dialog.showSaveDialogSync({
-			filters: [
-				{ name: 'Voice', extensions: ['vce'] },
-				{ name: 'All Files', extensions: ['*'] }],
-			properties: ['openFile', 'promptToCreate']
-		});
-		console.log("in saveVCEDialog: " + path);
-		if (path != undefined) {
-			let message = {
-				"name": "saveVCE",
-				"payload": path
-			};
-			// Send message
-			index.spinnerOn();
-			astilectron.sendMessage(message, function (message) {
-				index.spinnerOff();
-				// Check error
-				if (message.name === "error") {
-					index.errorNotification(message.payload);
-				} else {
-					index.infoNotification("Successfully saved Synergy voice file to " + path);
-				}
-				index.refreshConnectionStatus();
-			});
-		}
-	},
-	loadSYN: function (name, path) {
-		viewVCE_voice.connectSynergy(function () {
-			index.confirmDialog("Load Synergy state file " + path, function () {
-				let message = {
-					"name": "loadSYN",
-					"payload": path
-				};
-				// Send message
-				index.spinnerOn();
-				astilectron.sendMessage(message, function (message) {
-					index.spinnerOff();
-					// Check error
-					if (message.name === "error") {
-						index.errorNotification(message.payload);
-					} else {
-						index.infoNotification("Successfully loaded " + name + " to Synergy")
-					}
-					index.refreshConnectionStatus();
-				});
-			});
-		});
-	},
-	viewCRT: function (name, path) {
-		if (viewVCE_voice.voicingMode) {
-			index.errorNotification("Can't load a CRT file while in Voicing mode");
-			return;
-		}
-		let message = {
-			"name": "readCRT",
-			"payload": path
-		};
-		astilectron.sendMessage(message, function (message) {
-			// Check error
-			if (message.name === "error") {
-				index.errorNotification(message.payload);
-				return
-			}
-			viewCRT.setCRT(path, name, message.payload);
-			index.load("viewCRT.html", "content",
-				function () {
-					viewCRT.init();
-				});
-			index.refreshConnectionStatus();
-		});
-	},
-	viewVCE: function (name, path) {
-		console.log("index.viewVCE " + name + " " + path)
-		if (viewVCE_voice.voicingMode) {
-			index.confirmDialog("Loading voice file will overwrite any pending edits - continue?", function () {
-				index.raw_viewVCE(name, path);
-			});
-		} else {
-			index.raw_viewVCE(name, path);
-		}
-	},
-	raw_viewVCE: function (name, path) {
-		console.log("index.raw_viewVCE " + name + " " + path)
-		let msgname = "readVCE";
-		if (viewVCE_voice.voicingMode) {
-			msgname = "loadVceVoicingMode"
-		}
-		let message = {
-			"name": msgname,
-			"payload": path
-		};
-		// Send message
-		index.spinnerOn();
-		astilectron.sendMessage(message, function (message) {
-			index.spinnerOff();
-			// Check error
-			if (message.name === "error") {
-				index.errorNotification(message.payload);
-				return
-			}
-			viewVCE.setVCE(message.payload);
+    console.log('view voice slot ' + slot + ' : ' + viewVCE.vce);
+    index.load('viewVCE.html', 'content', function() {
+      viewVCE.init();
+    });
+  },
+  addFolder: function(name, path) {
+    let div = document.createElement('div');
+    div.className = 'dir';
+    div.onclick = function() {
+      index.explore(path)
+    };
+    if (name == '..') name = '&lt;Parent&gt;';
+    div.innerHTML = `<i class="fa fa-folder"></i><span>` + name + `</span>`;
+    document.getElementById('dirs').appendChild(div)
+  },
+  addSYNFile: function(name, path) {
+    let div = document.createElement('div');
+    div.className = 'file';
+    div.onclick = function() {
+      index.loadSYN(name, path)
+    };
+    div.innerHTML = `<i class="fa fa-file"></i><span>` + name + `</span>`;
+    document.getElementById('SYNfiles').appendChild(div)
+  },
+  addCRTFile: function(name, path) {
+    let div = document.createElement('div');
+    div.className = 'file';
+    div.onclick = function() {
+      index.viewCRT(name, path)
+    };
+    div.innerHTML = `<i class="fa fa-file"></i><span>` + name + `</span>`;
+    document.getElementById('CRTfiles').appendChild(div)
+  },
+  addVCEFile: function(name, path) {
+    let div = document.createElement('div');
+    div.className = 'file';
+    div.onclick = function() {
+      index.viewVCE(name, path)
+    };
+    div.innerHTML = `<i class="fa fa-file"></i><span>` + name + `</span>`;
+    document.getElementById('VCEfiles').appendChild(div)
+  },
+  explore: async function(path) {
+    if (path == undefined) path = '';
+    try {
+      console.log('explore:', path);
+      let exploration = await UIService.Explore(path);
+      console.log('exploration:', exploration);
 
-			viewCRT.setCRT(null, null); 
-			index.load("viewVCE.html", "content",
-				function () {
-					viewVCE.init();
-				});
-			index.refreshConnectionStatus();
-		});
-	},
-	viewVCESlot: function (slot) {
-		viewVCE.setVCE(viewCRT.crt.Voices[slot]);
+      // Process path
+      document.getElementById('path').innerHTML = exploration.path;
 
-		console.log("view voice slot " + slot + " : " + viewVCE.vce);
-		index.load("viewVCE.html", "content",
-			function () {
-				viewVCE.init();
-			});
-	},
-	addFolder: function (name, path) {
-		let div = document.createElement("div");
-		div.className = "dir";
-		div.onclick = function () { index.explore(path) };
-		if (name == "..") name = "&lt;Parent&gt;";
-		div.innerHTML = `<i class="fa fa-folder"></i><span>` + name + `</span>`;
-		document.getElementById("dirs").appendChild(div)
-	},
-	addSYNFile: function (name, path) {
-		let div = document.createElement("div");
-		div.className = "file";
-		div.onclick = function () { index.loadSYN(name, path) };
-		div.innerHTML = `<i class="fa fa-file"></i><span>` + name + `</span>`;
-		document.getElementById("SYNfiles").appendChild(div)
-	},
-	addCRTFile: function (name, path) {
-		let div = document.createElement("div");
-		div.className = "file";
-		div.onclick = function () { index.viewCRT(name, path) };
-		div.innerHTML = `<i class="fa fa-file"></i><span>` + name + `</span>`;
-		document.getElementById("CRTfiles").appendChild(div)
-	},
-	addVCEFile: function (name, path) {
-		let div = document.createElement("div");
-		div.className = "file";
-		div.onclick = function () { index.viewVCE(name, path) };
-		div.innerHTML = `<i class="fa fa-file"></i><span>` + name + `</span>`;
-		document.getElementById("VCEfiles").appendChild(div)
-	},
-	explore: async function (path) {
+      // Process dirs
+      document.getElementById('dirs').innerHTML = ''
+      for (let i = 0; i < exploration.dirs.length; i++) {
+        index.addFolder(exploration.dirs[i].name, exploration.dirs[i].path);
+      }
 
-		if (path == undefined) path = "";
-		try {
-			console.log("explore:", path);
-			let exploration = await UIService.Explore(path);
-			console.log("exploration:", exploration);
-			
-			// Process path
-			document.getElementById("path").innerHTML = exploration.path;
+      document.getElementById('CRTfiles').innerHTML = ''
+      if (exploration.CRTfiles.length > 0) {
+        let div = document.createElement('div')
+        div.innerHTML =
+            '<div class=\'horizSeparator\'></div><b>Cartridge Files (.CRT)</b>';
+        document.getElementById('CRTfiles').appendChild(div);
 
-			// Process dirs
-			document.getElementById("dirs").innerHTML = ""
-			for (let i = 0; i < exploration.dirs.length; i++) {
-				index.addFolder(exploration.dirs[i].name, exploration.dirs[i].path);
-			}
+        for (let i = 0; i < exploration.CRTfiles.length; i++) {
+          index.addCRTFile(
+              exploration.CRTfiles[i].name, exploration.CRTfiles[i].path);
+        }
+      }
 
-			document.getElementById("CRTfiles").innerHTML = ""
-			if (exploration.CRTfiles.length > 0) {
-				let div = document.createElement("div")
-				div.innerHTML = "<div class='horizSeparator'></div><b>Cartridge Files (.CRT)</b>";
-				document.getElementById("CRTfiles").appendChild(div);
+      document.getElementById('SYNfiles').innerHTML = ''
+      if (exploration.SYNfiles.length > 0) {
+        let div = document.createElement('div')
+        div.innerHTML =
+            '<div class=\'horizSeparator\'></div><b>Synergy State (.SYN)</b>';
+        document.getElementById('SYNfiles').appendChild(div);
+        for (let i = 0; i < exploration.SYNfiles.length; i++) {
+          index.addSYNFile(
+              exploration.SYNfiles[i].name, exploration.SYNfiles[i].path);
+        }
+      }
 
-				for (let i = 0; i < exploration.CRTfiles.length; i++) {
-					index.addCRTFile(exploration.CRTfiles[i].name, exploration.CRTfiles[i].path);
-				}
-			}
+      document.getElementById('VCEfiles').innerHTML = ''
+      if (exploration.VCEfiles.length > 0) {
+        let div = document.createElement('div')
+        div.innerHTML =
+            '<div class=\'horizSeparator\'></div><b>Voice Files (.VCE)</b>';
+        document.getElementById('VCEfiles').appendChild(div);
+        for (let i = 0; i < exploration.VCEfiles.length; i++) {
+          index.addVCEFile(
+              exploration.VCEfiles[i].name, exploration.VCEfiles[i].path);
+        }
+      }
+    } catch (err) {
+      index.errorNotification(err);
+      console.log('explore threw err: ', err);
+    }
+  },
+  disconnectSynergy: function() {
+    if (viewVCE_voice.voicingMode) {
+      index.confirmDialog(
+          'Disconnecting the Synergy will will discard any pending edits. Are you sure?',
+          function() {
+            viewVCE_voice.raw_voicingModeOff(true);
+          });
+    } else {
+      index.raw_disconnectSynergy();
+    }
+  },
 
-			document.getElementById("SYNfiles").innerHTML = ""
-			if (exploration.SYNfiles.length > 0) {
-				let div = document.createElement("div")
-				div.innerHTML = "<div class='horizSeparator'></div><b>Synergy State (.SYN)</b>";
-				document.getElementById("SYNfiles").appendChild(div);
-				for (let i = 0; i < exploration.SYNfiles.length; i++) {
-					index.addSYNFile(exploration.SYNfiles[i].name, exploration.SYNfiles[i].path);
-				}
-			}
+  raw_disconnectSynergy: function() {
+    let message = {'name': 'disconnectSynergy'};
+    index.spinnerOn();
+    astilectron.sendMessage(message, function(message) {
+      index.spinnerOff();
+      if (message.name === 'error') {
+        index.errorNotification(message.payload);
+        return
+      } else {
+        index.updateConnectionStatus(
+            message.payload.SynergyName, message.payload.ControlSurfaceName);
+        index.infoNotification('Disconnected Synergy');
+        return
+      }
+    });
+  },
 
-			document.getElementById("VCEfiles").innerHTML = ""
-			if (exploration.VCEfiles.length > 0) {
-				let div = document.createElement("div")
-				div.innerHTML = "<div class='horizSeparator'></div><b>Voice Files (.VCE)</b>";
-				document.getElementById("VCEfiles").appendChild(div);
-				for (let i = 0; i < exploration.VCEfiles.length; i++) {
-					index.addVCEFile(exploration.VCEfiles[i].name, exploration.VCEfiles[i].path);
-				}
-			}
-		} catch (err) {
-			index.errorNotification(err);
-			console.log("explore threw err: ", err);
-		}
-	},
-	disconnectSynergy: function () {
-		if (viewVCE_voice.voicingMode) {
-			index.confirmDialog("Disconnecting the Synergy will will discard any pending edits. Are you sure?", function () {
-				viewVCE_voice.raw_voicingModeOff(true);
-			});
-		} else {
-			index.raw_disconnectSynergy();
-		}
-	},
+  disconnectControlSurface: function() {
+    let message = {'name': 'disconnectControlSurface'};
+    index.spinnerOn();
+    astilectron.sendMessage(message, function(message) {
+      index.spinnerOff();
+      if (message.name === 'error') {
+        index.errorNotification(message.payload);
+        return
+      } else {
+        index.updateConnectionStatus(
+            message.payload.SynergyName, message.payload.ControlSurfaceName);
+        index.infoNotification('Disconnected Control Surface');
+        $('#disableControlSurfaceMenuItem').addClass('disabled');
+        return
+      }
+    });
+  },
+  disableVRAM: function() {
+    viewVCE_voice.connectSynergy(function() {
+      let message = {'name': 'disableVRAM'};
+      index.spinnerOn();
+      astilectron.sendMessage(message, function(message) {
+        index.spinnerOff();
+        if (message.name === 'error') {
+          index.errorNotification(message.payload);
+        } else {
+          index.infoNotification('Successfully disabled Synergy\'s VRAM')
+        }
+        index.refreshConnectionStatus();
+      });
+    });
+  },
+  refreshConnectionStatus: function() {
+    let message = {'name': 'getConnectionStatus', 'payload': 'DummyPayload'};
+    // Send message
+    console.log('refreshing connection status');
+    astilectron.sendMessage(message, function(message) {
+      // Check error
+      if (message.name === 'error') {
+        index.errorNotification(message.payload);
+      } else {
+        index.updateConnectionStatus(
+            message.payload.SynergyName, message.payload.ControlSurfaceName);
+      }
+    });
+  },
 
-	raw_disconnectSynergy: function () {
-		let message = { "name": "disconnectSynergy" };
-		index.spinnerOn();
-		astilectron.sendMessage(message, function (message) {
-			index.spinnerOff();
-			if (message.name === "error") {
-				index.errorNotification(message.payload);
-				return
-			} else {
-				index.updateConnectionStatus(message.payload.SynergyName, message.payload.ControlSurfaceName);
-				index.infoNotification("Disconnected Synergy");
-				return
-			}
-		});
-	},
+  synergyName: null,
+  controlSurfaceName: null,
 
-	disconnectControlSurface: function () {
-		let message = { "name": "disconnectControlSurface" };
-		index.spinnerOn();
-		astilectron.sendMessage(message, function (message) {
-			index.spinnerOff();
-			if (message.name === "error") {
-				index.errorNotification(message.payload);
-				return
-			} else {
-				index.updateConnectionStatus(message.payload.SynergyName, message.payload.ControlSurfaceName);
-				index.infoNotification("Disconnected Control Surface");
-				$('#disableControlSurfaceMenuItem').addClass('disabled');
-				return
-			}
-		});
-	},
-	disableVRAM: function () {
-		viewVCE_voice.connectSynergy(function () {
-			let message = { "name": "disableVRAM" };
-			index.spinnerOn();
-			astilectron.sendMessage(message, function (message) {
-				index.spinnerOff();
-				if (message.name === "error") {
-					index.errorNotification(message.payload);
-				} else {
-					index.infoNotification("Successfully disabled Synergy's VRAM")
-				}
-				index.refreshConnectionStatus();
-			});
-		});
-	},
-	refreshConnectionStatus: function () {
-		let message = {
-			"name": "getConnectionStatus",
-			"payload": "DummyPayload"
-		};
-		// Send message
-		console.log("refreshing connection status");
-		astilectron.sendMessage(message, function (message) {
-			// Check error
-			if (message.name === "error") {
-				index.errorNotification(message.payload);
-			} else {
-				index.updateConnectionStatus(message.payload.SynergyName, message.payload.ControlSurfaceName);
-			}
-		});
-	},
+  updateConnectionStatus: function(synergyName, csName) {
+    index.synergyName =
+        (synergyName == null || synergyName === '') ? null : synergyName;
+    index.contronSurfaceName =
+        (csName == null || csName === '') ? null : csName;
 
-	synergyName: null,
-	controlSurfaceName: null,
+    console.log('update status: ' + synergyName + ' ' + csName);
+    document.getElementById('synergyName').innerHTML = synergyName;
+    document.getElementById('controlSurfaceName').innerHTML = csName;
+    if (synergyName === null || synergyName === '') {
+      document.getElementById('synergyName').innerHTML = 'not connected';
+      $('#disconnectSynergyMenuItem').addClass('disabled');
+      $('#connectSynergyMenuItem').removeClass('disabled');
+      document.getElementById('connectButtonImg').src =
+          `static/images/grey-button-off-full.png`;
+    } else {
+      $('#disconnectSynergyMenuItem').removeClass('disabled');
+      $('#connectSynergyMenuItem').addClass('disabled');
+      document.getElementById('connectButtonImg').src =
+          `static/images/grey-button-on-full.png`;
+    }
+    if (csName === null || csName === '') {
+      $('#controlSurfaceStatus').hide();
+      $('#disconnectControlSurfaceMenuItem').addClass('disabled');
+    } else {
+      $('#controlSurfaceStatus').show();
+      $('#disconnectControlSurfaceMenuItem').removeClass('disabled');
+    }
+  },
 
-	updateConnectionStatus: function (synergyName, csName) {
-		index.synergyName = (synergyName == null || synergyName === "") ? null : synergyName;
-		index.contronSurfaceName = (csName == null || csName === "") ? null : csName;
+  checkVersion: function(
+      synergyWasDisconnected, controlSurfaceWasDisconnected) {
+    console.log(
+        'checkVersion ' + synergyWasDisconnected + ' ' +
+        controlSurfaceWasDisconnected);
+    let message = {
+      'name': 'checkVersion',
+      'payload': {
+        'SynergyWasDisconnected': synergyWasDisconnected,
+        'ControlSurfaceWasDisconnected': controlSurfaceWasDisconnected
+      }
+    };
+    astilectron.sendMessage(message, function(message) {
+      if (message.name === 'error') {
+        index.errorNotification(message.payload);
+        return
+      } else {
+        return
+      }
+    });
+  },
 
-		console.log("update status: " + synergyName + " " + csName);
-		document.getElementById("synergyName").innerHTML = synergyName;
-		document.getElementById("controlSurfaceName").innerHTML = csName;
-		if (synergyName === null || synergyName === "") {
-			document.getElementById("synergyName").innerHTML = "not connected";
-			$('#disconnectSynergyMenuItem').addClass('disabled');
-			$('#connectSynergyMenuItem').removeClass('disabled');
-			document.getElementById("connectButtonImg").src = `static/images/grey-button-off-full.png`;
-		} else {
-			$('#disconnectSynergyMenuItem').removeClass('disabled');
-			$('#connectSynergyMenuItem').addClass('disabled');
-			document.getElementById("connectButtonImg").src = `static/images/grey-button-on-full.png`;
-		}
-		if (csName === null || csName === "") {
-			$('#controlSurfaceStatus').hide();
-			$('#disconnectControlSurfaceMenuItem').addClass('disabled');
-		} else {
-			$('#controlSurfaceStatus').show();
-			$('#disconnectControlSurfaceMenuItem').removeClass('disabled');
-		}
-	},
+//   fileDialog: function() {
+//     let files = dialog.showOpenDialogSync({
+//       // electron bug? filter files cause the dialog to look wonky
+//       filters: [
+//         {name: 'Voice', extensions: ['vce']},
+//         {name: 'Cartridge', extensions: ['crt']},
+//         {name: 'State', extensions: ['syn']},
+//         {name: 'All Files', extensions: ['*']}
+//       ],
+//       properties: ['openFile']
+//     });
+//     console.log('in fileDialog: ' + files);
+//     return files;
+//   },
+  
+  runCOMTST: function() {
+    viewVCE_voice.connectSynergy(function() {
+      let message = {'name': 'runCOMTST'};
+      index.spinnerOn();
+      astilectron.sendMessage(message, function(message) {
+        index.spinnerOff();
+        console.log('runCOMTST returned: ' + JSON.stringify(message));
+        // Check error
+        if (message.name === 'error') {
+          index.errorNotification(message.payload);
+        } else {
+          index.infoNotification(message.payload);
+        }
+      });
+    });
+    index.refreshConnectionStatus();
+  },
 
-	checkVersion: function (synergyWasDisconnected, controlSurfaceWasDisconnected) {
-		console.log("checkVersion " + synergyWasDisconnected + " " + controlSurfaceWasDisconnected);
-		let message = {
-			"name": "checkVersion",
-			"payload": {
-				"SynergyWasDisconnected": synergyWasDisconnected,
-				"ControlSurfaceWasDisconnected": controlSurfaceWasDisconnected
-			}
-		};
-		astilectron.sendMessage(message, function (message) {
-			if (message.name === "error") {
-				index.errorNotification(message.payload);
-				return
-			} else {
-				return
-			}
-		});
-	},
+  load: function(url, eleId, callback) {
+    console.log('load ' + url + ' into ' + eleId + ' ' + $(('#' + eleId)));
+    //		console.dir($(('#' + eleId)));
+    $(('#' + eleId)).load(url, function() {
+      console.log('loaded url ' + url);
+      if (callback != undefined) {
+        let element = document.getElementById(eleId);
+        callback(element);
+      }
+    });
 
-	fileDialog: function () {
-		let files = dialog.showOpenDialogSync({
-			//electron bug? filter files cause the dialog to look wonky
-			filters: [
-				{ name: 'Voice', extensions: ['vce'] },
-				{ name: 'Cartridge', extensions: ['crt'] },
-				{ name: 'State', extensions: ['syn'] },
-				{ name: 'All Files', extensions: ['*'] }],
-			properties: ['openFile']
-		});
-		console.log("in fileDialog: " + files);
-		return files;
-	},
-	runCOMTST: function () {
-		viewVCE_voice.connectSynergy(function () {
-			let message = { "name": "runCOMTST" };
-			index.spinnerOn();
-			astilectron.sendMessage(message, function (message) {
-				index.spinnerOff();
-				console.log("runCOMTST returned: " + JSON.stringify(message));
-				// Check error
-				if (message.name === "error") {
-					index.errorNotification(message.payload);
-				} else {
-					index.infoNotification(message.payload);
-				}
-			});
-		});
-		index.refreshConnectionStatus();
-	},
+    /*
+    timing bug - onreadystatechange fires before the DOM is ready to query
 
-	load: function (url, eleId, callback) {
-		console.log("load " + url + " into " + eleId + " " + $(('#' + eleId)));
-		//		console.dir($(('#' + eleId)));
-		$(("#" + eleId)).load(url, function () {
-			console.log("loaded url " + url);
-			if (callback != undefined) {
-				let element = document.getElementById(eleId);
-				callback(element);
-			}
-		});
+    element = document.getElementById(eleId);
+    req = new XMLHttpRequest();
 
-		/*
-		timing bug - onreadystatechange fires before the DOM is ready to query
-		
-		element = document.getElementById(eleId);
-		req = new XMLHttpRequest();
-		
-		req.onreadystatechange = function () {
-			if (this.readyState == 4 && this.status == 200) {
-				element.innerHTML = req.responseText;
-				if (callback != undefined) {
-					callback(element);
-				}
-			}
-		};
-		
-		req.open("GET", url, false);
-		req.send(null);
-		*/
-	},
-	dropdownMenu: function (contentId) {
-		//console.log("toggle display on " + contentId);
-		document.getElementById(contentId).style.display = "block";
-	},
+    req.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                    element.innerHTML = req.responseText;
+                    if (callback != undefined) {
+                            callback(element);
+                    }
+            }
+    };
 
-	viewDiag: function () {
-		index.load("diag.html", "content");
-	},
-	showAbout: function () {
-		let message = { "name": "showAbout" };
-		astilectron.sendMessage(message, function (message) {
-			// nop
-		});
-	},
-	showPreferences: async function () {
-		try {
-			await UIService.ShowPreferences();
-		} catch (err) {
-			index.errorNotification(err);
-			console.log("show preferecnes threw err: ", err);
-		}
-	},
+    req.open("GET", url, false);
+    req.send(null);
+    */
+  },
+  dropdownMenu: function(contentId) {
+    // console.log("toggle display on " + contentId);
+    document.getElementById(contentId).style.display = 'block';
+  },
 
-	// debounce a function separately for each "first" argument - we use this
-	// with first argument being the input ele being debounced - this allows
-	// each input to be independently debounced even if all using the same onchange function
-	// Adapted from: https://github.com/lodash/lodash/issues/2403 and https://stackoverflow.com/a/28795512
-	debounceFirstArg: function (func, wait = 0, options = {}) {
-		let mem = _.memoize(function () {
-			return _.debounce(func, wait, options)
-		});
-		return function () { mem.apply(this, arguments).apply(this, arguments) }
-	}
+  viewDiag: function() {
+    index.load('diag.html', 'content');
+  },
+  showAbout: function() {
+    let message = {'name': 'showAbout'};
+    astilectron.sendMessage(message, function(message) {
+      // nop
+    });
+  },
+  showPreferences: async function() {
+    try {
+      await UIService.ShowPreferences();
+    } catch (err) {
+      index.errorNotification(err);
+      console.log('show preferecnes threw err: ', err);
+    }
+  },
+
+  // debounce a function separately for each "first" argument - we use this
+  // with first argument being the input ele being debounced - this allows
+  // each input to be independently debounced even if all using the same
+  // onchange function Adapted from:
+  // https://github.com/lodash/lodash/issues/2403 and
+  // https://stackoverflow.com/a/28795512
+  debounceFirstArg: function(func, wait = 0, options = {}) {
+    let mem = _.memoize(function() {
+      return _.debounce(func, wait, options)
+    });
+    return function() {
+      mem.apply(this, arguments).apply(this, arguments)
+    }
+  }
 };
 
-		/*** 
-	listen: function () {
-		console.log("index listening...")
-		astilectron.onMessage(function (message) {
-			switch (message.name) {
-				case "explore":
-					index.explore(message.payload);
-					return { payload: "ok" };
-				case "updateConnectionStatus":
-					index.updateConnectionStatus(message.payload.SynergyName, message.payload.ControlSurfaceName);
-					return { payload: "ok" };
-				case "fileDialog":
-					f = index.fileDialog(message.payload);
-					return { payload: f };
-					break;
-				case "viewVCE":
-					console.log("viewVCE: " + JSON.stringify(message.payload));
-					vce = message.payload;
-					index.load("view.html", "content",
-						function () {
-							viewVCE.init();
-						});
+/***
+listen: function () {
+console.log("index listening...")
+astilectron.onMessage(function (message) {
+        switch (message.name) {
+                case "explore":
+                        index.explore(message.payload);
+                        return { payload: "ok" };
+                case "updateConnectionStatus":
+                        index.updateConnectionStatus(message.payload.SynergyName,
+message.payload.ControlSurfaceName); return { payload: "ok" }; case
+"fileDialog": f = index.fileDialog(message.payload); return { payload: f };
+                        break;
+                case "viewVCE":
+                        console.log("viewVCE: " +
+JSON.stringify(message.payload)); vce = message.payload; index.load("view.html",
+"content", function () { viewVCE.init();
+                                });
 
-					return { payload: "ok" };
-					break;
-				case "runDiag":
-					index.viewDiag();
-					return { payload: "ok" };
-					break;
-				case "updateFromCSurface":
-					valueString = viewVCE_voice.updateFromCSurface(message.payload)
-					return { payload: valueString };
+                        return { payload: "ok" };
+                        break;
+                case "runDiag":
+                        index.viewDiag();
+                        return { payload: "ok" };
+                        break;
+                case "updateFromCSurface":
+                        valueString =
+viewVCE_voice.updateFromCSurface(message.payload) return { payload: valueString
+};
 
-				case "dx2synAddProcessLog":
-					console.log("dx2synAddProcessLog  - " + message.payload)
-					//????dx2syn.addProcessLog(message.payload);
-					return { payload: "ok" };
+                case "dx2synAddProcessLog":
+                        console.log("dx2synAddProcessLog  - " + message.payload)
+                        //????dx2syn.addProcessLog(message.payload);
+                        return { payload: "ok" };
 
-				case "dx2synFinish":
-					console.log("dx2synFinish  - " + message.payload)
-					//?????dx2syn.finishConvert(message.payload);
-					return { payload: "ok" };
+                case "dx2synFinish":
+                        console.log("dx2synFinish  - " + message.payload)
+                        //?????dx2syn.finishConvert(message.payload);
+                        return { payload: "ok" };
 
-			}
-		});
-	}
-	**/
+        }
+});
+}
+**/
 
 
 // make the letiable visible to HTML:
 window.index = index;
 
 function inDropbtn(ele) {
-	if (ele == null) {
-		//console.log("ele is null");
-		return false
-	} else if (ele.classList.contains('dropbtn')) {
-		//console.log("ele has dropbtn " + JSON.stringify(ele));
-		return true;
-	}
-	//console.log("ele doesnt have dropbtn - try parent " + JSON.stringify(ele) + " " + JSON.stringify(ele.parentElement));
-	return inDropbtn(ele.parentElement);
+  if (ele == null) {
+    // console.log("ele is null");
+    return false
+  } else if (ele.classList.contains('dropbtn')) {
+    // console.log("ele has dropbtn " + JSON.stringify(ele));
+    return true;
+  }
+  // console.log("ele doesnt have dropbtn - try parent " + JSON.stringify(ele) +
+  // " " + JSON.stringify(ele.parentElement));
+  return inDropbtn(ele.parentElement);
 }
 
 /* close dropdowns if user clicks outside the menu */
-window.onclick = function (event) {
-	if (!inDropbtn(event.target)) {
-		let dropdowns = document.getElementsByClassName("dropdown-content");
-		let i;
-		for (i = 0; i < dropdowns.length; i++) {
-			let openDropdown = dropdowns[i];
-			if (openDropdown.style.display === "block") {
-				//console.log("toggle display off " + openDropdown.id);
-				openDropdown.style.display = "none";
-			}
-		}
-	}
+window.onclick =
+    function(event) {
+  if (!inDropbtn(event.target)) {
+    let dropdowns = document.getElementsByClassName('dropdown-content');
+    let i;
+    for (i = 0; i < dropdowns.length; i++) {
+      let openDropdown = dropdowns[i];
+      if (openDropdown.style.display === 'block') {
+        // console.log("toggle display off " + openDropdown.id);
+        openDropdown.style.display = 'none';
+      }
+    }
+  }
 }
 
 
-wails.Events.On('explore', (path) => {
-	console.log("explore event: ", path);
-	index.explore(path[0])
-});
+    wails.Events.On('explore', (path) => {
+      console.log('explore event: ', path);
+      index.explore(path[0])
+    });
