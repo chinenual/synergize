@@ -1,4 +1,4 @@
-import { $ } from "./jquery-3.4.1.min";
+import * as $ from "./jquery";
 import * as viewVCE from './viewVCE';
 
 export let viewVCE_doc = {

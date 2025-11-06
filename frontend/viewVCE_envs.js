@@ -4,8 +4,8 @@
 import { index } from "./index";
 import * as viewVCE  from "./viewVCE";
 import { viewVCE_voice }  from "./viewVCE_voice";
-import { $ } from "./jquery-3.4.1.min";
-import { _ } from "./lodash-4.17.15";
+import * as $ from "./jquery";
+import { _ } from "lodash";
 import * as Chart from '/Chart.bundle.min';
 
 let dragOldValue = {x: undefined, y: undefined};

@@ -1,7 +1,8 @@
+import {UIService} from '/bindings/github.com/chinenual/synergize';
 import * as wails from '@wailsio/runtime';
 
-import { $ } from './jquery-3.4.1.min';
-import { index } from './index';
+import {index} from './index';
+import * as $ from './jquery';
 
 export let syn2midi = {
 
@@ -17,7 +18,7 @@ export let syn2midi = {
       'CanChooseFiles': true,
       'Title': 'Choose SYN file to convert to MIDI',
       'Filters': [
-        {DisplayName: 'SYN', Pattern: ['syn']},
+        {DisplayName: 'State', Pattern: ['syn']},
         {DisplayName: 'All Files', Pattern: ['*']}
       ]
     });
@@ -73,55 +74,30 @@ export let syn2midi = {
     });
   },
 
-  getSynSequencerState: function(path) {
-    console.log('getSynSequencerState: ' + path);
-    {
-      let message = {'name': 'getSynSequencerState', 'payload': {'Path': path}};
-      // Send message
-      console.log('call getSynSequencerState: ' + path);
-      astilectron.sendMessage(message, function(message) {
-        // Check error
-        if (message.name === 'error') {
-          index.errorNotification(message.payload);
-        } else {
-          document.getElementById('syn2midiTrack1').value =
-              '' + message.payload.TrackButtons[0]
-          document.getElementById('syn2midiTrack2').value =
-              '' + message.payload.TrackButtons[1]
-          document.getElementById('syn2midiTrack3').value =
-              '' + message.payload.TrackButtons[2]
-          document.getElementById('syn2midiTrack4').value =
-              '' + message.payload.TrackButtons[3]
-        }
-      });
+  getSynSequencerState: async function(path) {
+    console.log('call getSynSequencerState: ' + path);
+    let trackButtons;
+    try {
+      trackButtons = UIService.GetSynSequencerState(path);
+    } catch (exc) {
+      index.errorNotification(exc);
     }
+    document.getElementById('syn2midiTrack1').value = '' + trackButtons[0];
+    document.getElementById('syn2midiTrack2').value = '' + trackButtons[1];
+    document.getElementById('syn2midiTrack3').value = '' + trackButtons[2];
+    document.getElementById('syn2midiTrack4').value = '' + trackButtons[3];
   },
 
-  runConvert: function(path, tempo, raw, maxClockSeconds, buttons) {
+  runConvert: async function(path, tempo, raw, maxClockSeconds, buttons) {
     console.log('runConvert: ' + path + ' ' + tempo);
-    {
-      let message = {
-        'name': 'syn2midi',
-        'payload': {
-          'Path': path,
-          'Tempo': parseFloat(tempo),
-          'Raw': raw,
-          'MaxClockSeconds': maxClockSeconds,
-          'TrackButtons': buttons
-        }
-      };
-      // Send message
-      console.log('call syn2midi: ' + path + ' ' + tempo);
-      astilectron.sendMessage(message, function(message) {
-        // Check error
-        if (message.name === 'error') {
-          index.errorNotification(message.payload);
-        } else {
-          index.infoNotification(
-              'Successfully converted Synergy sequence data to ' + path +
-              '.mid');
-        }
-      });
+    try {
+      UIService.Syn2midi(
+          path, parseFloat(tempo), raw, maxClockSeconds, buttons);
+      index.infoNotification(
+          'Successfully converted Synergy sequence data to ' + path + '.mid');
+
+    } catch (exc) {
+      index.errorNotification(exc);
     }
   },
 };

@@ -5,8 +5,8 @@ import {UIService} from '/bindings/github.com/chinenual/synergize';
 import * as wails from '@wailsio/runtime';
 
 import * as dx2syn from './dx2syn';
-import {$} from './jquery-3.4.1.min';
-import {_} from './lodash-4.17.15.js';
+import * as $ from './jquery';
+import {_} from 'lodash';
 import * as syn2midi from './syn2midi';
 import * as viewCRT from './viewCRT';
 import * as viewVCE from './viewVCE';

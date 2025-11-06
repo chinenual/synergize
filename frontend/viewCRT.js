@@ -1,7 +1,9 @@
-import * as index from './index';
-import {$} from './jquery-3.4.1.min';
-import * as viewVCE_voice from './viewVCE_voice';
+import {UIService} from '/bindings/github.com/chinenual/synergize';
 import * as wails from '@wailsio/runtime';
+
+import * as index from './index';
+import * as $ from './jquery';
+import * as viewVCE_voice from './viewVCE_voice';
 
 export let viewCRT = {
   editMode: false,
@@ -51,22 +53,15 @@ export let viewCRT = {
 
     console.log('in fileDialog: ' + path);
     if (path != undefined) {
-      let message = {
-        'name': 'crtEditAddVoice',
-        'payload': {'VcePath': path[0], 'Slot': slot, 'Crt': viewCRT.crt}
-      };
-      console.dir(message.payload);
-      astilectron.sendMessage(message, function(message) {
-        // Check error
-        if (message.name === 'error') {
-          index.errorNotification(message.payload);
-          return
-        }
-        console.dir(message.payload);
-        viewCRT.crt = message.payload;
-        viewCRT.reinit();
-        index.refreshConnectionStatus();
-      });
+      let crt;
+      try {
+        crt = UIService.CrtEditAddVoice(viewCRT.crt, path[0]. slot);
+      } catch (exc) {
+        index.errorNotification(exc);
+      }
+      viewCRT.crt = crt;
+      viewCRT.reinit();
+      index.refreshConnectionStatus();
     }
   },
 
@@ -79,28 +74,24 @@ export let viewCRT = {
     viewCRT.crt.Voices[slot - 1] = null;
   },
 
-  loadCRT: function() {
+  loadCRT: async function () {
     if (viewCRT.crt_path != undefined) {
-      viewVCE_voice.connectSynergy(function() {
-        let message = {'name': 'crtEditLoadCRT', 'payload': {Crt: viewCRT.crt}};
-        // Send message
+      viewVCE_voice.connectSynergy(function () {
         index.spinnerOn();
-        astilectron.sendMessage(message, function(message) {
-          index.spinnerOff();
-          // Check error
-          if (message.name === 'error') {
-            index.errorNotification(message.payload);
-          } else {
-            index.infoNotification('Successfully loaded CRT to Synergy');
-          }
-          index.refreshConnectionStatus();
-        });
+        try {
+          UIService.CrtEditLoadCRT(viewCRT.crt);
+          index.infoNotification('Successfully loaded CRT to Synergy');
+        } catch (exc) {
+          index.errorNotification(exc);
+        }
+        index.spinnerOff();
+        index.refreshConnectionStatus();
       });
     }
   },
-
+        
   saveCRT: async function(name, path_ignored) {
-   let path = await wails.Dialogs.SaveFile({
+    let path = await wails.Dialogs.SaveFile({
       'CanChooseDirectories': false,
       'CanChooseFiles': true,
       'Title': 'Save CRT',
@@ -112,23 +103,16 @@ export let viewCRT = {
     console.log('in fileDialog: ' + path);
 
     if (path != undefined) {
-      viewVCE_voice.connectSynergy(function() {
-        let message = {
-          'name': 'crtEditSaveCRT',
-          'payload': {Path: path, Crt: viewCRT.crt}
-        };
-        // Send message
+      viewVCE_voice.connectSynergy(function () {
         index.spinnerOn();
-        astilectron.sendMessage(message, function(message) {
-          index.spinnerOff();
-          // Check error
-          if (message.name === 'error') {
-            index.errorNotification(message.payload);
-          } else {
-            index.infoNotification('Successfully saved CRT to ' + path);
-          }
-          index.refreshConnectionStatus();
-        });
+        try {
+          UIService.CrtEditSaveCRT(viewCRT.crt, path);
+          index.infoNotification('Successfully saved CRT to ' + path);
+        } catch (exc) {
+          index.errorNotification(exc);
+        }
+        index.spinnerOff();
+        index.refreshConnectionStatus();
       });
     }
   },

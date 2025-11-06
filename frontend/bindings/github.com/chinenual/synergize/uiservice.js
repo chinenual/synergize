@@ -11,6 +11,9 @@ import { Call as $Call, CancellablePromise as $CancellablePromise, Create as $Cr
 import * as data$0 from "./data/models.js";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
+import * as seq$0 from "./seq/models.js";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
 import * as zeroconf$0 from "./zeroconf/models.js";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -34,12 +37,41 @@ export function CheckVersion(synergyWasDisconnected, controlSurfaceWasDisconnect
 }
 
 /**
+ * @param {data$0.CRT} crt
+ * @param {string} vcePath
+ * @param {number} slot
+ * @returns {$CancellablePromise<data$0.CRT>}
+ */
+export function CrtEditAddVoice(crt, vcePath, slot) {
+    return $Call.ByID(2539128045, crt, vcePath, slot).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType0($result);
+    }));
+}
+
+/**
+ * @param {data$0.CRT} crt
+ * @returns {$CancellablePromise<void>}
+ */
+export function CrtEditLoadCRT(crt) {
+    return $Call.ByID(3272049917, crt);
+}
+
+/**
+ * @param {string} path
+ * @param {data$0.CRT} crt
+ * @returns {$CancellablePromise<void>}
+ */
+export function CrtEditSaveCRT(path, crt) {
+    return $Call.ByID(4178257586, path, crt);
+}
+
+/**
  * @param {string} path
  * @returns {$CancellablePromise<$models.Exploration>}
  */
 export function Explore(path) {
     return $Call.ByID(127536374, path).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType0($result);
+        return $$createType1($result);
     }));
 }
 
@@ -48,9 +80,17 @@ export function Explore(path) {
  */
 export function GetPreferences() {
     return $Call.ByID(3682233165).then(/** @type {($result: any) => any} */(($result) => {
-        $result[1] = $$createType1($result[1]);
+        $result[1] = $$createType2($result[1]);
         return $result;
     }));
+}
+
+/**
+ * @param {string} path
+ * @returns {$CancellablePromise<seq$0.TrackPlayMode[]>}
+ */
+export function GetSynSequencerState(path) {
+    return $Call.ByID(2709634891, path);
 }
 
 /**
@@ -76,6 +116,18 @@ export function ShowPreferences() {
 }
 
 /**
+ * @param {string} path
+ * @param {number} tempo
+ * @param {boolean} raw
+ * @param {number} maxClockSeconds
+ * @param {seq$0.TrackPlayMode[]} trackButtons
+ * @returns {$CancellablePromise<void>}
+ */
+export function Syn2midi(path, tempo, raw, maxClockSeconds, trackButtons) {
+    return $Call.ByID(2966877142, path, tempo, raw, maxClockSeconds, trackButtons);
+}
+
+/**
  * @param {boolean} mode
  * @param {boolean} disconnect
  * @param {data$0.VCE | null} useVce
@@ -85,13 +137,14 @@ export function ShowPreferences() {
  */
 export function ToggleVoicingMode(mode, disconnect, useVce, zeroconfSynergy, zeroconfCs) {
     return $Call.ByID(4111399143, mode, disconnect, useVce, zeroconfSynergy, zeroconfCs).then(/** @type {($result: any) => any} */(($result) => {
-        $result[0] = $$createType3($result[0]);
+        $result[0] = $$createType4($result[0]);
         return $result;
     }));
 }
 
 // Private type creation functions
-const $$createType0 = $models.Exploration.createFrom;
-const $$createType1 = $models.Preferences.createFrom;
-const $$createType2 = data$0.VCE.createFrom;
-const $$createType3 = $Create.Nullable($$createType2);
+const $$createType0 = data$0.CRT.createFrom;
+const $$createType1 = $models.Exploration.createFrom;
+const $$createType2 = $models.Preferences.createFrom;
+const $$createType3 = data$0.VCE.createFrom;
+const $$createType4 = $Create.Nullable($$createType3);

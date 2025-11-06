@@ -4,6 +4,8 @@
 
 export {
     AmpEnvelopeTable,
+    CRT,
+    CRTHead,
     Envelope,
     FreqEnvelopeTable,
     VCE,

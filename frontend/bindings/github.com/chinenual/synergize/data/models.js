@@ -67,6 +67,150 @@ export class AmpEnvelopeTable {
  * @typedef {any} ArrayOfByte
  */
 
+export class CRT {
+    /**
+     * Creates a new CRT instance.
+     * @param {Partial<CRT>} [$$source = {}] - The source object to create the CRT.
+     */
+    constructor($$source = {}) {
+        if (!("Head" in $$source)) {
+            /**
+             * @member
+             * @type {CRTHead}
+             */
+            this["Head"] = (new CRTHead());
+        }
+        if (!("Voices" in $$source)) {
+            /**
+             * @member
+             * @type {(VCE | null)[]}
+             */
+            this["Voices"] = [];
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new CRT instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {CRT}
+     */
+    static createFrom($$source = {}) {
+        const $$createField0_0 = $$createType0;
+        const $$createField1_0 = $$createType3;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("Head" in $$parsedSource) {
+            $$parsedSource["Head"] = $$createField0_0($$parsedSource["Head"]);
+        }
+        if ("Voices" in $$parsedSource) {
+            $$parsedSource["Voices"] = $$createField1_0($$parsedSource["Voices"]);
+        }
+        return new CRT(/** @type {Partial<CRT>} */($$parsedSource));
+    }
+}
+
+export class CRTHead {
+    /**
+     * Creates a new CRTHead instance.
+     * @param {Partial<CRTHead>} [$$source = {}] - The source object to create the CRTHead.
+     */
+    constructor($$source = {}) {
+        if (!("VRAM" in $$source)) {
+            /**
+             * "free storage"
+             * @member
+             * @type {number[]}
+             */
+            this["VRAM"] = Array.from({ length: 51 }, () => 0);
+        }
+        if (!("VOITAB" in $$source)) {
+            /**
+             * always zero
+             * @member
+             * @type {number}
+             */
+            this["VOITAB"] = 0;
+        }
+        if (!("VCHK" in $$source)) {
+            /**
+             * check bytes - each should be 170
+             * @member
+             * @type {number[]}
+             */
+            this["VCHK"] = Array.from({ length: 5 }, () => 0);
+        }
+        if (!("TSTVEC" in $$source)) {
+            /**
+             * test vector
+             * @member
+             * @type {number}
+             */
+            this["TSTVEC"] = 0;
+        }
+        if (!("IPDVEC" in $$source)) {
+            /**
+             * ret. from input w/ data
+             * @member
+             * @type {number}
+             */
+            this["IPDVEC"] = 0;
+        }
+        if (!("IPNVEC" in $$source)) {
+            /**
+             * ret. from input w/out data
+             * @member
+             * @type {number}
+             */
+            this["IPNVEC"] = 0;
+        }
+        if (!("VERSON" in $$source)) {
+            /**
+             * version
+             * @member
+             * @type {number}
+             */
+            this["VERSON"] = 0;
+        }
+        if (!("VOIPTR" in $$source)) {
+            /**
+             * 24 pointers to voice data (offsets from VOITAB)
+             * @member
+             * @type {number[]}
+             */
+            this["VOIPTR"] = Array.from({ length: 24 }, () => 0);
+        }
+        if (!("BFILTR" in $$source)) {
+            /**
+             * b-filter # start for voices
+             * @member
+             * @type {number[]}
+             */
+            this["BFILTR"] = Array.from({ length: 24 }, () => 0);
+        }
+        if (!("AFILTR" in $$source)) {
+            /**
+             * a-filter # start for voices
+             * @member
+             * @type {number[]}
+             */
+            this["AFILTR"] = Array.from({ length: 24 }, () => 0);
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new CRTHead instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {CRTHead}
+     */
+    static createFrom($$source = {}) {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new CRTHead(/** @type {Partial<CRTHead>} */($$parsedSource));
+    }
+}
+
 export class Envelope {
     /**
      * Creates a new Envelope instance.
@@ -97,8 +241,8 @@ export class Envelope {
      * @returns {Envelope}
      */
     static createFrom($$source = {}) {
-        const $$createField0_0 = $$createType0;
-        const $$createField1_0 = $$createType1;
+        const $$createField0_0 = $$createType4;
+        const $$createField1_0 = $$createType5;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("FreqEnvelope" in $$parsedSource) {
             $$parsedSource["FreqEnvelope"] = $$createField0_0($$parsedSource["FreqEnvelope"]);
@@ -244,10 +388,10 @@ export class VCE {
      * @returns {VCE}
      */
     static createFrom($$source = {}) {
-        const $$createField0_0 = $$createType2;
-        const $$createField1_0 = $$createType4;
-        const $$createField2_0 = $$createType5;
-        const $$createField3_0 = $$createType6;
+        const $$createField0_0 = $$createType6;
+        const $$createField1_0 = $$createType8;
+        const $$createField2_0 = $$createType9;
+        const $$createField3_0 = $$createType10;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("Head" in $$parsedSource) {
             $$parsedSource["Head"] = $$createField0_0($$parsedSource["Head"]);
@@ -437,10 +581,14 @@ export class VCEHead {
 }
 
 // Private type creation functions
-const $$createType0 = FreqEnvelopeTable.createFrom;
-const $$createType1 = AmpEnvelopeTable.createFrom;
-const $$createType2 = VCEHead.createFrom;
-const $$createType3 = Envelope.createFrom;
-const $$createType4 = $Create.Array($$createType3);
-const $$createType5 = $Create.Array($Create.Any);
-const $$createType6 = VCEExtra.createFrom;
+const $$createType0 = CRTHead.createFrom;
+const $$createType1 = VCE.createFrom;
+const $$createType2 = $Create.Nullable($$createType1);
+const $$createType3 = $Create.Array($$createType2);
+const $$createType4 = FreqEnvelopeTable.createFrom;
+const $$createType5 = AmpEnvelopeTable.createFrom;
+const $$createType6 = VCEHead.createFrom;
+const $$createType7 = Envelope.createFrom;
+const $$createType8 = $Create.Array($$createType7);
+const $$createType9 = $Create.Array($Create.Any);
+const $$createType10 = VCEExtra.createFrom;

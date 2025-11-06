@@ -1,5 +1,5 @@
-import { $ } from "./jquery-3.4.1.min";
-import { _ } from "./lodash-4.17.15.js";
+import * as $ from "./jquery";
+import _ from "lodash";
 import { index } from "./index";
 import { viewVCE_voice }  from "./viewVCE_voice";
 import * as viewVCE  from "./viewVCE";

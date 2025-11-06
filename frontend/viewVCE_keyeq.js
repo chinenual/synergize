@@ -1,4 +1,4 @@
-import { $ } from "./jquery-3.4.1.min";
+import * as $ from "./jquery";
 import { viewVCE_voice }  from "./viewVCE_voice";
 import * as viewVCE  from "./viewVCE";
 import * as index  from "./index";
