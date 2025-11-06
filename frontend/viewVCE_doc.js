@@ -1,8 +1,11 @@
-let viewVCE_doc = {
+import { $ } from "./jquery-3.4.1.min";
+import * as viewVCE from './viewVCE';
+
+export let viewVCE_doc = {
 
 	init: function () {
-		if (vce.Extra.Doc != null) {
-			$('#doctext').html(vce.Extra.Doc)
+		if (viewVCE.vce.Extra.Doc != null) {
+			$('#doctext').html(viewVCE.vce.Extra.Doc)
 		} else {
 			$('#doctext').html('')
 		}

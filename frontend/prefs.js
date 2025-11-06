@@ -1,5 +1,6 @@
 import {UIService} from '/bindings/github.com/chinenual/synergize';
 import * as wails from '@wailsio/runtime';
+import { index }  from "./index";
 
 export let prefs = {
   init: async function() {

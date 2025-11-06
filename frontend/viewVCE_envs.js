@@ -1,10 +1,14 @@
-"use strict";
-
 //const {lookupService} = require("dns");
 //const {env} = require("process");
 //const {DH_CHECK_P_NOT_PRIME} = require("constants");
+import { index } from "./index";
+import * as viewVCE  from "./viewVCE";
+import { viewVCE_voice }  from "./viewVCE_voice";
+import { $ } from "./jquery-3.4.1.min";
+import { _ } from "./lodash-4.17.15";
+import * as Chart from '/Chart.bundle.min';
 
-var dragOldValue = {x: undefined, y: undefined};
+let dragOldValue = {x: undefined, y: undefined};
 
 export let viewVCE_envs = {
 
@@ -13,31 +17,35 @@ export let viewVCE_envs = {
     // amp values for the currently displayed envelope - computed lazily
     floatAmpVal: null,
 
+    clearFloatAmpVal: function () {
+        this.floatAmpVal = null;
+    },
+
     init: function (incrementalUpdate) {
         //console.log('--- start viewVCE_envs init');
         viewVCE_envs.unsetFloatVals();
 
         if (viewVCE_envs.deb_onchange == null) {
-            viewVCE_envs.deb_onchange = index.debounceFirstArg(viewVCE_envs.raw_onchange, DEBOUNCE_WAIT);
+            viewVCE_envs.deb_onchange = index.debounceFirstArg(viewVCE_envs.raw_onchange, index.DEBOUNCE_WAIT);
         }
         if (viewVCE_envs.deb_onchangeGain == null) {
-            viewVCE_envs.deb_onchangeGain = index.debounceFirstArg(viewVCE_envs.raw_onchangeGain, DEBOUNCE_WAIT);
+            viewVCE_envs.deb_onchangeGain = index.debounceFirstArg(viewVCE_envs.raw_onchangeGain, index.DEBOUNCE_WAIT);
         }
         if (viewVCE_envs.deb_onchangeEnvAccel == null) {
-            viewVCE_envs.deb_onchangeEnvAccel = _.debounce(viewVCE_envs.raw_onchangeEnvAccel, DEBOUNCE_WAIT);
+            viewVCE_envs.deb_onchangeEnvAccel = _.debounce(viewVCE_envs.raw_onchangeEnvAccel, index.DEBOUNCE_WAIT);
         }
         if (viewVCE_envs.deb_copyFrom == null) {
-            viewVCE_envs.deb_copyFrom = _.debounce(viewVCE_envs.raw_copyFrom, DEBOUNCE_WAIT);
+            viewVCE_envs.deb_copyFrom = _.debounce(viewVCE_envs.raw_copyFrom, index.DEBOUNCE_WAIT);
         }
 
-        var selectEle = document.getElementById("envOscSelect");
+        let selectEle = document.getElementById("envOscSelect");
         // remove old options:
         while (selectEle.firstChild) {
             selectEle.removeChild(selectEle.firstChild);
         }
 
-        for (i = 0; i <= vce.Head.VOITAB; i++) {
-            var option = document.createElement("option");
+        for (let i = 0; i <= viewVCE.vce.Head.VOITAB; i++) {
+            let option = document.createElement("option");
             option.value = "" + (i + 1);
             option.innerHTML = "" + (i + 1);
             selectEle.appendChild(option);
@@ -77,7 +85,7 @@ export let viewVCE_envs = {
         if (v == null || v === '') {
             return 0;
         }
-        var val = parseInt(v, 10);
+        let val = parseInt(v, 10);
         return '' + viewVCE_envs.unscaleFreqEnvValue(val);
     },
 
@@ -104,7 +112,7 @@ export let viewVCE_envs = {
             //console.log("TextToAmpEnvValue '" + v + "' --> 55");
             return 55;
         }
-        var val = parseInt(v, 10);
+        let val = parseInt(v, 10);
         //console.log("TextToAmpEnvValue '" + v + "' -> "+viewVCE_envs.unscaleAmpEnvValue(val));
         return '' + viewVCE_envs.unscaleAmpEnvValue(val);
     },
@@ -166,7 +174,7 @@ export let viewVCE_envs = {
 
     unscaleFreqTimeValue: function (v) {
         // fixme: linear search is brute force - but the list is short - performance is "ok" as is...
-        for (var i = 0; i < viewVCE_envs.freqTimeScale.length; i++) {
+        for (let i = 0; i < viewVCE_envs.freqTimeScale.length; i++) {
             if (viewVCE_envs.freqTimeScale[i] >= v) {
                 return i;
             }
@@ -183,7 +191,7 @@ export let viewVCE_envs = {
         if (v == null || v === '') {
             return 0;
         }
-        var val = parseInt(v, 10);
+        let val = parseInt(v, 10);
         return '' + viewVCE_envs.unscaleFreqTimeValue(val);
     },
 
@@ -206,7 +214,7 @@ export let viewVCE_envs = {
 
     unscaleAmpTimeValue: function (v) {
         // fixme: linear search is brute force - but the list is short - performance is "ok" as is...
-        for (var i = 0; i < viewVCE_envs.ampTimeScale.length; i++) {
+        for (let i = 0; i < viewVCE_envs.ampTimeScale.length; i++) {
             if (viewVCE_envs.ampTimeScale[i] >= v) {
                 //console.log("unscale amp time value: " + v + ", -> " + i + " (" + viewVCE_envs.ampTimeScale[i])
                 return i;
@@ -225,39 +233,39 @@ export let viewVCE_envs = {
         if (v == null || v === '') {
             return 0;
         }
-        var val = parseInt(v, 10);
+        let val = parseInt(v, 10);
         return '' + viewVCE_envs.unscaleAmpTimeValue(val);
     },
 
     testConversionFunctions: function () {
-        var ok = true;
-        for (var i = 0; i <= 255; i++) {
-            var scaled = viewVCE_envs.scaleFreqEnvValue(i);
-            var unscaled = viewVCE_envs.unscaleFreqEnvValue(scaled);
+        let ok = true;
+        for (let i = 0; i <= 255; i++) {
+            let scaled = viewVCE_envs.scaleFreqEnvValue(i);
+            let unscaled = viewVCE_envs.unscaleFreqEnvValue(scaled);
             if (i != unscaled) {
                 ok = false;
                 console.log("ERROR: freqEnvValue " + i + " totext: " + scaled + " reversed to " + unscaled)
             }
         }
-        for (var i = 55; i <= 127; i++) {
-            var scaled = viewVCE_envs.scaleAmpEnvValue(i);
-            var unscaled = viewVCE_envs.unscaleAmpEnvValue(scaled);
+        for (let i = 55; i <= 127; i++) {
+            let scaled = viewVCE_envs.scaleAmpEnvValue(i);
+            let unscaled = viewVCE_envs.unscaleAmpEnvValue(scaled);
             if (i != unscaled) {
                 ok = false;
                 console.log("ERROR: ampEnvValue " + i + " totext: " + scaled + " reversed to " + unscaled)
             }
         }
-        for (var i = 0; i <= 79; i++) {
-            var scaled = viewVCE_envs.scaleFreqTimeValue(i);
-            var unscaled = viewVCE_envs.unscaleFreqTimeValue(scaled);
+        for (let i = 0; i <= 79; i++) {
+            let scaled = viewVCE_envs.scaleFreqTimeValue(i);
+            let unscaled = viewVCE_envs.unscaleFreqTimeValue(scaled);
             if (i != unscaled) {
                 ok = false;
                 console.log("ERROR: ampTimeValue " + i + " totext: " + scaled + " reversed to " + unscaled)
             }
         }
-        for (var i = 0; i <= 79; i++) {
-            var scaled = viewVCE_envs.scaleAmpTimeValue(i);
-            var unscaled = viewVCE_envs.unscaleAmpTimeValue(scaled);
+        for (let i = 0; i <= 79; i++) {
+            let scaled = viewVCE_envs.scaleAmpTimeValue(i);
+            let unscaled = viewVCE_envs.unscaleAmpTimeValue(scaled);
             if (i != unscaled) {
                 ok = false;
                 console.log("ERROR: ampTimeValue " + i + " totext: " + scaled + " reversed to " + unscaled)
@@ -265,7 +273,7 @@ export let viewVCE_envs = {
         }
         // Spot check some values to ensure the forumlae are computing same values as SYNHCS did (except
         // for the upper range of freq time which we delibrartely change to make the function reversable)
-        var expects = [
+        let expects = [
             {
                 arr: [[0, 0], [10, 10], [15, 15], [16, 25], [54, 2071], [75, 23436], [76, 26306], [77, 29528], [84, 29535], [85, 29535]],
                 name: "freqTimeValue",
@@ -303,10 +311,10 @@ export let viewVCE_envs = {
             }
         ];
 
-        for (var j = 0; j < expects.length; j++) {
-            var expect = expects[j];
-            for (var i = 0; i < expect.arr.length; i++) {
-                var scaled = expect.func(expect.arr[i][0]);
+        for (let j = 0; j < expects.length; j++) {
+            let expect = expects[j];
+            for (let i = 0; i < expect.arr.length; i++) {
+                let scaled = expect.func(expect.arr[i][0]);
                 if (scaled != expect.arr[i][1]) {
                     ok = false;
                     console.log("ERROR: " + expect.name + "(" + expect.arr[i][0] + ") == " + scaled + ", expected " + expect.arr[i][1]);
@@ -332,8 +340,8 @@ export let viewVCE_envs = {
             console.log("initFloatVals");
             viewVCE_envs.floatAmpVal = []
             console.log("initFloatVals init: ", viewVCE_envs.floatAmpVal)
-            for (osc = 0; osc <= vce.Head.VOITAB; osc++) {
-                currentOscGain = viewVCE_envs.raw_computeOscGain(osc);
+            for (let osc = 0; osc <= viewVCE.vce.Head.VOITAB; osc++) {
+                let currentOscGain = viewVCE_envs.raw_computeOscGain(osc);
                 if (currentOscGain[0] <= 0.0) {
                     // avoid divide by zero!  when original gain was zero, may as well just set the new
                     // gain as requested
@@ -348,12 +356,12 @@ export let viewVCE_envs = {
                 viewVCE_envs.floatAmpVal.push({ low: [], up: [], referenceLow: [], referenceUp: [], origOscGain: currentOscGain })
                 console.log("initFloatVals top: " + osc, viewVCE_envs.floatAmpVal)
 
-                for (eleIndex = 0; eleIndex < vce.Envelopes[osc].AmpEnvelope.NPOINTS; eleIndex++) {
-                    var v = viewVCE_envs.scaleAmpEnvValue(vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 0]);
+                for (let eleIndex = 0; eleIndex < viewVCE.vce.Envelopes[osc].AmpEnvelope.NPOINTS; eleIndex++) {
+                    let v = viewVCE_envs.scaleAmpEnvValue(viewVCE.vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 0]);
                     viewVCE_envs.floatAmpVal[osc].low.push(v)
                     v = 100.0 / currentOscGain[0] * v;
                     viewVCE_envs.floatAmpVal[osc].referenceLow.push(v)
-                    v = viewVCE_envs.scaleAmpEnvValue(vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 1]);
+                    v = viewVCE_envs.scaleAmpEnvValue(viewVCE.vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 1]);
                     viewVCE_envs.floatAmpVal[osc].up.push(v)
                     v = 100.0 / currentOscGain[1] * v;
                     viewVCE_envs.floatAmpVal[osc].referenceUp.push(v)
@@ -366,17 +374,17 @@ export let viewVCE_envs = {
     raw_computeOscGain: function (osc /* zero-based*/) {
         // initial computation of each env's gain from the byte values used to initialize the floatVal's
         // -- all subsequent gain calculations are based on the float vals
-        var maxLow = 0;
-        var maxUp = 0;
-        for (eleIndex = 0; eleIndex < vce.Envelopes[osc].AmpEnvelope.NPOINTS; eleIndex++) {
+        let maxLow = 0;
+        let maxUp = 0;
+        for (let eleIndex = 0; eleIndex < viewVCE.vce.Envelopes[osc].AmpEnvelope.NPOINTS; eleIndex++) {
             // low
-            var v = viewVCE_envs.scaleAmpEnvValue(vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 0]);
+            let v = viewVCE_envs.scaleAmpEnvValue(viewVCE.vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 0]);
             maxLow = Math.max(maxLow, v)
             // up
-            v = viewVCE_envs.scaleAmpEnvValue(vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 1]);
+            v = viewVCE_envs.scaleAmpEnvValue(viewVCE.vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + 1]);
             maxUp = Math.max(maxUp, v)
         }
-        var result = [
+        let result = [
             100.0 * maxLow / 72.0,
             100.0 * maxUp / 72.0]; // 72 == MAX allowed Amp Val
         console.log("raw_computeOscGain " + osc + " " + maxLow + " " + maxUp + " -> " + result)
@@ -390,20 +398,20 @@ export let viewVCE_envs = {
         // compute the request gain computation based on the floating point values in the
         // floatAmpVal arrays
 
-        var max = 0;
-        for (eleIndex = 0; eleIndex < vce.Envelopes[osc].AmpEnvelope.NPOINTS; eleIndex++) {
+        let max = 0;
+        for (let eleIndex = 0; eleIndex < viewVCE.vce.Envelopes[osc].AmpEnvelope.NPOINTS; eleIndex++) {
             if (lowupboth == 0 || lowupboth == 2) {
                 // low
-                var v = viewVCE_envs.floatAmpVal[osc].low[eleIndex];
+                let v = viewVCE_envs.floatAmpVal[osc].low[eleIndex];
                 max = Math.max(max, v)
             }
             if (lowupboth == 1 || lowupboth == 2) {
                 // up
-                v = viewVCE_envs.floatAmpVal[osc].up[eleIndex];
+                let v = viewVCE_envs.floatAmpVal[osc].up[eleIndex];
                 max = Math.max(max, v)
             }
         }
-        var result = Math.round(100.0 * max / 72.0); // 72 == MAX allowed Amp Val
+        let result = Math.round(100.0 * max / 72.0); // 72 == MAX allowed Amp Val
         console.log("computeOscGain " + osc + " " + lowupboth + " " + max + " -> " + result)
         return result;
     },
@@ -412,10 +420,10 @@ export let viewVCE_envs = {
         // need to recompute the individual gains in terms of the overall gain
         viewVCE_envs.initFloatVals();
 
-        var gainLow = viewVCE_envs.floatAmpVal[osc].origOscGain[0];
-        var gainUp = viewVCE_envs.floatAmpVal[osc].origOscGain[1];
+        let gainLow = viewVCE_envs.floatAmpVal[osc].origOscGain[0];
+        let gainUp = viewVCE_envs.floatAmpVal[osc].origOscGain[1];
 
-        var origOscGain = Math.max(gainLow, gainUp);
+        let origOscGain = Math.max(gainLow, gainUp);
         if (origOscGain <= 0.0) {
             // avoid divide by zero!  when original gain was zero, may as well just set the new
             // gain as requested
@@ -423,7 +431,7 @@ export let viewVCE_envs = {
         }
 
         // proportional change for each point
-        var proportion = gain / origOscGain;
+        let proportion = gain / origOscGain;
         console.log("setOscGain " + osc + " " + gain + " " + proportion);
         viewVCE_envs.setGain(osc, gainLow * proportion, 0);
         viewVCE_envs.setGain(osc, gainUp * proportion, 1);
@@ -440,44 +448,44 @@ export let viewVCE_envs = {
 
         console.log("setGain: " + osc + " " + gain + " " + lowup);
 
-        var envOscSelectEle = document.getElementById("envOscSelect");
-        var visibleOsc = parseInt(envOscSelectEle.value, 10); // one-based osc index
+        let envOscSelectEle = document.getElementById("envOscSelect");
+        let visibleOsc = parseInt(envOscSelectEle.value, 10); // one-based osc index
         visibleOsc--; // convert to zero-base
 
         viewVCE_envs.initFloatVals();
 
-        var referenceFloatVals = lowup == 0 ? viewVCE_envs.floatAmpVal[osc].referenceLow : viewVCE_envs.floatAmpVal[osc].referenceUp;
-        var floatVals = lowup == 0 ? viewVCE_envs.floatAmpVal[osc].low : viewVCE_envs.floatAmpVal[osc].up;
+        let referenceFloatVals = lowup == 0 ? viewVCE_envs.floatAmpVal[osc].referenceLow : viewVCE_envs.floatAmpVal[osc].referenceUp;
+        let floatVals = lowup == 0 ? viewVCE_envs.floatAmpVal[osc].low : viewVCE_envs.floatAmpVal[osc].up;
 
-        for (eleIndex = 0; eleIndex < vce.Envelopes[osc].AmpEnvelope.NPOINTS; eleIndex++) {
-            var stub = lowup == 0 ? 'envAmpLowVal' : 'envAmpUpVal';
+        for (let eleIndex = 0; eleIndex < viewVCE.vce.Envelopes[osc].AmpEnvelope.NPOINTS; eleIndex++) {
+            let stub = lowup == 0 ? 'envAmpLowVal' : 'envAmpUpVal';
             // reference val is for the "100%" gain case - doesnt change when we change gain
-            var refval = referenceFloatVals[eleIndex]
-            var floatNewVal = refval * gain / 100.0;
+            let refval = referenceFloatVals[eleIndex]
+            let floatNewVal = refval * gain / 100.0;
             floatNewVal = Math.min(72, Math.max(0, floatNewVal));
-            var newval = Math.round(floatNewVal);
+            let newval = Math.round(floatNewVal);
             // non-reference entries in the floatvals need to be kept up to date with the gain change
             floatVals[eleIndex] = floatNewVal;
 
             console.log("  setGain (point) " + gain + " " + stub + "[" + eleIndex + "] " + refval + " " + floatVals[eleIndex] + " " + newval);
 
             if (visibleOsc == osc) {
-                var input = document.getElementById(`${stub}[${eleIndex + 1}]`)
+                let input = document.getElementById(`${stub}[${eleIndex + 1}]`)
                 input.value = "" + newval;
-                // set value in the input, set in the vce.Envelopes and send to csurface and synergy:
+                // set value in the input, set in the viewVCE.vce.Envelopes and send to csurface and synergy:
                 // we are already debounced, so call raw to avoid a delay in updates:
                 viewVCE_envs.raw_onchange(input, floatNewVal);
             } else {
                 // no UI field to change, so need to call the backend to send values to
                 // Synergy here rather than relying on onchange
-                vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + lowup] =
+                viewVCE.vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + lowup] =
                     viewVCE_envs.unscaleAmpEnvValue(newval);
                 let message = {
                     "name": lowup == 0 ? 'setEnvAmpLowVal' : 'setEnvAmpUpVal',
                     "payload": {
                         "Osc": osc + 1, // one-based
                         "Index": eleIndex + 1, // one-based
-                        "Value": vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + lowup]
+                        "Value": viewVCE.vce.Envelopes[osc].AmpEnvelope.Table[(eleIndex * 4) + lowup]
                     }
                 };
                 astilectron.sendMessage(message, function (message) {
@@ -514,11 +522,11 @@ export let viewVCE_envs = {
     deb_onchangeGain: null, // initialized during init()
 
     raw_onchangeGain: function (ele) { // low or up gain change
-        var gain = parseInt(ele.value, 10);
+        let gain = parseInt(ele.value, 10);
 
         console.log("onchangeGain: " + ele.id + " " + gain);
-        var envOscSelectEle = document.getElementById("envOscSelect");
-        var osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
+        let envOscSelectEle = document.getElementById("envOscSelect");
+        let osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
         osc--; // convert to zero-base
 
         if (ele.id.match(/Low/)) {
@@ -545,30 +553,31 @@ export let viewVCE_envs = {
             return;
         }
 
-        var eleIndex;
-        var envOscSelectEle = document.getElementById("envOscSelect");
-        var osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
-        var envEnvSelectEle = document.getElementById("envEnvSelect");
-        var selectedEnv = parseInt(envEnvSelectEle.value, 10);
-        var eleValue = ele.value;
+        let eleIndex;
+        let envOscSelectEle = document.getElementById("envOscSelect");
+        let osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
+        //let envEnvSelectEle = document.getElementById("envEnvSelect");
+        //let selectedEnv = parseInt(envEnvSelectEle.value, 10);
+        let eleValue = ele.value;
 
-        var pattern = /([A-Za-z]+)\[(\d+)\]/;
-        if (ret = ele.id.match(pattern)) {
+        let pattern = /([A-Za-z]+)\[(\d+)\]/;
+        let ret = ele.id.match(pattern);
+        if (ret) {
             eleIndex = parseInt(ret[2])
         }
 
-        var env;
-        var envid;
+        let env;
+        let envid;
         if (ele.id.includes('Freq')) {
-            env = vce.Envelopes[osc - 1].FreqEnvelope;
+            env = viewVCE.vce.Envelopes[osc - 1].FreqEnvelope;
             envid = "Freq";
         } else {
-            env = vce.Envelopes[osc - 1].AmpEnvelope;
+            env = viewVCE.vce.Envelopes[osc - 1].AmpEnvelope;
             envid = "Amp";
         }
 
-        var accelLow = 30; // defaults
-        var accelUp = 30; // defaults
+        let accelLow = 30; // defaults
+        let accelUp = 30; // defaults
 
         if (env.ENVTYPE == 1) {
             accelLow = env.SUSTAINPT;
@@ -659,7 +668,7 @@ export let viewVCE_envs = {
 
         // validation is OK, but now need to clean up any selects (i.e. if loop point moved, need to set the previous location to '')
         // easiest thing to do is just brute force reset each ele to reflect the value in the envelope
-        for (var p = 0; p < 16; p++) {
+        for (let p = 0; p < 16; p++) {
             $(`#env${envid}Loop\\[${p + 1}\\] option[value='']`).prop('selected', true);
             $(`#env${envid}Loop\\[${p + 1}\\] option[value='L']`).prop('selected', false);
             $(`#env${envid}Loop\\[${p + 1}\\] option[value='R']`).prop('selected', false);
@@ -669,7 +678,7 @@ export let viewVCE_envs = {
             $(`#env${envid}Loop\\[${env.SUSTAINPT}\\] option[value='S']`).prop('selected', true);
         }
         if (env.ENVTYPE != 1 && env.LOOPPT > 0) {
-            var v = env.ENVTYPE == 3 ? 'L' : 'R'
+            let v = env.ENVTYPE == 3 ? 'L' : 'R'
             $(`#env${envid}Loop\\[${env.LOOPPT}\\] option[value='${v}']`).prop('selected', true);
         }
 
@@ -723,18 +732,18 @@ export let viewVCE_envs = {
     deb_copyFrom: null,
 
     raw_copyFrom: function (fromOsc) {
-        var oscSelectEle = document.getElementById("envOscSelect");
-        var toOsc = oscSelectEle.options[oscSelectEle.selectedIndex].value;
+        let oscSelectEle = document.getElementById("envOscSelect");
+        let toOsc = oscSelectEle.options[oscSelectEle.selectedIndex].value;
         toOsc = parseInt(toOsc, 10);
 
         // "copy" means copy all the osc-specific stuff related to the envelopes - but not the patch and detuning fields.
 
         // abuse JSON to do a deep copy:
-        newEnvelopes = JSON.parse(JSON.stringify(vce.Envelopes[fromOsc - 1]))
+        let newEnvelopes = JSON.parse(JSON.stringify(viewVCE.vce.Envelopes[fromOsc - 1]))
         // retain the stuff we don't want copied:
-        newEnvelopes.FreqEnvelope.OPTCH = vce.Envelopes[toOsc - 1].FreqEnvelope.OPTCH;
-        newEnvelopes.FreqEnvelope.OHARM = vce.Envelopes[toOsc - 1].FreqEnvelope.OHARM;
-        newEnvelopes.FreqEnvelope.FDETUN = vce.Envelopes[toOsc - 1].FreqEnvelope.FDETUN;
+        newEnvelopes.FreqEnvelope.OPTCH = viewVCE.vce.Envelopes[toOsc - 1].FreqEnvelope.OPTCH;
+        newEnvelopes.FreqEnvelope.OHARM = viewVCE.vce.Envelopes[toOsc - 1].FreqEnvelope.OHARM;
+        newEnvelopes.FreqEnvelope.FDETUN = viewVCE.vce.Envelopes[toOsc - 1].FreqEnvelope.FDETUN;
 
         let message = {
             "name": "setEnvelopes",
@@ -753,7 +762,7 @@ export let viewVCE_envs = {
                 index.errorNotification(message.payload);
                 return false;
             } else {
-                vce.Envelopes[toOsc - 1] = newEnvelopes
+                viewVCE.vce.Envelopes[toOsc - 1] = newEnvelopes
 
                 // update the floatVal so gains work
                 viewVCE_envs.unsetFloatVals();
@@ -792,25 +801,25 @@ export let viewVCE_envs = {
         // type1 accelerations are really just the SUSTAIN and LOOP points.  We use the same backend function as the loop change event
 
 
-        var envOscSelectEle = document.getElementById("envOscSelect");
-        var osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
-        var envEnvSelectEle = document.getElementById("envEnvSelect");
-        var selectedEnv = parseInt(envEnvSelectEle.value, 10);
-        var eleValue = index.checkInputElementValue(ele);
+        let envOscSelectEle = document.getElementById("envOscSelect");
+        let osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
+        //let envEnvSelectEle = document.getElementById("envEnvSelect");
+        //let selectedEnv = parseInt(envEnvSelectEle.value, 10);
+        let eleValue = index.checkInputElementValue(ele);
         if (eleValue == undefined) {
             return;
         }
 
         //console.log("changed: " + ele.id + " val: " + ele.value);
 
-        var env;
-        var envid;
+        let env;
+        let envid;
         // id is accelFreqUp , accelAmpLow etc.
         if (ele.id.includes('Freq')) {
-            env = vce.Envelopes[osc - 1].FreqEnvelope;
+            env = viewVCE.vce.Envelopes[osc - 1].FreqEnvelope;
             envid = "Freq";
         } else {
-            env = vce.Envelopes[osc - 1].AmpEnvelope;
+            env = viewVCE.vce.Envelopes[osc - 1].AmpEnvelope;
             envid = "Amp";
         }
         if (ele.id.includes('Low')) {
@@ -868,51 +877,51 @@ export let viewVCE_envs = {
             return;
         }
 
-        var eleIndex;
-        var envOscSelectEle = document.getElementById("envOscSelect");
-        var osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
-        var envEnvSelectEle = document.getElementById("envEnvSelect");
-        var selectedEnv = parseInt(envEnvSelectEle.value, 10);
+        let envOscSelectEle = document.getElementById("envOscSelect");
+        let osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
+        let envEnvSelectEle = document.getElementById("envEnvSelect");
+        let selectedEnv = parseInt(envEnvSelectEle.value, 10);
 
         // Don't call checkInoutElementValue() - it assumes that there is no scaling
         // and would apply the "byte" min/max to the "text" scaled value
-        //	  var value = index.checkInputElementValue(ele);
-        var value = parseInt(ele.value, 10);
+        //	  let value = index.checkInputElementValue(ele);
+        let value = parseInt(ele.value, 10);
 
         if (value == undefined) {
             return;
         }
         //console.log("in onchange - value: " + value + " " + typeof(value))
 
-        var pattern = /([A-Za-z]+)\[(\d+)\]/;
-        var funcName;
-        var eleIndex;
-        if (ret = ele.id.match(pattern)) {
-            fieldType = ret[1];
+        let pattern = /([A-Za-z]+)\[(\d+)\]/;
+        let funcName;
+        let eleIndex;
+        let ret = ele.id.match(pattern);
+        let bytevalue;
+        if (ret) {
+            let fieldType = ret[1];
             funcName = 'set' + fieldType.charAt(0).toUpperCase() + fieldType.slice(1);
             eleIndex = parseInt(ret[2])
-            var bytevalue;
             // now scale the value to the byte value the synergy wants to see:
             switch (fieldType) {
                 case "envFreqLowVal":
                     bytevalue = viewVCE_envs.unscaleFreqEnvValue(value);
-                    vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 0] = bytevalue;
+                    viewVCE.vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 0] = bytevalue;
                     break;
                 case "envFreqUpVal":
                     bytevalue = viewVCE_envs.unscaleFreqEnvValue(value);
-                    vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 1] = bytevalue;
+                    viewVCE.vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 1] = bytevalue;
                     break;
                 case "envFreqLowTime":
                     bytevalue = viewVCE_envs.unscaleFreqTimeValue(value);
-                    vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 2] = bytevalue;
+                    viewVCE.vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 2] = bytevalue;
                     break;
                 case "envFreqUpTime":
                     bytevalue = viewVCE_envs.unscaleFreqTimeValue(value);
-                    vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 3] = bytevalue;
+                    viewVCE.vce.Envelopes[osc - 1].FreqEnvelope.Table[((eleIndex - 1) * 4) + 3] = bytevalue;
                     break;
                 case "envAmpLowVal":
                     bytevalue = viewVCE_envs.unscaleAmpEnvValue(value);
-                    vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 0] = bytevalue;
+                    viewVCE.vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 0] = bytevalue;
                     if (extraarg == undefined) {
                         // update the floatVal so gains work
                         viewVCE_envs.unsetFloatVals();
@@ -924,7 +933,7 @@ export let viewVCE_envs = {
                     break;
                 case "envAmpUpVal":
                     bytevalue = viewVCE_envs.unscaleAmpEnvValue(value);
-                    vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 1] = bytevalue;
+                    viewVCE.vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 1] = bytevalue;
                     if (extraarg == undefined) {
                         // update the floatVal so gains work
                         viewVCE_envs.unsetFloatVals();
@@ -935,11 +944,11 @@ export let viewVCE_envs = {
                     break;
                 case "envAmpLowTime":
                     bytevalue = viewVCE_envs.unscaleAmpTimeValue(value);
-                    vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 2] = bytevalue;
+                    viewVCE.vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 2] = bytevalue;
                     break;
                 case "envAmpUpTime":
                     bytevalue = viewVCE_envs.unscaleAmpTimeValue(value);
-                    vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 3] = bytevalue;
+                    viewVCE.vce.Envelopes[osc - 1].AmpEnvelope.Table[((eleIndex - 1) * 4) + 3] = bytevalue;
                     break;
             }
         }
@@ -971,12 +980,11 @@ export let viewVCE_envs = {
     },
 
     changeEnvPoints: function (whichEnv, increment) {
-        var eleIndex;
-        var envOscSelectEle = document.getElementById("envOscSelect");
-        var osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
-        var envEnvSelectEle = document.getElementById("envEnvSelect");
-        var selectedEnv = parseInt(envEnvSelectEle.value, 10);
-        var envs = vce.Envelopes[osc - 1];
+        let envOscSelectEle = document.getElementById("envOscSelect");
+        let osc = parseInt(envOscSelectEle.value, 10); // one-based osc index
+        let envEnvSelectEle = document.getElementById("envEnvSelect");
+        let selectedEnv = parseInt(envEnvSelectEle.value, 10);
+        let envs = viewVCE.vce.Envelopes[osc - 1];
 
         console.log("#points changed: " + whichEnv + " increment: " + increment);
 
@@ -985,9 +993,9 @@ export let viewVCE_envs = {
         // may get a suprised distortion in the envelope shape.
         viewVCE_envs.unsetFloatVals();
 
-        var changed = false;
+        let changed = false;
         if (whichEnv === 'freq') {
-            newlen = envs.FreqEnvelope.NPOINTS + increment;
+            let newlen = envs.FreqEnvelope.NPOINTS + increment;
             if (newlen >= 1 && newlen <= 16) {
                 if (increment === -1 && envs.FreqEnvelope.ENVTYPE != 1 && (envs.FreqEnvelope.LOOPPT > newlen || envs.FreqEnvelope.SUSTAINPT > newlen)) {
                     index.errorNotification("Cannot remove envelope point with SUSTAIN/LOOP marker.  Remove the SUSTAIN/LOOP marker before trying to remove points.");
@@ -997,7 +1005,7 @@ export let viewVCE_envs = {
                 changed = true;
             }
         } else {
-            newlen = envs.AmpEnvelope.NPOINTS + increment;
+            let newlen = envs.AmpEnvelope.NPOINTS + increment;
             if (newlen >= 1 && newlen <= 16) {
                 if (increment === -1 && envs.AmpEnvelope.ENVTYPE != 1 && (envs.AmpEnvelope.LOOPPT > newlen || envs.AmpEnvelope.SUSTAINPT > newlen)) {
                     index.errorNotification("Cannot remove envelope point with SUSTAIN/LOOP marker.  Remove the SUSTAIN/LOOP marker before trying to remove points.");
@@ -1031,25 +1039,25 @@ export let viewVCE_envs = {
     },
 
     uncompressEnvelopes: function () {
-        // the first time we evaluate this vce, the envelopes may be compressed.  To make it easier to add/remove
+        // the first time we evaluate this viewVCE.vce, the envelopes may be compressed.  To make it easier to add/remove
         // filters in the editor, we rewrite the envelopes arrays such each has the max amount of elements and each are initialized
         // as SYNHCS does.
-        if (vce.Extra["uncompressedEnvelopes"] != undefined) {
+        if (viewVCE.vce.Extra["uncompressedEnvelopes"] != undefined) {
             // no need to do it again
             return;
         }
         // only need to worry about the number of oscillators in the Envelopes table; any addition osc's added will automatically
         // fill in "full length" envelopes (but use the length of the array not the current value of VOITAB lowered the number of osc's)
-        for (i = 0; i < vce.Envelopes.length; i++) {
+        for (let i = 0; i < viewVCE.vce.Envelopes.length; i++) {
             const FULL_LENGTH = 16 * 4; // 16 rows, each with 4 values
-            for (j = vce.Envelopes[i].FreqEnvelope.Table.length; j < FULL_LENGTH; j++) {
-                vce.Envelopes[i].FreqEnvelope.Table.push(0);
+            for (let j = viewVCE.vce.Envelopes[i].FreqEnvelope.Table.length; j < FULL_LENGTH; j++) {
+                viewVCE.vce.Envelopes[i].FreqEnvelope.Table.push(0);
             }
-            for (j = vce.Envelopes[i].AmpEnvelope.Table.length; j < FULL_LENGTH; j++) {
-                vce.Envelopes[i].AmpEnvelope.Table.push(0);
+            for (let j = viewVCE.vce.Envelopes[i].AmpEnvelope.Table.length; j < FULL_LENGTH; j++) {
+                viewVCE.vce.Envelopes[i].AmpEnvelope.Table.push(0);
             }
         }
-        vce.Extra.uncompressedEnvelopes = true;
+        viewVCE.vce.Extra.uncompressedEnvelopes = true;
     },
 
     changeTimeScale: function (val) {
@@ -1063,7 +1071,7 @@ export let viewVCE_envs = {
     },
 
     changeTimeZoom: function (val) {
-        var div = document.getElementById('envZoomDiv');
+        let div = document.getElementById('envZoomDiv');
         div.style.width = val;
         //this.chart.update();
     },
@@ -1079,7 +1087,7 @@ export let viewVCE_envs = {
 
         viewVCE_envs.uncompressEnvelopes();
 
-        var envCopySelectEle = document.getElementById("envCopySelect");
+        let envCopySelectEle = document.getElementById("envCopySelect");
         // remove old options:
         while (envCopySelectEle.firstChild) {
             envCopySelectEle.removeChild(envCopySelectEle.firstChild);
@@ -1091,14 +1099,14 @@ export let viewVCE_envs = {
             // populate options in the select with only "other" osc (i.e. "this" osc should be not shown or at least unselectable)
 
             // first element is empty to avoid confusing the user if they havent selected something:
-            var option = document.createElement("option");
+            let option = document.createElement("option");
             option.value = -1;
             option.innerHTML = "";
             envCopySelectEle.appendChild(option);
 
-            for (i = 0; i <= vce.Head.VOITAB; i++) {
+            for (let i = 0; i <= viewVCE.vce.Head.VOITAB; i++) {
                 if ((i + 1) != oscNum) {
-                    var option = document.createElement("option");
+                    let option = document.createElement("option");
                     option.value = i + 1;
                     option.innerHTML = i + 1;
                     envCopySelectEle.appendChild(option);
@@ -1106,10 +1114,10 @@ export let viewVCE_envs = {
             }
         }
 
-        var oscIndex = oscNum - 1;
-        var envelopes = vce.Envelopes[oscIndex];
+        let oscIndex = oscNum - 1;
+        let envelopes = viewVCE.vce.Envelopes[oscIndex];
 
-        var pointStyleMetadata = [
+        let pointStyleMetadata = [
             // order needs to match the dataset array
             {
                 color: 2,
@@ -1138,9 +1146,9 @@ export let viewVCE_envs = {
         ];
 
         function annotatePointStyle(ctx) {
-            var styleMeta = filteredPointStyleMetadata[ctx.datasetIndex]
+            let styleMeta = filteredPointStyleMetadata[ctx.datasetIndex]
             //console.log("annotate point ctx ",ctx)
-            var img = new Image(14, 14);
+            let img = new Image(14, 14);
             if (styleMeta.sustainPt == ctx.dataIndex) {
                 img.src = `static/images/loopS-${styleMeta.color}.png`;
                 return img;
@@ -1171,8 +1179,8 @@ export let viewVCE_envs = {
                 pointStyle: annotatePointStyle,
                 showLine: true,
                 borderWidth: 3,
-                backgroundColor: chartColors[2],
-                borderColor: chartColors[2],
+                backgroundColor: viewVCE.chartColors[2],
+                borderColor: viewVCE.chartColors[2],
                 data: []
             },
             {
@@ -1186,8 +1194,8 @@ export let viewVCE_envs = {
                 pointStyle: annotatePointStyle,
                 showLine: true,
                 borderWidth: 3,
-                backgroundColor: chartColors[3],
-                borderColor: chartColors[3],
+                backgroundColor: viewVCE.chartColors[3],
+                borderColor: viewVCE.chartColors[3],
                 data: []
             },
             {
@@ -1201,8 +1209,8 @@ export let viewVCE_envs = {
                 pointStyle: annotatePointStyle,
                 showLine: true,
                 borderWidth: 3,
-                backgroundColor: chartColors[0],
-                borderColor: chartColors[0],
+                backgroundColor: viewVCE.chartColors[0],
+                borderColor: viewVCE.chartColors[0],
                 data: []
             },
             {
@@ -1216,8 +1224,8 @@ export let viewVCE_envs = {
                 pointStyle: annotatePointStyle,
                 showLine: true,
                 borderWidth: 3,
-                backgroundColor: chartColors[1],
-                borderColor: chartColors[1],
+                backgroundColor: viewVCE.chartColors[1],
+                borderColor: viewVCE.chartColors[1],
                 data: []
             },
         ];
@@ -1238,16 +1246,16 @@ export let viewVCE_envs = {
 
         // scaling algorithms derived from DISVAL: in OSCDSP.Z80
 
-        var totalTimeLow = 0;
-        var totalTimeUp = 0;
-        var lastFreqLow = 0;
-        var lastFreqUp = 0;
-        var lastAmpLow = 0;
-        var lastAmpUp = 0;
+        let totalTimeLow = 0;
+        let totalTimeUp = 0;
+        //let lastFreqLow = 0;
+        //let lastFreqUp = 0;
+        //let lastAmpLow = 0;
+        //let lastAmpUp = 0;
 
-        for (i = 0; i < 16; i++) {
+        for (let i = 0; i < 16; i++) {
             // completely hide the rows for rows not used by either envelope
-            var tr = $('#envTable tbody tr:eq(' + i + ')');
+            let tr = $('#envTable tbody tr:eq(' + i + ')');
             if (i < Math.max(envelopes.FreqEnvelope.NPOINTS, envelopes.AmpEnvelope.NPOINTS)) {
                 tr.show();
             } else {
@@ -1306,9 +1314,9 @@ export let viewVCE_envs = {
             viewVCE_voice.sendToCSurface(null, `gainAmpUp`, $('#gainAmpUp').val());
         }
 
-        for (i = envelopes.FreqEnvelope.NPOINTS; i < 16; i++) {
+        for (let i = envelopes.FreqEnvelope.NPOINTS; i < 16; i++) {
             // hide unused rows
-            var tr = $('#envTable tbody tr:eq(' + i + ')');
+            //let tr = $('#envTable tbody tr:eq(' + i + ')');
 
             $(`#envFreqLoop\\[${i + 1}\\]`).hide();
             $(`#envFreqLowVal\\[${i + 1}\\]`).hide();
@@ -1322,8 +1330,8 @@ export let viewVCE_envs = {
                 viewVCE_voice.sendToCSurface(null, `envFreqUpTime[${i + 1}]`, 0);
             }
         }
-        for (i = 0; i < envelopes.FreqEnvelope.NPOINTS; i++) {
-            var tr = $('#envTable tbody tr:eq(' + i + ')');
+        for (let i = 0; i < envelopes.FreqEnvelope.NPOINTS; i++) {
+            //let tr = $('#envTable tbody tr:eq(' + i + ')');
 
             $(`#envFreqLoop\\[${i + 1}\\]`).show();
             $(`#envFreqLowVal\\[${i + 1}\\]`).show();
@@ -1332,10 +1340,10 @@ export let viewVCE_envs = {
             $(`#envFreqUpTime\\[${i + 1}\\]`).show();
 
             // table is logically in groups of 4
-            var freqLow = viewVCE_envs.scaleFreqEnvValue(envelopes.FreqEnvelope.Table[i * 4 + 0]);
-            var freqUp = viewVCE_envs.scaleFreqEnvValue(envelopes.FreqEnvelope.Table[i * 4 + 1]);
-            var timeLow = viewVCE_envs.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i * 4 + 2], i == 0);
-            var timeUp = viewVCE_envs.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i * 4 + 3], i == 0);
+            let freqLow = viewVCE_envs.scaleFreqEnvValue(envelopes.FreqEnvelope.Table[i * 4 + 0]);
+            let freqUp = viewVCE_envs.scaleFreqEnvValue(envelopes.FreqEnvelope.Table[i * 4 + 1]);
+            let timeLow = viewVCE_envs.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i * 4 + 2], i == 0);
+            let timeUp = viewVCE_envs.scaleFreqTimeValue(envelopes.FreqEnvelope.Table[i * 4 + 3], i == 0);
 
             if (animate) {
                 viewVCE_voice.sendToCSurface(null, `envFreqLowVal[${i + 1}]`, envelopes.FreqEnvelope.Table[i * 4 + 0]);
@@ -1349,8 +1357,8 @@ export let viewVCE_envs = {
                 timeLow = 0;
                 timeUp = 0;
             }
-            lastFreqLow = freqLow;
-            lastFreqUp = freqUp;
+            //lastFreqLow = freqLow;
+            //lastFreqUp = freqUp;
             totalTimeLow += timeLow;
             totalTimeUp += timeUp;
 
@@ -1373,7 +1381,7 @@ export let viewVCE_envs = {
                     pointStyleMetadata[freqUpIdx].sustainPt = i;
                 }
                 if (envelopes.FreqEnvelope.LOOPPT == (i + 1)) {
-                    var v = envelopes.FreqEnvelope.ENVTYPE == 3 ? 'L' : 'R'
+                    let v = envelopes.FreqEnvelope.ENVTYPE == 3 ? 'L' : 'R'
                     $(`#envFreqLoop\\[${i + 1}\\] option[value='${v}']`).prop('selected', true);
                     if (v === 'L') {
                         pointStyleMetadata[freqLowIdx].loopPt = i;
@@ -1385,13 +1393,13 @@ export let viewVCE_envs = {
                 }
             }
         }
-        var maxTotalTime = Math.max(totalTimeLow, totalTimeUp);
+        //let maxTotalTime = Math.max(totalTimeLow, totalTimeUp);
 
         totalTimeLow = 0;
         totalTimeUp = 0;
 
 
-        for (i = envelopes.FreqEnvelope.NPOINTS; i < 16; i++) {
+        for (let i = envelopes.FreqEnvelope.NPOINTS; i < 16; i++) {
             // hide unused rows
 
             $(`#envAmpLoop\\[${i + 1}\\]`).hide();
@@ -1412,8 +1420,8 @@ export let viewVCE_envs = {
         datasets[ampLowIdx].data.push({ x: 0, y: 0 });
         datasets[ampUpIdx].data.push({ x: 0, y: 0 });
 
-        for (i = 0; i < envelopes.AmpEnvelope.NPOINTS; i++) {
-            var tr = $('#envTable tbody tr:eq(' + i + ')');
+        for (let i = 0; i < envelopes.AmpEnvelope.NPOINTS; i++) {
+            //let tr = $('#envTable tbody tr:eq(' + i + ')');
 
             $(`#envAmpLoop\\[${i + 1}\\]`).show();
             $(`#envAmpLowVal\\[${i + 1}\\]`).show();
@@ -1424,15 +1432,15 @@ export let viewVCE_envs = {
             // table is logically in groups of 4.
             // "j" accounts for the difference in column index due to the
             // row-spanning separators (only in i==0):
-            j = (i == 0) ? 11 : 9;
+            //let j = (i == 0) ? 11 : 9;
 
             //	    console.dir(tr);
             //	    console.dir(tr.find('td:eq(' +(j+0)+ ')'));
-            var isLast = (i + 1) >= envelopes.AmpEnvelope.NPOINTS;
-            var ampLow = viewVCE_envs.scaleAmpEnvValue(envelopes.AmpEnvelope.Table[i * 4 + 0]);
-            var ampUp = viewVCE_envs.scaleAmpEnvValue(envelopes.AmpEnvelope.Table[i * 4 + 1]);
-            var timeLow = viewVCE_envs.scaleAmpTimeValue(envelopes.AmpEnvelope.Table[i * 4 + 2]);
-            var timeUp = viewVCE_envs.scaleAmpTimeValue(envelopes.AmpEnvelope.Table[i * 4 + 3]);
+            let isLast = (i + 1) >= envelopes.AmpEnvelope.NPOINTS;
+            let ampLow = viewVCE_envs.scaleAmpEnvValue(envelopes.AmpEnvelope.Table[i * 4 + 0]);
+            let ampUp = viewVCE_envs.scaleAmpEnvValue(envelopes.AmpEnvelope.Table[i * 4 + 1]);
+            let timeLow = viewVCE_envs.scaleAmpTimeValue(envelopes.AmpEnvelope.Table[i * 4 + 2]);
+            let timeUp = viewVCE_envs.scaleAmpTimeValue(envelopes.AmpEnvelope.Table[i * 4 + 3]);
 
             if (animate) {
                 viewVCE_voice.sendToCSurface(null, `envAmpLowVal[${i + 1}]`, envelopes.AmpEnvelope.Table[i * 4 + 0]);
@@ -1441,8 +1449,8 @@ export let viewVCE_envs = {
                 viewVCE_voice.sendToCSurface(null, `envAmpUpTime[${i + 1}]`, envelopes.AmpEnvelope.Table[i * 4 + 3]);
             }
 
-            lastAmpLow = ampLow;
-            lastAmpUp = ampUp;
+            //lastAmpLow = ampLow;
+            //lastAmpUp = ampUp;
             totalTimeLow += timeLow;
             totalTimeUp += timeUp;
 
@@ -1474,7 +1482,7 @@ export let viewVCE_envs = {
                     pointStyleMetadata[ampUpIdx].sustainPt = i + 1;
                 }
                 if (envelopes.AmpEnvelope.LOOPPT == (i + 1)) {
-                    var v = envelopes.AmpEnvelope.ENVTYPE == 3 ? 'L' : 'R'
+                    let v = envelopes.AmpEnvelope.ENVTYPE == 3 ? 'L' : 'R'
                     $(`#envAmpLoop\\[${i + 1}\\] option[value='${v}']`).prop('selected', true);
                     if (v === 'L') {
                         // we draw an extra point for amp curve - so the index of the loop point is i+1
@@ -1488,8 +1496,8 @@ export let viewVCE_envs = {
             }
         }
 
-        maxTotalTime = Math.max(maxTotalTime, totalTimeLow);
-        maxTotalTime = Math.max(maxTotalTime, totalTimeUp);
+        //maxTotalTime = Math.max(maxTotalTime, totalTimeLow);
+        //maxTotalTime = Math.max(maxTotalTime, totalTimeUp);
 
         /*
     need to confirm the actual behavior of the envelopes to determine if this
@@ -1502,10 +1510,10 @@ export let viewVCE_envs = {
 
         //	console.dir(datasets);
 
-        var animation_duration = animate ? 1000 : 0;
+        let animation_duration = animate ? 1000 : 0;
 
-        var filteredPointStyleMetadata = [];
-        var filteredDatasets = [];
+        let filteredPointStyleMetadata = [];
+        let filteredDatasets = [];
         if (envNum < 0) {
             // all of them:
             filteredDatasets = datasets;
@@ -1514,12 +1522,12 @@ export let viewVCE_envs = {
             filteredDatasets.push(datasets[envNum])
             filteredPointStyleMetadata.push(pointStyleMetadata[envNum])
         }
-        var ctx = document.getElementById('envChart').getContext('2d');
+        let ctx = document.getElementById('envChart').getContext('2d');
         if (viewVCE_envs.chart != null) {
             viewVCE_envs.chart.destroy();
         }
-        var timeAxisType = document.getElementById('timeScale').value;
-        var freqAxisType = document.getElementById('freqScale').value;
+        let timeAxisType = document.getElementById('timeScale').value;
+        let freqAxisType = document.getElementById('freqScale').value;
 
         viewVCE_envs.chart = new Chart(ctx, {
 
@@ -1535,9 +1543,6 @@ export let viewVCE_envs = {
                     duration: animation_duration
                 },
                 tooltips: {
-                    mode: 'index',
-                },
-                hover: {
                     mode: 'index',
                 },
                 scales: {
@@ -1575,7 +1580,7 @@ export let viewVCE_envs = {
                                 if (value >= 1.0) {
                                     return value.toFixed(0);
                                 } else {
-                                    v = value.toFixed(2);
+                                    let v = value.toFixed(2);
                                     if (v.endsWith('.00')) {
                                         return value.toFixed(0);
                                     } else {
@@ -1622,7 +1627,7 @@ export let viewVCE_envs = {
                                 if (value >= 1.0) {
                                     return value.toFixed(0);
                                 } else {
-                                    v = value.toFixed(2);
+                                    let v = value.toFixed(2);
                                     if (v.endsWith('.00')) {
                                         return value.toFixed(0);
                                     } else {
@@ -1707,9 +1712,9 @@ export let viewVCE_envs = {
                     }
                     e.target.style.cursor = 'grabbing'
                     // time must stay between neighboring points:
-                    var min = index > 0 ? viewVCE_envs.chart.data.datasets[datasetIndex].data[index - 1].x : 0;
+                    let min = index > 0 ? viewVCE_envs.chart.data.datasets[datasetIndex].data[index - 1].x : 0;
                     // if the last point, use the scale max
-                    var max = (index === (viewVCE_envs.chart.data.datasets[datasetIndex].data.length - 1))
+                    let max = (index === (viewVCE_envs.chart.data.datasets[datasetIndex].data.length - 1))
                         ? (viewVCE_envs.chart.scales['time-axis'].max + 1)
                         : viewVCE_envs.chart.data.datasets[datasetIndex].data[index + 1].x;
                     // if this is a freq env, then the 0th point's x value is fixed at 0
@@ -1737,9 +1742,6 @@ export let viewVCE_envs = {
                     viewVCE_envs.updateEnvFromGraphChange(datasetIndex, index, value, true)
                 },
 
-                tooltips: {
-                    mode: 'index',
-                },
                 hover: {
                     mode: 'index',
                     intersect: true,
@@ -1783,10 +1785,10 @@ export let viewVCE_envs = {
         // if x has changed, then the TIME value for both the point and the preceding point need to change
         // (since the env values are the delta-t from the previous point, not the absolute t of the point)
         // if y has changed, only its value needs to be updated.
-        var newV = value.y
-        var newT
-        var nextNewT = undefined
-        var fieldIndex = index + 1; // fields are 1-based
+        let newV = value.y
+        let newT
+        let nextNewT = undefined
+        let fieldIndex = index + 1; // fields are 1-based
 
         if (datasetIndex >= 2) {
             // amp.  the first point in the env corresponds to the second point on the graph
@@ -1815,7 +1817,7 @@ export let viewVCE_envs = {
         console.log("UPDATE VALUES", fieldIndex, newV, newT, nextNewT)
 
         function setValueAndFireOnchange(id, val) {
-            ele = document.getElementById(id);
+            let ele = document.getElementById(id);
             ele.value = val;
             // don't run onchange during the drag - since we redraw the graph after sending data to the Synergy
             //(and that aborts the drag)

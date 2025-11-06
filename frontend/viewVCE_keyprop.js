@@ -1,11 +1,18 @@
-let viewVCE_keyprop = {
+import { $ } from "./jquery-3.4.1.min";
+import * as viewVCE from './viewVCE';
+import * as viewVCE_voice from './viewVCE_voice';
+import * as viewVCE_chartdrag from './viewVCE_chartdrag';
+import * as index from './index';
+import * as Chart from '/Chart.bundle.min';
+
+export let viewVCE_keyprop = {
 	chart: null,
 
 	keyPropCurve: function (kprop) {
 		var result = [];
 		// y = 0..32
 		// x = 0..23
-		for (v = 0; v < kprop.length; v++) {
+		for (let v = 0; v < kprop.length; v++) {
 			result[v] = kprop[v];
 		}
 		return result;
@@ -31,7 +38,8 @@ let viewVCE_keyprop = {
 
 		var eleIndex;
 		var pattern = /keyprop\[(\d+)\]/;
-		if (ret = id.match(pattern)) {
+		let ret = id.match(pattern);
+		if (ret) {
 			eleIndex = parseInt(ret[1])
 		}
 		let message = {
@@ -49,7 +57,7 @@ let viewVCE_keyprop = {
 				index.errorNotification(message.payload);
 				return false;
 			} else {
-				vce.Head.KPROP[eleIndex - 1] = value;
+				viewVCE.vce.Head.KPROP[eleIndex - 1] = value;
 				if (updateChart) {
 					viewVCE_keyprop.init(true);
 				}
@@ -66,7 +74,7 @@ let viewVCE_keyprop = {
 			viewVCE_keyprop.deb_onchange = viewVCE_keyprop.raw_onchange;
 		}
 
-		var propData = viewVCE_keyprop.keyPropCurve(vce.Head.KPROP);
+		var propData = viewVCE_keyprop.keyPropCurve(viewVCE.vce.Head.KPROP);
 
 		$('#keyPropTable td.val input').each(function (i, obj) {
 			var id = obj.id;
@@ -110,8 +118,8 @@ let viewVCE_keyprop = {
 					lineTension: 0,
 					pointRadius: 0,
 					label: 'Key Proportion',
-					backgroundColor: chartColors[0],
-					borderColor: chartColors[0],
+					backgroundColor: viewVCE.chartColors[0],
+					borderColor: viewVCE.chartColors[0],
 					data: propData
 				}]
 			},

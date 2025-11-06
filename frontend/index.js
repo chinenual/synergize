@@ -2,14 +2,20 @@
 //
 //let shell = require('electron').shell
 import { UIService }  from "/bindings/github.com/chinenual/synergize";
-import { dx2syn }  from "./dx2syn";
-import { syn2midi }  from "./syn2midi";
+import * as dx2syn   from "./dx2syn";
+import * as syn2midi   from "./syn2midi";
+import * as viewCRT  from "./viewCRT";
+import * as viewVCE  from "./viewVCE";
+import * as viewVCE_voice  from "./viewVCE_voice";
 import * as wails from "@wailsio/runtime";
+import { $ } from "./jquery-3.4.1.min";
+import { _ } from "./lodash-4.17.15.js";
 
-const DEBOUNCE_WAIT_SHORT = 50;
-const DEBOUNCE_WAIT = 250;
 
 export let index = {
+ 	DEBOUNCE_WAIT_SHORT :  50,
+	DEBOUNCE_WAIT :  250,
+ 
 	init: function () {
 		dx2syn.init();
 		syn2midi.init();
@@ -36,13 +42,13 @@ export let index = {
 		if (!ele.value.match(/^-?\d+$/)) {
 			return undefined;
 		}
-		var result = parseInt(ele.value, 10);
+		let result = parseInt(ele.value, 10);
 		if (ele.hasAttribute("min")) {
-			var min = parseInt(ele.getAttribute("min"), 10);
+			let min = parseInt(ele.getAttribute("min"), 10);
 			if (result < min) result = min;
 		}
 		if (ele.hasAttribute("max")) {
-			var max = parseInt(ele.getAttribute("max"), 10);
+			let max = parseInt(ele.getAttribute("max"), 10);
 			if (result > max) result = max;
 		}
 		return result;
@@ -109,10 +115,10 @@ export let index = {
 			document.getElementById("chooseZeroconf2Items").innerHTML = "";
 			$('#zeroconf2Div').hide();
 		}
-		var html = "";
 		if (prompt1 != null && choices1 != null) {
-			for (i = 0; i < choices1.length; i++) {
-				var addr = ""
+			let html = "";
+			for (let i = 0; i < choices1.length; i++) {
+				let addr = ""
 				if (choices1[i].Port != 0) {
 					addr = ` (${choices1[i].HostName}:${choices1[i].Port})`
 				}
@@ -130,9 +136,9 @@ export let index = {
 		}
 
 		if (prompt2 != null && choices2 != null) {
-			var html = "";
-			for (i = 0; i < choices2.length; i++) {
-				var addr = ""
+			let html = "";
+			for (let i = 0; i < choices2.length; i++) {
+				let addr = ""
 				if (choices2[i].Port != 0) {
 					addr = ` (${choices2[i].HostName}:${choices2[i].Port})`
 				}
@@ -149,16 +155,15 @@ export let index = {
 			console.log("innerHTML now " + document.getElementById("chooseZeroconf2Items").innerHTML);
 		}
 
-		var selected = 0;
 		document.getElementById("chooseZeroconfCancelButton").onclick = function () {
 			console.log("Cancelled");
 			onCancel();
 		};
 		document.getElementById("chooseZeroconfOKButton").onclick = function () {
-			var idx1 = null
-			var selected1 = null
-			var idx2 = null
-			var selected2 = null
+			let idx1 = null
+			let selected1 = null
+			let idx2 = null
+			let selected2 = null
 			if (choices1 != null && prompt1 != null) {
 				idx1 = parseInt($('#chooseZeroconf1Items input:checked').val(), 10);
 				selected1 = choices1[idx1];
@@ -182,7 +187,7 @@ export let index = {
 
 	saveSYNDialog: function () {
 
-		path = dialog.showSaveDialogSync({
+		let path = dialog.showSaveDialogSync({
 			filters: [
 				{ name: 'State', extensions: ['syn'] },
 				{ name: 'All Files', extensions: ['*'] }],
@@ -213,7 +218,7 @@ export let index = {
 		}
 	},
 	loadSYNDialog: function () {
-		path = dialog.showOpenDialogSync({
+		let path = dialog.showOpenDialogSync({
 			filters: [
 				{ name: 'State', extensions: ['syn'] },
 				{ name: 'All Files', extensions: ['*'] }],
@@ -225,7 +230,7 @@ export let index = {
 		}
 	},
 	loadCRTDialog: function () {
-		path = dialog.showOpenDialogSync({
+		let path = dialog.showOpenDialogSync({
 			filters: [
 				{ name: 'Cartridge', extensions: ['crt'] },
 				{ name: 'All Files', extensions: ['*'] }],
@@ -237,7 +242,7 @@ export let index = {
 		}
 	},
 	loadVCEDialog: function () {
-		path = dialog.showOpenDialogSync({
+		let path = dialog.showOpenDialogSync({
 			filters: [
 				{ name: 'Voice', extensions: ['vce'] },
 				{ name: 'All Files', extensions: ['*'] }],
@@ -249,7 +254,7 @@ export let index = {
 		}
 	},
 	saveVCEDialog: function () {
-		path = dialog.showSaveDialogSync({
+		let path = dialog.showSaveDialogSync({
 			filters: [
 				{ name: 'Voice', extensions: ['vce'] },
 				{ name: 'All Files', extensions: ['*'] }],
@@ -312,9 +317,7 @@ export let index = {
 				index.errorNotification(message.payload);
 				return
 			}
-			crt_path = path;
-			crt_name = name;
-			crt = message.payload;
+			viewCRT.setCRT(path, name, message.payload);
 			index.load("viewCRT.html", "content",
 				function () {
 					viewCRT.init();
@@ -334,12 +337,12 @@ export let index = {
 	},
 	raw_viewVCE: function (name, path) {
 		console.log("index.raw_viewVCE " + name + " " + path)
-		var name = "readVCE";
+		let msgname = "readVCE";
 		if (viewVCE_voice.voicingMode) {
-			name = "loadVceVoicingMode"
+			msgname = "loadVceVoicingMode"
 		}
 		let message = {
-			"name": name,
+			"name": msgname,
 			"payload": path
 		};
 		// Send message
@@ -351,10 +354,9 @@ export let index = {
 				index.errorNotification(message.payload);
 				return
 			}
-			vce = message.payload;
+			viewVCE.setVCE(message.payload);
 
-			crt_name = null;
-			crt_path = null;
+			viewCRT.setCRT(null, null); 
 			index.load("viewVCE.html", "content",
 				function () {
 					viewVCE.init();
@@ -363,9 +365,9 @@ export let index = {
 		});
 	},
 	viewVCESlot: function (slot) {
-		vce = crt.Voices[slot];
+		viewVCE.setVCE(viewCRT.crt.Voices[slot]);
 
-		console.log("view voice slot " + slot + " : " + vce);
+		console.log("view voice slot " + slot + " : " + viewVCE.vce);
 		index.load("viewVCE.html", "content",
 			function () {
 				viewVCE.init();
@@ -575,7 +577,7 @@ export let index = {
 	},
 
 	fileDialog: function () {
-		files = dialog.showOpenDialogSync({
+		let files = dialog.showOpenDialogSync({
 			//electron bug? filter files cause the dialog to look wonky
 			filters: [
 				{ name: 'Voice', extensions: ['vce'] },
@@ -611,7 +613,7 @@ export let index = {
 		$(("#" + eleId)).load(url, function () {
 			console.log("loaded url " + url);
 			if (callback != undefined) {
-				element = document.getElementById(eleId);
+				let element = document.getElementById(eleId);
 				callback(element);
 			}
 		});
@@ -663,7 +665,7 @@ export let index = {
 	// each input to be independently debounced even if all using the same onchange function
 	// Adapted from: https://github.com/lodash/lodash/issues/2403 and https://stackoverflow.com/a/28795512
 	debounceFirstArg: function (func, wait = 0, options = {}) {
-		var mem = _.memoize(function () {
+		let mem = _.memoize(function () {
 			return _.debounce(func, wait, options)
 		});
 		return function () { mem.apply(this, arguments).apply(this, arguments) }
@@ -719,7 +721,7 @@ export let index = {
 	**/
 
 
-// make the variable visible to HTML:
+// make the letiable visible to HTML:
 window.index = index;
 
 function inDropbtn(ele) {
@@ -737,10 +739,10 @@ function inDropbtn(ele) {
 /* close dropdowns if user clicks outside the menu */
 window.onclick = function (event) {
 	if (!inDropbtn(event.target)) {
-		var dropdowns = document.getElementsByClassName("dropdown-content");
-		var i;
+		let dropdowns = document.getElementsByClassName("dropdown-content");
+		let i;
 		for (i = 0; i < dropdowns.length; i++) {
-			var openDropdown = dropdowns[i];
+			let openDropdown = dropdowns[i];
 			if (openDropdown.style.display === "block") {
 				//console.log("toggle display off " + openDropdown.id);
 				openDropdown.style.display = "none";

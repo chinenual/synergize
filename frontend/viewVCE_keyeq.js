@@ -1,11 +1,18 @@
-let viewVCE_keyeq = {
+import { $ } from "./jquery-3.4.1.min";
+import { viewVCE_voice }  from "./viewVCE_voice";
+import * as viewVCE  from "./viewVCE";
+import * as index  from "./index";
+import * as viewVCE_chartdrag  from "./viewVCE_chartdrag";
+import * as Chart from '/Chart.bundle.min';
+
+export let viewVCE_keyeq = {
 	chart: null,
 
 	keyEqCurve: function (keq) {
-		var result = [];
+		let result = [];
 		// y = -24..6
 		// x = 0..23
-		for (v = 0; v < keq.length; v++) {
+		for (let v = 0; v < keq.length; v++) {
 			result[v] = keq[v];
 		}
 		return result;
@@ -20,17 +27,18 @@ let viewVCE_keyeq = {
 
 	raw_onchange: function (ele, updateChart) {
 		if (viewVCE.supressOnchange) { /*console.log("raw viewVCE.suppressOnChange");*/ return; }
-		var value = index.checkInputElementValue(ele);
+		let value = index.checkInputElementValue(ele);
 		if (value == undefined) {
 			return;
 		}
 
-		var id = ele.id;
+		let id = ele.id;
 		console.log("changed: " + id + " val: " + ele.value);
 
-		var eleIndex;
-		var pattern = /keyeq\[(\d+)\]/;
-		if (ret = id.match(pattern)) {
+		let eleIndex;
+		let pattern = /keyeq\[(\d+)\]/;
+		let ret = id.match(pattern);
+		if (ret) {
 			eleIndex = parseInt(ret[1])
 		}
 		let message = {
@@ -48,7 +56,7 @@ let viewVCE_keyeq = {
 				index.errorNotification(message.payload);
 				return false;
 			} else {
-				vce.Head.VEQ[eleIndex - 1] = value;
+				viewVCE.vce.Head.VEQ[eleIndex - 1] = value;
 				if (updateChart) {
 					viewVCE_keyeq.init(true);
 				}
@@ -65,13 +73,13 @@ let viewVCE_keyeq = {
 			viewVCE_keyeq.deb_onchange = viewVCE_keyeq.raw_onchange;
 		}
 
-		var propData = viewVCE_keyeq.keyEqCurve(vce.Head.VEQ);
+		let propData = viewVCE_keyeq.keyEqCurve(viewVCE.vce.Head.VEQ);
 
 		$('#keyEqTable td.val input').each(function (i, obj) {
-			var id = obj.id;
+			let id = obj.id;
 			// id is "keyeq[<n>]" - we need the <n> part
-			var idxString = id.substring(6);
-			var idx = parseInt(idxString, 10) - 1;
+			let idxString = id.substring(6);
+			let idx = parseInt(idxString, 10) - 1;
 
 			obj.value = propData[idx];
 
@@ -83,7 +91,7 @@ let viewVCE_keyeq = {
 			viewVCE_keyeq.chart.destroy();
 		}
 
-		var ctx = document.getElementById('keyEqChart').getContext('2d');
+		let ctx = document.getElementById('keyEqChart').getContext('2d');
 		viewVCE_keyeq.chart = new Chart(ctx, {
 
 			type: 'line',
@@ -95,8 +103,8 @@ let viewVCE_keyeq = {
 					lineTension: 0,
 					pointRadius: 0,
 					label: 'Key Equalization',
-					backgroundColor: chartColors[0],
-					borderColor: chartColors[0],
+					backgroundColor: viewVCE.chartColors[0],
+					borderColor: viewVCE.chartColors[0],
 					data: propData
 				}]
 			},

@@ -1,22 +1,30 @@
-"use strict";
+import { $ } from "./jquery-3.4.1.min";
+import { _ } from "./lodash-4.17.15.js";
+import { index } from "./index";
+import * as viewVCE  from "./viewVCE";
+import * as viewCRT  from "./viewCRT";
+import * as viewVCE_envs  from "./viewVCE_envs";
+import * as viewVCE_filters  from "./viewVCE_filters";
+import * as Chart from '/Chart.bundle.min';
+import * as nomnoml from 'nomnoml-0.8.0';
 
 export let viewVCE_voice = {
 	voicingMode: false,
 	csEnabled: false,
 
 	timbreProportionCurve: function (center, sensitivity) {
-		var result = [];
+		let result = [];
 		if (sensitivity == 0) {
-			for (v = 0; v < 32; v++) {
+			for (let v = 0; v < 32; v++) {
 				result[v] = center;
 			}
 			return result;
 		}
 		// center = 0..32
 		// sensitivity = 1..31
-		for (v = 0; v < 32; v++) {
+		for (let v = 0; v < 32; v++) {
 			// this appears to be what the z80 code is doing for timbre PROPC:
-			var p = (center * 2) - 15 + ((v / 10) * sensitivity) - (2 * sensitivity);
+			let p = (center * 2) - 15 + ((v / 10) * sensitivity) - (2 * sensitivity);
 			if (p > 31) p = 31;
 			if (p < 0) p = 0;
 			result[v] = p;
@@ -25,18 +33,18 @@ export let viewVCE_voice = {
 	},
 
 	ampProportionCurve: function (center, sensitivity) {
-		var result = [];
+		let result = [];
 		if (sensitivity == 0) {
-			for (v = 0; v < 32; v++) {
+			for (let v = 0; v < 32; v++) {
 				result[v] = center;
 			}
 			return result;
 		}
 		// center = 0..32
 		// sensitivity = 1..31
-		for (v = 0; v < 32; v++) {
+		for (let v = 0; v < 32; v++) {
 			// this appears to be what the z80 code is doing for timbre PROPC:
-			var p = ((((v / 10) * sensitivity) / 2.0 - sensitivity) / 2.0) + (center - 24)
+			let p = ((((v / 10) * sensitivity) / 2.0 - sensitivity) / 2.0) + (center - 24)
 			if (p > 6) p = 6;
 			if (p < -24) p = -24;
 			result[v] = p + 25;
@@ -49,13 +57,13 @@ export let viewVCE_voice = {
 
 	toggleOsc: function (ele) {
 		console.log("toggle " + ele.id);
-		var oscPattern = /([A-Z]+)\[(\d+)\]/;
-		let ret;
-		if (ret = ele.id.match(oscPattern)) {
-			param = ret[1];
-			osc = parseInt(ret[2], 10); /* 1-based */
+		let oscPattern = /([A-Z]+)\[(\d+)\]/;
+		let ret = ele.id.match(oscPattern);
+		if (ret) {
+			let param = ret[1];
+			let osc = parseInt(ret[2], 10); /* 1-based */
 
-			state = !ele.classList.contains("on");
+			let state = !ele.classList.contains("on");
 			viewVCE_voice[param][osc - 1] = state;
 			ele.classList.toggle('on');
 
@@ -82,18 +90,20 @@ export let viewVCE_voice = {
 	},
 
 	filterChanged: function (ele) {
-		var id = ele.id;
+		let id = ele.id;
 		console.log("filterChanged: " + id + " val: " + ele.value);
 
-		var filterPattern = /FILTER\[(\d+)\]/;
+		let filterPattern = /FILTER\[(\d+)\]/;
 		let ret;
-		if (ret = id.match(filterPattern)) {
+		let osc;
+		if ((ret = id.match(filterPattern))) {
 			osc = parseInt(ret[1])
 		} else {
 			console.log("ERROR: filterCHanged called with bad ele " + ele);
+			osc = 0;
 		}
-		var filterValue = parseInt(ele.value, 10);
-		vce.Head.FILTER[osc - 1] = filterValue;
+		let filterValue = parseInt(ele.value, 10);
+		viewVCE.vce.Head.FILTER[osc - 1] = filterValue;
 		// don't wait for this - we want to get feedback to the control surface asap
 		//async () => {
 		viewVCE_filters.init(true);
@@ -101,8 +111,8 @@ export let viewVCE_voice = {
 	},
 
 	OHARMToText: function (str) {
-		var newStr;
-		var val = parseInt(str, 10);
+		let newStr;
+		let val = parseInt(str, 10);
 		if (val == -12) {
 			newStr = "dc";
 		} else if (val < 0) {
@@ -117,17 +127,17 @@ export let viewVCE_voice = {
 	},
 
 	TextToOHARM: function (str) {
-		var newStr;
+		let newStr;
 		let ret;
 		if (str === "dc") {
 			newStr = '-12';
-		} else if (ret = str.match(/s(\d+)/)) {
+		} else if ((ret = str.match(/s(\d+)/))) {
 		    	// bug#79:  s1 -> -1 (ff), s2 -> -2 (fe)
 		    	// correct: s1 -> -11 (f5), s2 -> -10 (f6)
 		        //          s11 -> -1 (ff),  s10 -> -2 (fe)
 			let val = parseInt(ret[1], 10);
 			newStr = '' + (val - 12);
-		} else if (ret = str.match(/\d+/)) {
+		} else if ((ret = str.match(/\d+/))) {
 			newStr = str;
 		} else {
 			/// error! 
@@ -144,8 +154,8 @@ export let viewVCE_voice = {
 		*
 		* See D.DTN routine in VOIDSP.Z80 in the SYNHCS sourcecode.
 		*/
-		var newStr;
-		var val = parseInt(str, 10);
+		let newStr;
+		let val = parseInt(str, 10);
 		if (val > 58) {
 			// CASE A
 			newStr = "ran" + (val - 58);
@@ -168,15 +178,15 @@ export let viewVCE_voice = {
 
 	TextToFDETUN: function (str) {
 		// See FDETUNToText.  This "reverses" that attrocity
-		var newStr;
+		let newStr;
 		let ret;
-		if (ret = str.match(/ran(\d+)/)) {
+		if ((ret = str.match(/ran(\d+)/))) {
 			// CASE A
-			var val = parseInt(ret[1], 10);
+			let val = parseInt(ret[1], 10);
 			val += 58;
 			newStr = '' + val;
 		} else {
-			var val = parseInt(str, 10);
+			let val = parseInt(str, 10);
 			if (val >= (-32 * 3) && val <= (32 * 3)) {
 				// CASE B
 				val /= 3;
@@ -197,7 +207,7 @@ export let viewVCE_voice = {
 		if (str.trim() === '') {
 			return '';
 		}
-		var val = parseInt(str, 10);
+		let val = parseInt(str, 10);
 		if (val === 0) {
 			return '';
 		}
@@ -208,7 +218,7 @@ export let viewVCE_voice = {
 		if (str.trim() === '') {
 			return '0';
 		}
-		var val = parseInt(str, 10);
+		let val = parseInt(str, 10);
 		if (val === 0) {
 			return '0'
 		}
@@ -216,26 +226,26 @@ export let viewVCE_voice = {
 	},
 
 	testConversionFunctions: function () {
-		var ok = true;
-		for (var i = 0; i < 3; i++) {
-			var str = viewVCE_voice.NullablePatchRegisterToText('' + i);
-			var reverseStr = viewVCE_voice.TextToNullablePatchRegister(str);
+		let ok = true;
+		for (let i = 0; i < 3; i++) {
+			let str = viewVCE_voice.NullablePatchRegisterToText('' + i);
+			let reverseStr = viewVCE_voice.TextToNullablePatchRegister(str);
 			if (('' + i) != reverseStr) {
 				ok = false;
 				console.log("ERROR: PatchReg " + i + " totext: " + str + " reversed to " + reverseStr)
 			}
 		}
-		for (var i = -12; i <= 30; i++) {
-			var str = viewVCE_voice.OHARMToText('' + i);
-			var reverseStr = viewVCE_voice.TextToOHARM(str);
+		for (let i = -12; i <= 30; i++) {
+			let str = viewVCE_voice.OHARMToText('' + i);
+			let reverseStr = viewVCE_voice.TextToOHARM(str);
 			if (('' + i) != reverseStr) {
 				ok = false;
 				console.log("ERROR: OHARM " + i + " totext: " + str + " reversed to " + reverseStr)
 			}
 		}
-		for (var i = -63; i <= 63; i++) {
-			var str = viewVCE_voice.FDETUNToText('' + i);
-			var reverseStr = viewVCE_voice.TextToFDETUN(str);
+		for (let i = -63; i <= 63; i++) {
+			let str = viewVCE_voice.FDETUNToText('' + i);
+			let reverseStr = viewVCE_voice.TextToFDETUN(str);
 			if (('' + i) != reverseStr) {
 				ok = false;
 				console.log("ERROR: FDETUN " + i + " totext: " + str + " reversed to " + reverseStr)
@@ -249,7 +259,7 @@ export let viewVCE_voice = {
 		//	// CASE D
 		//}
 		// test that the FDETUN rounding does the right thing: 
-		var v = viewVCE_voice.FDETUNToText(viewVCE_voice.TextToFDETUN('20'));
+		let v = viewVCE_voice.FDETUNToText(viewVCE_voice.TextToFDETUN('20'));
 		if ('21' != v) {
 			ok = false;
 			console.log("ERROR: FDETUN CASE B " + 20 + " rounded to " + v + " - expected " + 21)
@@ -275,14 +285,14 @@ export let viewVCE_voice = {
 		console.log("onchangeDSR: " + param + "[" + osc + "] == " + value);
 
 		// displayed values are 1-based, bit values in the patch byte are 0-based
-		var patchFOInputDSR = document.getElementById(`patchFOInputDSR[${osc}]`).value;
-		var patchAdderInDSR = document.getElementById(`patchAdderInDSR[${osc}]`).value;
-		var patchOutputDSR = document.getElementById(`patchOutputDSR[${osc}]`).value;
+		let patchFOInputDSR = document.getElementById(`patchFOInputDSR[${osc}]`).value;
+		let patchAdderInDSR = document.getElementById(`patchAdderInDSR[${osc}]`).value;
+		let patchOutputDSR = document.getElementById(`patchOutputDSR[${osc}]`).value;
 
 		// XREF: patch byte encode/decode
-		var patchInhibitAddr = patchAdderInDSR == '' ? true : false;
-		var patchInhibitF0 = patchFOInputDSR == '' ? true : false;
-		var patchByte = 0;
+		let patchInhibitAddr = patchAdderInDSR == '' ? true : false;
+		let patchInhibitF0 = patchFOInputDSR == '' ? true : false;
+		let patchByte = 0;
 		patchByte |= ((parseInt(patchFOInputDSR, 10) - 1) & 0x03);
 		patchByte |= (((parseInt(patchAdderInDSR, 10) - 1) << 3) & 0x18);
 		patchByte |= (((parseInt(patchOutputDSR, 10) - 1) << 6) & 0xc0);
@@ -293,7 +303,7 @@ export let viewVCE_voice = {
 			patchByte |= 0x04;
 		}
 
-		console.log(osc + " old patch byte: " + vce.Envelopes[osc - 1].FreqEnvelope.OPTCH + "\n" +
+		console.log(osc + " old patch byte: " + viewVCE.vce.Envelopes[osc - 1].FreqEnvelope.OPTCH + "\n" +
 			" new patch byte: " + patchByte + "\n" +
 			" patchInhibitAddr : " + patchInhibitAddr + "\n" +
 			" patchInhibitF0   : " + patchInhibitF0 + "\n" +
@@ -316,7 +326,7 @@ export let viewVCE_voice = {
 				index.errorNotification(message.payload);
 				return false;
 			}
-			vce.Envelopes[osc - 1].FreqEnvelope.OPTCH = patchByte;
+			viewVCE.vce.Envelopes[osc - 1].FreqEnvelope.OPTCH = patchByte;
 			viewVCE_voice.patchTable(); // in case the patch diagram changes due to the edit
 			viewVCE_voice.voicingModeVisuals();
 		});
@@ -333,7 +343,7 @@ export let viewVCE_voice = {
 
 	raw_onchange: function (ele, updater, valueConverter) {
 		if (viewVCE.supressOnchange) { /*console.log("raw viewVCE.suppressOnChange");*/ return; }
-		var id = ele.id;
+		let id = ele.id;
 		console.log("changed: " + id + ", new value: " + ele.value);
 
 		if (valueConverter == undefined) {
@@ -341,70 +351,73 @@ export let viewVCE_voice = {
 			valueConverter = function (v) { return v };
 		}
 
-		var value
-		var param
-		var args
-		var gainPattern = /OscGain\[(\d+)\]/;
-		var filterPattern = /FILTER\[(\d+)\]/;
-		var dsrPattern = /([0-9A-Za-z]+DSR)\[(\d+)\]/;
-		var waveKeyPattern = /wk([A-Z]+)\[(\d+)\]/;
-		var oscPattern = /([A-Z]+)\[(\d+)\]/;
-		var headPattern = /([A-Z]+)/;
+		let value
+		let param
+		let args
+		let osc
+		let gainPattern = /OscGain\[(\d+)\]/;
+		let filterPattern = /FILTER\[(\d+)\]/;
+		let dsrPattern = /([0-9A-Za-z]+DSR)\[(\d+)\]/;
+		let waveKeyPattern = /wk([A-Z]+)\[(\d+)\]/;
+		let oscPattern = /([A-Z]+)\[(\d+)\]/;
+		let headPattern = /([A-Z]+)/;
+		let funcname;
+		let ret;
 		if (id === "VNAME") {
 			param = "VNAME"
 			funcname = "setVNAME";
 			args = ele.value;
-		} else if (ret = id.match(gainPattern)) {
+		} else if ((ret = id.match(gainPattern))) {
 			osc = parseInt(ret[1])
 			value = parseInt(ele.value, 10);
 			viewVCE_envs.setOscGain(osc-1,value);
 			viewVCE_voice.sendToCSurface(ele, ele.id, value);
 			return
 
-		} else if (ret = id.match(dsrPattern)) {
+		} else if ((ret = id.match(dsrPattern))) {
 			param = ret[1]
 			osc = ret[2]
 			value = parseInt(valueConverter(ele.value), 10);
 			return viewVCE_voice.onchangeDSR(param, osc, value);
-		} else if (ret = id.match(filterPattern)) {
+		} else if ((ret = id.match(filterPattern))) {
 			param = "FILTER"
 			funcname = "setOscFILTER";
 			osc = parseInt(ret[1])
 			// the synergy wants to see -1 for Af, <osc#> for Bf and 0 for no filter
 			value = parseInt(valueConverter(ele.value), 10);
 			args = [osc, value];
-		} else if (ret = id.match(waveKeyPattern)) {
+		} else if ((ret = id.match(waveKeyPattern))) {
 			param = ret[1]
 			osc = parseInt(ret[2], 10)
 			if (param == "WAVE") {
 				funcname = "setOscWAVE"
 				value = ele.value == "Sin" ? 0 : 1;
 				args = [osc, value];
-				vce.Envelopes[osc-1].FreqEnvelope.Table[3] |= value;
+				viewVCE.vce.Envelopes[osc-1].FreqEnvelope.Table[3] |= value;
 			} else {
 				funcname = "setOscKEYPROP"
 				value = ele.checked ? 1 : 0;
 				args = [osc, value];
-				vce.Envelopes[osc-1].FreqEnvelope.Table[3] |= (value ? 0x10 : 0);
+				viewVCE.vce.Envelopes[osc-1].FreqEnvelope.Table[3] |= (value ? 0x10 : 0);
 			}
-		} else if (ret = id.match(oscPattern)) {
+		} else if ((ret = id.match(oscPattern))) {
 			param = ret[1];
 			osc = parseInt(ret[2], 10)
 			value = parseInt(valueConverter(ele.value), 10)
 			args = [osc, value]
 
 			//console.log("changed: " + id + " param: " + param + " osc: " + osc);
-			vce.Envelopes[osc - 1].FreqEnvelope[param] = value;
+			viewVCE.vce.Envelopes[osc - 1].FreqEnvelope[param] = value;
 			funcname = "setVoiceByte"
 
-		} else if (ret = id.match(headPattern)) {
+		} else if ((ret = id.match(headPattern))) {
 			param = id;
 			value = parseInt(valueConverter(ele.value), 10)
 			args = [value]
-			vce.Head[param] = valueConverter(ele.value);
+			viewVCE.vce.Head[param] = valueConverter(ele.value);
 			funcname = "setVoiceByte"
 		}
-		//console.dir(vce);
+		//console.dir(viewVCE.viewVCE.vce);
 		if (param != null) {
 			let message = {
 				"name": funcname,
@@ -441,20 +454,20 @@ export let viewVCE_voice = {
 		// Fix this once the DOM lifecycle issue is sorted out.
 		//
 		//$("#patchType").empty().append(viewVCE_voice.patchTypeOptions);
-		$("#patchType").val(vce.Extra.PatchType);
+		$("#patchType").val(viewVCE.vce.Extra.PatchType);
 
-		var tbody = document.getElementById("patchTbody");
+		let tbody = document.getElementById("patchTbody");
 		// remove old rows:
 		while (tbody.firstChild) {
 			tbody.removeChild(tbody.firstChild);
 		}
 
-		var outRegisters = [[], [], [], []];
-		var freqDAG = "";
+		let outRegisters = [[], [], [], []];
+		let freqDAG = "";
 
-		viewVCE_voice.sendToCSurface(null, `num-osc`, vce.Head.VOITAB + 1);
+		viewVCE_voice.sendToCSurface(null, `num-osc`, viewVCE.vce.Head.VOITAB + 1);
 		/*
-		for (osc = vce.Head.VOITAB + 1; osc < 16; osc++) {
+		for (let osc = viewVCE.vce.Head.VOITAB + 1; osc < 16; osc++) {
 			// midi initialation for unused osc's
 			viewVCE_voice.sendToCSurface(null, `OHARM[${osc + 1}]`, 0);
 			viewVCE_voice.sendToCSurface(null, `FDETUN[${osc + 1}]`, 0);
@@ -466,17 +479,18 @@ export let viewVCE_voice = {
 			viewVCE_voice.sendToCSurface(null, `osc-enabled[${osc + 1}]`, 0);
 		}*/
 
-                var debug_patchBytes = "";
+                let debug_patchBytes = "";
 		// populate new ones:
-		for (osc = 0; osc <= vce.Head.VOITAB; osc++) {
+		for (let osc = 0; osc <= viewVCE.vce.Head.VOITAB; osc++) {
 			viewVCE_voice.sendToCSurface(null, `osc-enabled[${osc + 1}]`, 1);
 
-			var tr = document.createElement("tr");
-			var td = document.createElement("td");
+			let tr = document.createElement("tr");
+			let td = document.createElement("td");
 
 			//--- OSC
 			td.innerHTML = osc + 1; // Osc
 			// Mute 
+			let span;
 			span = document.createElement("span");
 			span.innerHTML = `&nbsp;&nbsp;<span onclick="viewVCE_voice.toggleOsc(this)" class="vceEditToggleText" id="MUTE[${osc + 1}]">M</span>`;
 			td.append(span);
@@ -491,7 +505,7 @@ export let viewVCE_voice = {
 			tr.appendChild(td);
 
 			// Gain
-			gain = viewVCE_envs.computeOscGain(osc, 2);
+			let gain = viewVCE_envs.computeOscGain(osc, 2);
 			td = document.createElement("td");
 			td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinPLAIN" id="OscGain[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,undefined)" value="${gain}"
@@ -502,12 +516,12 @@ export let viewVCE_voice = {
 
 			// XREF: patch byte encode/decode
 			// FIXME: assumes envelopes are sorted in oscillator order
-			var patchByte = vce.Envelopes[osc].FreqEnvelope.OPTCH;
-			var patchInhibitAddr = (patchByte & 0x20) != 0;
-			var patchInhibitF0 = (patchByte & 0x04) != 0;
-			var patchOutputDSR = ((patchByte & 0xc0) >> 6);
-			var patchAdderInDSR = ((patchByte & 0x18) >> 3);
-			var patchFOInputDSR = (patchByte & 0x03);
+			let patchByte = viewVCE.vce.Envelopes[osc].FreqEnvelope.OPTCH;
+			let patchInhibitAddr = (patchByte & 0x20) != 0;
+			let patchInhibitF0 = (patchByte & 0x04) != 0;
+			let patchOutputDSR = ((patchByte & 0xc0) >> 6);
+			let patchAdderInDSR = ((patchByte & 0x18) >> 3);
+			let patchFOInputDSR = (patchByte & 0x03);
 
 			//			console.log(osc + " patch byte: " + patchByte + "\n" +
 			//				" patchInhibitAddr : " + patchInhibitAddr + "\n" +
@@ -520,8 +534,8 @@ export let viewVCE_voice = {
                     
 			// compute the DAG based on current register usage:
 			if (!patchInhibitF0) {
-				var modulatingOscs = outRegisters[patchFOInputDSR];
-				for (var i = 0; i < modulatingOscs.length; i++) {
+				let modulatingOscs = outRegisters[patchFOInputDSR];
+				for (let i = 0; i < modulatingOscs.length; i++) {
 					freqDAG += `[${modulatingOscs[i] + 1}]-[${osc + 1}]\n`;
 				}
 			} else {
@@ -535,7 +549,7 @@ export let viewVCE_voice = {
 
 			//--- Patch F
 			td = document.createElement("td");
-			var reg = 0;
+			let reg = 0;
 			if (!patchInhibitF0) {
 				reg = patchFOInputDSR + 1;
 			} else {
@@ -581,24 +595,24 @@ export let viewVCE_voice = {
 			// Someone more skilled in the ways of CSS would surely have a cleaner solution.
 			td = document.createElement("td");
 			td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinOHARM" id="OHARM[${osc + 1}]" 
-			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToOHARM)" value="${viewVCE_voice.OHARMToText(vce.Envelopes[osc].FreqEnvelope.OHARM)}" 
+			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToOHARM)" value="${viewVCE_voice.OHARMToText(viewVCE.vce.Envelopes[osc].FreqEnvelope.OHARM)}" 
 			min="-12" max="30"
 			disabled/></div>`;
 			tr.appendChild(td);
-			viewVCE_voice.sendToCSurface(null, `OHARM[${osc + 1}]`, vce.Envelopes[osc].FreqEnvelope.OHARM)
+			viewVCE_voice.sendToCSurface(null, `OHARM[${osc + 1}]`, viewVCE.vce.Envelopes[osc].FreqEnvelope.OHARM)
 
 			//--- Detn
 			td = document.createElement("td");
 			td.innerHTML = `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinFDETUN" id="FDETUN[${osc + 1}]" 
-			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToFDETUN)" value="${viewVCE_voice.FDETUNToText(vce.Envelopes[osc].FreqEnvelope.FDETUN)}" 
+			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToFDETUN)" value="${viewVCE_voice.FDETUNToText(viewVCE.vce.Envelopes[osc].FreqEnvelope.FDETUN)}" 
 			min="-63" max="63"
 			disabled/></div>`;
 			tr.appendChild(td);
-			viewVCE_voice.sendToCSurface(null, `FDETUN[${osc + 1}]`, vce.Envelopes[osc].FreqEnvelope.FDETUN)
+			viewVCE_voice.sendToCSurface(null, `FDETUN[${osc + 1}]`, viewVCE.vce.Envelopes[osc].FreqEnvelope.FDETUN)
 
-			var waveByte = vce.Envelopes[osc].FreqEnvelope.Table[3];
-			var wave = ((waveByte & 0x1) == 0) ? 'Sin' : 'Tri';
-			var keyprop = ((waveByte & 0x10) == 0) ? false : true;
+			let waveByte = viewVCE.vce.Envelopes[osc].FreqEnvelope.Table[3];
+			let wave = ((waveByte & 0x1) == 0) ? 'Sin' : 'Tri';
+			let keyprop = ((waveByte & 0x10) == 0) ? false : true;
 
 			//--- Wave
 			td = document.createElement("td");
@@ -623,7 +637,7 @@ export let viewVCE_voice = {
 
 			//--- Flt
 			td = document.createElement("td");
-			var filter = vce.Head.FILTER[osc];
+			let filter = viewVCE.vce.Head.FILTER[osc];
 			td.innerHTML =
 				(filter == 0) ? ''
 					: (filter > 0) ? ('Bf ' + filter) : ('Af ' + -filter);
@@ -648,9 +662,9 @@ export let viewVCE_voice = {
 							    <td colspan="9">
 			    					<div style="margin-top: 5px; float: left;">
 				    					<input id="del-osc" type='button' value='-'
-										    onclick='viewVCE_voice.setNumOscillators(vce.Head.VOITAB)' />
+										    onclick='viewVCE_voice.setNumOscillators(viewVCE.vce.Head.VOITAB)' />
 									    <input id="add-osc" type='button' value='+'
-									   	    onclick='viewVCE_voice.setNumOscillators(vce.Head.VOITAB+2)' />
+									   	    onclick='viewVCE_voice.setNumOscillators(viewVCE.vce.Head.VOITAB+2)' />
 								    </div>
 								</td>
 							</tr>`;
@@ -660,9 +674,9 @@ export let viewVCE_voice = {
             console.log("patchBytes: " + debug_patchBytes);
 		console.log("freqDAG: " + freqDAG);
 		// Generate the patch diagram:
-		var patchDiagramCanvas = document.getElementById('patchDiagram');
+		let patchDiagramCanvas = document.getElementById('patchDiagram');
 		// nomnoml is confused by leading spaces on directives lines, so...:
-		var patchDiagramSource =
+		let patchDiagramSource =
 			`
 #ranker: longest-path
 #spacing: 12
@@ -695,10 +709,10 @@ ${freqDAG}
 				// failed - dont change the boolean
 				index.errorNotification(message.payload);
 			} else {
-				for (i = 0; i < vce.Envelopes.length; i++) {
-					vce.Envelopes[i].FreqEnvelope.OPTCH = message.payload[i];
+				for (let i = 0; i < viewVCE.vce.Envelopes.length; i++) {
+					viewVCE.vce.Envelopes[i].FreqEnvelope.OPTCH = message.payload[i];
 				}
-				vce.Extra.PatchType = parseInt(newIndex, 0);
+				viewVCE.vce.Extra.PatchType = parseInt(newIndex, 0);
 				viewVCE.init();
 			}
 			index.refreshConnectionStatus();
@@ -722,7 +736,7 @@ ${freqDAG}
 		// reset the floating point backing arrays: FIXME: this may mean that someone who is in
 		// midst of twiddling gain, then adds/deletes a oscillator, then expects gain to keep working
 		// may get a suprised distortion in the envelope shape.
-		viewVCE_envs.floatAmpVal = null;
+		viewVCE_envs.clearFloatAmpVal();
 
 		let message = {
 			"name": "setNumOscillators",
@@ -741,15 +755,15 @@ ${freqDAG}
 				index.errorNotification(message.payload);
 			} else {
 				/// now the tricky part - update the in memory version of vce to reflect what just happened:
-				vce.Head.VOITAB = newNum - 1
-				var oldLength = vce.Envelopes.length
+				viewVCE.vce.Head.VOITAB = newNum - 1
+				let oldLength = viewVCE.vce.Envelopes.length
 
-				if (vce.Head.VOITAB <= 0) {
+				if (viewVCE.vce.Head.VOITAB <= 0) {
 					$("#del-osc").addClass('disabled');
 				} else {
 					$("#del-osc").removeClass('disabled');
 				}
-				if (vce.Head.VOITAB >= 15) {
+				if (viewVCE.vce.Head.VOITAB >= 15) {
 					$("#add-osc").addClass('disabled');
 				} else {
 					$("#add-osc").removeClass('disabled');
@@ -757,15 +771,15 @@ ${freqDAG}
 				if (newNum <= oldLength) {
 					// nothing to do - just ignored the extra envelopes
 				} else {
-					for (i = oldLength; i < newNum; i++) {
+					for (let i = oldLength; i < newNum; i++) {
 						// copy the envelope template into the vce:
 						// abuse JSON to do a deep copy:
-						vce.Envelopes[i] = JSON.parse(JSON.stringify(message.payload.EnvelopeTemplate));
+						viewVCE.vce.Envelopes[i] = JSON.parse(JSON.stringify(message.payload.EnvelopeTemplate));
 						// overwrite the default patch type
-						console.log("before copy", vce.Envelopes);
-						vce.Envelopes[i].OPTCH = message.payload.PatchBytes[i];
-						console.log(i, "copy env - now ", vce.Envelopes[i]);
-						console.log("AFTER copy", vce.Envelopes);
+						console.log("before copy", viewVCE.vce.Envelopes);
+						viewVCE.vce.Envelopes[i].OPTCH = message.payload.PatchBytes[i];
+						console.log(i, "copy env - now ", viewVCE.vce.Envelopes[i]);
+						console.log("AFTER copy", viewVCE.vce.Envelopes);
 					}
 				}
 				viewVCE.init();
@@ -849,7 +863,7 @@ ${freqDAG}
 	},
 
 	connectSynergy: function (successCallback) {
-		var wasDisconnectedSynergy = index.synergyName === null;
+		let wasDisconnectedSynergy = index.synergyName === null;
 		return viewVCE_voice._withZeroconf("Choose Synergy", null, "getSynergy",
 			viewVCE_voice.raw_connectSynergy,
 			viewVCE_voice.connectSynergy,
@@ -862,8 +876,8 @@ ${freqDAG}
 	},
 
 	voicingModeOn: function () {
-		var wasDisconnectedSynergy = index.synergyName === null;
-		var wasDisconnectedCs = index.controlSurfaceName === null;
+		let wasDisconnectedSynergy = index.synergyName === null;
+		let wasDisconnectedCs = index.controlSurfaceName === null;
 		return viewVCE_voice._withZeroconf("Choose Synergy", "Choose Control Surface", "getSynergyAndControlSurface",
 			viewVCE_voice.raw_voicingModeOn,
 			viewVCE_voice.voicingModeOn,
@@ -931,9 +945,9 @@ ${freqDAG}
 				$('#disableControlSurfaceMenuItem').addClass('disabled');
 				viewVCE_voice.csEnabled = false;
 			}
-			vce = null;
+			viewVCE.setVCE(null);
 			viewVCE_voice.voicingModeVisuals();
-			var msg = 'Voicing mode disabled.';
+			let msg = 'Voicing mode disabled.';
 			if (disconnect) {
 				msg = msg + " Synergy Disconnected.";
 			}
@@ -948,7 +962,7 @@ ${freqDAG}
 			"name": "toggleVoicingMode",
 			"payload": {
 				"Mode": true,
-				"Vce" : vce,
+				"Vce" : viewVCE.vce,
 				"ZeroconfSynergy": synergyZeroconfChoice, // optional param - null unless user just selected from a menu
 				"ZeroconfCs": csZeroconfChoice // optional param - null unless user just selected from a menu
 			}
@@ -964,20 +978,19 @@ ${freqDAG}
 				viewVCE_voice.csEnabled = false;
 			} else {
 				viewVCE_voice.voicingMode = true;
-				var csMessage = "";
+				let csMessage = "";
 				if (message.payload != null) {
-					vce = message.payload.Vce;
+					viewVCE.setVCE(message.payload.Vce);
 					viewVCE_voice.csEnabled = message.payload.CsEnabled;
 
-					var csMessage = ""
+					let csMessage;
 					if (viewVCE_voice.csEnabled) {
 						csMessage = `.<br>Control Surface is enabled: ${message.payload.CsName}.`;
 					} else {
 						csMessage = `.<br>Control Surface is not enabled.`;
 					}
 
-					crt_name = null;
-					crt_path = null;
+					viewCRT.setCRT(null, null);
 					index.load("viewVCE.html", "content",
 						function (ele) {
 							viewVCE.init();
@@ -989,7 +1002,7 @@ ${freqDAG}
 			index.refreshConnectionStatus();
 
 			// reset the SOLO arrays
-			for (osc = 0; osc < 16; osc++) {
+			for (let osc = 0; osc < 16; osc++) {
 				viewVCE_voice.MUTE[osc] = false;
 				viewVCE_voice.SOLO[osc] = false;
 				$('.vceEditToggle').removeClass('on');
@@ -1002,7 +1015,7 @@ ${freqDAG}
 	},
 
 	voicingModeVisuals: function () {
-		var mode = viewVCE_voice.voicingMode;
+		let mode = viewVCE_voice.voicingMode;
 		//mode = true; // For debugging and CSS tweaking: force edit controls to be visible
 
 		// XREF: converter mappings : these are duplicated in updateFromCSurface
@@ -1110,12 +1123,12 @@ ${freqDAG}
 			$('#saveVCEMenuItem').addClass('disabled');
 			$('#oscPlusMinus').hide();
 		}
-		if (vce && vce.Head.VOITAB <= 0) {
+		if (viewVCE.vce && viewVCE.vce.Head.VOITAB <= 0) {
 			$("#del-osc").addClass('disabled');
 		} else {
 			$("#del-osc").removeClass('disabled');
 		}
-		if (vce && vce.Head.VOITAB >= 15) {
+		if (viewVCE.vce && viewVCE.vce.Head.VOITAB >= 15) {
 			$("#add-osc").addClass('disabled');
 		} else {
 			$("#add-osc").removeClass('disabled');
@@ -1133,8 +1146,8 @@ ${freqDAG}
 	chart: null,
 
 	updateChart: function () {
-		var ampData = viewVCE_voice.ampProportionCurve(vce.Head.VACENT, vce.Head.VASENS);
-		var timbreData = viewVCE_voice.timbreProportionCurve(vce.Head.VTCENT, vce.Head.VTSENS);
+		let ampData = viewVCE_voice.ampProportionCurve(viewVCE.vce.Head.VACENT, viewVCE.vce.Head.VASENS);
+		let timbreData = viewVCE_voice.timbreProportionCurve(viewVCE.vce.Head.VTCENT, viewVCE.vce.Head.VTSENS);
 
 		viewVCE_voice.chart.data.datasets[0].data = ampData;
 		viewVCE_voice.chart.data.datasets[1].data = timbreData;
@@ -1142,7 +1155,7 @@ ${freqDAG}
 	},
 
 	updateVibType: function () {
-		document.getElementById("vibType").innerHTML = (vce.Head.VIBDEP >= 0) ? "Sine" : "Random";
+		document.getElementById("vibType").innerHTML = (viewVCE.vce.Head.VIBDEP >= 0) ? "Sine" : "Random";
 	},
 
 	patchTypeOptions: null, // HTML fragment used to populate the <options> for the patchType select
@@ -1158,9 +1171,9 @@ ${freqDAG}
 			if (message.name === "error") {
 				index.errorNotification(message.payload);
 			}
-			nameArray = message.payload;
-			html = ""
-			for (i = 0; i < nameArray.length; i++) {
+			let nameArray = message.payload;
+			let html = ""
+			for (let i = 0; i < nameArray.length; i++) {
 				html += `<option value="${i}">${nameArray[i]}</option>\n`;
 			}
 			viewVCE_voice.patchTypeOptions = html;
@@ -1171,10 +1184,10 @@ ${freqDAG}
 		console.log('--- start viewVCE_voice init');
 
 		if (viewVCE_voice.deb_onchange == null) {
-			viewVCE_voice.deb_onchange = index.debounceFirstArg(viewVCE_voice.raw_onchange, DEBOUNCE_WAIT);
+			viewVCE_voice.deb_onchange = index.debounceFirstArg(viewVCE_voice.raw_onchange, index.DEBOUNCE_WAIT);
 		}
 		if (viewVCE_voice.deb_setNumOscillators == null) {
-			viewVCE_voice.deb_setNumOscillators = _.debounce(viewVCE_voice.raw_setNumOscillators, DEBOUNCE_WAIT);
+			viewVCE_voice.deb_setNumOscillators = _.debounce(viewVCE_voice.raw_setNumOscillators, index.DEBOUNCE_WAIT);
 		}
 		if (viewVCE_voice.patchTypeNames == null) {
 			viewVCE_voice.getPatchTypeNames();
@@ -1198,41 +1211,40 @@ ${freqDAG}
 
 		viewVCE_voice.patchTable();
 
-		console.log("view VCE, CRT:" + crt_name + ", VCE: " + vce.Head.VNAME)
+		console.log("view VCE, CRT:" + viewCRT.crt_name + ", VCE: " + viewVCE.vce.Head.VNAME)
 
-		if (crt_name == null) {
+		if (viewCRT.crt_name == null) {
 			document.getElementById("backToCRT").hidden = true;
 		} else {
 			document.getElementById("backToCRT").hidden = false;
 		}
 
-		document.getElementById("nOsc").innerHTML = vce.Head.VOITAB + 1;
-		document.getElementById("keysPlayable").innerHTML = Math.floor(32 / (vce.Head.VOITAB + 1));
+		document.getElementById("nOsc").innerHTML = viewVCE.vce.Head.VOITAB + 1;
+		document.getElementById("keysPlayable").innerHTML = Math.floor(32 / (viewVCE.vce.Head.VOITAB + 1));
 		viewVCE_voice.updateVibType();
-		document.getElementById("VIBRAT").value = vce.Head.VIBRAT;
-		viewVCE_voice.sendToCSurface(document.getElementById("VIBRAT"), "VIBRAT", vce.Head.VIBRAT)
-		document.getElementById("VIBDEL").value = vce.Head.VIBDEL;
-		viewVCE_voice.sendToCSurface(document.getElementById("VIBDEL"), "VIBDEL", vce.Head.VIBDEL)
-		document.getElementById("VIBDEP").value = vce.Head.VIBDEP;
-		viewVCE_voice.sendToCSurface(document.getElementById("VIBDEP"), "VIBDEP", vce.Head.VIBDEP)
-		document.getElementById("APVIB").value = vce.Head.APVIB;
-		viewVCE_voice.sendToCSurface(document.getElementById("APVIB"), "APVIB", vce.Head.APVIB)
+		document.getElementById("VIBRAT").value = viewVCE.vce.Head.VIBRAT;
+		viewVCE_voice.sendToCSurface(document.getElementById("VIBRAT"), "VIBRAT", viewVCE.vce.Head.VIBRAT)
+		document.getElementById("VIBDEL").value = viewVCE.vce.Head.VIBDEL;
+		viewVCE_voice.sendToCSurface(document.getElementById("VIBDEL"), "VIBDEL", viewVCE.vce.Head.VIBDEL)
+		document.getElementById("VIBDEP").value = viewVCE.vce.Head.VIBDEP;
+		viewVCE_voice.sendToCSurface(document.getElementById("VIBDEP"), "VIBDEP", viewVCE.vce.Head.VIBDEP)
+		document.getElementById("APVIB").value = viewVCE.vce.Head.APVIB;
+		viewVCE_voice.sendToCSurface(document.getElementById("APVIB"), "APVIB", viewVCE.vce.Head.APVIB)
 
-		document.getElementById("VTRANS").value = vce.Head.VTRANS;
-		viewVCE_voice.sendToCSurface(document.getElementById("VTRANS"), "VTRANS", vce.Head.VTRANS)
-		document.getElementById("VACENT").value = vce.Head.VACENT;
-		viewVCE_voice.sendToCSurface(document.getElementById("VACENT"), "VACENT", vce.Head.VACENT)
-		document.getElementById("VASENS").value = vce.Head.VASENS;
-		viewVCE_voice.sendToCSurface(document.getElementById("VASENS"), "VASENS", vce.Head.VASENS)
-		document.getElementById("VTCENT").value = vce.Head.VTCENT;
-		viewVCE_voice.sendToCSurface(document.getElementById("VTCENT"), "VTCENT", vce.Head.VTCENT)
-		document.getElementById("VTSENS").value = vce.Head.VTSENS;
-		viewVCE_voice.sendToCSurface(document.getElementById("VTSENS"), "VTSENS", vce.Head.VTSENS)
+		document.getElementById("VTRANS").value = viewVCE.vce.Head.VTRANS;
+		viewVCE_voice.sendToCSurface(document.getElementById("VTRANS"), "VTRANS", viewVCE.vce.Head.VTRANS)
+		document.getElementById("VACENT").value = viewVCE.vce.Head.VACENT;
+		viewVCE_voice.sendToCSurface(document.getElementById("VACENT"), "VACENT", viewVCE.vce.Head.VACENT)
+		document.getElementById("VASENS").value = viewVCE.vce.Head.VASENS;
+		viewVCE_voice.sendToCSurface(document.getElementById("VASENS"), "VASENS", viewVCE.vce.Head.VASENS)
+		document.getElementById("VTCENT").value = viewVCE.vce.Head.VTCENT;
+		viewVCE_voice.sendToCSurface(document.getElementById("VTCENT"), "VTCENT", viewVCE.vce.Head.VTCENT)
+		document.getElementById("VTSENS").value = viewVCE.vce.Head.VTSENS;
+		viewVCE_voice.sendToCSurface(document.getElementById("VTSENS"), "VTSENS", viewVCE.vce.Head.VTSENS)
 
-		var i;
-		var count = 0;
-		for (i = 0; i < vce.Head.FILTER.length; i++) {
-			if (vce.Head.FILTER[i] != 0) {
+		let count = 0;
+		for (let i = 0; i < viewVCE.vce.Head.FILTER.length; i++) {
+			if (viewVCE.vce.Head.FILTER[i] != 0) {
 				count++;
 			}
 		}
@@ -1241,10 +1253,10 @@ ${freqDAG}
 		Chart.defaults.global.defaultFontColor = 'white';
 		Chart.defaults.global.defaultFontSize = 14;
 
-		var ampData = viewVCE_voice.ampProportionCurve(vce.Head.VACENT, vce.Head.VASENS);
-		var timbreData = viewVCE_voice.timbreProportionCurve(vce.Head.VTCENT, vce.Head.VTSENS);
+		let ampData = viewVCE_voice.ampProportionCurve(viewVCE.vce.Head.VACENT, viewVCE.vce.Head.VASENS);
+		let timbreData = viewVCE_voice.timbreProportionCurve(viewVCE.vce.Head.VTCENT, viewVCE.vce.Head.VTSENS);
 
-		var ctx = document.getElementById('velocityChart').getContext('2d');
+		let ctx = document.getElementById('velocityChart').getContext('2d');
 		if (viewVCE_voice.chart != null) {
 			// kill off the old chart so we dont get conflicts
 			viewVCE_voice.chart.destroy();
@@ -1261,8 +1273,8 @@ ${freqDAG}
 					pointRadius: 0,
 					pointHitRadius: 5,
 					label: 'Amplitude',
-					backgroundColor: chartColors[0],
-					borderColor: chartColors[0],
+					backgroundColor: viewVCE.chartColors[0],
+					borderColor: viewVCE.chartColors[0],
 					data: ampData
 				}, {
 					fill: false,
@@ -1270,8 +1282,8 @@ ${freqDAG}
 					pointRadius: 0,
 					pointHitRadius: 5,
 					label: 'Timbre',
-					backgroundColor: chartColors[1],
-					borderColor: chartColors[1],
+					backgroundColor: viewVCE.chartColors[1],
+					borderColor: viewVCE.chartColors[1],
 					data: timbreData
 				}]
 			},
@@ -1321,10 +1333,10 @@ ${freqDAG}
 			}
 		});
 
-		document.getElementById("vce_crt_name").innerHTML = crt_name;
+		document.getElementById("vce_crt_name").innerHTML = viewCRT.crt_name;
 		// do this last to help the uitest to not start testing too soon
-		document.getElementById("vce_name").innerHTML = vce.Head.VNAME;
-		document.getElementById("VNAME").value = vce.Head.VNAME.replace(/ +$/g, ''); // trim trailing spaces for editing
+		document.getElementById("vce_name").innerHTML = viewVCE.vce.Head.VNAME;
+		document.getElementById("VNAME").value = viewVCE.vce.Head.VNAME.replace(/ +$/g, ''); // trim trailing spaces for editing
 		console.log('--- finish viewVCE_voice init');
 	},
 
@@ -1352,7 +1364,7 @@ ${freqDAG}
 			return;
 		}
 
-		var ele = document.getElementById(payload.Field)
+		let ele = document.getElementById(payload.Field)
 
 		// special handling for the +/- buttons
 		if (payload.Field.search("add-") == 0 || payload.Field.search("del-") == 0) {
@@ -1365,7 +1377,7 @@ ${freqDAG}
 			console.log("updateFromCSurface " + payload.Field + " element not found");
 			return
 		}
-		var value = payload.Value
+		let value = payload.Value
 
 
 		// when using MIDI
@@ -1376,7 +1388,7 @@ ${freqDAG}
 		// when using OSC, the value is the direct Synergy byte value - no offset
 		/*
 		if (ele.hasAttribute("min")) {
-			var min = parseInt(ele.getAttribute("min"), 10);
+			let min = parseInt(ele.getAttribute("min"), 10);
 			value = value + min;
 		}
 		*/
@@ -1384,7 +1396,7 @@ ${freqDAG}
 		// XREF: converter mappings: it would be nicer to directly query the input element to determine what 
 		// sort of touchspin callbacks are associate, if any.  But its not obvous how to do that, so
 		// I duplicate some logic here
-		var converter = function (value) {
+		let converter = function (value) {
 			return value;
 		};
 		if (ele.classList.contains("spinFreqTime")) {
@@ -1403,7 +1415,7 @@ ${freqDAG}
 			converter = viewVCE_envs.FreqTimeValueToText;
 		}
 
-		var valueString = converter("" + value)
+		let valueString = converter("" + value)
 
 		//console.log("  updateFromCSurface " + payload.Field + "was " + ele.value);
 		if (ele.disabled) {
@@ -1416,9 +1428,9 @@ ${freqDAG}
 		}
 		if (ele.nodeName == "SELECT") {
 			// cycle through the options in each click
-			var options = ele.options
+			let options = ele.options
 			//			console.log("cycle SELECT: currently " + options.selectedIndex + " len: " + options.length);
-			var i = options.selectedIndex + 1
+			let i = options.selectedIndex + 1
 			if (i >= options.length) {
 				i = 0
 			}
@@ -1453,7 +1465,7 @@ ${freqDAG}
 		// Use the min value on the input control to correct for an offset 
 		/*
 		if (ele != null && ele.hasAttribute("min")) {
-			var min = parseInt(ele.getAttribute("min"), 10);
+			let min = parseInt(ele.getAttribute("min"), 10);
 			value = value - min;
 		}
 		*/
