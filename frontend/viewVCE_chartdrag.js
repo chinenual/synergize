@@ -2,12 +2,12 @@
 // Can't use for envelopes since those are a lot more complicated.
 
 //ChartJs event handler attaching events to chart canvas
-var viewVCE_chartdrag = {
+export let viewVCE_chartdrag = {
     registeredCharts: [],
 
     deregister: function (chart) {
         console.log("deregister: ", chart, viewVCE_chartdrag.registeredCharts[chart])
-        cleanup = viewVCE_chartdrag.registeredCharts[chart];
+        let cleanup = viewVCE_chartdrag.registeredCharts[chart];
         if (cleanup != null) {
             cleanup(chart);
         }
@@ -50,6 +50,7 @@ var viewVCE_chartdrag = {
                         case "mouseout":
                             console.log("mouseout");
                             cancel = viewVCE_chartdrag.onDragEnd(evt, state);
+                            break;
                         default:
                         //handleDefault(evt);
                     }
@@ -149,9 +150,9 @@ onDragEnd: function (e, state) {
             }
             sleep(2);
     */
-    for (i = 0; i < viewVCE_chartdrag.points.length; i++) {
+    for (let i = 0; i < viewVCE_chartdrag.points.length; i++) {
         if (viewVCE_chartdrag.points[i] != undefined) {
-            ele = document.getElementById(`${state.fieldName}[${i + 1}]`);
+            let ele = document.getElementById(`${state.fieldName}[${i + 1}]`);
             state.onchange(ele,false)
         }
     }
@@ -162,7 +163,7 @@ updateField: function (state, idx, value) {
     viewVCE_chartdrag.points[idx] = value;
     state.chart.data.datasets[0].data[idx] = value;
     state.chart.update(0);
-    ele = document.getElementById(`${state.fieldName}[${idx + 1}]`, value);
+    let ele = document.getElementById(`${state.fieldName}[${idx + 1}]`, value);
     ele.value = value;
 }
 }

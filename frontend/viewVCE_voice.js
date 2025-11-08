@@ -1,13 +1,13 @@
-import * as Chart from '/Chart.bundle.min';
+import {Chart} from 'chart.js/auto';
 
 import {index} from './index';
 import * as $ from './jquery';
 import _ from 'lodash';
 import * as nomnoml from './nomnoml';
-import * as viewCRT from './viewCRT';
-import * as viewVCE from './viewVCE';
-import * as viewVCE_envs from './viewVCE_envs';
-import * as viewVCE_filters from './viewVCE_filters';
+import { viewCRT } from './viewCRT';
+import { viewVCE } from './viewVCE';
+import { viewVCE_envs } from './viewVCE_envs';
+import { viewVCE_filters } from './viewVCE_filters';
 
 export let viewVCE_voice = {
   voicingMode: false,
@@ -1524,8 +1524,6 @@ ${freqDAG}
       converter = viewVCE_envs.AmpEnvValueToText;
     } else if (ele.classList.contains('spinAmpTime')) {
       converter = viewVCE_envs.AmpTimeValueToText;
-    } else if (ele.classList.contains('spinFreqTime')) {
-      converter = viewVCE_envs.FreqTimeValueToText;
     }
 
     let valueString = converter('' + value)

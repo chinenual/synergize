@@ -2,11 +2,11 @@
 //const {env} = require("process");
 //const {DH_CHECK_P_NOT_PRIME} = require("constants");
 import { index } from "./index";
-import * as viewVCE  from "./viewVCE";
+import { viewVCE }  from "./viewVCE";
 import { viewVCE_voice }  from "./viewVCE_voice";
 import * as $ from "./jquery";
 import { _ } from "lodash";
-import * as Chart from '/Chart.bundle.min';
+import { Chart } from 'chart.js/auto';
 
 let dragOldValue = {x: undefined, y: undefined};
 

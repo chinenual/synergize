@@ -1,11 +1,11 @@
-import * as Chart from '/Chart.bundle.min';
+import { Chart } from 'chart.js/auto';
 
-import * as viewVCE_doc from './viewVCE_doc';
-import * as viewVCE_envs from './viewVCE_envs';
-import * as viewVCE_filters from './viewVCE_filters';
-import * as viewVCE_keyeq from './viewVCE_keyeq';
-import * as viewVCE_keyprop from './viewVCE_keyprop';
-import * as viewVCE_voice from './viewVCE_voice';
+import { viewVCE_doc } from './viewVCE_doc';
+import { viewVCE_envs } from './viewVCE_envs';
+import { viewVCE_filters } from './viewVCE_filters';
+import { viewVCE_keyeq } from './viewVCE_keyeq';
+import { viewVCE_keyprop } from './viewVCE_keyprop';
+import { viewVCE_voice } from './viewVCE_voice';
 
 export let viewVCE = {
   // flag to prevent programatic voice changes from triggering onchange updates

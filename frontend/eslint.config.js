@@ -1,13 +1,28 @@
 import js from "@eslint/js";
 import globals from "globals";
-import { defineConfig } from "eslint/config";
+import { defineConfig, globalIgnores } from "eslint/config";
 /*eslint no-unused-vars: ["error", { "args": "none" }]*/
 
 export default defineConfig([
+    globalIgnores([
+	"bindings/**",
+	"dist/**",
+	"public/**",
+	"Chart.bundle.min.js",
+	"graphre.js",
+	"jquery.js",
+	"lodash.js",
+	"nomnoml.js",
+	"runtime-debug.js",
+	"runtime.js"
+    ]),
     {
 	files: ["**/*.{js,mjs,cjs}"],
+	
 	plugins: { js },
-	extends: ["js/recommended"],
+	extends: [
+	    "js/recommended",
+	],
 	languageOptions: {
 	    globals: globals.browser
 	},
@@ -15,6 +30,6 @@ export default defineConfig([
             "no-unused-vars": ["error", {
 		"args": "none",
             }]
-	}
+	},
     },
 ]);

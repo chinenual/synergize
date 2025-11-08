@@ -66,6 +66,21 @@ export function CrtEditSaveCRT(path, crt) {
 }
 
 /**
+ * @returns {$CancellablePromise<void>}
+ */
+export function Dx2synCancel() {
+    return $Call.ByID(3057982693);
+}
+
+/**
+ * @param {string} path
+ * @returns {$CancellablePromise<void>}
+ */
+export function Dx2synStart(path) {
+    return $Call.ByID(2164463121, path);
+}
+
+/**
  * @param {string} path
  * @returns {$CancellablePromise<$models.Exploration>}
  */
@@ -106,6 +121,43 @@ export function GetVersion() {
  */
 export function SavePreferences(preferences) {
     return $Call.ByID(1411312828, preferences);
+}
+
+/**
+ * @param {number} uiFilterIndex
+ * @param {number[]} values
+ * @returns {$CancellablePromise<void>}
+ */
+export function SetFilterArray(uiFilterIndex, values) {
+    return $Call.ByID(1951657392, uiFilterIndex, values);
+}
+
+/**
+ * @param {number} uiFilterIndex
+ * @param {number} index
+ * @param {number} value
+ * @returns {$CancellablePromise<void>}
+ */
+export function SetFilterEle(uiFilterIndex, index, value) {
+    return $Call.ByID(3725700453, uiFilterIndex, index, value);
+}
+
+/**
+ * @param {number} index
+ * @param {number} value
+ * @returns {$CancellablePromise<void>}
+ */
+export function SetVoiceKPROPEle(index, value) {
+    return $Call.ByID(1100869349, index, value);
+}
+
+/**
+ * @param {number} index
+ * @param {number} value
+ * @returns {$CancellablePromise<void>}
+ */
+export function SetVoiceVEQEle(index, value) {
+    return $Call.ByID(1799679745, index, value);
 }
 
 /**

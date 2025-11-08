@@ -3,14 +3,14 @@
 // let shell = require('electron').shell
 import {UIService} from '/bindings/github.com/chinenual/synergize';
 import * as wails from '@wailsio/runtime';
-
-import * as dx2syn from './dx2syn';
-import * as $ from './jquery';
 import {_} from 'lodash';
-import * as syn2midi from './syn2midi';
-import * as viewCRT from './viewCRT';
-import * as viewVCE from './viewVCE';
-import * as viewVCE_voice from './viewVCE_voice';
+
+import {dx2syn} from './dx2syn';
+import * as $ from './jquery';
+import { syn2midi } from './syn2midi';
+import { viewCRT } from './viewCRT';
+import {viewVCE} from './viewVCE';
+import {viewVCE_voice} from './viewVCE_voice';
 
 
 export let index = {
@@ -18,13 +18,15 @@ export let index = {
   DEBOUNCE_WAIT: 250,
 
   init: function() {
+    console.log('dx2syn', dx2syn);
+
     dx2syn.init();
     syn2midi.init();
     // make sure external web links open in system browser - not the
     // application:
     // document.addEventListener('click', function (event) {
     //	if (event.target.tagName === 'A' &&
-    //event.target.href.startsWith('http')) { 		event.preventDefault()
+    // event.target.href.startsWith('http')) { 		event.preventDefault()
     //		shell.openExternal(event.target.href)
     //	}
     //})
@@ -611,21 +613,21 @@ export let index = {
     });
   },
 
-//   fileDialog: function() {
-//     let files = dialog.showOpenDialogSync({
-//       // electron bug? filter files cause the dialog to look wonky
-//       filters: [
-//         {name: 'Voice', extensions: ['vce']},
-//         {name: 'Cartridge', extensions: ['crt']},
-//         {name: 'State', extensions: ['syn']},
-//         {name: 'All Files', extensions: ['*']}
-//       ],
-//       properties: ['openFile']
-//     });
-//     console.log('in fileDialog: ' + files);
-//     return files;
-//   },
-  
+  //   fileDialog: function() {
+  //     let files = dialog.showOpenDialogSync({
+  //       // electron bug? filter files cause the dialog to look wonky
+  //       filters: [
+  //         {name: 'Voice', extensions: ['vce']},
+  //         {name: 'Cartridge', extensions: ['crt']},
+  //         {name: 'State', extensions: ['syn']},
+  //         {name: 'All Files', extensions: ['*']}
+  //       ],
+  //       properties: ['openFile']
+  //     });
+  //     console.log('in fileDialog: ' + files);
+  //     return files;
+  //   },
+
   runCOMTST: function() {
     viewVCE_voice.connectSynergy(function() {
       let message = {'name': 'runCOMTST'};

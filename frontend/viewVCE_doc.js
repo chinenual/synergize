@@ -1,5 +1,5 @@
 import * as $ from "./jquery";
-import * as viewVCE from './viewVCE';
+import { viewVCE } from './viewVCE';
 
 export let viewVCE_doc = {
 
