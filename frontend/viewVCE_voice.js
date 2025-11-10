@@ -347,7 +347,7 @@ export let viewVCE_voice = {
 
   deb_onchange: null,
 
-  raw_onchange: function(ele, updater, valueConverter) {
+  raw_onchange: async function(ele, updater, valueConverter) {
     if (viewVCE
             .supressOnchange) { /*console.log("raw viewVCE.suppressOnChange");*/
       return;
@@ -432,25 +432,34 @@ export let viewVCE_voice = {
     }
     // console.dir(viewVCE.viewVCE.vce);
     if (param != null) {
-      let message = {
-        'name': funcname,
-        'payload': {'Param': param, 'Args': args}
-      };
-      astilectron.sendMessage(message, function(message) {
-        // console.log(funcname + " returned: " + JSON.stringify(message));
-        //  Check error
-        if (message.name === 'error') {
-          // failed - dont change the boolean
-          index.errorNotification(message.payload);
-          return false;
-        } else {
-          viewVCE_voice.sendToCSurface(ele, ele.id, value);
-          if (updater != undefined) {
-            console.log('updater: ' + updater);
-            updater(ele);
-          }
+      try {
+        switch (funcname) {
+          case 'setVNAME':
+            await UIService.SetVNAME(args);
+            break;
+          case 'setOscFILTER':
+            await UIService.SetOscFILTER(args);
+            break;
+          case 'setOscWAVE':
+            await UIService.SetOscWAVE(args);
+            break;
+          case 'setOscKEYPROP':
+            await UIService.SetOscKEYPROP(args);
+            break;
+          case 'setVoiceByte':
+            await UIService.SetVoiceByte(param, args);
+            break;
         }
-      });
+        viewVCE_voice.sendToCSurface(ele, ele.id, value);
+        if (updater != undefined) {
+          console.log('updater: ' + updater);
+          updater(ele);
+        }
+      } catch (exc) {
+        // failed - dont change the boolean
+        index.errorNotification(exc);
+        return false;
+      }
     }
     return true;
   },
@@ -835,9 +844,10 @@ ${freqDAG}
     index.refreshConnectionStatus();
   },
 
-  _withZeroconf: function(
-      prompt1, prompt2, zeroconfSelector, actionAfterSelect, recurseAction,
-      successCallback) {
+  _withZeroconf: async function(
+      prompt1, prompt2,
+      zeroconfSelector /* "getSynergy" or "getSynergyAndControlSurface" */,
+      actionAfterSelect, recurseAction, successCallback) {
     // fetch the config from the server (server will return already selected
     // config, or "not enabled" or a list of selections) if server returns
     // "already configured" or "not enabled"
@@ -852,67 +862,69 @@ ${freqDAG}
     console.log(
         'top withZeroconf ' + zeroconfSelector + ' ' + actionAfterSelect);
 
-    let message = {'name': zeroconfSelector, 'payload': ''};
-    astilectron.sendMessage(message, function(message) {
-      if (message.name === 'error') {
-        // failed - abort
-        console.log(
-            '_withZeroconfig - sendMessage failed: ' +
-            JSON.stringify(message.payload))
-        index.errorNotification(message.payload);
-      } else {
-        console.log(
-            zeroconfSelector + ' returned ' + JSON.stringify(message.payload));
-        if (((!message.payload[0].HasDevice) ||
-             message.payload[0].AlreadyConfigured) &&
-            ((!message.payload[1].HasDevice) ||
-             message.payload[1].AlreadyConfigured)) {
-          console.log('call actionAfterSelect');
-          actionAfterSelect(null, null, successCallback);
-        } else {
-          // zeroconf found more than one option - show dialog
-          console.log('show menu');
-          if ((!message.payload[0].HasDevice) ||
-              message.payload[0].AlreadyConfigured) {
-            prompt1 = null;
-          }
-          if ((!message.payload[1].HasDevice) ||
-              message.payload[1].AlreadyConfigured) {
-            prompt2 = null;
-          }
-          index.chooseZeroconfService(
-              prompt1, message.payload[0].Choices, prompt2,
-              message.payload[1].Choices,
-              function() {
-                console.log('cancelled');
-                // cancelled - do nothing
-              },
-              function(choice1, choice2) {
-                console.log(
-                    'user chose ' + JSON.stringify(choice1) + ' ' +
-                    JSON.stringify(choice2));
-                // user selected one of the options
-                actionAfterSelect(choice1, choice2, successCallback);
-              },
-              async function() {
-                console.log('rescan');
-                // user asked for a rescan
-                index.spinnerOn();
-                try {
-                  await UIService.RescanZeroconf();
-                  console.log('rescan done');
-                  // recurse
-                  index.spinnerOff();
-                  recurseAction();
-                } catch (exc) {
-                  // failed - abort
-                  index.spinnerOff();
-                  index.errorNotification(exc);
-                }
-              });
-        }
+    let r;
+    try {
+      switch (zeroconfSelector) {
+        case 'getSynergy':
+          r = await UIService.GetSynergy();
+          break;
+        case 'getSynergyAndControlSurface':
+          r = await UIService.GetSynergyAndControlSurface();
+          break;
+        default:
+          index.errorNotification(
+              'invalid arg to _withZeroconf - ' + zeroconfSelector);
+          break;
       }
-    });
+    } catch (exc) {
+      console.log(
+          '_withZeroconfig - sendMessage failed: ' + JSON.stringify(exc))
+      index.errorNotification(exc);
+    }
+    console.log(zeroconfSelector + ' returned ' + JSON.stringify(r));
+    if (((!r[0].HasDevice) || r[0].AlreadyConfigured) &&
+        ((!r[1].HasDevice) || r[1].AlreadyConfigured)) {
+      console.log('call actionAfterSelect');
+      actionAfterSelect(null, null, successCallback);
+    } else {
+      // zeroconf found more than one option - show dialog
+      console.log('show menu');
+      if ((!r[0].HasDevice) || r[0].AlreadyConfigured) {
+        prompt1 = null;
+      }
+      if ((!r[1].HasDevice) || r[1].AlreadyConfigured) {
+        prompt2 = null;
+      }
+      index.chooseZeroconfService(
+          prompt1, r[0].Choices, prompt2, r[1].Choices,
+          function() {
+            console.log('cancelled');
+            // cancelled - do nothing
+          },
+          function(choice1, choice2) {
+            console.log(
+                'user chose ' + JSON.stringify(choice1) + ' ' +
+                JSON.stringify(choice2));
+            // user selected one of the options
+            actionAfterSelect(choice1, choice2, successCallback);
+          },
+          async function() {
+            console.log('rescan');
+            // user asked for a rescan
+            index.spinnerOn();
+            try {
+              await UIService.RescanZeroconf();
+              console.log('rescan done');
+              // recurse
+              index.spinnerOff();
+              recurseAction();
+            } catch (exc) {
+              // failed - abort
+              index.spinnerOff();
+              index.errorNotification(exc);
+            }
+          });
+    }
   },
 
   connectSynergy: function(successCallback) {

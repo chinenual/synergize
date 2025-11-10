@@ -428,44 +428,22 @@ func (s *UIService) SetOscEnvLengths(osc int, freqLength int, ampLength int) (er
 	}
 	return
 }
-
-// 	case "setOscFILTER":
-// 		var args struct {
-// 			Args []int
-// 		}
-// 		if len(m.Payload) > 0 {
-// 			// Unmarshal payload
-// 			if err = json.Unmarshal(m.Payload, &args); err != nil {
-// 				payload = err.Error()
-// 				return
-// 			}
-// 		}
-// 		if err = synio.SetOscFILTER(args.Args[0], args.Args[1]); err != nil {
-// 			payload = err.Error()
-// 			return
-// 		}
-// 		payload = "ok"
-
-// 	case "setOscKEYPROP":
-// 		var args struct {
-// 			Args []int
-// 		}
-// 		if len(m.Payload) > 0 {
-// 			// Unmarshal payload
-// 			if err = json.Unmarshal(m.Payload, &args); err != nil {
-// 				payload = err.Error()
-// 				return
-// 			}
-// 		}
-// 		var val = false
-// 		if args.Args[1] == 1 {
-// 			val = true
-// 		}
-// 		if err = synio.SetOscKEYPROP(args.Args[0], val); err != nil {
-// 			payload = err.Error()
-// 			return
-// 		}
-// 		payload = "ok"
+func (s *UIService) SetOscFILTER(args []int) (err error) {
+	if err = synio.SetOscFILTER(args[0], args[1]); err != nil {
+		return
+	}
+	return
+}
+func (s *UIService) SetOscKEYPROP(args []int) (err error) {
+	var val = false
+	if args[1] == 1 {
+		val = true
+	}
+	if err = synio.SetOscKEYPROP(args[0], val); err != nil {
+		return
+	}
+	return
+}
 
 func (s *UIService) SetOscSolo(mute []bool, solo []bool) (oscStatus [16]bool, err error) {
 	if oscStatus, err = synio.SetOscSolo(mute, solo); err != nil {
@@ -474,26 +452,16 @@ func (s *UIService) SetOscSolo(mute []bool, solo []bool) (oscStatus [16]bool, er
 	return
 }
 
-// 	case "setOscWAVE":
-// 		var args struct {
-// 			Args []int
-// 		}
-// 		if len(m.Payload) > 0 {
-// 			// Unmarshal payload
-// 			if err = json.Unmarshal(m.Payload, &args); err != nil {
-// 				payload = err.Error()
-// 				return
-// 			}
-// 		}
-// 		var val = false
-// 		if args.Args[1] == 1 {
-// 			val = true
-// 		}
-// 		if err = synio.SetOscWAVE(args.Args[0], val); err != nil {
-// 			payload = err.Error()
-// 			return
-// 		}
-// 		payload = "ok"
+func (s *UIService) SetOscWAVE(args []int) (err error) {
+	var val = false
+	if args[1] == 1 {
+		val = true
+	}
+	if err = synio.SetOscWAVE(args[0], val); err != nil {
+		return
+	}
+	return
+}
 
 func (s *UIService) SetVoiceOscDataByte(osc int, value int) (err error) {
 	if err = synio.SetVoiceOscDataByte(osc, "OPTCH_reloadGenerators", byte(value)); err != nil {
@@ -509,48 +477,25 @@ func (s *UIService) SetPatchType(index int) (patchBytes [16]byte, err error) {
 	return
 }
 
-// 	case "setVNAME":
-// 		var args struct {
-// 			Param string
-// 			Args  string // HACK: just a string - the JS code shares some logic with the other voice bytes that use setVoiceByte
-// 		}
-// 		if len(m.Payload) > 0 {
-// 			// Unmarshal payload
-// 			if err = json.Unmarshal(m.Payload, &args); err != nil {
-// 				payload = err.Error()
-// 				return
-// 			}
-// 		}
-// 		if err = synio.SetVNAME(args.Args); err != nil {
-// 			payload = err.Error()
-// 			return
-// 		}
-// 		payload = "ok"
+func (s *UIService) SetVNAME(name string) (err error) {
+	if err = synio.SetVNAME(name); err != nil {
+		return
+	}
+	return
+}
 
-// 	case "setVoiceByte":
-// 		var args struct {
-// 			Param string
-// 			Args  []int
-// 		}
-// 		if len(m.Payload) > 0 {
-// 			// Unmarshal payload
-// 			if err = json.Unmarshal(m.Payload, &args); err != nil {
-// 				payload = err.Error()
-// 				return
-// 			}
-// 		}
-// 		if len(args.Args) == 2 {
-// 			if err = synio.SetVoiceOscDataByte(args.Args[0], args.Param, byte(args.Args[1])); err != nil {
-// 				payload = err.Error()
-// 				return
-// 			}
-// 		} else {
-// 			if err = synio.SetVoiceHeadDataByte(args.Param, byte(args.Args[0])); err != nil {
-// 				payload = err.Error()
-// 				return
-// 			}
-// 		}
-// 		payload = "ok"
+func (s *UIService) SetVoiceByte(param string, args []int) (err error) {
+	if len(args) == 2 {
+		if err = synio.SetVoiceOscDataByte(args[0], param, byte(args[1])); err != nil {
+			return
+		}
+	} else {
+		if err = synio.SetVoiceHeadDataByte(param, byte(args[0])); err != nil {
+			return
+		}
+	}
+	return
+}
 
 func (s *UIService) SetVoiceKPROPEle(index int, value int) (err error) {
 	if err = synio.SetVoiceKPROPEle(index, value); err != nil {
@@ -566,38 +511,35 @@ func (s *UIService) SetVoiceVEQEle(index int, value int) (err error) {
 	return
 }
 
-// 	case "getSynergy":
-// 		var response [2]struct {
-// 			HasDevice         bool
-// 			AlreadyConfigured bool
-// 			Name              string
-// 			Choices           *[]zeroconf.Service
-// 		}
-// 		if response[0].HasDevice, response[0].AlreadyConfigured, response[0].Name, response[0].Choices, err = GetSynergyConfig(); err != nil {
-// 			logger.Infof("ZEROCONF: GetSynergyConfig failed: %v\n", err)
-// 			payload = err.Error()
-// 		} else {
-// 			logger.Infof("ZEROCONF: GetSynergyConfig success: %#v\n", response)
-// 			payload = response
-// 		}
+type GetSynergyReturnType struct {
+	HasDevice         bool
+	AlreadyConfigured bool
+	Name              string
+	Choices           *[]zeroconf.Service
+}
 
-// 	case "getSynergyAndControlSurface":
-// 		var response [2]struct {
-// 			HasDevice         bool
-// 			AlreadyConfigured bool
-// 			Name              string
-// 			Choices           *[]zeroconf.Service
-// 		}
-// 		if response[0].HasDevice, response[0].AlreadyConfigured, response[0].Name, response[0].Choices, err = GetSynergyConfig(); err != nil {
-// 			logger.Infof("ZEROCONF: GetSynergyConfig failed: %v\n", err)
-// 			payload = err.Error()
-// 		} else if response[1].HasDevice, response[1].AlreadyConfigured, response[1].Name, response[1].Choices, err = GetControlSurfaceConfig(); err != nil {
-// 			logger.Infof("ZEROCONF: GetControlSurfaceConfig failed: %v\n", err)
-// 			payload = err.Error()
-// 		} else {
-// 			logger.Infof("ZEROCONF: GetControlSurfaceConfig success: %#v\n", response)
-// 			payload = response
-// 		}
+func (s *UIService) GetSynergy() (response [2]GetSynergyReturnType, err error) {
+	if response[0].HasDevice, response[0].AlreadyConfigured, response[0].Name, response[0].Choices, err = GetSynergyConfig(); err != nil {
+		logger.Infof("ZEROCONF: GetSynergyConfig failed: %v\n", err)
+		return
+	} else {
+		logger.Infof("ZEROCONF: GetSynergyConfig success: %#v\n", response)
+	}
+	return
+}
+
+func (s *UIService) GetSynergyAndControlSurface() (response [2]GetSynergyReturnType, err error) {
+	if response[0].HasDevice, response[0].AlreadyConfigured, response[0].Name, response[0].Choices, err = GetSynergyConfig(); err != nil {
+		logger.Infof("ZEROCONF: GetSynergyConfig failed: %v\n", err)
+		return
+	} else if response[1].HasDevice, response[1].AlreadyConfigured, response[1].Name, response[1].Choices, err = GetControlSurfaceConfig(); err != nil {
+		logger.Infof("ZEROCONF: GetControlSurfaceConfig failed: %v\n", err)
+		return
+	} else {
+		logger.Infof("ZEROCONF: GetControlSurfaceConfig success: %#v\n", response)
+	}
+	return
+}
 
 // 	case "getControlSurface":
 // 		var response [2]struct {
