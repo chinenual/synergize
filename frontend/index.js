@@ -6,11 +6,13 @@ import * as wails from '@wailsio/runtime';
 import {_} from 'lodash';
 
 import {dx2syn} from './dx2syn';
-import { $ } from 'jquery';
 import {syn2midi} from './syn2midi';
 import {viewCRT} from './viewCRT';
 import {viewVCE} from './viewVCE';
 import {viewVCE_voice} from './viewVCE_voice';
+
+import $ from 'jquery';
+Object.assign(window, { $: $, jQuery: $ });
 
 
 export let index = {
@@ -19,6 +21,7 @@ export let index = {
 
   init: function() {
     console.log('dx2syn', dx2syn);
+    console.log("$ in init: ", $);
 
     dx2syn.init();
     syn2midi.init();

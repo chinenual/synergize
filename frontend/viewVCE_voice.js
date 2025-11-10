@@ -1567,3 +1567,4 @@ ${freqDAG}
     }
   }
 };
+window.viewVCE_voice = viewVCE_voice;

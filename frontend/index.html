@@ -441,18 +441,15 @@ TEST a "more button" design:
 		</div>
 	</div>
 
-	<script type="module">
-		import { index } from "./index.js";
+	<script>
 		document.addEventListener('DOMContentLoaded', () => {
 			console.log("BEFORE init");
+			console.log("BEFORE INIT $",$);
 			index.init();
 			console.log("AFTER init");
 		});
 	</script>
 
-<SCRIPT>
-	function foo() { return 'bar'}
-</SCRIPT>
 </body>
 
 </html>
