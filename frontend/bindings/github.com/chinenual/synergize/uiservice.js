@@ -92,6 +92,15 @@ export function DisconnectControlSurface() {
 }
 
 /**
+ * @returns {$CancellablePromise<$models.ConnectionStatusResponse>}
+ */
+export function DisconnectSynergy() {
+    return $Call.ByID(1331345138).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType2($result);
+    }));
+}
+
+/**
  * @returns {$CancellablePromise<void>}
  */
 export function Dx2synCancel() {
@@ -153,10 +162,63 @@ export function GetSynSequencerState(path) {
 }
 
 /**
+ * @returns {$CancellablePromise<$models.GetSynergyReturnType[]>}
+ */
+export function GetSynergy() {
+    return $Call.ByID(217972966).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType7($result);
+    }));
+}
+
+/**
+ * @returns {$CancellablePromise<$models.GetSynergyReturnType[]>}
+ */
+export function GetSynergyAndControlSurface() {
+    return $Call.ByID(489125899).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType7($result);
+    }));
+}
+
+/**
  * @returns {$CancellablePromise<[string, boolean]>}
  */
 export function GetVersion() {
     return $Call.ByID(1744344967);
+}
+
+/**
+ * @param {string} path
+ * @returns {$CancellablePromise<void>}
+ */
+export function LoadSYN(path) {
+    return $Call.ByID(748956647, path);
+}
+
+/**
+ * @param {string} path
+ * @returns {$CancellablePromise<data$0.CRT>}
+ */
+export function ReadCRT(path) {
+    return $Call.ByID(3388619906, path).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType1($result);
+    }));
+}
+
+/**
+ * @param {string} path
+ * @returns {$CancellablePromise<data$0.VCE>}
+ */
+export function ReadVCE(path) {
+    return $Call.ByID(1296091671, path).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType8($result);
+    }));
+}
+
+/**
+ * @returns {$CancellablePromise<void>}
+ */
+export function RescanZeroconf() {
+    return $Call.ByID(1156182939);
 }
 
 /**
@@ -244,6 +306,17 @@ export function SetLoopPoint(osc, env, envType, sustainPt, loopPt) {
 }
 
 /**
+ * @param {number} numOsc
+ * @param {number} patchType
+ * @returns {$CancellablePromise<$models.SetNumOscillatorsResultType>}
+ */
+export function SetNumOscillators(numOsc, patchType) {
+    return $Call.ByID(3797214618, numOsc, patchType).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType9($result);
+    }));
+}
+
+/**
  * @param {number} osc
  * @param {number} freqLength
  * @param {number} ampLength
@@ -251,6 +324,22 @@ export function SetLoopPoint(osc, env, envType, sustainPt, loopPt) {
  */
 export function SetOscEnvLengths(osc, freqLength, ampLength) {
     return $Call.ByID(162934356, osc, freqLength, ampLength);
+}
+
+/**
+ * @param {number[]} args
+ * @returns {$CancellablePromise<void>}
+ */
+export function SetOscFILTER(args) {
+    return $Call.ByID(3555546242, args);
+}
+
+/**
+ * @param {number[]} args
+ * @returns {$CancellablePromise<void>}
+ */
+export function SetOscKEYPROP(args) {
+    return $Call.ByID(3332065058, args);
 }
 
 /**
@@ -263,11 +352,36 @@ export function SetOscSolo(mute, solo) {
 }
 
 /**
+ * @param {number[]} args
+ * @returns {$CancellablePromise<void>}
+ */
+export function SetOscWAVE(args) {
+    return $Call.ByID(3701878417, args);
+}
+
+/**
  * @param {number} index
  * @returns {$CancellablePromise<number[]>}
  */
 export function SetPatchType(index) {
     return $Call.ByID(2440239717, index);
+}
+
+/**
+ * @param {string} name
+ * @returns {$CancellablePromise<void>}
+ */
+export function SetVNAME(name) {
+    return $Call.ByID(474782638, name);
+}
+
+/**
+ * @param {string} param
+ * @param {number[]} args
+ * @returns {$CancellablePromise<void>}
+ */
+export function SetVoiceByte(param, args) {
+    return $Call.ByID(1141126583, param, args);
 }
 
 /**
@@ -333,7 +447,7 @@ export function Syn2midi(path, tempo, raw, maxClockSeconds, trackButtons) {
  */
 export function ToggleVoicingMode(mode, disconnect, useVce, zeroconfSynergy, zeroconfCs) {
     return $Call.ByID(4111399143, mode, disconnect, useVce, zeroconfSynergy, zeroconfCs).then(/** @type {($result: any) => any} */(($result) => {
-        $result[0] = $$createType7($result[0]);
+        $result[0] = $$createType10($result[0]);
         return $result;
     }));
 }
@@ -345,5 +459,8 @@ const $$createType2 = $models.ConnectionStatusResponse.createFrom;
 const $$createType3 = $models.Exploration.createFrom;
 const $$createType4 = $Create.Array($Create.Any);
 const $$createType5 = $models.Preferences.createFrom;
-const $$createType6 = data$0.VCE.createFrom;
-const $$createType7 = $Create.Nullable($$createType6);
+const $$createType6 = $models.GetSynergyReturnType.createFrom;
+const $$createType7 = $Create.Array($$createType6);
+const $$createType8 = data$0.VCE.createFrom;
+const $$createType9 = $models.SetNumOscillatorsResultType.createFrom;
+const $$createType10 = $Create.Nullable($$createType8);

@@ -1,4 +1,4 @@
-import * as $ from "./jquery";
+import { $ } from 'jquery';
 import { viewVCE } from './viewVCE';
 
 export let viewVCE_doc = {

@@ -3,7 +3,7 @@ import {Chart} from 'chart.js/auto';
 import _ from 'lodash';
 
 import {index} from './index';
-import * as $ from './jquery';
+import { $ } from 'jquery';
 import * as nomnoml from './nomnoml';
 import {viewCRT} from './viewCRT';
 import {viewVCE} from './viewVCE';

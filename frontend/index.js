@@ -6,7 +6,7 @@ import * as wails from '@wailsio/runtime';
 import {_} from 'lodash';
 
 import {dx2syn} from './dx2syn';
-import * as $ from './jquery';
+import { $ } from 'jquery';
 import {syn2midi} from './syn2midi';
 import {viewCRT} from './viewCRT';
 import {viewVCE} from './viewVCE';

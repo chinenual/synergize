@@ -2,7 +2,7 @@ import {UIService} from '/bindings/github.com/chinenual/synergize';
 import * as wails from '@wailsio/runtime';
 import { index } from './index';
 
-import * as $ from './jquery';
+import { $ } from 'jquery';
 
 export let dx2syn = {
   init : function() {

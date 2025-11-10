@@ -6,6 +6,13 @@
 // @ts-ignore: Unused imports
 import { Create as $Create } from "@wailsio/runtime";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as data$0 from "./data/models.js";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as zeroconf$0 from "./zeroconf/models.js";
+
 export class ConnectSynergyResponseType {
     /**
      * Creates a new ConnectSynergyResponseType instance.
@@ -193,6 +200,59 @@ export class Exploration {
     }
 }
 
+export class GetSynergyReturnType {
+    /**
+     * Creates a new GetSynergyReturnType instance.
+     * @param {Partial<GetSynergyReturnType>} [$$source = {}] - The source object to create the GetSynergyReturnType.
+     */
+    constructor($$source = {}) {
+        if (!("HasDevice" in $$source)) {
+            /**
+             * @member
+             * @type {boolean}
+             */
+            this["HasDevice"] = false;
+        }
+        if (!("AlreadyConfigured" in $$source)) {
+            /**
+             * @member
+             * @type {boolean}
+             */
+            this["AlreadyConfigured"] = false;
+        }
+        if (!("Name" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["Name"] = "";
+        }
+        if (!("Choices" in $$source)) {
+            /**
+             * @member
+             * @type {zeroconf$0.Service[] | null}
+             */
+            this["Choices"] = null;
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new GetSynergyReturnType instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {GetSynergyReturnType}
+     */
+    static createFrom($$source = {}) {
+        const $$createField3_0 = $$createType5;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("Choices" in $$parsedSource) {
+            $$parsedSource["Choices"] = $$createField3_0($$parsedSource["Choices"]);
+        }
+        return new GetSynergyReturnType(/** @type {Partial<GetSynergyReturnType>} */($$parsedSource));
+    }
+}
+
 export class Preferences {
     /**
      * Creates a new Preferences instance.
@@ -292,7 +352,50 @@ export class Preferences {
     }
 }
 
+export class SetNumOscillatorsResultType {
+    /**
+     * Creates a new SetNumOscillatorsResultType instance.
+     * @param {Partial<SetNumOscillatorsResultType>} [$$source = {}] - The source object to create the SetNumOscillatorsResultType.
+     */
+    constructor($$source = {}) {
+        if (!("EnvelopeTemplate" in $$source)) {
+            /**
+             * @member
+             * @type {data$0.Envelope}
+             */
+            this["EnvelopeTemplate"] = (new data$0.Envelope());
+        }
+        if (!("PatchBytes" in $$source)) {
+            /**
+             * @member
+             * @type {number[]}
+             */
+            this["PatchBytes"] = Array.from({ length: 16 }, () => 0);
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new SetNumOscillatorsResultType instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {SetNumOscillatorsResultType}
+     */
+    static createFrom($$source = {}) {
+        const $$createField0_0 = $$createType6;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("EnvelopeTemplate" in $$parsedSource) {
+            $$parsedSource["EnvelopeTemplate"] = $$createField0_0($$parsedSource["EnvelopeTemplate"]);
+        }
+        return new SetNumOscillatorsResultType(/** @type {Partial<SetNumOscillatorsResultType>} */($$parsedSource));
+    }
+}
+
 // Private type creation functions
 const $$createType0 = ConnectionStatusResponse.createFrom;
 const $$createType1 = Dir.createFrom;
 const $$createType2 = $Create.Array($$createType1);
+const $$createType3 = zeroconf$0.Service.createFrom;
+const $$createType4 = $Create.Array($$createType3);
+const $$createType5 = $Create.Nullable($$createType4);
+const $$createType6 = data$0.Envelope.createFrom;

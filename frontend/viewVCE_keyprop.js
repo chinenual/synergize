@@ -2,7 +2,7 @@ import {UIService} from '/bindings/github.com/chinenual/synergize';
 import {Chart} from 'chart.js/auto';
 
 import {index} from './index';
-import * as $ from './jquery';
+import { $ } from 'jquery';
 import { viewVCE } from './viewVCE';
 import { viewVCE_chartdrag } from './viewVCE_chartdrag';
 import { viewVCE_voice } from './viewVCE_voice';

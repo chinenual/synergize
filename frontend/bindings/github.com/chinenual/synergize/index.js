@@ -12,5 +12,7 @@ export {
     ConnectionStatusResponse,
     Dir,
     Exploration,
-    Preferences
+    GetSynergyReturnType,
+    Preferences,
+    SetNumOscillatorsResultType
 } from "./models.js";
