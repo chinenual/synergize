@@ -776,9 +776,9 @@ ${freqDAG}
 
   deb_setNumOscillators: null,
 
-  raw_setNumOscillators: function(newNum) {
-    if (viewVCE
-            .supressOnchange) { /*console.log("raw viewVCE.suppressOnChange");*/
+  raw_setNumOscillators: async function(newNum) {
+    if (viewVCE.supressOnchange) {
+      /*console.log("raw viewVCE.suppressOnChange");*/
       return;
     }
     console.log('setNumOscillators: ' + newNum);
@@ -792,59 +792,48 @@ ${freqDAG}
     // distortion in the envelope shape.
     viewVCE_envs.clearFloatAmpVal();
 
-    let message = {
-      'name': 'setNumOscillators',
-      'payload': {
-        'NumOsc': parseInt(newNum, 10),
-        'PatchType': parseInt(document.getElementById('patchType').value, 10)
+    try {
+      let r = await UIService.SetNumOscillators(
+          parseInt(newNum, 10),
+          parseInt(document.getElementById('patchType').value, 10))
+      /// now the tricky part - update the in memory version of vce to reflect
+      /// what just happened:
+      viewVCE.vce.Head.VOITAB = newNum - 1
+      let oldLength = viewVCE.vce.Envelopes.length
+
+      if (viewVCE.vce.Head.VOITAB <= 0) {
+        $('#del-osc').addClass('disabled');
       }
-    };
-    // index.spinnerOn();
-    astilectron.sendMessage(message, function(message) {
-      // index.spinnerOff();
-      // console.log("setNumOscillators returned: " + JSON.stringify(message));
-      //  Check error
-      if (message.name === 'error') {
-        // failed - dont change the boolean
-        index.errorNotification(message.payload);
+      else {
+        $('#del-osc').removeClass('disabled');
+      }
+      if (viewVCE.vce.Head.VOITAB >= 15) {
+        $('#add-osc').addClass('disabled');
       } else {
-        /// now the tricky part - update the in memory version of vce to reflect
-        /// what just happened:
-        viewVCE.vce.Head.VOITAB = newNum - 1
-        let oldLength = viewVCE.vce.Envelopes.length
-
-        if (viewVCE.vce.Head.VOITAB <= 0) {
-          $('#del-osc').addClass('disabled');
-        }
-        else {
-          $('#del-osc').removeClass('disabled');
-        }
-        if (viewVCE.vce.Head.VOITAB >= 15) {
-          $('#add-osc').addClass('disabled');
-        } else {
-          $('#add-osc').removeClass('disabled');
-        }
-        if (newNum <= oldLength) {
-          // nothing to do - just ignored the extra envelopes
-        } else {
-          for (let i = oldLength; i < newNum; i++) {
-            // copy the envelope template into the vce:
-            // abuse JSON to do a deep copy:
-            viewVCE.vce.Envelopes[i] =
-                JSON.parse(JSON.stringify(message.payload.EnvelopeTemplate));
-            // overwrite the default patch type
-            console.log('before copy', viewVCE.vce.Envelopes);
-            viewVCE.vce.Envelopes[i].OPTCH = message.payload.PatchBytes[i];
-            console.log(i, 'copy env - now ', viewVCE.vce.Envelopes[i]);
-            console.log('AFTER copy', viewVCE.vce.Envelopes);
-          }
-        }
-        viewVCE.init();
+        $('#add-osc').removeClass('disabled');
       }
-      index.refreshConnectionStatus();
-    });
+      if (newNum <= oldLength) {
+        // nothing to do - just ignored the extra envelopes
+      } else {
+        for (let i = oldLength; i < newNum; i++) {
+          // copy the envelope template into the vce:
+          // abuse JSON to do a deep copy:
+          viewVCE.vce.Envelopes[i] =
+              JSON.parse(JSON.stringify(r.EnvelopeTemplate));
+          // overwrite the default patch type
+          console.log('before copy', viewVCE.vce.Envelopes);
+          viewVCE.vce.Envelopes[i].OPTCH = r.PatchBytes[i];
+          console.log(i, 'copy env - now ', viewVCE.vce.Envelopes[i]);
+          console.log('AFTER copy', viewVCE.vce.Envelopes);
+        }
+      }
+      viewVCE.init();
+    } catch (exc) {
+      // failed - dont change the boolean
+      index.errorNotification(exc);
+    }
+    index.refreshConnectionStatus();
   },
-
 
   _withZeroconf: function(
       prompt1, prompt2, zeroconfSelector, actionAfterSelect, recurseAction,
@@ -905,22 +894,21 @@ ${freqDAG}
                 // user selected one of the options
                 actionAfterSelect(choice1, choice2, successCallback);
               },
-              function() {
+              async function() {
                 console.log('rescan');
                 // user asked for a rescan
-                let message = {'name': 'rescanZeroconf', 'payload': ''};
                 index.spinnerOn();
-                astilectron.sendMessage(message, function(message) {
+                try {
+                  await UIService.RescanZeroconf();
+                  console.log('rescan done');
+                  // recurse
                   index.spinnerOff();
-                  if (message.name === 'error') {
-                    // failed - abort
-                    index.errorNotification(message.payload);
-                  } else {
-                    console.log('rescan done');
-                    // recurse
-                    recurseAction();
-                  }
-                });
+                  recurseAction();
+                } catch (exc) {
+                  // failed - abort
+                  index.spinnerOff();
+                  index.errorNotification(exc);
+                }
               });
         }
       }
@@ -985,25 +973,19 @@ ${freqDAG}
     }
   },
 
-  raw_voicingModeOff: function(disconnect) {
+  raw_voicingModeOff: async function(disconnect) {
     console.log(`VoicingMode off`);
-    let message = {
-      'name': 'toggleVoicingMode',
-      'payload': {
-        'Mode': false,
-        'Vce': null,
-        'Disconnect': disconnect,
-        'ZeroconfSynergy': null,  // optional param - null unless user just
-                                  // selected from a menu
-        'ZeroconfCs': null,  // optional param - null unless user just selected
-                             // from a menu
-      }
-    };
+
     index.spinnerOn();
-    astilectron.sendMessage(message, function(message) {
+    try {
+      let r = await UIService.ToggleVoicingMode(
+          false /*mode*/, disconnect /*disconnect*/, null /*vce*/,
+          null /*zeroconfSynergy*/, null /*zeroconfCs*/);
       index.spinnerOff();
       viewVCE_voice.voicingMode = false;
-      if (message.payload != null) {
+      if (r != null) {
+        // FIXME: why are we ignoring the values returned by the service??
+
         // if we just disabled voicing, clear the VCE view
         document.getElementById('content').innerHTML = '';
         $('#disableControlSurfaceMenuItem').addClass('disabled');
@@ -1016,11 +998,14 @@ ${freqDAG}
         msg = msg + ' Synergy Disconnected.';
       }
       index.infoNotification(msg);
-      index.refreshConnectionStatus();
-    });
+    } catch (exc) {
+      index.spinnerOff();
+      index.errorNotification(exc);
+    }
+    index.refreshConnectionStatus();
   },
 
-  raw_voicingModeOn: function(
+  raw_voicingModeOn: async function(
       synergyZeroconfChoice, csZeroconfChoice, callback) {
     console.log(`VoicingMode on`);
     let message = {
@@ -1036,37 +1021,34 @@ ${freqDAG}
       }
     };
     index.spinnerOn();
-    astilectron.sendMessage(message, function(message) {
+    try {
+      let r = await UIService.ToggleVoicingMode(
+          true /*mode*/, false /*disconnect*/, viewVCE.vcr /*vce*/,
+          synergyZeroconfChoice /*zeroconfSynergy*/,
+          csZeroconfChoice /*zeroconfCs*/);
       index.spinnerOff();
       // console.log("toggleVoiceMode returned: " + JSON.stringify(message));
       //  Check error
-      if (message.name === 'error') {
-        // failed - dont change the boolean
-        index.errorNotification(message.payload);
-        viewVCE_voice.csEnabled = false;
-      } else {
-        viewVCE_voice.voicingMode = true;
-        let csMessage = '';
-        if (message.payload != null) {
-          viewVCE.setVCE(message.payload.Vce);
-          viewVCE_voice.csEnabled = message.payload.CsEnabled;
 
-          let csMessage;
-          if (viewVCE_voice.csEnabled) {
-            csMessage =
-                `.<br>Control Surface is enabled: ${message.payload.CsName}.`;
-          } else {
-            csMessage = `.<br>Control Surface is not enabled.`;
-          }
+      viewVCE_voice.voicingMode = true;
+      let csMessage = '';
+      if (message.payload != null) {
+        viewVCE.setVCE(r.Vce);
+        viewVCE_voice.csEnabled = r.CsEnabled;
 
-          viewCRT.setCRT(null, null);
-          index.load('viewVCE.html', 'content', function(ele) {
-            viewVCE.init();
-          });
+        if (viewVCE_voice.csEnabled) {
+          csMessage = `.<br>Control Surface is enabled: ${r.CsName}.`;
+        } else {
+          csMessage = `.<br>Control Surface is not enabled.`;
         }
-        index.infoNotification(`Voicing mode ${
-            viewVCE_voice.voicingMode ? 'enabled' : 'disabled'}.${csMessage}`);
+        viewCRT.setCRT(null, null);
+        index.load('viewVCE.html', 'content', function(ele) {
+          viewVCE.init();
+        });
       }
+      index.infoNotification(`Voicing mode ${
+          viewVCE_voice.voicingMode ? 'enabled' : 'disabled'}.${csMessage}`);
+
       index.refreshConnectionStatus();
 
       // reset the SOLO arrays
@@ -1079,7 +1061,12 @@ ${freqDAG}
       }
       viewVCE_voice.voicingModeVisuals();
       callback();
-    });
+
+    } catch (exc) {
+      index.spinnerOff();
+      index.errorNotification(exc);
+      viewVCE_voice.csEnabled = false;
+    }
   },
 
   voicingModeVisuals: function() {

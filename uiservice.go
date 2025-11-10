@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/chinenual/synergize/data"
 	"github.com/chinenual/synergize/io"
@@ -285,22 +286,12 @@ func (s *UIService) GetPatchTypeNames() (result []string, err error) {
 // 			payload = "ok"
 // 		}
 
-// case "loadSYN":
-//
-//	var path string
-//	if len(m.Payload) > 0 {
-//		// Unmarshal payload
-//		if err = json.Unmarshal(m.Payload, &path); err != nil {
-//			payload = err.Error()
-//			return
-//		}
-//	}
-//	if err = diagLoadSYN(path); err != nil {
-//		payload = err.Error()
-//		return
-//	} else {
-//		payload = "ok"
-//	}
+func (s *UIService) LoadSYN(path string) (err error) {
+	if err = diagLoadSYN(path); err != nil {
+		return
+	}
+	return
+}
 
 func (s *UIService) loadVceVoicingMode(path string) (vce data.VCE, err error) {
 	if vce, err = data.ReadVceFile(path); err != nil {
@@ -417,28 +408,19 @@ func (s *UIService) SetLoopPoint(osc int, env string, envType int, sustainPt int
 	return
 }
 
-// 	case "setNumOscillators":
-// 		var args struct {
-// 			NumOsc    int
-// 			PatchType int
-// 		}
-// 		if len(m.Payload) > 0 {
-// 			// Unmarshal payload
-// 			if err = json.Unmarshal(m.Payload, &args); err != nil {
-// 				payload = err.Error()
-// 				return
-// 			}
-// 		}
-// 		var resultPayload struct {
-// 			EnvelopeTemplate data.Envelope
-// 			PatchBytes       [16]byte
-// 		}
-// 		if resultPayload.PatchBytes, err = synio.SetNumOscillators(args.NumOsc, args.PatchType); err != nil {
-// 			payload = err.Error()
-// 			return
-// 		}
-// 		resultPayload.EnvelopeTemplate = data.DefaultEnvelope
-// 		payload = resultPayload
+type SetNumOscillatorsResultType struct {
+	EnvelopeTemplate data.Envelope
+	PatchBytes       [16]byte
+}
+
+func (s *UIService) SetNumOscillators(numOsc int, patchType int) (resultPayload SetNumOscillatorsResultType, err error) {
+
+	if resultPayload.PatchBytes, err = synio.SetNumOscillators(numOsc, patchType); err != nil {
+		return
+	}
+	resultPayload.EnvelopeTemplate = data.DefaultEnvelope
+	return
+}
 
 func (s *UIService) SetOscEnvLengths(osc int, freqLength int, ampLength int) (err error) {
 	if err = synio.SetOscEnvLengths(osc, freqLength, ampLength); err != nil {
@@ -632,15 +614,16 @@ func (s *UIService) SetVoiceVEQEle(index int, value int) (err error) {
 // 			payload = response
 // 		}
 
-// 	case "rescanZeroconf":
-// 		// NOP - basically just waiting a bit for the listener to find new stuff
+func (s *UIService) RescanZeroconf() (err error) {
+	// NOP - basically just waiting a bit for the listener to find new stuff
 
-// 		// HACK: the javascript modal gets confused if we return too fast (attempting to open a new modal before the
-// 		// previous incarnation has finished transitioning causes the events to be ignored):
-// 		//    https://getbootstrap.com/docs/4.0/components/modal/).
-// 		// So if we returned too fast, add a bit of artificial delay...
-// 		time.Sleep(time.Second * 3)
-// 		payload = "ok"
+	// HACK: the javascript modal gets confused if we return too fast (attempting to open a new modal before the
+	// previous incarnation has finished transitioning causes the events to be ignored):
+	//    https://getbootstrap.com/docs/4.0/components/modal/).
+	// So if we returned too fast, add a bit of artificial delay...
+	time.Sleep(time.Second * 3)
+	return
+}
 
 func (s *UIService) ToggleVoicingMode(
 	mode bool,
@@ -652,16 +635,6 @@ func (s *UIService) ToggleVoicingMode(
 	csName string,
 	synergyName string,
 	err error) {
-
-	// 	case "toggleVoicingMode":
-	// 		var args struct {
-	// 			Mode            bool
-	// 			Disconnect      bool
-	// 			Vce             *data.VCE
-	// 			ZeroconfSynergy *zeroconf.Service
-	// 			ZeroconfCs      *zeroconf.Service
-	// 		}
-
 	if mode {
 		if zeroconfSynergy != nil {
 			logger.Infof("ZEROCONF: config Synergy selected by user: %#v\n", *zeroconfSynergy)
@@ -705,22 +678,6 @@ func (s *UIService) ToggleVoicingMode(
 }
 
 func (s *UIService) Explore(path string) (exploration Exploration, err error) {
-	// 	case "explore":
-	// 		// Unmarshal payload
-	// 		var path string
-	// 		if len(m.Payload) > 0 {
-	// 			// Unmarshal payload
-	// 			if err = json.Unmarshal(m.Payload, &path); err != nil {
-	// 				payload = err.Error()
-	// 				return
-	// 			}
-	// 		}
-
-	// 		// Explore
-	// 		if payload, err = explore(path); err != nil {
-	// 			payload = err.Error()
-	// 			return
-	// 		}
 	exploration, err = explore(path)
 	return
 }
