@@ -8,6 +8,8 @@ export {
 };
 
 export {
+    ConnectSynergyResponseType,
+    ConnectionStatusResponse,
     Dir,
     Exploration,
     Preferences

@@ -7,8 +7,8 @@ import {_} from 'lodash';
 
 import {dx2syn} from './dx2syn';
 import * as $ from './jquery';
-import { syn2midi } from './syn2midi';
-import { viewCRT } from './viewCRT';
+import {syn2midi} from './syn2midi';
+import {viewCRT} from './viewCRT';
 import {viewVCE} from './viewVCE';
 import {viewVCE_voice} from './viewVCE_voice';
 
@@ -212,21 +212,16 @@ export let index = {
     console.log('in fileDialog: ' + path);
 
     if (path != undefined) {
-      viewVCE_voice.connectSynergy(function() {
-        let message = {'name': 'saveSYN', 'payload': path};
+      viewVCE_voice.connectSynergy(async function() {
         // Send message
         index.spinnerOn();
-        astilectron.sendMessage(message, function(message) {
-          index.spinnerOff();
-          // Check error
-          if (message.name === 'error') {
-            index.errorNotification(message.payload);
-          } else {
-            index.infoNotification(
-                'Successfully saved Synergy state to ' + path);
-          }
-          index.refreshConnectionStatus();
-        });
+        try {
+          await UIService.SaveSYN(path);
+          index.infoNotification('Successfully saved Synergy state to ' + path);
+        } catch (exc) {
+          index.errorNotification(exc);
+        }
+        index.refreshConnectionStatus();
       });
     }
   },
@@ -287,60 +282,54 @@ export let index = {
     });
     console.log('in saveVCEDialog: ' + path);
     if (path != undefined) {
-      let message = {'name': 'saveVCE', 'payload': path};
-      // Send message
       index.spinnerOn();
-      astilectron.sendMessage(message, function(message) {
+      try {
+        await UIService.SaveVCE(path);
         index.spinnerOff();
-        // Check error
-        if (message.name === 'error') {
-          index.errorNotification(message.payload);
-        } else {
-          index.infoNotification(
-              'Successfully saved Synergy voice file to ' + path);
-        }
-        index.refreshConnectionStatus();
-      });
+        index.infoNotification(
+            'Successfully saved Synergy voice file to ' + path);
+      } catch (exc) {
+        index.spinnerOff();
+        index.errorNotification(exc);
+      }
+
+      index.refreshConnectionStatus();
     }
   },
   loadSYN: function(name, path) {
     viewVCE_voice.connectSynergy(function() {
-      index.confirmDialog('Load Synergy state file ' + path, function() {
-        let message = {'name': 'loadSYN', 'payload': path};
+      index.confirmDialog('Load Synergy state file ' + path, async function() {
         // Send message
         index.spinnerOn();
-        astilectron.sendMessage(message, function(message) {
+        try {
+          await UIService.LoadSYN(path);
           index.spinnerOff();
-          // Check error
-          if (message.name === 'error') {
-            index.errorNotification(message.payload);
-          } else {
-            index.infoNotification(
-                'Successfully loaded ' + name + ' to Synergy')
-          }
-          index.refreshConnectionStatus();
-        });
-      });
+          index.infoNotification('Successfully loaded ' + name + ' to Synergy')
+        } catch (exc) {
+          index.spinnerOff();
+          index.errorNotification(exc);
+        }
+        index.refreshConnectionStatus();
+      })
     });
   },
-  viewCRT: function(name, path) {
+
+  viewCRT: async function(name, path) {
     if (viewVCE_voice.voicingMode) {
       index.errorNotification('Can\'t load a CRT file while in Voicing mode');
       return;
     }
-    let message = {'name': 'readCRT', 'payload': path};
-    astilectron.sendMessage(message, function(message) {
-      // Check error
-      if (message.name === 'error') {
-        index.errorNotification(message.payload);
-        return
-      }
-      viewCRT.setCRT(path, name, message.payload);
+    try {
+      let c = await UIService.ReadCRT(path)
+      viewCRT.setCRT(path, name, c);
       index.load('viewCRT.html', 'content', function() {
         viewCRT.init();
       });
       index.refreshConnectionStatus();
-    });
+
+    } catch (exc) {
+      index.errorNotification(exc);
+    }
   },
   viewVCE: function(name, path) {
     console.log('index.viewVCE ' + name + ' ' + path)
@@ -355,30 +344,30 @@ export let index = {
       index.raw_viewVCE(name, path);
     }
   },
-  raw_viewVCE: function(name, path) {
+  raw_viewVCE: async function(name, path) {
     console.log('index.raw_viewVCE ' + name + ' ' + path)
-    let msgname = 'readVCE';
-    if (viewVCE_voice.voicingMode) {
-      msgname = 'loadVceVoicingMode'
-    }
-    let message = {'name': msgname, 'payload': path};
     // Send message
     index.spinnerOn();
-    astilectron.sendMessage(message, function(message) {
-      index.spinnerOff();
-      // Check error
-      if (message.name === 'error') {
-        index.errorNotification(message.payload);
-        return
+    try {
+      let v;
+      if (viewVCE_voice.voicingMode) {
+        v = await UIService.LoadVceVoicingMode(path);
+      } else {
+        v = await UIService.ReadVCE(path);
       }
-      viewVCE.setVCE(message.payload);
+      index.spinnerOff();
+      viewVCE.setVCE(v);
 
       viewCRT.setCRT(null, null);
       index.load('viewVCE.html', 'content', function() {
         viewVCE.init();
       });
       index.refreshConnectionStatus();
-    });
+    } catch (exc) {
+      index.spinnerOff();
+      index.errorNotification(exc);
+      return
+    }
   },
   viewVCESlot: function(slot) {
     viewVCE.setVCE(viewCRT.crt.Voices[slot]);
@@ -494,68 +483,59 @@ export let index = {
     }
   },
 
-  raw_disconnectSynergy: function() {
-    let message = {'name': 'disconnectSynergy'};
+  raw_disconnectSynergy: async function() {
     index.spinnerOn();
-    astilectron.sendMessage(message, function(message) {
+    try {
+      let status = await UIService.DisconnectSynergy();
+      index.updateConnectionStatus(
+          status.SynergyName, status.ControlSurfaceName);
+      index.infoNotification('Disconnected Synergy');
       index.spinnerOff();
-      if (message.name === 'error') {
-        index.errorNotification(message.payload);
-        return
-      } else {
-        index.updateConnectionStatus(
-            message.payload.SynergyName, message.payload.ControlSurfaceName);
-        index.infoNotification('Disconnected Synergy');
-        return
+    } catch (exc) {
+      index.spinnerOff();
+      index.errorNotification(exc);
+    }
+  },
+
+  disconnectControlSurface: async function() {
+    index.spinnerOn();
+    try {
+      let status = await UIService.DisconnectControlSurface();
+      index.spinnerOff();
+      index.updateConnectionStatus(
+          status.SynergyName, status.ControlSurfaceName);
+      index.infoNotification('Disconnected Control Surface');
+      $('#disableControlSurfaceMenuItem').addClass('disabled');
+    } catch (exc) {
+      index.spinnerOff();
+      index.errorNotification(exc);
+    }
+  },
+
+  disableVRAM: function() {
+    viewVCE_voice.connectSynergy(async function() {
+      index.spinnerOff();
+      try {
+        await UIService.DisableVRAM();
+        index.spinnerOff();
+        index.infoNotification('Successfully disabled Synergy\'s VRAM')
+      } catch (exc) {
+        index.spinnerOff();
+        index.errorNotification(exc);
       }
+      index.refreshConnectionStatus();
     });
   },
 
-  disconnectControlSurface: function() {
-    let message = {'name': 'disconnectControlSurface'};
-    index.spinnerOn();
-    astilectron.sendMessage(message, function(message) {
-      index.spinnerOff();
-      if (message.name === 'error') {
-        index.errorNotification(message.payload);
-        return
-      } else {
-        index.updateConnectionStatus(
-            message.payload.SynergyName, message.payload.ControlSurfaceName);
-        index.infoNotification('Disconnected Control Surface');
-        $('#disableControlSurfaceMenuItem').addClass('disabled');
-        return
-      }
-    });
-  },
-  disableVRAM: function() {
-    viewVCE_voice.connectSynergy(function() {
-      let message = {'name': 'disableVRAM'};
-      index.spinnerOn();
-      astilectron.sendMessage(message, function(message) {
-        index.spinnerOff();
-        if (message.name === 'error') {
-          index.errorNotification(message.payload);
-        } else {
-          index.infoNotification('Successfully disabled Synergy\'s VRAM')
-        }
-        index.refreshConnectionStatus();
-      });
-    });
-  },
-  refreshConnectionStatus: function() {
-    let message = {'name': 'getConnectionStatus', 'payload': 'DummyPayload'};
-    // Send message
+  refreshConnectionStatus: async function() {
     console.log('refreshing connection status');
-    astilectron.sendMessage(message, function(message) {
-      // Check error
-      if (message.name === 'error') {
-        index.errorNotification(message.payload);
-      } else {
-        index.updateConnectionStatus(
-            message.payload.SynergyName, message.payload.ControlSurfaceName);
-      }
-    });
+    try {
+      let status = await UIService.GetConnectionStatus();
+      index.updateConnectionStatus(
+          status.SynergyName, status.ControlSurfaceName);
+    } catch (exc) {
+      index.errorNotification(exc);
+    }
   },
 
   synergyName: null,
@@ -591,27 +571,18 @@ export let index = {
     }
   },
 
-  checkVersion: function(
-      synergyWasDisconnected, controlSurfaceWasDisconnected) {
-    console.log(
-        'checkVersion ' + synergyWasDisconnected + ' ' +
-        controlSurfaceWasDisconnected);
-    let message = {
-      'name': 'checkVersion',
-      'payload': {
-        'SynergyWasDisconnected': synergyWasDisconnected,
-        'ControlSurfaceWasDisconnected': controlSurfaceWasDisconnected
-      }
-    };
-    astilectron.sendMessage(message, function(message) {
-      if (message.name === 'error') {
-        index.errorNotification(message.payload);
-        return
-      } else {
-        return
-      }
-    });
-  },
+  checkVersion:
+      async function(synergyWasDisconnected, controlSurfaceWasDisconnected) {
+        console.log(
+            'checkVersion ' + synergyWasDisconnected + ' ' +
+            controlSurfaceWasDisconnected);
+        try {
+          await UIService.CheckVersion(
+              synergyWasDisconnected, controlSurfaceWasDisconnected)
+        } catch (exc) {
+          index.errorNotification(exc);
+        }
+      },
 
   //   fileDialog: function() {
   //     let files = dialog.showOpenDialogSync({
@@ -628,20 +599,18 @@ export let index = {
   //     return files;
   //   },
 
-  runCOMTST: function() {
-    viewVCE_voice.connectSynergy(function() {
-      let message = {'name': 'runCOMTST'};
+  runCOMTST: async function() {
+    viewVCE_voice.connectSynergy(async function() {
       index.spinnerOn();
-      astilectron.sendMessage(message, function(message) {
+      try {
+        let status = await UIService.RunCOMTST();
         index.spinnerOff();
-        console.log('runCOMTST returned: ' + JSON.stringify(message));
-        // Check error
-        if (message.name === 'error') {
-          index.errorNotification(message.payload);
-        } else {
-          index.infoNotification(message.payload);
-        }
-      });
+        console.log('runCOMTST returned: ' + status);
+        index.infoNotification(status);
+      } catch (exc) {
+        index.spinnerOff();
+        index.errorNotification(exc);
+      }
     });
     index.refreshConnectionStatus();
   },
@@ -684,18 +653,20 @@ export let index = {
   viewDiag: function() {
     index.load('diag.html', 'content');
   },
-  showAbout: function() {
-    let message = {'name': 'showAbout'};
-    astilectron.sendMessage(message, function(message) {
-      // nop
-    });
+  showAbout: async function() {
+    try {
+      await UIService.ShowAbout();
+    } catch (err) {
+      index.errorNotification(err);
+      console.log('show about threw err: ', err);
+    }
   },
   showPreferences: async function() {
     try {
       await UIService.ShowPreferences();
     } catch (err) {
       index.errorNotification(err);
-      console.log('show preferecnes threw err: ', err);
+      console.log('show preferences threw err: ', err);
     }
   },
 

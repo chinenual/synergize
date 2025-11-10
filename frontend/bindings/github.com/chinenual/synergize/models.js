@@ -6,6 +6,80 @@
 // @ts-ignore: Unused imports
 import { Create as $Create } from "@wailsio/runtime";
 
+export class ConnectSynergyResponseType {
+    /**
+     * Creates a new ConnectSynergyResponseType instance.
+     * @param {Partial<ConnectSynergyResponseType>} [$$source = {}] - The source object to create the ConnectSynergyResponseType.
+     */
+    constructor($$source = {}) {
+        if (!("AlreadyConnected" in $$source)) {
+            /**
+             * @member
+             * @type {boolean}
+             */
+            this["AlreadyConnected"] = false;
+        }
+        if (!("Status" in $$source)) {
+            /**
+             * @member
+             * @type {ConnectionStatusResponse}
+             */
+            this["Status"] = (new ConnectionStatusResponse());
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ConnectSynergyResponseType instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {ConnectSynergyResponseType}
+     */
+    static createFrom($$source = {}) {
+        const $$createField1_0 = $$createType0;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("Status" in $$parsedSource) {
+            $$parsedSource["Status"] = $$createField1_0($$parsedSource["Status"]);
+        }
+        return new ConnectSynergyResponseType(/** @type {Partial<ConnectSynergyResponseType>} */($$parsedSource));
+    }
+}
+
+export class ConnectionStatusResponse {
+    /**
+     * Creates a new ConnectionStatusResponse instance.
+     * @param {Partial<ConnectionStatusResponse>} [$$source = {}] - The source object to create the ConnectionStatusResponse.
+     */
+    constructor($$source = {}) {
+        if (!("SynergyName" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["SynergyName"] = "";
+        }
+        if (!("ControlSurfaceName" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["ControlSurfaceName"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ConnectionStatusResponse instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {ConnectionStatusResponse}
+     */
+    static createFrom($$source = {}) {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new ConnectionStatusResponse(/** @type {Partial<ConnectionStatusResponse>} */($$parsedSource));
+    }
+}
+
 /**
  * PayloadDir represents a dir payload
  */
@@ -98,10 +172,10 @@ export class Exploration {
      * @returns {Exploration}
      */
     static createFrom($$source = {}) {
-        const $$createField0_0 = $$createType1;
-        const $$createField1_0 = $$createType1;
-        const $$createField2_0 = $$createType1;
-        const $$createField3_0 = $$createType1;
+        const $$createField0_0 = $$createType2;
+        const $$createField1_0 = $$createType2;
+        const $$createField2_0 = $$createType2;
+        const $$createField3_0 = $$createType2;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("dirs" in $$parsedSource) {
             $$parsedSource["dirs"] = $$createField0_0($$parsedSource["dirs"]);
@@ -219,5 +293,6 @@ export class Preferences {
 }
 
 // Private type creation functions
-const $$createType0 = Dir.createFrom;
-const $$createType1 = $Create.Array($$createType0);
+const $$createType0 = ConnectionStatusResponse.createFrom;
+const $$createType1 = Dir.createFrom;
+const $$createType2 = $Create.Array($$createType1);

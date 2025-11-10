@@ -18,6 +18,7 @@ var assets embed.FS
 
 var wailsApp *application.App
 var wailsPrefsWindow *application.WebviewWindow
+var wailsAboutWindow *application.WebviewWindow
 
 // main function serves as the application's entry point. It initializes the application, creates a window,
 // and starts a goroutine that emits a time-based event every second. It subsequently runs the application and
@@ -66,6 +67,14 @@ func WailsMain() {
 		Height: 680,
 		Width:  800,
 		Hidden: true,
+	})
+	wailsAboutWindow = wailsApp.Window.NewWithOptions(application.WebviewWindowOptions{
+		Title:           "About Synergize",
+		URL:             "/about.html",
+		Height:          470,
+		Width:           500,
+		InitialPosition: application.WindowCentered,
+		Hidden:          true,
 	})
 
 	/**

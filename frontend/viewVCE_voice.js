@@ -1,13 +1,14 @@
+import {UIService} from '/bindings/github.com/chinenual/synergize';
 import {Chart} from 'chart.js/auto';
+import _ from 'lodash';
 
 import {index} from './index';
 import * as $ from './jquery';
-import _ from 'lodash';
 import * as nomnoml from './nomnoml';
-import { viewCRT } from './viewCRT';
-import { viewVCE } from './viewVCE';
-import { viewVCE_envs } from './viewVCE_envs';
-import { viewVCE_filters } from './viewVCE_filters';
+import {viewCRT} from './viewCRT';
+import {viewVCE} from './viewVCE';
+import {viewVCE_envs} from './viewVCE_envs';
+import {viewVCE_filters} from './viewVCE_filters';
 
 export let viewVCE_voice = {
   voicingMode: false,
@@ -57,7 +58,7 @@ export let viewVCE_voice = {
   SOLO: [],
   MUTE: [],
 
-  toggleOsc: function(ele) {
+  toggleOsc: async function(ele) {
     console.log('toggle ' + ele.id);
     let oscPattern = /([A-Z]+)\[(\d+)\]/;
     let ret = ele.id.match(oscPattern);
@@ -69,25 +70,16 @@ export let viewVCE_voice = {
       viewVCE_voice[param][osc - 1] = state;
       ele.classList.toggle('on');
 
-      let message = {
-        'name': 'setOscSolo',
-        'payload': {
-          'Mute': viewVCE_voice.MUTE,
-          'Solo': viewVCE_voice.SOLO,
-        }
-      };
-      astilectron.sendMessage(message, function(message) {
-        // console.log("setOscSolo returned: " + JSON.stringify(message));
-        //  Check error
-        if (message.name === 'error') {
-          // failed - dont change the boolean
-          index.errorNotification(message.payload);
-          return false;
-        } else {
-          console.log('send to csurface ' + ele.id + ' ' + state)
-          viewVCE_voice.sendToCSurface(ele, ele.id, state ? 1 : 0);
-        }
-      });
+      try {
+        await UIService.SetOscSolo(viewVCE_voice.MUTE, viewVCE_voice.SOLO);
+        // return array is ignored
+      } catch (exc) {
+        // failed - dont change the boolean
+        index.errorNotification(exc);
+        return false;
+      }
+      console.log('send to csurface ' + ele.id + ' ' + state)
+      viewVCE_voice.sendToCSurface(ele, ele.id, state ? 1 : 0);
     }
   },
 
@@ -295,7 +287,7 @@ export let viewVCE_voice = {
     return ok;
   },
 
-  onchangeDSR: function(param, osc /*1-based*/, value) {
+  onchangeDSR: async function(param, osc /*1-based*/, value) {
     osc = parseInt(osc, 10);
 
     console.log('onchangeDSR: ' + param + '[' + osc + '] == ' + value);
@@ -332,23 +324,18 @@ export let viewVCE_voice = {
         ' patchAdderInDSR  : ' + patchAdderInDSR + '\n' +
         ' patchFOInputDSR  : ' + patchFOInputDSR + '\n');
 
-    let message = {
-      'name': 'setPatchByte',
-      'payload': {'Osc': osc, 'Value': patchByte}
-    };
-    astilectron.sendMessage(message, function(message) {
-      // console.log("setPatchByte returned: " + JSON.stringify(message));
-      //  Check error
-      if (message.name === 'error') {
-        // failed - dont change the boolean
-        index.errorNotification(message.payload);
-        return false;
-      }
-      viewVCE.vce.Envelopes[osc - 1].FreqEnvelope.OPTCH = patchByte;
-      viewVCE_voice
-          .patchTable();  // in case the patch diagram changes due to the edit
-      viewVCE_voice.voicingModeVisuals();
-    });
+    try {
+      await UIService.SetVoiceOscDataByte(osc, patchByte);
+    } catch (exc) {
+      // failed - dont change the boolean
+      index.errorNotification(exc);
+      return false;
+    }
+    viewVCE.vce.Envelopes[osc - 1].FreqEnvelope.OPTCH = patchByte;
+    viewVCE_voice
+        .patchTable();  // in case the patch diagram changes due to the edit
+    viewVCE_voice.voicingModeVisuals();
+    return true;
   },
 
   onchange: function(ele, updater, valueConverter) {
@@ -553,10 +540,13 @@ export let viewVCE_voice = {
       let patchFOInputDSR = (patchByte & 0x03);
 
       //			console.log(osc + " patch byte: " + patchByte +
-      //"\n" + 				" patchInhibitAddr : " + patchInhibitAddr + "\n" + 				"
-      //patchInhibitF0   : " + patchInhibitF0 + "\n" + 				" patchOutputDSR   : " +
-      //patchOutputDSR + "\n" + 				" patchAdderInDSR  : " + patchAdderInDSR + "\n"
-      //+ 				" patchFOInputDSR  : " + patchFOInputDSR + "\n");
+      //"\n" + 				" patchInhibitAddr : " +
+      // patchInhibitAddr + "\n" + 				" patchInhibitF0
+      // : " + patchInhibitF0 + "\n" + 				" patchOutputDSR
+      // : " + patchOutputDSR + "\n" + 				"
+      // patchAdderInDSR  : " + patchAdderInDSR + "\n"
+      //+ 				" patchFOInputDSR  : " + patchFOInputDSR
+      //+ "\n");
 
       debug_patchBytes += ', ' + patchByte;
 
@@ -758,25 +748,23 @@ ${freqDAG}
     nomnoml.draw(patchDiagramCanvas, patchDiagramSource);
   },
 
-  changePatchType: function(newIndex) {
-    let message = {'name': 'setPatchType', 'payload': parseInt(newIndex, 10)};
+  changePatchType: async function(newIndex) {
+    let patchBytes = [];
     index.spinnerOn();
-    astilectron.sendMessage(message, function(message) {
+    try {
+      patchBytes = await UIService.SetPatchType(parseInt(newIndex, 10));
       index.spinnerOff();
-      // console.log("setPatchType returned: " + JSON.stringify(message));
-      //  Check error
-      if (message.name === 'error') {
-        // failed - dont change the boolean
-        index.errorNotification(message.payload);
-      } else {
-        for (let i = 0; i < viewVCE.vce.Envelopes.length; i++) {
-          viewVCE.vce.Envelopes[i].FreqEnvelope.OPTCH = message.payload[i];
-        }
-        viewVCE.vce.Extra.PatchType = parseInt(newIndex, 0);
-        viewVCE.init();
-      }
-      index.refreshConnectionStatus();
-    });
+    } catch (exc) {
+      index.spinnerOff();
+      index.errorNotification(exc);
+      return
+    }
+    for (let i = 0; i < viewVCE.vce.Envelopes.length; i++) {
+      viewVCE.vce.Envelopes[i].FreqEnvelope.OPTCH = patchBytes[i];
+    }
+    viewVCE.vce.Extra.PatchType = parseInt(newIndex, 0);
+    viewVCE.init();
+    index.refreshConnectionStatus();
   },
 
   setNumOscillators: function(newNum) {
@@ -964,34 +952,25 @@ ${freqDAG}
         });
   },
 
-  raw_connectSynergy: function(zeroconfChoice, ignored, callback) {
-    let message = {
-      'name': 'connectSynergy',
-      'payload': {
-        'ZeroconfChoice': zeroconfChoice  // optional param - null unless user
-                                          // just selected from a menu
-      }
-    };
-
+  raw_connectSynergy: async function(zeroconfChoice, ignored, callback) {
     index.spinnerOn();
-    astilectron.sendMessage(message, function(message) {
+    let r;
+    try {
+      r = await UIService.ConnectSynergy(zeroconfChoice);
       index.spinnerOff();
-      if (message.name === 'error') {
-        index.errorNotification(message.payload);
-        return
-      } else {
-        index.updateConnectionStatus(
-            message.payload.Status.SynergyName,
-            message.payload.Status.ControlSurfaceName);
-        if (!message.payload.AlreadyConnected) {
-          index.infoNotification(
-              'Successfully connected to Synergy: ' +
-              message.payload.Status.SynergyName);
-        }
-        callback();
-        return
-      }
-    });
+    } catch (exc) {
+      index.spinnerOff();
+      index.errorNotification(exc);
+      return
+    }
+    index.updateConnectionStatus(
+        r.Status.SynergyName, r.Status.ControlSurfaceName);
+    if (!r.AlreadyConnected) {
+      index.infoNotification(
+          'Successfully connected to Synergy: ' + r.Status.SynergyName);
+    }
+    callback();
+    return
   },
 
   toggleVoicingMode: function(mode) {
@@ -1256,21 +1235,18 @@ ${freqDAG}
   patchTypeOptions: null,  // HTML fragment used to populate the <options> for
                            // the patchType select
 
-  getPatchTypeNames: function() {
-    let message = {'name': 'getPatchTypeNames', 'payload': null};
-    astilectron.sendMessage(message, function(message) {
-      // console.log("sendToCSurface returned: " + JSON.stringify(message));
-      //  Check error
-      if (message.name === 'error') {
-        index.errorNotification(message.payload);
-      }
-      let nameArray = message.payload;
-      let html = ''
-      for (let i = 0; i < nameArray.length; i++) {
-        html += `<option value="${i}">${nameArray[i]}</option>\n`;
-      }
-      viewVCE_voice.patchTypeOptions = html;
-    });
+  getPatchTypeNames: async function() {
+    let nameArray;
+    try {
+      nameArray = await UIService.GetPatchTypeNames()
+    } catch (exc) {
+      index.errorNotification(exc);
+    }
+    let html = ''
+    for (let i = 0; i < nameArray.length; i++) {
+      html += `<option value="${i}">${nameArray[i]}</option>\n`;
+    }
+    viewVCE_voice.patchTypeOptions = html;
   },
 
   init: function(incrementalUpdate) {
@@ -1542,14 +1518,14 @@ ${freqDAG}
       // cycle through the options in each click
       let options = ele.options
       //			console.log("cycle SELECT: currently " +
-      //options.selectedIndex + " len: " + options.length);
+      // options.selectedIndex + " len: " + options.length);
       let i = options.selectedIndex + 1
       if (i >= options.length) {
         i = 0
       }
       options.selectedIndex = i;
       //			console.log("cycle SELECT: now " +
-      //options.selectedIndex);
+      // options.selectedIndex);
       valueString = options[i].text;
     } else if (ele.nodeName == 'SPAN') {
       // SOLO/MUTE buttons
@@ -1568,7 +1544,7 @@ ${freqDAG}
     return valueString;
   },
 
-  sendToCSurface: function(ele, field, value) {
+  sendToCSurface: async function(ele, field, value) {
     if (!viewVCE_voice.csEnabled) {
       return
     }
@@ -1585,18 +1561,10 @@ ${freqDAG}
     }
     */
 
-    let message = {
-      'name': 'sendToCSurface',
-      'payload': {Field: field, Value: parseInt(value, 10)}
-    };
-    astilectron.sendMessage(message, function(message) {
-      // console.log("sendToCSurface returned: " + JSON.stringify(message));
-      //  Check error
-      if (message.name === 'error') {
-        index.errorNotification(message.payload);
-      }
-    });
+    try {
+      await UIService.SendToCSurface(field, parseInt(value, 10));
+    } catch (exc) {
+      index.errorNotification(exc);
+    }
   }
 };
-
-window.viewVCE_voice = viewVCE_voice;

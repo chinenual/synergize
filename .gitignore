@@ -1,3 +1,6 @@
+*~
+*#
+
 # files used by the Docker-based jekyll script to preview documentation changes (see ../jekyll-driver/README.md)
 Gemfile
 Gemfile.lock

@@ -37,6 +37,16 @@ export function CheckVersion(synergyWasDisconnected, controlSurfaceWasDisconnect
 }
 
 /**
+ * @param {zeroconf$0.Service | null} zeroconfChoice
+ * @returns {$CancellablePromise<$models.ConnectSynergyResponseType>}
+ */
+export function ConnectSynergy(zeroconfChoice) {
+    return $Call.ByID(1765205788, zeroconfChoice).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType0($result);
+    }));
+}
+
+/**
  * @param {data$0.CRT} crt
  * @param {string} vcePath
  * @param {number} slot
@@ -44,7 +54,7 @@ export function CheckVersion(synergyWasDisconnected, controlSurfaceWasDisconnect
  */
 export function CrtEditAddVoice(crt, vcePath, slot) {
     return $Call.ByID(2539128045, crt, vcePath, slot).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType0($result);
+        return $$createType1($result);
     }));
 }
 
@@ -68,6 +78,22 @@ export function CrtEditSaveCRT(path, crt) {
 /**
  * @returns {$CancellablePromise<void>}
  */
+export function DisableVRAM() {
+    return $Call.ByID(2668031727);
+}
+
+/**
+ * @returns {$CancellablePromise<$models.ConnectionStatusResponse>}
+ */
+export function DisconnectControlSurface() {
+    return $Call.ByID(3150771529).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType2($result);
+    }));
+}
+
+/**
+ * @returns {$CancellablePromise<void>}
+ */
 export function Dx2synCancel() {
     return $Call.ByID(3057982693);
 }
@@ -86,7 +112,25 @@ export function Dx2synStart(path) {
  */
 export function Explore(path) {
     return $Call.ByID(127536374, path).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType1($result);
+        return $$createType3($result);
+    }));
+}
+
+/**
+ * @returns {$CancellablePromise<$models.ConnectionStatusResponse>}
+ */
+export function GetConnectionStatus() {
+    return $Call.ByID(1635550443).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType2($result);
+    }));
+}
+
+/**
+ * @returns {$CancellablePromise<string[]>}
+ */
+export function GetPatchTypeNames() {
+    return $Call.ByID(594519195).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType4($result);
     }));
 }
 
@@ -95,7 +139,7 @@ export function Explore(path) {
  */
 export function GetPreferences() {
     return $Call.ByID(3682233165).then(/** @type {($result: any) => any} */(($result) => {
-        $result[1] = $$createType2($result[1]);
+        $result[1] = $$createType5($result[1]);
         return $result;
     }));
 }
@@ -124,6 +168,51 @@ export function SavePreferences(preferences) {
 }
 
 /**
+ * @param {string} path
+ * @returns {$CancellablePromise<void>}
+ */
+export function SaveSYN(path) {
+    return $Call.ByID(3370937748, path);
+}
+
+/**
+ * @param {string} path
+ * @returns {$CancellablePromise<void>}
+ */
+export function SaveVCE(path) {
+    return $Call.ByID(2968353300, path);
+}
+
+/**
+ * @param {string} field
+ * @param {number} value
+ * @returns {$CancellablePromise<void>}
+ */
+export function SendToCSurface(field, value) {
+    return $Call.ByID(1372072484, field, value);
+}
+
+/**
+ * @param {string} funcname
+ * @param {number} osc
+ * @param {number} index
+ * @param {number} value
+ * @returns {$CancellablePromise<void>}
+ */
+export function SetEnvEle(funcname, osc, index, value) {
+    return $Call.ByID(2889952252, funcname, osc, index, value);
+}
+
+/**
+ * @param {number} osc
+ * @param {data$0.Envelope} envelopes
+ * @returns {$CancellablePromise<void>}
+ */
+export function SetEnvelopes(osc, envelopes) {
+    return $Call.ByID(3628011926, osc, envelopes);
+}
+
+/**
  * @param {number} uiFilterIndex
  * @param {number[]} values
  * @returns {$CancellablePromise<void>}
@@ -143,6 +232,45 @@ export function SetFilterEle(uiFilterIndex, index, value) {
 }
 
 /**
+ * @param {number} osc
+ * @param {string} env
+ * @param {number} envType
+ * @param {number} sustainPt
+ * @param {number} loopPt
+ * @returns {$CancellablePromise<void>}
+ */
+export function SetLoopPoint(osc, env, envType, sustainPt, loopPt) {
+    return $Call.ByID(1734588703, osc, env, envType, sustainPt, loopPt);
+}
+
+/**
+ * @param {number} osc
+ * @param {number} freqLength
+ * @param {number} ampLength
+ * @returns {$CancellablePromise<void>}
+ */
+export function SetOscEnvLengths(osc, freqLength, ampLength) {
+    return $Call.ByID(162934356, osc, freqLength, ampLength);
+}
+
+/**
+ * @param {boolean[]} mute
+ * @param {boolean[]} solo
+ * @returns {$CancellablePromise<boolean[]>}
+ */
+export function SetOscSolo(mute, solo) {
+    return $Call.ByID(1063518047, mute, solo);
+}
+
+/**
+ * @param {number} index
+ * @returns {$CancellablePromise<number[]>}
+ */
+export function SetPatchType(index) {
+    return $Call.ByID(2440239717, index);
+}
+
+/**
  * @param {number} index
  * @param {number} value
  * @returns {$CancellablePromise<void>}
@@ -152,12 +280,28 @@ export function SetVoiceKPROPEle(index, value) {
 }
 
 /**
+ * @param {number} osc
+ * @param {number} value
+ * @returns {$CancellablePromise<void>}
+ */
+export function SetVoiceOscDataByte(osc, value) {
+    return $Call.ByID(2361785606, osc, value);
+}
+
+/**
  * @param {number} index
  * @param {number} value
  * @returns {$CancellablePromise<void>}
  */
 export function SetVoiceVEQEle(index, value) {
     return $Call.ByID(1799679745, index, value);
+}
+
+/**
+ * @returns {$CancellablePromise<void>}
+ */
+export function ShowAbout() {
+    return $Call.ByID(3434432679);
 }
 
 /**
@@ -189,14 +333,17 @@ export function Syn2midi(path, tempo, raw, maxClockSeconds, trackButtons) {
  */
 export function ToggleVoicingMode(mode, disconnect, useVce, zeroconfSynergy, zeroconfCs) {
     return $Call.ByID(4111399143, mode, disconnect, useVce, zeroconfSynergy, zeroconfCs).then(/** @type {($result: any) => any} */(($result) => {
-        $result[0] = $$createType4($result[0]);
+        $result[0] = $$createType7($result[0]);
         return $result;
     }));
 }
 
 // Private type creation functions
-const $$createType0 = data$0.CRT.createFrom;
-const $$createType1 = $models.Exploration.createFrom;
-const $$createType2 = $models.Preferences.createFrom;
-const $$createType3 = data$0.VCE.createFrom;
-const $$createType4 = $Create.Nullable($$createType3);
+const $$createType0 = $models.ConnectSynergyResponseType.createFrom;
+const $$createType1 = data$0.CRT.createFrom;
+const $$createType2 = $models.ConnectionStatusResponse.createFrom;
+const $$createType3 = $models.Exploration.createFrom;
+const $$createType4 = $Create.Array($Create.Any);
+const $$createType5 = $models.Preferences.createFrom;
+const $$createType6 = data$0.VCE.createFrom;
+const $$createType7 = $Create.Nullable($$createType6);
