@@ -14,6 +14,11 @@ import {viewVCE_voice} from './viewVCE_voice';
 import $ from 'jquery';
 Object.assign(window, { $: $, jQuery: $ });
 
+// Import bootstrap custom CSS
+//import './scss/styles.scss'
+
+// Import all of Bootstrap's JS
+import * as bootstrap from 'bootstrap'
 
 export let index = {
   DEBOUNCE_WAIT_SHORT: 50,

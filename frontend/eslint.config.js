@@ -8,11 +8,6 @@ export default defineConfig([
 	"bindings/**",
 	"dist/**",
 	"public/**",
-	"Chart.bundle.min.js",
-	"graphre.js",
-	"jquery.js",
-	"lodash.js",
-	"nomnoml.js",
 	"runtime-debug.js",
 	"runtime.js"
     ]),

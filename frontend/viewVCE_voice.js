@@ -4,7 +4,7 @@ import _ from 'lodash';
 
 import {index} from './index';
 import { $ } from 'jquery';
-import * as nomnoml from './nomnoml';
+import * as nomnoml from 'nomnoml';
 import {viewCRT} from './viewCRT';
 import {viewVCE} from './viewVCE';
 import {viewVCE_envs} from './viewVCE_envs';

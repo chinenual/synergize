@@ -116,3 +116,5 @@ export let dx2syn = {
     $('#subprocessModal').modal('handleUpdate')
   },
 };
+// for menus:
+window.dx2syn = dx2syn;
