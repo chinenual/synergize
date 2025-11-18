@@ -1,14 +1,16 @@
 import {UIService} from '/bindings/github.com/chinenual/synergize';
-import {Chart} from 'chart.js/auto';
+import {Chart} from 'chart.js';
 import _ from 'lodash';
 
 import {index} from './index';
-import { $ } from 'jquery';
 import * as nomnoml from 'nomnoml';
 import {viewCRT} from './viewCRT';
 import {viewVCE} from './viewVCE';
 import {viewVCE_envs} from './viewVCE_envs';
 import {viewVCE_filters} from './viewVCE_filters';
+
+import $ from 'jquery';
+Object.assign(window, { $: $, jQuery: $ });
 
 export let viewVCE_voice = {
   voicingMode: false,

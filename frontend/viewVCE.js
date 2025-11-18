@@ -1,4 +1,4 @@
-import { Chart } from 'chart.js/auto';
+import { Chart } from 'chart.js';
 
 import { viewVCE_doc } from './viewVCE_doc';
 import { viewVCE_envs } from './viewVCE_envs';

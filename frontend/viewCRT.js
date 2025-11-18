@@ -2,8 +2,10 @@ import {UIService} from '/bindings/github.com/chinenual/synergize';
 import * as wails from '@wailsio/runtime';
 
 import { index } from './index';
-import { $ } from 'jquery';
 import { viewVCE_voice } from './viewVCE_voice';
+
+import $ from 'jquery';
+Object.assign(window, { $: $, jQuery: $ });
 
 export let viewCRT = {
   editMode: false,

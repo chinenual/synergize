@@ -2,14 +2,15 @@
 // const {env} = require("process");
 // const {DH_CHECK_P_NOT_PRIME} = require("constants");
 import {UIService} from '/bindings/github.com/chinenual/synergize';
-import {Chart} from 'chart.js/auto';
+import {Chart} from 'chart.js';
 import {_} from 'lodash';
 
 import {index} from './index';
-import { $ } from 'jquery';
 import {viewVCE} from './viewVCE';
 import {viewVCE_voice} from './viewVCE_voice';
 
+import $ from 'jquery';
+Object.assign(window, { $: $, jQuery: $ });
 
 let dragOldValue = {x: undefined, y: undefined};
 

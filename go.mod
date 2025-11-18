@@ -3,7 +3,6 @@ module github.com/chinenual/synergize
 go 1.24.0
 
 require (
-	github.com/asticode/go-astikit v0.29.1
 	github.com/asticode/go-astilectron v0.27.0
 	github.com/asticode/go-astilectron-bootstrap v0.4.14
 	github.com/chinenual/dnssd v1.1.2
@@ -20,6 +19,8 @@ require (
 	gopkg.in/go-playground/validator.v9 v9.31.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
+
+require github.com/asticode/go-astikit v0.29.1
 
 require (
 	// FROM WAILS init:

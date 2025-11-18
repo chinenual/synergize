@@ -1,5 +1,7 @@
-import { $ } from 'jquery';
 import { viewVCE } from './viewVCE';
+
+import $ from 'jquery';
+Object.assign(window, { $: $, jQuery: $ });
 
 export let viewVCE_doc = {
 
