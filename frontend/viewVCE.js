@@ -50,7 +50,8 @@ export let viewVCE = {
     // console.log('--- finish viewVCE init');
   },
 
-  setVCE: function(data) {
+  setVCE: function (data) {
+    console.log("setVCE: ", data);
     viewVCE.vce = data;
   }
 }

@@ -1014,6 +1014,7 @@ ${freqDAG}
       index.infoNotification(msg);
     } catch (exc) {
       index.spinnerOff();
+      console.log(exc);
       index.errorNotification(exc);
     }
     index.refreshConnectionStatus();
@@ -1022,18 +1023,7 @@ ${freqDAG}
   raw_voicingModeOn: async function(
       synergyZeroconfChoice, csZeroconfChoice, callback) {
     console.log(`VoicingMode on`);
-    let message = {
-      'name': 'toggleVoicingMode',
-      'payload': {
-        'Mode': true,
-        'Vce': viewVCE.vce,
-        'ZeroconfSynergy':
-            synergyZeroconfChoice,  // optional param - null unless user just
-                                    // selected from a menu
-        'ZeroconfCs': csZeroconfChoice  // optional param - null unless user
-                                        // just selected from a menu
-      }
-    };
+  
     index.spinnerOn();
     try {
       let r = await UIService.ToggleVoicingMode(
@@ -1041,17 +1031,22 @@ ${freqDAG}
           synergyZeroconfChoice /*zeroconfSynergy*/,
           csZeroconfChoice /*zeroconfCs*/);
       index.spinnerOff();
-      // console.log("toggleVoiceMode returned: " + JSON.stringify(message));
+      console.log("toggleVoiceMode returned: ",r);
       //  Check error
 
       viewVCE_voice.voicingMode = true;
       let csMessage = '';
-      if (message.payload != null) {
-        viewVCE.setVCE(r.Vce);
-        viewVCE_voice.csEnabled = r.CsEnabled;
+      if (r != null) {
+        let loaded_vce = r[0];
+        let csEnabled = r[1];
+        let csName = r[2];
+        let synergyName = r[3];
+
+        viewVCE.setVCE(loaded_vce);
+        viewVCE_voice.csEnabled = csEnabled;
 
         if (viewVCE_voice.csEnabled) {
-          csMessage = `.<br>Control Surface is enabled: ${r.CsName}.`;
+          csMessage = `.<br>Control Surface is enabled: ${csName}.`;
         } else {
           csMessage = `.<br>Control Surface is not enabled.`;
         }
