@@ -26,8 +26,8 @@ export let dx2syn = {
       'CanChooseFiles': true,
       'Title': 'Choose DX7 Sysex or folder containing DX7 Sysex\'s',
       'Filters': [
-        {DisplayName: 'DX Sysex', Pattern: ['syx', 'sysx']},
-        {DisplayName: 'All Files', Pattern: ['*']}
+        {DisplayName: 'DX Sysex', Pattern: 'syx, sysx'},
+        {DisplayName: 'All Files', Pattern: '*'}
       ]
     });
     console.log('in convertFileDialog: ' + path);
@@ -42,8 +42,8 @@ export let dx2syn = {
       'CanChooseFiles': true,
       'Title': 'Choose DX7 Sysex',
       'Filters': [
-        {DisplayName: 'DX Sysex', Pattern: ['syx', 'sysx']},
-        {DisplayName: 'All Files', Pattern: ['*']}
+        {DisplayName: 'DX Sysex', Pattern: 'syx, sysx'},
+        {DisplayName: 'All Files', Pattern: '*'}
       ]
     });
     console.log('in convertFileDialog: ' + path);

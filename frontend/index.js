@@ -213,8 +213,8 @@ export let index = {
       'CanChooseFiles': true,
       'Title': 'Save state to SYN file',
       'Filters': [
-        {DisplayName: 'State', Pattern: ['syn']},
-        {DisplayName: 'All Files', Pattern: ['*']}
+        {DisplayName: 'State', Pattern: 'syn'},
+        {DisplayName: 'All Files', Pattern: '*'}
       ]
     });
     console.log('in fileDialog: ' + path);
@@ -239,8 +239,8 @@ export let index = {
       'CanChooseFiles': true,
       'Title': 'Load state from SYN file',
       'Filters': [
-        {DisplayName: 'State', Pattern: ['syn']},
-        {DisplayName: 'All Files', Pattern: ['*']}
+        {DisplayName: 'State', Pattern: 'syn'},
+        {DisplayName: 'All Files', Pattern: '*'}
       ]
     });
     console.log('in fileDialog: ' + path);
@@ -254,8 +254,8 @@ export let index = {
       'CanChooseFiles': true,
       'Title': 'Load CRT Cartridge file',
       'Filters': [
-        {DisplayName: 'Cartridge', Pattern: ['crt']},
-        {DisplayName: 'All Files', Pattern: ['*']}
+        {DisplayName: 'Cartridge', Pattern: 'crt'},
+        {DisplayName: 'All Files', Pattern: '*'}
       ]
     });
     console.log('in fileDialog: ' + path);
@@ -269,8 +269,8 @@ export let index = {
       'CanChooseFiles': true,
       'Title': 'Load VCE Voice file',
       'Filters': [
-        {DisplayName: 'Voice', Pattern: ['vce']},
-        {DisplayName: 'All Files', Pattern: ['*']}
+        {DisplayName: 'Voice', Pattern: 'vce'},
+        {DisplayName: 'All Files', Pattern: '*'}
       ]
     });
     console.log('in fileDialog: ' + path);
@@ -284,8 +284,8 @@ export let index = {
       'CanChooseFiles': true,
       'Title': 'Save VCE Voice file',
       'Filters': [
-        {DisplayName: 'Voice', Pattern: ['vce']},
-        {DisplayName: 'All Files', Pattern: ['*']}
+        {DisplayName: 'Voice', Pattern: 'vce'},
+        {DisplayName: 'All Files', Pattern: '*'}
       ]
     });
     console.log('in saveVCEDialog: ' + path);

@@ -19,8 +19,8 @@ export let syn2midi = {
       'CanChooseFiles': true,
       'Title': 'Choose SYN file to convert to MIDI',
       'Filters': [
-        {DisplayName: 'State', Pattern: ['syn']},
-        {DisplayName: 'All Files', Pattern: ['*']}
+        {DisplayName: 'State', Pattern: 'syn'},
+        {DisplayName: 'All Files', Pattern: '*'}
       ]
     });
 

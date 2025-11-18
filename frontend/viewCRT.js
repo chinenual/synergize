@@ -48,8 +48,8 @@ export let viewCRT = {
       'CanChooseFiles': true,
       'Title': 'Add Voice',
       'Filters': [
-        {DisplayName: 'Voice', Pattern: ['vce']},
-        {DisplayName: 'All Files', Pattern: ['*']}
+        {DisplayName: 'Voice', Pattern: 'vce'},
+        {DisplayName: 'All Files', Pattern: '*'}
       ]
     });
 
@@ -98,8 +98,8 @@ export let viewCRT = {
       'CanChooseFiles': true,
       'Title': 'Save CRT',
       'Filters': [
-        {DisplayName: 'Cartridge', Pattern: ['CRT']},
-        {DisplayName: 'All Files', Pattern: ['*']}
+        {DisplayName: 'Cartridge', Pattern: 'CRT'},
+        {DisplayName: 'All Files', Pattern: '*'}
       ]
     });
     console.log('in fileDialog: ' + path);
