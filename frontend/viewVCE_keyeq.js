@@ -75,7 +75,7 @@ export let viewVCE_keyeq = {
 
     let propData = viewVCE_keyeq.keyEqCurve(viewVCE.vce.Head.VEQ);
 
-    $('#keyEqTable td.val input').each(function(i, obj) {
+    document.querySelectorAll('#keyEqTable td.val input').forEach((obj, i) => {
       let id = obj.id;
       // id is "keyeq[<n>]" - we need the <n> part
       let idxString = id.substring(6);

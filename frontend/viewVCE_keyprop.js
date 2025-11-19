@@ -77,7 +77,7 @@ export let viewVCE_keyprop = {
 
     var propData = viewVCE_keyprop.keyPropCurve(viewVCE.vce.Head.KPROP);
 
-    $('#keyPropTable td.val input').each(function(i, obj) {
+    document.querySelectorAll('#keyPropTable td.val input').forEach((obj, i) => {
       var id = obj.id;
 
       // id is "keyprop[<n>]" - we need the <n> part

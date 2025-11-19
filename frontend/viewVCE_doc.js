@@ -7,9 +7,9 @@ export let viewVCE_doc = {
 
 	init: function () {
 		if (viewVCE.vce.Extra.Doc != null) {
-			$('#doctext').html(viewVCE.vce.Extra.Doc)
+			document.querySelector('#doctext').innerHTML = viewVCE.vce.Extra.Doc;
 		} else {
-			$('#doctext').html('')
+			document.querySelector('#doctext').innerHTML = '';
 		}
 	}
 };

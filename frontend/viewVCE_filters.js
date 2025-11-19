@@ -301,7 +301,7 @@ export let viewVCE_filters = {
       }
 
       document.querySelector('#filterTable').style.display = 'block';
-      $('#filterTable td.val input').each(function(i, obj) {
+      document.querySelectorAll('#filterTable td.val input').forEach((obj, i) => {
         let id = obj.id;
         // id is "flt[<n>]" - we need the <n> part
         let idxString = id.substring(4);

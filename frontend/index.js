@@ -626,16 +626,16 @@ export let index = {
     index.refreshConnectionStatus();
   },
 
-  load: function(url, eleId, callback) {
+  load: async function(url, eleId, callback) {
     console.log('load ' + url + ' into ' + eleId + ' ' + $(('#' + eleId)));
     //		console.dir($(('#' + eleId)));
-    $(('#' + eleId)).load(url, function() {
-      console.log('loaded url ' + url);
-      if (callback != undefined) {
-        let element = document.getElementById(eleId);
-        callback(element);
-      }
-    });
+    const r = await fetch(url);
+    const body = await r.text();
+    document.querySelector('#' + eleId).innerHTML = body;
+    if (callback != undefined) {
+      let element = document.getElementById(eleId);
+      callback(element);
+    }
 
     /*
     timing bug - onreadystatechange fires before the DOM is ready to query

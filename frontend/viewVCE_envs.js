@@ -747,24 +747,27 @@ export let viewVCE_envs = {
     // easiest thing to do is just brute force reset each ele to
     // reflect the value in the envelope
     for (let p = 0; p < 16; p++) {
-      $(`#env${envid}Loop\\[${p + 1}\\] option[value='']`)
-          .prop('selected', true);
-      $(`#env${envid}Loop\\[${p + 1}\\] option[value='L']`)
-          .prop('selected', false);
-      $(`#env${envid}Loop\\[${p + 1}\\] option[value='R']`)
-          .prop('selected', false);
-      $(`#env${envid}Loop\\[${p + 1}\\] option[value='S']`)
-          .prop('selected', false);
+      //$(`#env${envid}Loop\\[${p + 1}\\] option[value='']`)
+      //    .prop('selected', true);
+      //$(`#env${envid}Loop\\[${p + 1}\\] option[value='L']`)
+      //    .prop('selected', false);
+      //$(`#env${envid}Loop\\[${p + 1}\\] option[value='R']`)
+      //    .prop('selected', false);
+      //$(`#env${envid}Loop\\[${p + 1}\\] option[value='S']`)
+      //    .prop('selected', false);
+      document.querySelector(`#env${envid}Loop\\[${p + 1}\\]`).value = '';
     }
     if (env.ENVTYPE != 1 && env.SUSTAINPT > 0) {
-      $(`#env${envid}Loop\\[${env.SUSTAINPT}\\] option[value='S']`)
-          .prop('selected', true);
+      //$(`#env${envid}Loop\\[${env.SUSTAINPT}\\] option[value='S']`)
+      //    .prop('selected', true);
+      document.querySelector(`#env${envid}Loop\\[${env.SUSTAINPT}\\]`).value = 'S';
     }
     if (env.ENVTYPE != 1 && env.LOOPPT > 0) {
       let v = env.ENVTYPE == 3 ? 'L' : 'R'
-      $(`#env${envid}Loop\\[${env.LOOPPT}\\] option[value='${v}']`)
-          .prop('selected', true);
-    }
+      //$(`#env${envid}Loop\\[${env.LOOPPT}\\] option[value='${v}']`)
+      //    .prop('selected', true);
+      document.querySelector(`#env${envid}Loop\\[${env.LOOPPT}\\]`).value = v;
+              }
 
     // only show accelleration values if type1 envelope
     if (env.ENVTYPE === 1) {
@@ -1302,7 +1305,7 @@ export let viewVCE_envs = {
 
     // clear old values:
     document.querySelector('#envTable td.val input').value ='';
-    $('#envTable td.total span').html('');
+    document.querySelector('#envTable td.total span').innerHTML = ('');
     // clear the loop points
     document.querySelector(`#envTable select option[value='']`).selected = true;
     document.querySelector(`#envTable select option[value='L']`).selected = false;
@@ -1322,13 +1325,13 @@ export let viewVCE_envs = {
 
     for (let i = 0; i < 16; i++) {
       // completely hide the rows for rows not used by either envelope
-      let tr = $('#envTable tbody tr:eq(' + i + ')');
+      let tr = document.querySelector('#envTable tbody tr:eq(' + i + ')');
       if (i <
           Math.max(
               envelopes.FreqEnvelope.NPOINTS, envelopes.AmpEnvelope.NPOINTS)) {
-        tr.show();
+        tr.style.display = 'block';
       } else {
-        tr.hide();
+        tr.style.display = 'hide';
       }
     }
     if (viewVCE_voice.voicingMode) {
@@ -1392,9 +1395,6 @@ export let viewVCE_envs = {
     }
 
     for (let i = envelopes.FreqEnvelope.NPOINTS; i < 16; i++) {
-      // hide unused rows
-      // let tr = $('#envTable tbody tr:eq(' + i + ')');
-
       document.querySelector(`#envFreqLoop\\[${i + 1}\\]`).style.display = 'none';
       document.querySelector(`#envFreqLowVal\\[${i + 1}\\]`).style.display = 'none';
       document.querySelector(`#envFreqUpVal\\[${i + 1}\\]`).style.display = 'none';
@@ -1414,8 +1414,6 @@ export let viewVCE_envs = {
       }
     }
     for (let i = 0; i < envelopes.FreqEnvelope.NPOINTS; i++) {
-      // let tr = $('#envTable tbody tr:eq(' + i + ')');
-
       document.querySelector(`#envFreqLoop\\[${i + 1}\\]`).style.display = 'block';
       document.querySelector(`#envFreqLowVal\\[${i + 1}\\]`).style.display = 'block';
       document.querySelector(`#envFreqUpVal\\[${i + 1}\\]`).style.display = 'block';
@@ -1476,15 +1474,17 @@ export let viewVCE_envs = {
 
       if (envelopes.FreqEnvelope.ENVTYPE != 1) {
         if (envelopes.FreqEnvelope.SUSTAINPT == (i + 1)) {
-          $(`#envFreqLoop\\[${i + 1}\\] option[value='S']`)
-              .prop('selected', true);
+          //$(`#envFreqLoop\\[${i + 1}\\] option[value='S']`)
+          //    .prop('selected', true);
+          document.querySelector(`#envFreqLoop\\[${i + 1}\\]`).value = 'S';
           pointStyleMetadata[freqLowIdx].sustainPt = i;
           pointStyleMetadata[freqUpIdx].sustainPt = i;
         }
         if (envelopes.FreqEnvelope.LOOPPT == (i + 1)) {
           let v = envelopes.FreqEnvelope.ENVTYPE == 3 ? 'L' : 'R'
-          $(`#envFreqLoop\\[${i + 1}\\] option[value='${v}']`)
-              .prop('selected', true);
+          //$(`#envFreqLoop\\[${i + 1}\\] option[value='${v}']`)
+          //    .prop('selected', true);
+          document.querySelector(`#envFreqLoop\\[${i + 1}\\]`).value = v;
           if (v === 'L') {
             pointStyleMetadata[freqLowIdx].loopPt = i;
             pointStyleMetadata[freqUpIdx].loopPt = i;
@@ -1524,8 +1524,6 @@ export let viewVCE_envs = {
     datasets[ampUpIdx].data.push({x: 0, y: 0});
 
     for (let i = 0; i < envelopes.AmpEnvelope.NPOINTS; i++) {
-      // let tr = $('#envTable tbody tr:eq(' + i + ')');
-
       document.querySelector(`#envAmpLoop\\[${i + 1}\\]`).style.display = 'block';
       document.querySelector(`#envAmpLowVal\\[${i + 1}\\]`).style.display = 'block';
       document.querySelector(`#envAmpUpVal\\[${i + 1}\\]`).style.display = 'block';
@@ -1593,8 +1591,9 @@ export let viewVCE_envs = {
 
       if (envelopes.AmpEnvelope.ENVTYPE != 1) {
         if (envelopes.AmpEnvelope.SUSTAINPT == (i + 1)) {
-          $(`#envAmpLoop\\[${i + 1}\\] option[value='S']`)
-              .prop('selected', true);
+          //$(`#envAmpLoop\\[${i + 1}\\] option[value='S']`)
+          //  .prop('selected', true);
+          document.querySelector(`#envAmpLoop\\[${i + 1}\\]`).value = 'S';
           // we draw an extra point for amp curve - so the index of
           // the loop point is i+1
           pointStyleMetadata[ampLowIdx].sustainPt = i + 1;
@@ -1602,8 +1601,9 @@ export let viewVCE_envs = {
         }
         if (envelopes.AmpEnvelope.LOOPPT == (i + 1)) {
           let v = envelopes.AmpEnvelope.ENVTYPE == 3 ? 'L' : 'R'
-          $(`#envAmpLoop\\[${i + 1}\\] option[value='${v}']`)
-              .prop('selected', true);
+          //$(`#envAmpLoop\\[${i + 1}\\] option[value='${v}']`)
+          //    .prop('selected', true);
+          document.querySelector(`#envAmpLoop\\[${i + 1}\\]`).value = v;
           if (v === 'L') {
             // we draw an extra point for amp curve - so the index of
             // the loop point is i+1

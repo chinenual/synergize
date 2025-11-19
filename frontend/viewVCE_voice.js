@@ -1260,19 +1260,19 @@ ${freqDAG}
       viewVCE_voice.getPatchTypeNames();
     }
 
-    $('#vceTabs a[href="#vceVoiceTab"]').on('shown.bs.tab', function(e) {
+    document.querySelector(('#vceTabs a[href="#vceVoiceTab"]').addEventListener('shown.bs.tab', () => {
       viewVCE_voice.sendToCSurface(null, 'voice-tab', 1);
     });
-    $('#vceTabs a[href="#vceEnvsTab"]').on('shown.bs.tab', function(e) {
+    document.querySelector(('#vceTabs a[href="#vceEnvsTab"]').addEventListener('shown.bs.tab', () => {
       viewVCE_voice.sendToCSurface(null, 'freq-envelopes-tab', 1);
     });
-    $('#vceTabs a[href="#vceFiltersTab"]').on('shown.bs.tab', function(e) {
+    document.querySelector(('#vceTabs a[href="#vceFiltersTab"]').addEventListener('shown.bs.tab', () => {
       viewVCE_voice.sendToCSurface(null, 'filters-tab', 1);
     });
-    $('#vceTabs a[href="#vceKeyEqTab"]').on('shown.bs.tab', function(e) {
+    document.querySelector(('#vceTabs a[href="#vceKeyEqTab"]').addEventListener('shown.bs.tab', () => {
       viewVCE_voice.sendToCSurface(null, 'keyeq-tab', 1);
     });
-    $('#vceTabs a[href="#vceKeyPropTab"]').on('shown.bs.tab', function(e) {
+    document.querySelector(('#vceTabs a[href="#vceKeyPropTab"]').addEventListener('shown.bs.tab', () => {
       viewVCE_voice.sendToCSurface(null, 'keyprop-tab', 1);
     });
 
@@ -1436,6 +1436,9 @@ ${freqDAG}
       if (payload.Field === 'voice-tab' ||
           payload.Field === 'voice-freqs-tab' ||
           payload.Field === 'osc-gain-tab') {
+        //let el = document.querySelector('#vceTabs a[href="#vceVoiceTab"]');
+        //let tab = bootstrap.Tab.getInstance(el);
+        //tab.show();
         $('#vceTabs a[href="#vceVoiceTab"]').tab('show');
       } else if (payload.Field === 'freq-envelopes-tab') {
         $('#vceTabs a[href="#vceEnvsTab"]').tab('show');
