@@ -1260,19 +1260,19 @@ ${freqDAG}
       viewVCE_voice.getPatchTypeNames();
     }
 
-    document.querySelector(('#vceTabs a[href="#vceVoiceTab"]').addEventListener('shown.bs.tab', () => {
+    document.querySelector('#vceTabs a[href="#vceVoiceTab"]').addEventListener('shown.bs.tab', () => {
       viewVCE_voice.sendToCSurface(null, 'voice-tab', 1);
     });
-    document.querySelector(('#vceTabs a[href="#vceEnvsTab"]').addEventListener('shown.bs.tab', () => {
+    document.querySelector('#vceTabs a[href="#vceEnvsTab"]').addEventListener('shown.bs.tab', () => {
       viewVCE_voice.sendToCSurface(null, 'freq-envelopes-tab', 1);
     });
-    document.querySelector(('#vceTabs a[href="#vceFiltersTab"]').addEventListener('shown.bs.tab', () => {
+    document.querySelector('#vceTabs a[href="#vceFiltersTab"]').addEventListener('shown.bs.tab', () => {
       viewVCE_voice.sendToCSurface(null, 'filters-tab', 1);
     });
-    document.querySelector(('#vceTabs a[href="#vceKeyEqTab"]').addEventListener('shown.bs.tab', () => {
+    document.querySelector('#vceTabs a[href="#vceKeyEqTab"]').addEventListener('shown.bs.tab', () => {
       viewVCE_voice.sendToCSurface(null, 'keyeq-tab', 1);
     });
-    document.querySelector(('#vceTabs a[href="#vceKeyPropTab"]').addEventListener('shown.bs.tab', () => {
+    document.querySelector('#vceTabs a[href="#vceKeyPropTab"]').addEventListener('shown.bs.tab', () => {
       viewVCE_voice.sendToCSurface(null, 'keyprop-tab', 1);
     });
 
