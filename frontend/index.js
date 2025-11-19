@@ -14,6 +14,9 @@ import {viewVCE_voice} from './viewVCE_voice';
 import $ from 'jquery';
 Object.assign(window, { $: $, jQuery: $ });
 
+//import * as touchspin from '/static/js/jquery.bootstrap-touchspin.js';
+
+
 // Import bootstrap custom CSS
 //import './scss/styles.scss'
 
@@ -115,19 +118,19 @@ export let index = {
         ' ' + prompt2 + ' ' + JSON.stringify(choices2));
     if (prompt1 != null) {
       document.getElementById('chooseZeroconf1Prompt').innerHTML = prompt1;
-      $('#zeroconf1Div').show();
+      document.querySelector('#zeroconf1Div').style.display = 'block';
     } else {
       document.getElementById('chooseZeroconf1Prompt').innerHTML = '';
       document.getElementById('chooseZeroconf1Items').innerHTML = '';
-      $('#zeroconf1Div').hide();
+      document.querySelector('#zeroconf1Div').style.display = 'none';
     }
     if (prompt2 != null) {
       document.getElementById('chooseZeroconf2Prompt').innerHTML = prompt2;
-      $('#zeroconf2Div').show();
+      document.querySelector('#zeroconf2Div').style.display = 'block';
     } else {
       document.getElementById('chooseZeroconf2Prompt').innerHTML = '';
       document.getElementById('chooseZeroconf2Items').innerHTML = '';
-      $('#zeroconf2Div').hide();
+      document.querySelector('#zeroconf2Div').style.display = 'none';
     }
     if (prompt1 != null && choices1 != null) {
       let html = '';
@@ -187,11 +190,11 @@ export let index = {
       let idx2 = null
       let selected2 = null
       if (choices1 != null && prompt1 != null) {
-        idx1 = parseInt($('#chooseZeroconf1Items input:checked').val(), 10);
+        idx1 = parseInt(document.querySelector('#chooseZeroconf1Items input:checked').value, 10);
         selected1 = choices1[idx1];
       }
       if (choices2 != null && prompt2 != null) {
-        idx2 = parseInt($('#chooseZeroconf2Items input:checked').val(), 10);
+        idx2 = parseInt(document.querySelector('#chooseZeroconf2Items input:checked').value, 10);
         selected2 = choices2[idx2];
       }
       console.log('Selected ' + idx1 + ' ' + idx2);
@@ -513,7 +516,7 @@ export let index = {
       index.updateConnectionStatus(
           status.SynergyName, status.ControlSurfaceName);
       index.infoNotification('Disconnected Control Surface');
-      $('#disableControlSurfaceMenuItem').addClass('disabled');
+      document.querySelector('#disableControlSurfaceMenuItem').classList.add('disabled');
     } catch (exc) {
       index.spinnerOff();
       index.errorNotification(exc);
@@ -560,22 +563,22 @@ export let index = {
     document.getElementById('controlSurfaceName').innerHTML = csName;
     if (synergyName === null || synergyName === '') {
       document.getElementById('synergyName').innerHTML = 'not connected';
-      $('#disconnectSynergyMenuItem').addClass('disabled');
-      $('#connectSynergyMenuItem').removeClass('disabled');
+      document.querySelector('#disconnectSynergyMenuItem').classList.add('disabled');
+      document.querySelector('#connectSynergyMenuItem').classList.remove('disabled');
       document.getElementById('connectButtonImg').src =
           `static/images/grey-button-off-full.png`;
     } else {
-      $('#disconnectSynergyMenuItem').removeClass('disabled');
-      $('#connectSynergyMenuItem').addClass('disabled');
+      document.querySelector('#disconnectSynergyMenuItem').classList.remove('disabled');
+      document.querySelector('#connectSynergyMenuItem').classList.add('disabled');
       document.getElementById('connectButtonImg').src =
           `static/images/grey-button-on-full.png`;
     }
     if (csName === null || csName === '') {
-      $('#controlSurfaceStatus').hide();
-      $('#disconnectControlSurfaceMenuItem').addClass('disabled');
+      document.querySelector('#controlSurfaceStatus').style.display = 'none';
+      document.querySelector('#disconnectControlSurfaceMenuItem').classList.add('disabled');
     } else {
-      $('#controlSurfaceStatus').show();
-      $('#disconnectControlSurfaceMenuItem').removeClass('disabled');
+      document.querySelector('#controlSurfaceStatus').style.display = 'block';
+      document.querySelector('#disconnectControlSurfaceMenuItem').classList.remove('disabled');
     }
   },
 

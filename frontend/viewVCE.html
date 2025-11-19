@@ -280,7 +280,7 @@
 
 		Oscillator:&nbsp;
 		<select id="envOscSelect"
-			onchange="viewVCE_envs.envChartUpdate(this.options[this.selectedIndex].value, $('#envEnvSelect').val())">
+			onchange="viewVCE_envs.envChartUpdate(this.options[this.selectedIndex].value, document.querySelector('#envEnvSelect').value)">
 			<option>1</option>
 			<option>2</option>
 			<option>3</option>
@@ -289,7 +289,7 @@
 
 		&nbsp;&nbsp;&nbsp;&nbsp;Envelopes:&nbsp;
 		<select id="envEnvSelect"
-			onchange="viewVCE_envs.envChartUpdate($('#envOscSelect').val(), this.options[this.selectedIndex].value)">
+			onchange="viewVCE_envs.envChartUpdate(document.querySelector('#envOscSelect').value, this.options[this.selectedIndex].value)">
 			<option value="-1">All</option>
 			<option value="0">Freq Low</option>
 			<option value="1">Freq Up</option>

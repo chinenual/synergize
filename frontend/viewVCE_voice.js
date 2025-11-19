@@ -474,7 +474,7 @@ export let viewVCE_voice = {
     // Fix this once the DOM lifecycle issue is sorted out.
     //
     //$("#patchType").empty().append(viewVCE_voice.patchTypeOptions);
-    $('#patchType').val(viewVCE.vce.Extra.PatchType);
+    document.querySelector('#patchType').value=viewVCE.vce.Extra.PatchType;
 
     let tbody = document.getElementById('patchTbody');
     // remove old rows:
@@ -813,15 +813,15 @@ ${freqDAG}
       let oldLength = viewVCE.vce.Envelopes.length
 
       if (viewVCE.vce.Head.VOITAB <= 0) {
-        $('#del-osc').addClass('disabled');
+        document.querySelector('#del-osc').classList.add('disabled');
       }
       else {
-        $('#del-osc').removeClass('disabled');
+        document.querySelector('#del-osc').classList.remove('disabled');
       }
       if (viewVCE.vce.Head.VOITAB >= 15) {
-        $('#add-osc').addClass('disabled');
+        document.querySelector('#add-osc').classList.add('disabled');
       } else {
-        $('#add-osc').removeClass('disabled');
+        document.querySelector('#add-osc').classList.remove('disabled');
       }
       if (newNum <= oldLength) {
         // nothing to do - just ignored the extra envelopes
@@ -1002,7 +1002,7 @@ ${freqDAG}
 
         // if we just disabled voicing, clear the VCE view
         document.getElementById('content').innerHTML = '';
-        $('#disableControlSurfaceMenuItem').addClass('disabled');
+        document.querySelector('#disableControlSurfaceMenuItem').classList.add('disabled');
         viewVCE_voice.csEnabled = false;
       }
       viewVCE.setVCE(null);
@@ -1040,7 +1040,7 @@ ${freqDAG}
         let loaded_vce = r[0];
         let csEnabled = r[1];
         let csName = r[2];
-        let synergyName = r[3];
+        let synergyName_ignored = r[3];
 
         viewVCE.setVCE(loaded_vce);
         viewVCE_voice.csEnabled = csEnabled;
@@ -1064,7 +1064,7 @@ ${freqDAG}
       for (let osc = 0; osc < 16; osc++) {
         viewVCE_voice.MUTE[osc] = false;
         viewVCE_voice.SOLO[osc] = false;
-        $('.vceEditToggle').removeClass('on');
+        document.querySelector('.vceEditToggle').classList.remove('on');
         viewVCE_voice.sendToCSurface(null, `MUTE[${osc + 1}]`, 0)
         viewVCE_voice.sendToCSurface(null, `MUTE[${osc + 1}]`, 0)
       }
@@ -1173,37 +1173,37 @@ ${freqDAG}
         buttondown_txt: '\u25be',  //'\u25bc',
       });
       // make any plain-text spans align:
-      $('.spinNOSPIN').addClass('spinNOSPIN-Enabled');
+      document.querySelector('.spinNOSPIN').classList.add('spinNOSPIN-Enabled');
     }
 
     // Load/Save menu items get disabled/enabled:
     if (mode) {
-      $('#disableVRAMMenuItem').addClass('disabled');
-      $('#loadCRTMenuItem').addClass('disabled');
-      $('#saveVCEMenuItem').removeClass('disabled');
-      $('#oscPlusMinus').show();
+      document.querySelector('#disableVRAMMenuItem').classList.add('disabled');
+      document.querySelector('#loadCRTMenuItem').classList.add('disabled');
+      document.querySelector('#saveVCEMenuItem').classList.remove('disabled');
+      document.querySelector('#oscPlusMinus').style.display = 'block';
     } else {
-      $('#disableVRAMMenuItem').removeClass('disabled');
-      $('#loadCRTMenuItem').removeClass('disabled');
-      $('#saveVCEMenuItem').addClass('disabled');
-      $('#oscPlusMinus').hide();
+      document.querySelector('#disableVRAMMenuItem').classList.remove('disabled');
+      document.querySelector('#loadCRTMenuItem').classList.remove('disabled');
+      document.querySelector('#saveVCEMenuItem').classList.add('disabled');
+      document.querySelector('#oscPlusMinus').style.display = 'none';
     }
     if (viewVCE.vce && viewVCE.vce.Head.VOITAB <= 0) {
-      $('#del-osc').addClass('disabled');
+      document.querySelector('#del-osc').classList.add('disabled');
     } else {
-      $('#del-osc').removeClass('disabled');
+      document.querySelector('#del-osc').classList.remove('disabled');
     }
     if (viewVCE.vce && viewVCE.vce.Head.VOITAB >= 15) {
-      $('#add-osc').addClass('disabled');
+      document.querySelector('#add-osc').classList.add('disabled');
     } else {
-      $('#add-osc').removeClass('disabled');
+      document.querySelector('#add-osc').classList.remove('disabled');
     }
 
-    $('.vceEdit').prop('disabled', !mode);
+    document.querySelector('.vceEdit').disabled = !mode;
     if (mode) {
-      $('.vceEditToggleText').show();
+      document.querySelector('.vceEditToggleText').style.display = 'block';
     } else {
-      $('.vceEditToggleText').hide();
+      document.querySelector('.vceEditToggleText').style.display = 'none';
     }
     document.getElementById('voiceModeButtonImg').src =
         `static/images/red-button-${

@@ -204,7 +204,7 @@ export let viewVCE_filters = {
       // no filters
       document.getElementById('filtersChart').style.display = 'none';
       document.getElementById('filterTable').style.display = 'none';
-      $('#filterCopySelectDiv').hide();
+      document.querySelector('#filterCopySelectDiv').style.display = 'none';
       for (let i = 1; i <= 32; i++) {
         viewVCE_voice.sendToCSurface(null, `flt[${i}]`, 0);
       }
@@ -274,11 +274,11 @@ export let viewVCE_filters = {
     }
     // hide the copy selector for All or cases where there are no filters, or
     // when we're not in voicing mode
-    $('#filterCopySelectDiv').hide();
+    document.querySelector('#filterCopySelectDiv').style.display = 'none';
 
     if (filterIndex >= 0) {
       if (viewVCE_voice.voicingMode) {
-        $('#filterCopySelectDiv').show();
+        document.querySelector('#filterCopySelectDiv').style.display = 'block';
         // populate options in the select with only "other" filters (i.e. "this"
         // filter should be not shown or at least unselectable)
 
@@ -300,7 +300,7 @@ export let viewVCE_filters = {
         }
       }
 
-      $('#filterTable').show();
+      document.querySelector('#filterTable').style.display = 'block';
       $('#filterTable td.val input').each(function(i, obj) {
         let id = obj.id;
         // id is "flt[<n>]" - we need the <n> part
@@ -350,7 +350,7 @@ export let viewVCE_filters = {
       }
       //}
 
-      $('#filterTable').hide();
+      document.querySelector('#filterTable').style.display = 'none';
       // only include the ones actually in use (see viewVCE.vce.Head.FILTER
       // entry)
       for (let i = 0; i <= viewVCE.vce.Head.VOITAB; i++) {

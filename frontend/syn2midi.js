@@ -38,11 +38,11 @@ export let syn2midi = {
     let raw = !document.getElementById('syn2midiMode').checked;
     console.log('mode change ' + raw);
     if (raw) {
-      $('#syn2midiMaxClockDiv').hide();
-      $('#syn2midiTrackModeDiv').hide();
+      document.querySelector('#syn2midiMaxClockDiv').style.display = 'none';
+      document.querySelector('#syn2midiTrackModeDiv').style.display = 'none';
     } else {
-      $('#syn2midiMaxClockDiv').show();
-      $('#syn2midiTrackModeDiv').show();
+      document.querySelector('#syn2midiMaxClockDiv').style.display = 'block';
+      document.querySelector('#syn2midiTrackModeDiv').style.display = 'block';
     }
   },
 

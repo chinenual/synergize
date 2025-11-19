@@ -148,15 +148,15 @@ export let viewCRT = {
     if (viewCRT.editMode) {
       document.getElementById('editCRTButtonImg').src =
           `static/images/red-button-on-full.png`;
-      $('#saveCRTButtonDiv').show();
-      $('.crtSlotAddButton').show();
-      $('.crtSlotClearButton').show();
+      document.querySelector('#saveCRTButtonDiv').style.display = 'block';
+      document.querySelector('.crtSlotAddButton').style.display = 'block';
+      document.querySelector('.crtSlotClearButton').style.display = 'block';
     } else {
       document.getElementById('editCRTButtonImg').src =
           `static/images/red-button-off-full.png`;
-      $('#saveCRTButtonDiv').hide();
-      $('.crtSlotAddButton').hide();
-      $('.crtSlotClearButton').hide();
+      document.querySelector('#saveCRTButtonDiv').style.display = 'none';
+      document.querySelector('.crtSlotAddButton').style.display = 'none';
+      document.querySelector('.crtSlotClearButton').style.display = 'none';
     }
   },
 

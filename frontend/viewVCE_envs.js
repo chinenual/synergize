@@ -58,7 +58,7 @@ export let viewVCE_envs = {
       option.innerHTML = '' + (i + 1);
       selectEle.appendChild(option);
     }
-    $('#envCopySelectDiv').hide();
+    document.querySelector('#envCopySelectDiv').style.display = 'none';
 
     viewVCE_envs.envChartUpdate(1, -1, true)
     // console.log('--- finish viewVCE_envs init');
@@ -566,8 +566,8 @@ export let viewVCE_envs = {
       }
 
       if (osc == visibleOsc) {
-        $('#gainAmpLow').val(viewVCE_envs.computeOscGain(osc, 0));
-        $('#gainAmpUp').val(viewVCE_envs.computeOscGain(osc, 1));
+        document.querySelector('#gainAmpLow').value = viewVCE_envs.computeOscGain(osc, 0);
+        document.querySelector('#gainAmpUp').value = viewVCE_envs.computeOscGain(osc, 1);
       }
       // update the Voice tab
       document.getElementById(`OscGain[${osc + 1}]`).value =
@@ -768,11 +768,11 @@ export let viewVCE_envs = {
 
     // only show accelleration values if type1 envelope
     if (env.ENVTYPE === 1) {
-      $(`.type1accel div.${envid}`).show();
-      $(`#accel${envid}Low`).val(env.SUSTAINPT);
-      $(`#accel${envid}Up`).val(env.LOOPPT);
+      document.querySelector(`.type1accel div.${envid}`).style.display = 'block';
+      document.querySelector(`#accel${envid}Low`).value = env.SUSTAINPT;
+      document.querySelector(`#accel${envid}Up`).value = env.LOOPPT;
     } else {
-      $(`.type1accel div.${envid}`).hide();
+      document.querySelector(`.type1accel div.${envid}`).style.display = 'none';
     }
 
     console.log('resulting env: ' + envid);
@@ -835,8 +835,8 @@ export let viewVCE_envs = {
 
     // update the floatVal so gains work
     viewVCE_envs.unsetFloatVals();
-    $('#gainAmpLow').val = viewVCE_envs.computeOscGain(toOsc - 1, 0);
-    $('#gainAmpUp').val = viewVCE_envs.computeOscGain(toOsc - 1, 1);
+    document.querySelector('#gainAmpLow').value = viewVCE_envs.computeOscGain(toOsc - 1, 0);
+    document.querySelector('#gainAmpUp').value = viewVCE_envs.computeOscGain(toOsc - 1, 1);
     // update the Voice tab
     document.getElementById(`OscGain[${toOsc}]`).value =
         viewVCE_envs.computeOscGain(toOsc - 1, 2)
@@ -1001,7 +1001,7 @@ export let viewVCE_envs = {
           if (extraarg == undefined) {
             // update the floatVal so gains work
             viewVCE_envs.unsetFloatVals();
-            $('#gainAmpLow').val = viewVCE_envs.computeOscGain(osc - 1, 0);
+            document.querySelector('#gainAmpLow').value = viewVCE_envs.computeOscGain(osc - 1, 0);
             // update the Voice tab
             document.getElementById(`OscGain[${osc}]`).value =
                 viewVCE_envs.computeOscGain(osc - 1, 2)
@@ -1017,7 +1017,7 @@ export let viewVCE_envs = {
           if (extraarg == undefined) {
             // update the floatVal so gains work
             viewVCE_envs.unsetFloatVals();
-            $('#gainAmpUp').val = viewVCE_envs.computeOscGain(osc - 1, 1);
+            document.querySelector('#gainAmpUp').value = viewVCE_envs.computeOscGain(osc - 1, 1);
             document.getElementById(`OscGain[${osc}]`).value =
                 viewVCE_envs.computeOscGain(osc - 1, 2)
             console.log(
@@ -1175,9 +1175,9 @@ export let viewVCE_envs = {
     }
     // hide the copy selector for All or cases where there are no
     // filters, or when we're not in voicing mode
-    $('#envCopySelectDiv').hide();
+    document.querySelector('#envCopySelectDiv').style.display = 'none';
     if (viewVCE_voice.voicingMode) {
-      $('#envCopySelectDiv').show();
+      document.querySelector('#envCopySelectDiv').style.display = 'block';
       // populate options in the select with only "other" osc (i.e.
       // "this" osc should be not shown or at least unselectable)
 
@@ -1301,13 +1301,13 @@ export let viewVCE_envs = {
         null, `num-amp-env-points`, envelopes.AmpEnvelope.NPOINTS);
 
     // clear old values:
-    $('#envTable td.val input').val('');
+    document.querySelector('#envTable td.val input').value ='';
     $('#envTable td.total span').html('');
     // clear the loop points
-    $(`#envTable select option[value='']`).prop('selected', true);
-    $(`#envTable select option[value='L']`).prop('selected', false);
-    $(`#envTable select option[value='S']`).prop('selected', false);
-    $(`#envTable select option[value='R']`).prop('selected', false);
+    document.querySelector(`#envTable select option[value='']`).selected = true;
+    document.querySelector(`#envTable select option[value='L']`).selected = false;
+    document.querySelector(`#envTable select option[value='S']`).selected = false;
+    document.querySelector(`#envTable select option[value='R']`).selected = false;
 
     // fill in freq env data:
 
@@ -1332,9 +1332,9 @@ export let viewVCE_envs = {
       }
     }
     if (viewVCE_voice.voicingMode) {
-      $('.listplusminus div').show();
+      document.querySelector('.listplusminus div').style.display = 'block';
     } else {
-      $('.listplusminus div').hide();
+      document.querySelector('.listplusminus div').style.display = 'none';
     }
     viewVCE_voice.sendToCSurface(
         null, `num-freq-env-points`, envelopes.FreqEnvelope.NPOINTS);
@@ -1343,9 +1343,9 @@ export let viewVCE_envs = {
 
     // only show accelleration values if type1 envelope
     if (envelopes.FreqEnvelope.ENVTYPE === 1) {
-      $('.type1accel div.Freq').show();
-      $('#accelFreqLow').val(envelopes.FreqEnvelope.SUSTAINPT);
-      $('#accelFreqUp').val(envelopes.FreqEnvelope.LOOPPT);
+      document.querySelector('.type1accel div.Freq').style.display = 'block';
+      document.querySelector('#accelFreqLow').value=envelopes.FreqEnvelope.SUSTAINPT;
+      document.querySelector('#accelFreqUp').value=envelopes.FreqEnvelope.LOOPPT;
       viewVCE_voice.sendToCSurface(null, `freq-env-accel-visible`, 1);
       if (animate) {
         viewVCE_voice.sendToCSurface(
@@ -1354,7 +1354,7 @@ export let viewVCE_envs = {
             null, `accelFreqUp`, envelopes.FreqEnvelope.LOOPPT);
       }
     } else {
-      $('.type1accel div.Freq').hide();
+      document.querySelector('.type1accel div.Freq').style.display = 'none';
       viewVCE_voice.sendToCSurface(null, `freq-env-accel-visible`, 0);
       if (animate) {
         viewVCE_voice.sendToCSurface(null, `accelFreqLow`, 0);
@@ -1363,9 +1363,9 @@ export let viewVCE_envs = {
     }
     // only show accelleration values if type1 envelope
     if (envelopes.AmpEnvelope.ENVTYPE === 1) {
-      $('.type1accel div.Amp').show();
-      $('#accelAmpLow').val(envelopes.AmpEnvelope.SUSTAINPT);
-      $('#accelAmpUp').val(envelopes.AmpEnvelope.LOOPPT);
+      document.querySelector('.type1accel div.Amp').style.display = 'block';
+      document.querySelector('#accelAmpLow').value=envelopes.AmpEnvelope.SUSTAINPT;
+      document.querySelector('#accelAmpUp').value-envelopes.AmpEnvelope.LOOPPT;
       viewVCE_voice.sendToCSurface(null, `amp-env-accel-visible`, 1);
       if (animate) {
         viewVCE_voice.sendToCSurface(
@@ -1374,48 +1374,56 @@ export let viewVCE_envs = {
             null, `accelAmpUp`, envelopes.AmpEnvelope.LOOPPT);
       }
     } else {
-      $('.type1accel div.Amp').hide();
+      document.querySelector('.type1accel div.Amp').style.display = 'none';
       viewVCE_voice.sendToCSurface(null, `amp-env-accel-visible`, 0);
       if (animate) {
         viewVCE_voice.sendToCSurface(null, `accelAmpLow`, 0);
         viewVCE_voice.sendToCSurface(null, `accelAmpUp`, 0);
       }
     }
-    $('#gainAmpLow').val(viewVCE_envs.computeOscGain(oscIndex, 0));
-    $('#gainAmpUp').val(viewVCE_envs.computeOscGain(oscIndex, 1));
+    document.querySelector('#gainAmpLow').value=viewVCE_envs.computeOscGain(oscIndex, 0);
+    document.querySelector('#gainAmpUp').value=viewVCE_envs.computeOscGain(oscIndex, 1);
     if (animate) {
       console.log(
-          'GAIN TO CS: ' + $('#gainAmpLow').val() + ' and ' +
-          $('#gainAmpUp').val())
-      viewVCE_voice.sendToCSurface(null, `gainAmpLow`, $('#gainAmpLow').val());
-      viewVCE_voice.sendToCSurface(null, `gainAmpUp`, $('#gainAmpUp').val());
+          'GAIN TO CS: ' + document.querySelector('#gainAmpLow').value + ' and ' +
+          document.querySelector('#gainAmpUp').value)
+      viewVCE_voice.sendToCSurface(null, `gainAmpLow`, document.querySelector('#gainAmpLow').value);
+      viewVCE_voice.sendToCSurface(null, `gainAmpUp`, document.querySelector('#gainAmpUp').value);
     }
 
     for (let i = envelopes.FreqEnvelope.NPOINTS; i < 16; i++) {
       // hide unused rows
       // let tr = $('#envTable tbody tr:eq(' + i + ')');
 
-      $(`#envFreqLoop\\[${i + 1}\\]`).hide();
-      $(`#envFreqLowVal\\[${i + 1}\\]`).hide();
-      $(`#envFreqUpVal\\[${i + 1}\\]`).hide();
-      $(`#envFreqLowTime\\[${i + 1}\\]`).hide();
-      $(`#envFreqUpTime\\[${i + 1}\\]`).hide();
+      document.querySelector(`#envFreqLoop\\[${i + 1}\\]`).style.display = 'none';
+      document.querySelector(`#envFreqLowVal\\[${i + 1}\\]`).style.display = 'none';
+      document.querySelector(`#envFreqUpVal\\[${i + 1}\\]`).style.display = 'none';
+      if (i != 0) {
+        // no xxxTime[1] on the display
+        document.querySelector(`#envFreqLowTime\\[${i + 1}\\]`).style.display = 'none';
+        document.querySelector(`#envFreqUpTime\\[${i + 1}\\]`).style.display = 'none';
+      }
       if (animate) {
         viewVCE_voice.sendToCSurface(null, `envFreqLowVal[${i + 1}]`, 0);
         viewVCE_voice.sendToCSurface(null, `envFreqUpVal[${i + 1}]`, 0);
-        viewVCE_voice.sendToCSurface(null, `envFreqLowTime[${i + 1}]`, 0);
-        viewVCE_voice.sendToCSurface(null, `envFreqUpTime[${i + 1}]`, 0);
+        if (i != 0) {
+          // no xxxTime[1] on the display
+          viewVCE_voice.sendToCSurface(null, `envFreqLowTime[${i + 1}]`, 0);
+          viewVCE_voice.sendToCSurface(null, `envFreqUpTime[${i + 1}]`, 0);
+        }
       }
     }
     for (let i = 0; i < envelopes.FreqEnvelope.NPOINTS; i++) {
       // let tr = $('#envTable tbody tr:eq(' + i + ')');
 
-      $(`#envFreqLoop\\[${i + 1}\\]`).show();
-      $(`#envFreqLowVal\\[${i + 1}\\]`).show();
-      $(`#envFreqUpVal\\[${i + 1}\\]`).show();
-      $(`#envFreqLowTime\\[${i + 1}\\]`).show();
-      $(`#envFreqUpTime\\[${i + 1}\\]`).show();
-
+      document.querySelector(`#envFreqLoop\\[${i + 1}\\]`).style.display = 'block';
+      document.querySelector(`#envFreqLowVal\\[${i + 1}\\]`).style.display = 'block';
+      document.querySelector(`#envFreqUpVal\\[${i + 1}\\]`).style.display = 'block';
+      if (i != 0) {
+        // no xxxTime[1] on the display
+        document.querySelector(`#envFreqLowTime\\[${i + 1}\\]`).style.display = 'block';
+        document.querySelector(`#envFreqUpTime\\[${i + 1}\\]`).style.display = 'block';
+      }
       // table is logically in groups of 4
       let freqLow = viewVCE_envs.scaleFreqEnvValue(
           envelopes.FreqEnvelope.Table[i * 4 + 0]);
@@ -1496,11 +1504,11 @@ export let viewVCE_envs = {
     for (let i = envelopes.FreqEnvelope.NPOINTS; i < 16; i++) {
       // hide unused rows
 
-      $(`#envAmpLoop\\[${i + 1}\\]`).hide();
-      $(`#envAmpLowVal\\[${i + 1}\\]`).hide();
-      $(`#envAmpUpVal\\[${i + 1}\\]`).hide();
-      $(`#envAmpLowTime\\[${i + 1}\\]`).hide();
-      $(`#envAmpUpTime\\[${i + 1}\\]`).hide();
+      document.querySelector(`#envAmpLoop\\[${i + 1}\\]`).style.display = 'none';
+      document.querySelector(`#envAmpLowVal\\[${i + 1}\\]`).style.display = 'none';
+      document.querySelector(`#envAmpUpVal\\[${i + 1}\\]`).style.display = 'none';
+      document.querySelector(`#envAmpLowTime\\[${i + 1}\\]`).style.display = 'none';
+      document.querySelector(`#envAmpUpTime\\[${i + 1}\\]`).style.display = 'none';
 
       if (animate) {
         viewVCE_voice.sendToCSurface(null, `envAmpLowVal[${i + 1}]`, 0);
@@ -1518,11 +1526,11 @@ export let viewVCE_envs = {
     for (let i = 0; i < envelopes.AmpEnvelope.NPOINTS; i++) {
       // let tr = $('#envTable tbody tr:eq(' + i + ')');
 
-      $(`#envAmpLoop\\[${i + 1}\\]`).show();
-      $(`#envAmpLowVal\\[${i + 1}\\]`).show();
-      $(`#envAmpUpVal\\[${i + 1}\\]`).show();
-      $(`#envAmpLowTime\\[${i + 1}\\]`).show();
-      $(`#envAmpUpTime\\[${i + 1}\\]`).show();
+      document.querySelector(`#envAmpLoop\\[${i + 1}\\]`).style.display = 'block';
+      document.querySelector(`#envAmpLowVal\\[${i + 1}\\]`).style.display = 'block';
+      document.querySelector(`#envAmpUpVal\\[${i + 1}\\]`).style.display = 'block';
+      document.querySelector(`#envAmpLowTime\\[${i + 1}\\]`).style.display = 'block';
+      document.querySelector(`#envAmpUpTime\\[${i + 1}\\]`).style.display = 'block';
 
       // table is logically in groups of 4.
       // "j" accounts for the difference in column index due to the

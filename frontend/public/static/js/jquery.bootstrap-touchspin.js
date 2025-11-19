@@ -317,8 +317,8 @@
           down: $('.bootstrap-touchspin-down', container),
           up: $('.bootstrap-touchspin-up', container),
           input: $('input', container),
-          prefix: $('.bootstrap-touchspin-prefix', container).addClass(settings.prefix_extraclass),
-          postfix: $('.bootstrap-touchspin-postfix', container).addClass(settings.postfix_extraclass)
+          prefix: document.querySelector('.bootstrap-touchspin-prefix', container).classList.add(settings.prefix_extraclass),
+          postfix: document.querySelector('.bootstrap-touchspin-postfix', container).classList.add(settings.postfix_extraclass)
         };
       }
 
