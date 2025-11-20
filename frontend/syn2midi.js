@@ -2,8 +2,6 @@ import {UIService} from '/bindings/github.com/chinenual/synergize';
 import * as wails from '@wailsio/runtime';
 
 import {index} from './index';
-import $ from 'jquery';
-Object.assign(window, { $: $, jQuery: $ });
 
 // Import all of Bootstrap's JS
 import * as bootstrap from 'bootstrap';

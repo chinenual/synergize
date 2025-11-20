@@ -6,8 +6,6 @@ import { viewVCE } from './viewVCE';
 import { viewVCE_chartdrag } from './viewVCE_chartdrag';
 import { viewVCE_voice } from './viewVCE_voice';
 
-import $ from 'jquery';
-Object.assign(window, { $: $, jQuery: $ });
 
 export let viewVCE_keyprop = {
   chart: null,

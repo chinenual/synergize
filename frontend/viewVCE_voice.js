@@ -1,6 +1,5 @@
 import {UIService} from '/bindings/github.com/chinenual/synergize';
 import {Chart} from 'chart.js';
-import $ from 'jquery';
 import _ from 'lodash';
 import * as nomnoml from 'nomnoml';
 
@@ -9,8 +8,6 @@ import {viewCRT} from './viewCRT';
 import {viewVCE} from './viewVCE';
 import {viewVCE_envs} from './viewVCE_envs';
 import {viewVCE_filters} from './viewVCE_filters';
-
-Object.assign(window, {$: $, jQuery: $});
 
 // Import all of Bootstrap's JS
 import * as bootstrap from 'bootstrap';

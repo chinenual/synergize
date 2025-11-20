@@ -11,10 +11,6 @@ import {viewCRT} from './viewCRT';
 import {viewVCE} from './viewVCE';
 import {viewVCE_voice} from './viewVCE_voice';
 
-import $ from 'jquery';
-Object.assign(window, { $: $, jQuery: $ });
-
-
 // Import bootstrap custom CSS
 import './scss/styles.scss'
 
@@ -27,7 +23,6 @@ export let index = {
 
   init: function() {
     console.log('dx2syn', dx2syn);
-    console.log("$ in init: ", $);
 
     dx2syn.init();
     syn2midi.init();
@@ -629,7 +624,6 @@ export let index = {
 
   load: async function(url, eleId, callback) {
     console.log('load ' + url + ' into ' + eleId + ' ' + document.querySelector(('#' + eleId)));
-    //		console.dir($(('#' + eleId)));
     const r = await fetch(url);
     const body = await r.text();
     document.querySelector('#' + eleId).innerHTML = body;

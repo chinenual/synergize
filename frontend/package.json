@@ -17,7 +17,6 @@
     "bootstrap": "^5.3.8",
     "chart.js": "^2.9.3",
     "graphre": "^0.1.3",
-    "jquery": "^3.7.1",
     "lodash": "^4.17.21",
     "nomnoml": "^1.7.0"
   },

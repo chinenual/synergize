@@ -9,9 +9,6 @@ import {index} from './index';
 import {viewVCE} from './viewVCE';
 import {viewVCE_voice} from './viewVCE_voice';
 
-import $ from 'jquery';
-Object.assign(window, { $: $, jQuery: $ });
-
 let dragOldValue = {x: undefined, y: undefined};
 
 export let viewVCE_envs = {
