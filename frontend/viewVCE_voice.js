@@ -14,7 +14,6 @@ import * as bootstrap from 'bootstrap';
 
 import {TouchSpin} from '@touchspin/core';
 import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
-import '@touchspin/renderer-bootstrap5/css';
 
 export let viewVCE_voice = {
   voicingMode: false,
