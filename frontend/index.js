@@ -18,10 +18,10 @@ Object.assign(window, { $: $, jQuery: $ });
 
 
 // Import bootstrap custom CSS
-//import './scss/styles.scss'
+import './scss/styles.scss'
 
 // Import all of Bootstrap's JS
-import * as bootstrap from 'bootstrap'
+import * as bootstrap from 'bootstrap';
 
 export let index = {
   DEBOUNCE_WAIT_SHORT: 50,
@@ -46,6 +46,7 @@ export let index = {
     // Explore default path
     index.explore();
     /*})*/
+    index.errorNotification("FAKE init error")
   },
 
   browserOpenURL: function(url) {
@@ -83,9 +84,9 @@ export let index = {
     document.getElementById('confirmTitle').innerHTML = 'Confirm';
     document.getElementById('confirmText').innerHTML = message;
     document.getElementById('confirmOKButton').onclick = successCallback;
-    $('#confirmModal').modal({
-      backdrop: 'static'  // clicking outside the dialog doesnt close the dialog
-    });
+    let modal = new bootstrap.Modal(document.getElementById('confirmModal'), {backdrop: 'static'});
+    console.log("modal", modal);
+    modal.show();
   },
 
   errorNotification: function(message) {
@@ -95,7 +96,9 @@ export let index = {
     console.log('ERROR NOTIFICATION: ' + message)
     document.getElementById('alertTitle').innerHTML = 'Error';
     document.getElementById('alertText').innerHTML = message;
-    $('#alertModal').modal();
+    let modal = new bootstrap.Modal(document.getElementById('alertModal'));
+    console.log("modal", modal);
+    modal.show();
   },
   infoNotification: function(message) {
     if (typeof message != 'string') {
@@ -105,10 +108,11 @@ export let index = {
     document.getElementById('alertTitle').innerHTML = 'Info';
     document.getElementById('alertText').innerHTML = message;
     // Make alert messages hide themselves after 3s - no need to click
+    let modal = new bootstrap.Modal(document.getElementById('alertModal'));
     setTimeout(function() {
-      $('#alertModal').modal('hide');
+      modal.hide();
     }, 3000);
-    $('#alertModal').modal();
+    modal.show();
   },
 
   chooseZeroconfService: function(
@@ -205,9 +209,9 @@ export let index = {
       onRescan();
     };
 
-    $('#chooseZeroconfModal').modal({
-      backdrop: 'static'  // clicking outside the dialog doesnt close the dialog
-    });
+    let modal = new bootstrap.Modal(document.getElementById('chooseZeroconfModal'), {backdrop: 'static'});
+    console.log("modal", modal);
+    modal.show();
   },
 
   saveSYNDialog: async function() {

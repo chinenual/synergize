@@ -1325,7 +1325,8 @@ export let viewVCE_envs = {
 
     for (let i = 0; i < 16; i++) {
       // completely hide the rows for rows not used by either envelope
-      let tr = document.querySelector('#envTable tbody tr:eq(' + i + ')');
+      let tr = document.querySelector(`#envTableTr\\[${(i + 1)}\\]`);
+      console.log('tr',i, tr)
       if (i <
           Math.max(
               envelopes.FreqEnvelope.NPOINTS, envelopes.AmpEnvelope.NPOINTS)) {

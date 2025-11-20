@@ -69,10 +69,10 @@ export let syn2midi = {
             buttons);
       }
     };
-
-    $('#syn2midiModal').modal({
-      backdrop: 'static'  // clicking outside the dialog doesnt close the dialog
-    });
+    let modal = new bootstrap.Modal(document.getElementById('syn2midiModal'), {backdrop: 'static'});
+    console.log("modal", modal);
+    modal.show();
+    
   },
 
   getSynSequencerState: async function(path) {

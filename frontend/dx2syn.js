@@ -89,9 +89,10 @@ export let dx2syn = {
           .setAttribute('disabled', 'disabled');
     };
 
-    $('#subprocessModal').modal({
-      backdrop: 'static'  // clicking outside the dialog doesnt close the dialog
-    });
+    let modal = new bootstrap.Modal(document.getElementById('subprocessModal'), {backdrop: 'static'});
+    console.log("modal", modal);
+    modal.show();
+    
 	  try {
 		  await UIService.Dx2synStart(path);
 	} catch (exc) {
@@ -114,7 +115,10 @@ export let dx2syn = {
     }
     document.getElementById('logOutput').innerHTML =
         document.getElementById('logOutput').innerHTML + html;
-    $('#subprocessModal').modal('handleUpdate')
+    
+    let modal = new bootstrap.Modal(document.getElementById('subprocessModal'), {backdrop: 'static'});
+    console.log("modal", modal);
+    modal.handleUpdate();
   },
 };
 // for menus:

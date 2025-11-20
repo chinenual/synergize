@@ -1040,7 +1040,7 @@ ${freqDAG}
         let loaded_vce = r[0];
         let csEnabled = r[1];
         let csName = r[2];
-        let synergyName_ignored = r[3];
+        //let synergyName_ignored = r[3];
 
         viewVCE.setVCE(loaded_vce);
         viewVCE_voice.csEnabled = csEnabled;
