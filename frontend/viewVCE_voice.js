@@ -12,6 +12,9 @@ import {viewVCE_filters} from './viewVCE_filters';
 import $ from 'jquery';
 Object.assign(window, { $: $, jQuery: $ });
 
+// Import all of Bootstrap's JS
+import * as bootstrap from 'bootstrap';
+
 export let viewVCE_voice = {
   voicingMode: false,
   csEnabled: false,
@@ -1439,17 +1442,29 @@ ${freqDAG}
         //let el = document.querySelector('#vceTabs a[href="#vceVoiceTab"]');
         //let tab = bootstrap.Tab.getInstance(el);
         //tab.show();
-        $('#vceTabs a[href="#vceVoiceTab"]').tab('show');
+        let tab = new bootstrap.Tab(document.getSelection('#vceTabs a[href="#vceVoiceTab"]'));
+        console.log('tab', tab);
+        tab.show();
       } else if (payload.Field === 'freq-envelopes-tab') {
-        $('#vceTabs a[href="#vceEnvsTab"]').tab('show');
+        let tab = new bootstrap.Tab(document.getSelection('#vceTabs a[href="#vceEnvsTab"]'));
+        console.log('tab', tab);
+        tab.show();
       } else if (payload.Field === 'amp-envelopes-tab') {
-        $('#vceTabs a[href="#vceEnvsTab"]').tab('show');
+        let tab = new bootstrap.Tab(document.getSelection('#vceTabs a[href="#vceEnvsTab"]'));
+        console.log('tab', tab);
+        tab.show();
       } else if (payload.Field === 'filters-tab') {
-        $('#vceTabs a[href="#vceFiltersTab"]').tab('show');
+        let tab = new bootstrap.Tab(document.getSelection('#vceTabs a[href="#vceFiltersTab"]'));
+        console.log('tab', tab);
+        tab.show();
       } else if (payload.Field === 'keyeq-tab') {
-        $('#vceTabs a[href="#vceKeyEqTab"]').tab('show');
+        let tab = new bootstrap.Tab(document.getSelection('#vceTabs a[href="#vceKeyEqTab"]'));
+        console.log('tab', tab);
+        tab.show();
       } else if (payload.Field === 'keyprop-tab') {
-        $('#vceTabs a[href="#vceKeyPropTab"]').tab('show');
+        let tab = new bootstrap.Tab(document.getSelection('#vceTabs a[href="#vceKeyPropTab"]'));
+        console.log('tab', tab);
+        tab.show();
       }
       return;
     }

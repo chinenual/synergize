@@ -631,7 +631,7 @@ export let index = {
   },
 
   load: async function(url, eleId, callback) {
-    console.log('load ' + url + ' into ' + eleId + ' ' + $(('#' + eleId)));
+    console.log('load ' + url + ' into ' + eleId + ' ' + document.querySelector(('#' + eleId)));
     //		console.dir($(('#' + eleId)));
     const r = await fetch(url);
     const body = await r.text();

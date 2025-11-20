@@ -5,6 +5,9 @@ import {index} from './index';
 import $ from 'jquery';
 Object.assign(window, { $: $, jQuery: $ });
 
+// Import all of Bootstrap's JS
+import * as bootstrap from 'bootstrap';
+
 export let syn2midi = {
 
   init: function() {},
