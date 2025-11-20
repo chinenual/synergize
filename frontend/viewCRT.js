@@ -149,14 +149,14 @@ export let viewCRT = {
       document.getElementById('editCRTButtonImg').src =
           `static/images/red-button-on-full.png`;
       document.querySelector('#saveCRTButtonDiv').style.display = 'block';
-      document.querySelector('.crtSlotAddButton').style.display = 'block';
-      document.querySelector('.crtSlotClearButton').style.display = 'block';
+      document.querySelectorAll('.crtSlotAddButton').forEach(el => { el.style.display = 'block'; });
+      document.querySelectorAll('.crtSlotClearButton').forEach(el => { el.style.display = 'block'; });
     } else {
       document.getElementById('editCRTButtonImg').src =
           `static/images/red-button-off-full.png`;
       document.querySelector('#saveCRTButtonDiv').style.display = 'none';
-      document.querySelector('.crtSlotAddButton').style.display = 'none';
-      document.querySelector('.crtSlotClearButton').style.display = 'none';
+      document.querySelectorAll('.crtSlotAddButton').forEach(el => { el.style.display = 'none'; });
+      document.querySelectorAll('.crtSlotClearButton').forEach(el => { el.style.display = 'none'; });
     }
   },
 

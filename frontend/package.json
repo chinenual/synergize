@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
+    "@touchspin/core": "^5.0.1",
+    "@touchspin/renderer-bootstrap5": "^5.0.1",
     "@wailsio/runtime": "latest",
     "bootstrap": "^5.3.8",
     "chart.js": "^2.9.3",

@@ -14,8 +14,6 @@ import {viewVCE_voice} from './viewVCE_voice';
 import $ from 'jquery';
 Object.assign(window, { $: $, jQuery: $ });
 
-//import * as touchspin from '/static/js/jquery.bootstrap-touchspin.js';
-
 
 // Import bootstrap custom CSS
 import './scss/styles.scss'
@@ -46,7 +44,6 @@ export let index = {
     // Explore default path
     index.explore();
     /*})*/
-    index.errorNotification("FAKE init error")
   },
 
   browserOpenURL: function(url) {

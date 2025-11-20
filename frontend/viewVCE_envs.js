@@ -771,11 +771,11 @@ export let viewVCE_envs = {
 
     // only show accelleration values if type1 envelope
     if (env.ENVTYPE === 1) {
-      document.querySelector(`.type1accel div.${envid}`).style.display = 'block';
+      document.querySelectorAll(`.type1accel div.${envid}`).forEach(el => { el.style.display = 'block'; });
       document.querySelector(`#accel${envid}Low`).value = env.SUSTAINPT;
       document.querySelector(`#accel${envid}Up`).value = env.LOOPPT;
     } else {
-      document.querySelector(`.type1accel div.${envid}`).style.display = 'none';
+      document.querySelectorAll(`.type1accel div.${envid}`).forEach(el => { el.style.display = 'none'; });
     }
 
     console.log('resulting env: ' + envid);
@@ -1336,9 +1336,9 @@ export let viewVCE_envs = {
       }
     }
     if (viewVCE_voice.voicingMode) {
-      document.querySelector('.listplusminus div').style.display = 'block';
+      document.querySelectorAll('.listplusminus div').forEach(el => { el.style.display = 'block'; });
     } else {
-      document.querySelector('.listplusminus div').style.display = 'none';
+      document.querySelectorAll('.listplusminus div').forEach(el => { el.style.display = 'none'; });
     }
     viewVCE_voice.sendToCSurface(
         null, `num-freq-env-points`, envelopes.FreqEnvelope.NPOINTS);
@@ -1347,7 +1347,7 @@ export let viewVCE_envs = {
 
     // only show accelleration values if type1 envelope
     if (envelopes.FreqEnvelope.ENVTYPE === 1) {
-      document.querySelector('.type1accel div.Freq').style.display = 'block';
+      document.querySelectorAll('.type1accel div.Freq').forEach(el => { el.style.display = 'block'; });
       document.querySelector('#accelFreqLow').value=envelopes.FreqEnvelope.SUSTAINPT;
       document.querySelector('#accelFreqUp').value=envelopes.FreqEnvelope.LOOPPT;
       viewVCE_voice.sendToCSurface(null, `freq-env-accel-visible`, 1);
@@ -1358,7 +1358,7 @@ export let viewVCE_envs = {
             null, `accelFreqUp`, envelopes.FreqEnvelope.LOOPPT);
       }
     } else {
-      document.querySelector('.type1accel div.Freq').style.display = 'none';
+      document.querySelectorAll('.type1accel div.Freq').forEach(el => { el.style.display = 'none'; });
       viewVCE_voice.sendToCSurface(null, `freq-env-accel-visible`, 0);
       if (animate) {
         viewVCE_voice.sendToCSurface(null, `accelFreqLow`, 0);
@@ -1367,7 +1367,7 @@ export let viewVCE_envs = {
     }
     // only show accelleration values if type1 envelope
     if (envelopes.AmpEnvelope.ENVTYPE === 1) {
-      document.querySelector('.type1accel div.Amp').style.display = 'block';
+      document.querySelectorAll('.type1accel div.Amp').forEach(el => { el.style.display = 'block'; });
       document.querySelector('#accelAmpLow').value=envelopes.AmpEnvelope.SUSTAINPT;
       document.querySelector('#accelAmpUp').value-envelopes.AmpEnvelope.LOOPPT;
       viewVCE_voice.sendToCSurface(null, `amp-env-accel-visible`, 1);
@@ -1378,7 +1378,7 @@ export let viewVCE_envs = {
             null, `accelAmpUp`, envelopes.AmpEnvelope.LOOPPT);
       }
     } else {
-      document.querySelector('.type1accel div.Amp').style.display = 'none';
+      document.querySelectorAll('.type1accel div.Amp').forEach(el => { el.style.display = 'none'; });
       viewVCE_voice.sendToCSurface(null, `amp-env-accel-visible`, 0);
       if (animate) {
         viewVCE_voice.sendToCSurface(null, `accelAmpLow`, 0);

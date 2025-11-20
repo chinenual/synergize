@@ -1,19 +1,23 @@
 import {UIService} from '/bindings/github.com/chinenual/synergize';
 import {Chart} from 'chart.js';
+import $ from 'jquery';
 import _ from 'lodash';
+import * as nomnoml from 'nomnoml';
 
 import {index} from './index';
-import * as nomnoml from 'nomnoml';
 import {viewCRT} from './viewCRT';
 import {viewVCE} from './viewVCE';
 import {viewVCE_envs} from './viewVCE_envs';
 import {viewVCE_filters} from './viewVCE_filters';
 
-import $ from 'jquery';
-Object.assign(window, { $: $, jQuery: $ });
+Object.assign(window, {$: $, jQuery: $});
 
 // Import all of Bootstrap's JS
 import * as bootstrap from 'bootstrap';
+
+import {TouchSpin} from '@touchspin/core';
+import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
+import '@touchspin/renderer-bootstrap5/css';
 
 export let viewVCE_voice = {
   voicingMode: false,
@@ -477,7 +481,7 @@ export let viewVCE_voice = {
     // Fix this once the DOM lifecycle issue is sorted out.
     //
     //$("#patchType").empty().append(viewVCE_voice.patchTypeOptions);
-    document.querySelector('#patchType').value=viewVCE.vce.Extra.PatchType;
+    document.querySelector('#patchType').value = viewVCE.vce.Extra.PatchType;
 
     let tbody = document.getElementById('patchTbody');
     // remove old rows:
@@ -1005,7 +1009,8 @@ ${freqDAG}
 
         // if we just disabled voicing, clear the VCE view
         document.getElementById('content').innerHTML = '';
-        document.querySelector('#disableControlSurfaceMenuItem').classList.add('disabled');
+        document.querySelector('#disableControlSurfaceMenuItem')
+            .classList.add('disabled');
         viewVCE_voice.csEnabled = false;
       }
       viewVCE.setVCE(null);
@@ -1026,7 +1031,7 @@ ${freqDAG}
   raw_voicingModeOn: async function(
       synergyZeroconfChoice, csZeroconfChoice, callback) {
     console.log(`VoicingMode on`);
-  
+
     index.spinnerOn();
     try {
       let r = await UIService.ToggleVoicingMode(
@@ -1034,7 +1039,7 @@ ${freqDAG}
           synergyZeroconfChoice /*zeroconfSynergy*/,
           csZeroconfChoice /*zeroconfCs*/);
       index.spinnerOff();
-      console.log("toggleVoiceMode returned: ",r);
+      console.log('toggleVoiceMode returned: ', r);
       //  Check error
 
       viewVCE_voice.voicingMode = true;
@@ -1043,7 +1048,7 @@ ${freqDAG}
         let loaded_vce = r[0];
         let csEnabled = r[1];
         let csName = r[2];
-        //let synergyName_ignored = r[3];
+        // let synergyName_ignored = r[3];
 
         viewVCE.setVCE(loaded_vce);
         viewVCE_voice.csEnabled = csEnabled;
@@ -1067,7 +1072,7 @@ ${freqDAG}
       for (let osc = 0; osc < 16; osc++) {
         viewVCE_voice.MUTE[osc] = false;
         viewVCE_voice.SOLO[osc] = false;
-        document.querySelector('.vceEditToggle').classList.remove('on');
+        document.querySelectorAll('.vceEditToggle').forEach(el => { el.classList.remove('on'); });
         viewVCE_voice.sendToCSurface(null, `MUTE[${osc + 1}]`, 0)
         viewVCE_voice.sendToCSurface(null, `MUTE[${osc + 1}]`, 0)
       }
@@ -1081,6 +1086,40 @@ ${freqDAG}
     }
   },
 
+  touchspin_init: function(els, callback_before, callback_after) {
+    els.forEach(el => {
+      if (callback_before === undefined) {
+        TouchSpin(el, {
+          renderer: Bootstrap5Renderer,
+          verticalbuttons: true,
+          verticalup: '\u25b4',      //'\u25b2',
+          verticaldown: '\u25be',    //'\u25bc',
+          buttonup_txt: '\u25b4',    //'\u25b2',
+          buttondown_txt: '\u25be'   //'\u25bc',
+        });          
+      } else {
+        TouchSpin(el, {
+          renderer: Bootstrap5Renderer,
+          verticalbuttons: true,
+          verticalup: '\u25b4',      //'\u25b2',
+          verticaldown: '\u25be',    //'\u25bc',
+          buttonup_txt: '\u25b4',    //'\u25b2',
+          buttondown_txt: '\u25be',  //'\u25bc',
+          callback_before_calculation: function (value) {
+            return callback_before(value);
+          },
+          callback_after_calculation: function (value) {
+            return callback_after(value);
+          }
+        });
+      }
+        // el.addEventListener('change:start', (event) => {
+        //   event.preventDefault();
+        // })
+      });
+
+  },
+
   voicingModeVisuals: function() {
     let mode = viewVCE_voice.voicingMode;
     // mode = true; // For debugging and CSS tweaking: force edit controls to be
@@ -1089,94 +1128,29 @@ ${freqDAG}
     // XREF: converter mappings : these are duplicated in updateFromCSurface
     if (mode) {
       // CSS for styling the buttons when disabled is HARD.  So avoid it.
-      $('.vceNum.spinNullablePatchReg').TouchSpin({
-        verticalbuttons: true,
-        verticalup: '\u25b4',      //'\u25b2',
-        verticaldown: '\u25be',    //'\u25bc',
-        buttonup_txt: '\u25b4',    //'\u25b2',
-        buttondown_txt: '\u25be',  //'\u25bc',
-        callback_before_calculation: function(value) {
-          return viewVCE_voice.TextToNullablePatchRegister(value);
-        },
-        callback_after_calculation: function(value) {
-          return viewVCE_voice.NullablePatchRegisterToText(value);
-        }
-      });
-      $('.vceNum.spinOHARM').TouchSpin({
-        verticalbuttons: true,
-        verticalup: '\u25b4',      //'\u25b2',
-        verticaldown: '\u25be',    //'\u25bc',
-        buttonup_txt: '\u25b4',    //'\u25b2',
-        buttondown_txt: '\u25be',  //'\u25bc',
-        callback_before_calculation: function(value) {
-          return viewVCE_voice.TextToOHARM(value);
-        },
-        callback_after_calculation: function(value) {
-          return viewVCE_voice.OHARMToText(value);
-        }
-      });
-      $('.vceNum.spinFDETUN').TouchSpin({
-        verticalbuttons: true,
-        verticalup: '\u25b4',      //'\u25b2',
-        verticaldown: '\u25be',    //'\u25bc',
-        buttonup_txt: '\u25b4',    //'\u25b2',
-        buttondown_txt: '\u25be',  //'\u25bc',
-        callback_before_calculation: function(value) {
-          return viewVCE_voice.TextToFDETUN(value);
-        },
-        callback_after_calculation: function(value) {
-          return viewVCE_voice.FDETUNToText(value);
-        }
-      });
-      $('.vceNum.spinAmpEnv').TouchSpin({
-        verticalbuttons: true,
-        verticalup: '\u25b4',      //'\u25b2',
-        verticaldown: '\u25be',    //'\u25bc',
-        buttonup_txt: '\u25b4',    //'\u25b2',
-        buttondown_txt: '\u25be',  //'\u25bc',
-        callback_before_calculation: function(value) {
-          return viewVCE_envs.TextToAmpEnvValue(value);
-        },
-        callback_after_calculation: function(value) {
-          return viewVCE_envs.AmpEnvValueToText(value);
-        },
-      });
-      $('.vceNum.spinAmpTime').TouchSpin({
-        verticalbuttons: true,
-        verticalup: '\u25b4',      //'\u25b2',
-        verticaldown: '\u25be',    //'\u25bc',
-        buttonup_txt: '\u25b4',    //'\u25b2',
-        buttondown_txt: '\u25be',  //'\u25bc',
-        callback_before_calculation: function(value) {
-          return viewVCE_envs.TextToAmpTimeValue(value);
-        },
-        callback_after_calculation: function(value) {
-          return viewVCE_envs.AmpTimeValueToText(value);
-        }
-      });
-      $('.vceNum.spinFreqTime').TouchSpin({
-        verticalbuttons: true,
-        verticalup: '\u25b4',      //'\u25b2',
-        verticaldown: '\u25be',    //'\u25bc',
-        buttonup_txt: '\u25b4',    //'\u25b2',
-        buttondown_txt: '\u25be',  //'\u25bc',
-        callback_before_calculation: function(value) {
-          return viewVCE_envs.TextToFreqTimeValue(value);
-        },
-        callback_after_calculation: function(value) {
-          return viewVCE_envs.FreqTimeValueToText(value);
-        }
-      });
+      viewVCE_voice.touchspin_init(document.querySelectorAll('.vceNum.spinNullablePatchReg'),
+        viewVCE_voice.TextToNullablePatchRegister,
+        viewVCE_voice.NullablePatchRegisterToText);
+      
+      viewVCE_voice.touchspin_init(document.querySelectorAll('.vceNum.spinOHARM'),
+        viewVCE_voice.TextToOHARM,
+        viewVCE_voice.OHARMToText);
+      viewVCE_voice.touchspin_init(document.querySelectorAll('.vceNum.spinFDETUN'),
+        viewVCE_voice.TextToFDETUN,
+        viewVCE_voice.FDETUNToText);
+      viewVCE_voice.touchspin_init(document.querySelectorAll('.vceNum.spinAmpEnv'),
+        viewVCE_envs.TextToAmpEnvValue,
+        viewVCE_envs.AmpEnvValueToText);
+      viewVCE_voice.touchspin_init(document.querySelectorAll('.vceNum.spinAmpTime'),
+        viewVCE_envs.TextToAmpTimeValue,
+        viewVCE_envs.AmpTimeValueToText);
+      viewVCE_voice.touchspin_init(document.querySelectorAll('.vceNum.spinFreqTime'),
+        viewVCE_envs.TextToFreqTimeValue,
+        viewVCE_envs.FreqTimeValueToText);
       // plain number variant:
-      $('.vceNum.spinPLAIN').TouchSpin({
-        verticalbuttons: true,
-        verticalup: '\u25b4',      //'\u25b2',
-        verticaldown: '\u25be',    //'\u25bc',
-        buttonup_txt: '\u25b4',    //'\u25b2',
-        buttondown_txt: '\u25be',  //'\u25bc',
-      });
+      viewVCE_voice.touchspin_init(document.querySelectorAll('.vceNum.spinPLAIN'), undefined, undefined);
       // make any plain-text spans align:
-      document.querySelector('.spinNOSPIN').classList.add('spinNOSPIN-Enabled');
+      document.querySelectorAll('.spinNOSPIN').forEach(el => { el.classList.add('spinNOSPIN-Enabled') });
     }
 
     // Load/Save menu items get disabled/enabled:
@@ -1186,7 +1160,8 @@ ${freqDAG}
       document.querySelector('#saveVCEMenuItem').classList.remove('disabled');
       document.querySelector('#oscPlusMinus').style.display = 'block';
     } else {
-      document.querySelector('#disableVRAMMenuItem').classList.remove('disabled');
+      document.querySelector('#disableVRAMMenuItem')
+          .classList.remove('disabled');
       document.querySelector('#loadCRTMenuItem').classList.remove('disabled');
       document.querySelector('#saveVCEMenuItem').classList.add('disabled');
       document.querySelector('#oscPlusMinus').style.display = 'none';
@@ -1202,11 +1177,11 @@ ${freqDAG}
       document.querySelector('#add-osc').classList.remove('disabled');
     }
 
-    document.querySelector('.vceEdit').disabled = !mode;
+    document.querySelectorAll('.vceEdit').forEach(el => { el.disabled = !mode; });
     if (mode) {
-      document.querySelector('.vceEditToggleText').style.display = 'block';
+      document.querySelectorAll('.vceEditToggleText').forEach(el => { el.style.display = 'block'; });
     } else {
-      document.querySelector('.vceEditToggleText').style.display = 'none';
+      document.querySelectorAll('.vceEditToggleText').forEach(el => { el.style.display = 'none'; });
     }
     document.getElementById('voiceModeButtonImg').src =
         `static/images/red-button-${
@@ -1263,21 +1238,26 @@ ${freqDAG}
       viewVCE_voice.getPatchTypeNames();
     }
 
-    document.querySelector('#vceTabs a[href="#vceVoiceTab"]').addEventListener('shown.bs.tab', () => {
-      viewVCE_voice.sendToCSurface(null, 'voice-tab', 1);
-    });
-    document.querySelector('#vceTabs a[href="#vceEnvsTab"]').addEventListener('shown.bs.tab', () => {
-      viewVCE_voice.sendToCSurface(null, 'freq-envelopes-tab', 1);
-    });
-    document.querySelector('#vceTabs a[href="#vceFiltersTab"]').addEventListener('shown.bs.tab', () => {
-      viewVCE_voice.sendToCSurface(null, 'filters-tab', 1);
-    });
-    document.querySelector('#vceTabs a[href="#vceKeyEqTab"]').addEventListener('shown.bs.tab', () => {
-      viewVCE_voice.sendToCSurface(null, 'keyeq-tab', 1);
-    });
-    document.querySelector('#vceTabs a[href="#vceKeyPropTab"]').addEventListener('shown.bs.tab', () => {
-      viewVCE_voice.sendToCSurface(null, 'keyprop-tab', 1);
-    });
+    document.querySelector('#vceTabs a[href="#vceVoiceTab"]')
+        .addEventListener('shown.bs.tab', () => {
+          viewVCE_voice.sendToCSurface(null, 'voice-tab', 1);
+        });
+    document.querySelector('#vceTabs a[href="#vceEnvsTab"]')
+        .addEventListener('shown.bs.tab', () => {
+          viewVCE_voice.sendToCSurface(null, 'freq-envelopes-tab', 1);
+        });
+    document.querySelector('#vceTabs a[href="#vceFiltersTab"]')
+        .addEventListener('shown.bs.tab', () => {
+          viewVCE_voice.sendToCSurface(null, 'filters-tab', 1);
+        });
+    document.querySelector('#vceTabs a[href="#vceKeyEqTab"]')
+        .addEventListener('shown.bs.tab', () => {
+          viewVCE_voice.sendToCSurface(null, 'keyeq-tab', 1);
+        });
+    document.querySelector('#vceTabs a[href="#vceKeyPropTab"]')
+        .addEventListener('shown.bs.tab', () => {
+          viewVCE_voice.sendToCSurface(null, 'keyprop-tab', 1);
+        });
 
     viewVCE_voice.patchTable();
 
@@ -1418,13 +1398,13 @@ ${freqDAG}
 
     document.getElementById('vce_crt_name').innerHTML = viewCRT.crt_name;
     // do this last to help the uitest to not start testing too soon
-    let name = ""
+    let name = ''
     for (let i = 0; i < viewVCE.vce.Head.VNAME.length; i++) {
       name = name + String.fromCharCode(viewVCE.vce.Head.VNAME[i]);
     }
     document.getElementById('vce_name').innerHTML = name;
-    document.getElementById('VNAME').value = name.replace(
-        / +$/g, '');  // trim trailing spaces for editing
+    document.getElementById('VNAME').value =
+        name.replace(/ +$/g, '');  // trim trailing spaces for editing
     console.log('--- finish viewVCE_voice init');
   },
 
@@ -1439,30 +1419,36 @@ ${freqDAG}
       if (payload.Field === 'voice-tab' ||
           payload.Field === 'voice-freqs-tab' ||
           payload.Field === 'osc-gain-tab') {
-        //let el = document.querySelector('#vceTabs a[href="#vceVoiceTab"]');
-        //let tab = bootstrap.Tab.getInstance(el);
-        //tab.show();
-        let tab = new bootstrap.Tab(document.getSelection('#vceTabs a[href="#vceVoiceTab"]'));
+        // let el = document.querySelector('#vceTabs a[href="#vceVoiceTab"]');
+        // let tab = bootstrap.Tab.getInstance(el);
+        // tab.show();
+        let tab = new bootstrap.Tab(
+            document.getSelection('#vceTabs a[href="#vceVoiceTab"]'));
         console.log('tab', tab);
         tab.show();
       } else if (payload.Field === 'freq-envelopes-tab') {
-        let tab = new bootstrap.Tab(document.getSelection('#vceTabs a[href="#vceEnvsTab"]'));
+        let tab = new bootstrap.Tab(
+            document.getSelection('#vceTabs a[href="#vceEnvsTab"]'));
         console.log('tab', tab);
         tab.show();
       } else if (payload.Field === 'amp-envelopes-tab') {
-        let tab = new bootstrap.Tab(document.getSelection('#vceTabs a[href="#vceEnvsTab"]'));
+        let tab = new bootstrap.Tab(
+            document.getSelection('#vceTabs a[href="#vceEnvsTab"]'));
         console.log('tab', tab);
         tab.show();
       } else if (payload.Field === 'filters-tab') {
-        let tab = new bootstrap.Tab(document.getSelection('#vceTabs a[href="#vceFiltersTab"]'));
+        let tab = new bootstrap.Tab(
+            document.getSelection('#vceTabs a[href="#vceFiltersTab"]'));
         console.log('tab', tab);
         tab.show();
       } else if (payload.Field === 'keyeq-tab') {
-        let tab = new bootstrap.Tab(document.getSelection('#vceTabs a[href="#vceKeyEqTab"]'));
+        let tab = new bootstrap.Tab(
+            document.getSelection('#vceTabs a[href="#vceKeyEqTab"]'));
         console.log('tab', tab);
         tab.show();
       } else if (payload.Field === 'keyprop-tab') {
-        let tab = new bootstrap.Tab(document.getSelection('#vceTabs a[href="#vceKeyPropTab"]'));
+        let tab = new bootstrap.Tab(
+            document.getSelection('#vceTabs a[href="#vceKeyPropTab"]'));
         console.log('tab', tab);
         tab.show();
       }
@@ -1509,7 +1495,7 @@ ${freqDAG}
     if (ele.classList.contains('spinFreqTime')) {
       converter = viewVCE_envs.FreqTimeValueToText;
     } else if (ele.classList.contains('spinNullablePatchReg')) {
-      converter = viewVCE_voice.NullablePatchRegisterToText(value);
+      converter = viewVCE_voice.NullablePatchRegisterToText;
     } else if (ele.classList.contains('spinOHARM')) {
       converter = viewVCE_voice.OHARMToText;
     } else if (ele.classList.contains('spinFDETUN')) {
