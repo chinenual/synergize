@@ -1,0 +1,434 @@
+$body-bg: #222;
+$body-color: #fff;
+$font-size-base: 0.8;
+
+// Import all of Bootstrap's CSS
+@import "~bootstrap/scss/bootstrap";
+@import "@touchspin/renderer-bootstrap5/css";
+
+body {
+    background-color: #222;
+    color: #fff;
+    font-size: 0.8rem;
+}
+a {
+    /* XREF: match yellow
+     * the bootstrap theme uses green links.  Use a color that matches the yellow we use in charts.
+     */
+    color: rgb(244,180,0);
+}
+
+table {
+    font-size: small;
+}
+
+.navbar {
+    padding-top: 0px;
+}
+
+.navbar-text {
+    color: #fff;
+}
+
+.topContainer {
+    padding: 10px; 
+    margin: 0px;
+    max-width: 100%;
+    overflow-x: hidden; /* hack to get rid of scrollbar for a few unknown pixels*/
+}
+
+.headerSeparator {
+    height: 40px;
+    margin: 10px;
+    border-right: 1px solid #fff;
+}
+.mainSeparator {
+    /* control width - override all the bootstrappiness */
+    width: 40px;
+    flex-grow: 0;
+    max-width: 40px;
+    -webkit-box-flex: 0;
+    padding: 0px;
+    
+    margin: 10px;
+    border-right: 1px solid #fff;
+}
+
+.horizSeparator {
+    width: 80%;
+    
+    margin: 5px;
+    border-bottom: 1px solid #fff;
+}
+
+.aboutbox {
+    margin: 10px;
+    padding: 10px;
+    /* simulate the inset, rounded main panel on the Synergy */
+    border-radius: 20px 20px 20px 20px;
+    -moz-border-radius: 20px 20px 20px 20px;
+    -webkit-border-radius: 20px 20px 20px 20px;
+    border: 3px groove #666;
+}
+
+.headerContainer {
+    height: 100%;
+    width: 100%;
+    /* simulate the inset, rounded main panel on the Synergy */
+    border-radius: 20px 20px 20px 20px;
+    -moz-border-radius: 20px 20px 20px 20px;
+    -webkit-border-radius: 20px 20px 20px 20px;
+    border: 3px groove #666;
+}
+
+.connectionStatus {
+    float: left;
+    height: 100%;
+    overflow: auto;
+    padding: 18px;
+}
+
+#spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+.listplusminus div {
+    margin-top: 5px; 
+    float: left;
+}
+
+.listplusminus input {
+    height: 25px;
+    width: 25px;
+    font-size: larger;
+    color: #fff;
+    background-color: #222;
+    border: 1px solid #aaa;
+    border-style: solid;
+    border-radius: 5px;
+
+}
+
+.gain input {
+    height: 25px;
+    width: 25px;
+    color: #fff;
+    background-color: #222;
+    border: 1px solid #aaa;
+    border-style: solid;
+    border-radius: 5px;
+
+}
+
+.dir {
+    cursor: pointer;
+    padding: 3px;
+}
+
+.hiddenscroll {
+    overflow:hidden;
+}
+
+.hiddenscroll:hover {
+    overflow:auto;
+}
+
+.file {
+    cursor: pointer;
+    padding: 3px;
+}
+.dir .fa {
+    margin-right: 5px;
+}
+
+.file .fa {
+    margin-right: 10px;
+}
+
+#path {
+    font-size: 1.1em;
+    text-align: center;
+    word-wrap: break-word;
+    font-weight: 1000;
+}
+
+#crt_path {
+    font-size: 1.1em;
+    text-align: center;
+    word-wrap: break-word;
+    font-weight: 1000;
+}
+
+hr {
+    color: white;
+}
+	       
+::-webkit-scrollbar {
+    width: 9px;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 4px rgba(200,200,200,1);
+    border-radius: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 7px;
+    background-color: #adb5bd;
+    -webkit-box-shadow: inset 0 0 4px rgba(90,90,90,0.7);
+}
+
+td.centered img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+td.centered span {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.buttonText {
+    font-size: x-small;
+}
+
+/* Dropdown menu support */
+.dropbtn {
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/*.dropbtn:hover, .dropbtn:focus {
+  background-color: #2980B9;
+}*/
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 30;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  width: fit-content;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 3px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown a:hover {background-color: #ddd;}
+
+.dropdown a.disabled {
+    pointer-events:none;
+    opacity:0.6;    
+}
+
+.show {display: block;}
+
+
+.valTable td {
+    color: #aaa;
+    text-align: center;
+}
+
+.valTable th {
+    color: #aaa;
+    text-align: center;
+}
+
+.valTable td.val {
+    color: #fff;
+    width: 3em;
+}
+
+.valTable td.total {
+    color: #aaa;
+}
+
+.valTable th.val {
+    color: #fff;
+}
+
+
+/*-- styling for value fields that are "disablable" depending on whether we're displaying a voice or editing it */
+.vceEdit {
+    color: #fff;
+    background-color: #222;
+    border: 1px solid #aaa;
+    border-style: solid;
+    border-radius: 5px;
+}
+.vceEditDisabled { /* inputs that are permanantely disabled, but rendered as inputs for consistency */
+    color: #fff;
+    background-color: #222;
+    border: none !important;
+}
+.vceNum {
+    width: 3.5em;
+}
+
+input[disabled].vceEdit:hover, input[disabled].vceEdit:active, input[disabled].vceEdit:focus, .vceEdit:disabled  {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    outline: none !important;
+    border: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+}
+
+/**
+.vceEdit::-webkit-outer-spin-button,
+.vceEdit::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+**/
+
+.vceEditToggleText {
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    width: 1.2em;
+}
+.vceEditToggleText.on {
+    /* invert */
+    color: #222;
+    background-color: #fff;
+}
+
+[data-touchspin-injected] .form-control:disabled,
+[data-touchspin-injected] .form-control:focus,
+[data-touchspin-injected] .form-control[readonly] {
+    background-color: #222;
+    color: #fff;
+}
+
+[data-touchspin-injected] input {
+     /* override bootstrappy css for the TouchSpin module */
+     flex-grow: 0 !important;
+     flex-shrink: 0 !important;
+     flex-basis: 3em !important;
+     height: 19px;
+     padding: 0px 0px;
+     font-size: inherit;
+     border-radius: 5px !important;
+/*
+     margin-left: 12px;
+     margin-right: 12px;
+     */
+}
+
+[data-touchspin-injected]:focus-within input,
+[data-touchspin-injected]:hover input {
+     border-radius: 0px !important;
+     margin-left: 0px !important;
+     margin-right: 0px !important;
+}
+
+[data-touchspin-injected] .btn {
+     display: none;
+     background-color: #222;
+     color: #fff;
+     border-color: #aaa;
+     padding: 0px 2px;
+     height: 19px;
+     font-size: inherit;
+}
+/* hide spinner buttons unless focused */
+[data-touchspin-injected]:focus-within .btn,
+[data-touchspin-injected]:hover .btn {
+    flex-basis: 12px;
+    display:block;
+}
+/* hide spinner buttons unless focused */
+[data-touchspin-injected]:focus-within input,
+[data-touchspin-injected]:hover input {
+    flex-basis: 3.7em;
+    border-radius: 5px;
+}
+
+/* plain text that needs to align with SPIN controls. See voicingModeVisuals() for the hack */
+span.spinNOSPIN-Enabled {
+    margin-left: 12px;
+}
+
+/* make the spin buttons appear inside the input -- just like a native select */
+.bootstrap-touchspin .input-group-btn-vertical .btn {
+    width: 7px;
+    right: 9px;
+    //left: auto;
+    /*top: -3;*/
+    border: none;
+    background-color: transparent;
+    height: 30%;
+    font-size: 1rem;
+    left: unset;
+}
+
+.bootstrap-touchspin .input-group-btn-vertical .bootstrap-touchspin-down {
+    bottom: 6;
+    cursor: url(/static/images/s-resize.png) 16 16, auto;
+}
+.bootstrap-touchspin .input-group-btn-vertical .bootstrap-touchspin-up {
+    top: 1;
+    cursor: url(/static/images/n-resize.png) 16 16, auto;
+}
+
+.bootstrap-touchspin .bootstrap-touchspin-vertical-button-wrapper  {
+/* FOR DEBUGGING ONLY - make the spin buttons visible while wrestling with the CSS positioning: */
+        //background: red;
+        position: absolute;
+        width: 100%;
+        top: -4px;
+        // height: 30%;
+        // right: 0;
+        // left: 0;
+}
+
+.input-group-text {
+        background-color: transparent;
+}
+/*
+.bootstrap-touchspin .input-group-btn-vertical .bootstrap-touchspin-up {
+    top: -10;
+}*/
+
+.spinwrapper {
+    width: 3.5em;
+    display: inline-block;
+}
+
+.crtSlotAddButton,
+.crtSlotClearButton {
+    cursor: pointer;
+}
+
+/* darken preferences disabled */
+.form-control:disabled, .form-control[readonly] {
+    background-color: #aaa;
+}
+/* checkbox size override for Windows and LInux: */
+input[type="checkbox"].form-control {
+    height: 1em;
+    width: 1em;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.doctext {
+    margin-top: 2em;
+    font-size: 1.1rem;
+    font-family: monospace;
+    white-space: pre;
+}
