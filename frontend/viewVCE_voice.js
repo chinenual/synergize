@@ -1084,8 +1084,9 @@ ${freqDAG}
 
   touchspin_init: function(els, callback_before, callback_after) {
     els.forEach(el => {
+      let spinner;
       if (callback_before === undefined) {
-        TouchSpin(el, {
+        spinner = TouchSpin(el, {
           renderer: Bootstrap5Renderer,
           verticalbuttons: true,
           verticalup: '\u25b4',      //'\u25b2',
@@ -1094,7 +1095,7 @@ ${freqDAG}
           buttondown_txt: '\u25be'   //'\u25bc',
         });          
       } else {
-        TouchSpin(el, {
+        spinner = TouchSpin(el, {
           renderer: Bootstrap5Renderer,
           verticalbuttons: true,
           verticalup: '\u25b4',      //'\u25b2',
@@ -1109,10 +1110,22 @@ ${freqDAG}
           }
         });
       }
-        // el.addEventListener('change:start', (event) => {
-        //   event.preventDefault();
-        // })
-      });
+      // spinner.addEventListener('keydown', (e) => {
+      //   switch (e.key) {
+      //     case 'ArrowUp':
+      //       e.preventDefault();
+      //       spinner.upOnce();
+      //       break;
+      //     case 'ArrowDown':
+      //       e.preventDefault();
+      //       spinner.downOnce();
+      //       break;
+      //   }
+      // });
+    //   el.addEventListener('change:start', (event) => {
+    //    event.preventDefault();
+    //  })
+   });
 
   },
 
