@@ -1,6 +1,5 @@
 import {UIService} from '/bindings/github.com/chinenual/synergize';
 import * as wails from '@wailsio/runtime';
-import { index }  from "./index";
 
 export let prefs = {
   init: async function() {
@@ -12,7 +11,7 @@ export let prefs = {
       preferences = result[1];
     } catch (err) {
       console.log('getpref err', err);
-      index.errorNotification(err);
+      alert("ERROR: " + err);
       return
     }
 
@@ -94,7 +93,7 @@ export let prefs = {
       UIService.CancelPreferences()
     } catch (err) {
       console.log('CANCEL pref err', err);
-      index.errorNotification(err);
+      alert("ERROR: " + err);
     }
   },
 
@@ -117,7 +116,7 @@ export let prefs = {
       await UIService.SavePreferences(preferences);
       console.log('after save');
     } catch (err) {
-      index.errorNotification(err);
+      alert("ERROR: " + err);
     }
   }
 };
