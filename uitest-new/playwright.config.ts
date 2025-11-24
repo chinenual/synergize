@@ -72,7 +72,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
    webServer: {
-      command: 'cd .. && wails3 dev',
+      command: 'cd .. && ENV_ARGS="-SERIALVERBOSE -MOCKSYNIO" wails3 dev',
       url: 'http://localhost:9245',
       reuseExistingServer: !process.env.CI,
    },
