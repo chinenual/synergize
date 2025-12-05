@@ -1,6 +1,12 @@
 import {UIService} from '/bindings/github.com/chinenual/synergize';
 import * as wails from '@wailsio/runtime';
 
+// Import bootstrap custom CSS
+import './scss/styles.scss'
+
+// Import all of Bootstrap's JS
+import * as bootstrap from 'bootstrap';
+
 export let prefs = {
   init: async function() {
     let preferences;

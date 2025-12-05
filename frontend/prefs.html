@@ -4,8 +4,6 @@
 <head>
 	<title>Synergize Preferences</title>
 	<meta charset="UTF-8">
-
-	<script type="module" src="./index.js"></script>
 	<script type="module" src="./prefs.js"></script>
 </head>
 
@@ -16,7 +14,7 @@
 			<div class="form-group row">
 				<label class="col-md-3 col-form-label" for="libraryPath">Voice Library Location</label>
 				<div class="col-md-7">
-					<input type="string" class="form-control" id="libraryPath"
+					<input type="string" class="form-control" aria-label="libraryPath" id="libraryPath"
 						onclick="window.prefs.libraryFolderDialog(this,this.value);" />
 				</div>
 			</div>
@@ -24,7 +22,7 @@
 			<div class="form-group row">
 				<label class="col-md-3 col-form-label" for="useSerial">Enable Hardware Serial Port</label>
 				<div class="col-md-7">
-					<input type="checkbox" class="form-control" id="useSerial" onclick="window.prefs.toggleOsc();" value="true" />
+					<input type="checkbox" class="form-control" aria-label="useSerial" id="useSerial" onclick="window.prefs.toggleOsc();" value="true" />
 				</div>
 			</div>
 			<div class="form-group row">
@@ -34,13 +32,13 @@
 	  * via javascript at initialization.
 	  -->
 				<div class="col-md-7">
-					<input type="string" class="form-control" id="serialPort">
+					<input type="string" class="form-control" aria-label="serialPort" id="serialPort">
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-md-3 col-form-label" for="serialBaud">Serial Baud Rate</label>
 				<div class="col-md-7">
-					<select type="string" class="form-control" id="serialBaud">
+					<select type="string" class="form-control" aria-label="serialBaud" id="serialBaud">
 						<option value="19200">19200</option>
 						<option value="9600">9600</option>
 						<option value="4800">4800</option>
@@ -53,45 +51,45 @@
 			<div class="form-group row">
 				<label class="col-md-3 col-form-label" for="flowControl">Serial Port RTS/CTS flow control</label>
 				<div class="col-md-7">
-					<input type="checkbox" class="form-control" id="flowControl"  value="true" />
+					<input type="checkbox" class="form-control" aria-label="flowControl" id="flowControl"  value="true" />
 				</div>
 			</div>
 
 			<div class="form-group row">
 				<label class="col-md-3 col-form-label" for="useOsc">Enable OSC Control Surface</label>
 				<div class="col-md-7">
-					<input type="checkbox" class="form-control" id="useOsc" onclick="window.prefs.toggleOsc();" value="true" />
+					<input type="checkbox" class="form-control" aria-label="useOsc" id="useOsc" onclick="window.prefs.toggleOsc();" value="true" />
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-md-3 col-form-label" for="oscPort">OSC Listening Port</label>
 				<div class="col-md-7">
-					<input type="integer" class="form-control" id="oscPort" />
+					<input type="integer" class="form-control" aria-label="oscPort" id="oscPort" />
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-md-3 col-form-label" for="oscAutoConfig">Zeroconf Control Surface</label>
 				<div class="col-md-7">
-					<input type="checkbox" class="form-control" id="oscAutoConfig" onclick="window.prefs.toggleOsc()"
+					<input type="checkbox" class="form-control" aria-label="oscAutoConfig" id="oscAutoConfig" onclick="window.prefs.toggleOsc()"
 						value="true" />
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-md-3 col-form-label" for="oscCSurfaceAddress">Control Surface Address</label>
 				<div class="col-md-7">
-					<input type="string" class="form-control" id="oscCSurfaceAddress" />
+					<input type="string" class="form-control" aria-label="oscCSurfaceAddress" id="oscCSurfaceAddress" />
 				</div>
 			</div>
 			<div class="form-group row">
 
 				<label class="col-md-3 col-form-label" for="oscCSurfacePort">Control Surface Port</label>
 				<div class="col-md-7">
-					<input type="integer" class="form-control" id="oscCSurfacePort" />
+					<input type="integer" class="form-control" aria-label="oscCSurfacePort" id="oscCSurfacePort" />
 				</div>
 			</div>
 			<div class="col-md-7 offset-md-3">
-				<button id="cancelButton" type="cancel" onclick="window.prefs.cancelAndClose();">Cancel</button>
-				<button id="saveButton" type="button" class="btn btn-primary" onclick="window.prefs.saveAndClose();">Save</button>
+				<button aria-label="cancelButton" id="cancelButton" type="cancel" onclick="window.prefs.cancelAndClose();">Cancel</button>
+				<button aria-label="saveButton" id="saveButton" type="button" class="btn btn-primary" onclick="window.prefs.saveAndClose();">Save</button>
 			</div>
 		</form>
 	</div>

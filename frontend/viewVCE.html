@@ -1,11 +1,11 @@
-<span id="backToCRT" onclick="viewCRT.viewLoadedCRT()" style="cursor: pointer;">
-	<span id="vce_crt_name"></span>
+<span aria-label="backToCRT" id="backToCRT" onclick="viewCRT.viewLoadedCRT()" style="cursor: pointer;">
+	<span aria-label="vce_crt_name" id="vce_crt_name"></span>
 	&nbsp;&nbsp;&gt;&nbsp;&nbsp;
 </span>
-<span id="vce_name"></span>
+<span aria-label="vce_name" id="vce_name"></span>
 <br><br>
 
-<ul id="vceTabs" class="nav nav-pills">
+<ul aria-label="vceTabs" id="vceTabs" class="nav nav-pills">
 	<li class="nav-item"><a class="active nav-link" data-bs-toggle="pill" href="#vceVoiceTab">Voice</a></li>
 	<li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#vceEnvsTab">Envelopes</a></li>
 	<li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#vceFiltersTab">Filters</a></li>
@@ -17,16 +17,16 @@
 <div class="tab-content">
 
 	<!-- used to help the UITEST to know when a tab content has been updated and ready to test (e.g. after changing osc on the Env page) -->
-	<input type="text" hidden id="tabTelltaleContent" value="">
+	<input type="text" hidden aria-label="tabTelltaleContent" id="tabTelltaleContent" value="">
 
-	<div id="vceVoiceTab" class="tab-pane fade show active">
+	<div aria-label="vceVoiceTab" id="vceVoiceTab" class="tab-pane fade show active">
 
 		<!-- Old School - table layout -->
 		<table>
 			<tr>
 				<td>
 					Patch Type:&nbsp;
-					<select class="vceEdit" id="patchType" onchange="viewVCE_voice.changePatchType(this.value)"
+					<select class="vceEdit" aria-label="patchType" id="patchType" onchange="viewVCE_voice.changePatchType(this.value)"
 						disabled>
 						<!-- XREF: needs to match the array in data/vce.go PatchTypeNames-->
                                                 <option value="0">1 + 2 + 3 + 4 + 5 + 6 + 7 + 8</option>
@@ -62,13 +62,13 @@
 					</select>
 				</td>
 				<td>
-					<canvas id="patchDiagram"
+					<canvas aria-label="patchDiagram" id="patchDiagram"
 						style="padding:10px; border:1px solid #666; border-radius: 5px 5px 5px 5px;">
 					</canvas>
 				</td>
 			</tr>
 		</table>
-		<table id="voiceOscTable" style="width:100%">
+		<table aria-label="voiceOscTable" id="voiceOscTable" style="width:100%">
 			<thead>
 				<tr>
 					<th>Osc</th>
@@ -93,7 +93,7 @@
 					<th></th>
 				</tr>
 			</thead>
-			<tbody id="patchTbody">
+			<tbody aria-label="patchTbody" id="patchTbody">
 				<tr>
 					<td>1&lt;</td>
 					<td>100</td>
@@ -118,12 +118,12 @@
 					<td></td>
 					<td>Bf</td>
 				</tr>
-				<tr class="listplusminus" id="oscPlusMinus" style="display:none;">
+				<tr class="listplusminus" aria-label="oscPlusMinus" id="oscPlusMinus" style="display:none;">
 					<td colspan="9">
 						<div style="margin-top: 5px; float: left;">
-							<input id="del-osc" type='button' value='-'
+							<input aria-label="del-osc" id="del-osc" type='button' value='-'
 								onclick=' viewVCE_voice.setNumOscillators(vce.Head.VOITAB)' />
-							<input id="add-osc" type='button' value='+'
+							<input aria-label="add-osc" id="add-osc" type='button' value='+'
 								onclick='viewVCE_voice.setNumOscillators(vce.Head.VOITAB+2)' />
 						</div>
 					</td>
@@ -133,14 +133,14 @@
 
 		<br><br>
 
-		<table id="voiceParamTable" style="width:100%">
+		<table aria-label="voiceParamTable" id="voiceParamTable" style="width:100%">
 			<tr>
 				<td>
 					<table>
 						<tr>
 							<td>Voice Name</td>
 							<td>
-								<input class="vceEdit" type="text" id="VNAME" maxlength="8" style="width: 8em;"
+								<input class="vceEdit" type="text" aria-label="VNAME" id="VNAME" maxlength="8" style="width: 8em;"
 									onchange="viewVCE_voice.onchange(this)" disabled />
 							</td>
 						</tr>
@@ -151,12 +151,12 @@
 						<tr>
 							<td>Oscillators</td>
 							<!-- HACK: add margin to align with TouchSpin styled fields -->
-							<td><span class="spinNOSPIN" id="nOsc" /></td>
+							<td><span class="spinNOSPIN" aria-label="nOsc" id="nOsc" /></td>
 						</tr>
 						<tr>
 							<td>Keys Playable</td>
 							<!-- HACK: add margin to align with TouchSpin styled fields -->
-							<td><span class="spinNOSPIN" id="keysPlayable" /></td>
+							<td><span class="spinNOSPIN" aria-label="keysPlayable" id="keysPlayable" /></td>
 						</tr>
 
 
@@ -168,13 +168,13 @@
 							<td>Vibrato Type</td>
 							<td>
 								<!-- HACK: add margin to align with TouchSpin styled fields -->
-								<span class="spinNOSPIN" id="vibType"></span>
+								<span class="spinNOSPIN" aria-label="vibType" id="vibType"></span>
 							</td>
 						</tr>
 						<tr>
 							<td>Vibrato Depth</td>
 							<td>
-								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VIBDEP"
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" aria-label="VIBDEP" id="VIBDEP"
 										min="-128" max="128"
 										onchange="viewVCE_voice.onchange(this, viewVCE_voice.updateVibType)" disabled />
 								</div>
@@ -183,21 +183,21 @@
 						<tr>
 							<td>Vibrato Rate</td>
 							<td>
-								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VIBRAT"
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" aria-label="VIBRAT" id="VIBRAT"
 										min="0" max="127" onchange="viewVCE_voice.onchange(this)" disabled /></div>
 							</td>
 						</tr>
 						<tr>
 							<td>Vibrato Delay</td>
 							<td>
-								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VIBDEL"
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" aria-label="VIBDEL" id="VIBDEL"
 										min="0" max="127" onchange="viewVCE_voice.onchange(this);" disabled /></div>
 							</td>
 						</tr>
 						<tr>
 							<td>Aperiodic Vibrato</td>
 							<td>
-								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="APVIB"
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" aria-label="APVIB" id="APVIB"
 										min="-128" max="128" onchange="viewVCE_voice.onchange(this)" disabled /></div>
 								<!--FIXME:validate range-->
 							</td>
@@ -209,7 +209,7 @@
 						<tr>
 							<td>Amp Center</td>
 							<td>
-								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VACENT"
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" aria-label="VACENT" id="VACENT"
 										min="0" max="32"
 										onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled />
 								</div>
@@ -218,7 +218,7 @@
 						<tr>
 							<td>Amp Sensitivity</td>
 							<td>
-								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VASENS"
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" aria-label="VASENS" id="VASENS"
 										min="0" max="31"
 										onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled />
 								</div>
@@ -231,7 +231,7 @@
 						<tr>
 							<td>Timbre Center</td>
 							<td>
-								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VTCENT"
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" aria-label="VTCENT" id="VTCENT"
 										min="0" max="32"
 										onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled />
 								</div>
@@ -240,7 +240,7 @@
 						<tr>
 							<td>Timbre Sensitivity</td>
 							<td>
-								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VTSENS"
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" aria-label="VTSENS" id="VTSENS"
 										min="0" max="31"
 										onchange="viewVCE_voice.onchange(this,viewVCE_voice.updateChart);" disabled />
 								</div>
@@ -253,7 +253,7 @@
 						<tr>
 							<td>Transpose</td>
 							<td>
-								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" id="VTRANS"
+								<div class="spinwrapper"><input class="vceEdit vceNum spinPLAIN" type="text" aria-label="VTRANS" id="VTRANS"
 										min="-127" max="128" onchange="viewVCE_voice.onchange(this)" disabled /></div>
 							</td>
 						</tr>
@@ -264,22 +264,22 @@
 						<tr>
 							<td>Filters Used</td>
 							<!-- HACK: add margin to align with TouchSpin styled fields -->
-							<td><span class="spinNOSPIN" id="nFilter" /></td>
+							<td><span class="spinNOSPIN" aria-label="nFilter" id="nFilter" /></td>
 						</tr>
 					</table>
 				</td>
 				<td>
-					<canvas id="velocityChart" height="300" width="400" style="border:solid #666;"></canvas>
+					<canvas aria-label="velocityChart" id="velocityChart" height="300" width="400" style="border:solid #666;"></canvas>
 				</td>
 			</tr>
 		</table>
 
 	</div>
 
-	<div id="vceEnvsTab" class="tab-pane fade">
+	<div aria-label="vceEnvsTab" id="vceEnvsTab" class="tab-pane fade">
 
 		Oscillator:&nbsp;
-		<select id="envOscSelect"
+		<select aria-label="envOscSelect" id="envOscSelect"
 			onchange="viewVCE_envs.envChartUpdate(this.options[this.selectedIndex].value, document.querySelector('#envEnvSelect').value)">
 			<option>1</option>
 			<option>2</option>
@@ -288,7 +288,7 @@
 		</select>
 
 		&nbsp;&nbsp;&nbsp;&nbsp;Envelopes:&nbsp;
-		<select id="envEnvSelect"
+		<select aria-label="envEnvSelect" id="envEnvSelect"
 			onchange="viewVCE_envs.envChartUpdate(document.querySelector('#envOscSelect').value, this.options[this.selectedIndex].value)">
 			<option value="-1">All</option>
 			<option value="0">Freq Low</option>
@@ -297,43 +297,43 @@
 			<option value="3">Amp Up</option>
 		</select>
 
-		<div id="envCopySelectDiv" style="display:inline-block;">
+		<div aria-label="envCopySelectDiv" id="envCopySelectDiv" style="display:inline-block;">
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copy From:&nbsp;
-			<select id="envCopySelect" onchange="viewVCE_envs.copyFrom(this.options[this.selectedIndex].value)">
+			<select aria-label="envCopySelect" id="envCopySelect" onchange="viewVCE_envs.copyFrom(this.options[this.selectedIndex].value)">
 				<option>1</option>
 				<option>2</option>
 			</select>
 		</div>
-		<div id="freqScaleDiv" style="display:inline-block;">
+		<div aria-label="freqScaleDiv" id="freqScaleDiv" style="display:inline-block;">
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Freq Scale:&nbsp;
-			<select id="freqScale" onchange="viewVCE_envs.changeFreqScale(this.options[this.selectedIndex].value)">
+			<select aria-label="freqScale" id="freqScale" onchange="viewVCE_envs.changeFreqScale(this.options[this.selectedIndex].value)">
 				<option value="logarithmic">Log</option>
 				<option value="linear" selected>Linear</option>
 			</select>
 		</div>
-		<div id="timeScaleDiv" style="display:inline-block;">
+		<div aria-label="timeScaleDiv" id="timeScaleDiv" style="display:inline-block;">
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Time Scale:&nbsp;
-			<select id="timeScale" onchange="viewVCE_envs.changeTimeScale(this.options[this.selectedIndex].value)">
+			<select aria-label="timeScale" id="timeScale" onchange="viewVCE_envs.changeTimeScale(this.options[this.selectedIndex].value)">
 				<option value="logarithmic" selected>Log</option>
 				<option value="linear">Linear</option>
 			</select>
 		</div>
 		<!--
-                <div id="timeZoomDiv" style="display:inline-block;">
+                <div aria-label="timeZoomDiv" id="timeZoomDiv" style="display:inline-block;">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Zoom:&nbsp;
-                    <select id="timeScale" onchange="viewVCE_envs.changeTimeZoom(this.options[this.selectedIndex].value)">
+                    <select aria-label="timeScale" id="timeScale" onchange="viewVCE_envs.changeTimeZoom(this.options[this.selectedIndex].value)">
                         <option value="600">100%</option>
                         <option value="3000">500%</option>
                     </select>
                 </div>
         -->
 		<div style="width: inherit" style="display:flex;">
-  		   <div id="envZoomDiv" style="overflow-x:auto; white-space: nowrap; position:relative; height:400px; width:600px">
-		      <canvas id="envChart" style="border:solid #666;"></canvas>
+  		   <div aria-label="envZoomDiv" id="envZoomDiv" style="overflow-x:auto; white-space: nowrap; position:relative; height:400px; width:600px">
+		      <canvas aria-label="envChart" id="envChart" style="border:solid #666;"></canvas>
 		   </div>
         </div>
 
-		<table id="envTable" class="valTable">
+		<table aria-label="envTable" id="envTable" class="valTable">
 			<thead>
 				<tr>
 					<th colspan="9">Frequency</th>
@@ -377,10 +377,10 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr id="envTableTr[1]">
+				<tr aria-label="envTableTr[1]" id="envTableTr[1]">
 					<td>1</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[1]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envFreqLoop[1]" id="envFreqLoop[1]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -388,11 +388,11 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envFreqLowVal[1]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqLowVal[1]" id="envFreqLowVal[1]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpVal[1]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqUpVal[1]" id="envFreqUpVal[1]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<!-- First row's freq time values are fixed at zero-->
@@ -402,14 +402,14 @@
 					<td class="val">
 						0
 					</td>
-					<td class="val total"> <span id="envFreqTotLowTime[1]" /> </td>
-					<td class="val total"> <span id="envFreqTotUpTime[1]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotLowTime[1]" id="envFreqTotLowTime[1]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotUpTime[1]" id="envFreqTotUpTime[1]" /> </td>
 
 					<td rowspan="16" style="padding:10px;"></td>
 					<td rowspan="16" style="border-left:1px solid #666;padding:10px;">
 
 					<td class="val">
-						<select class="vceEdit" id="envAmpLoop[1]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envAmpLoop[1]" id="envAmpLoop[1]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="R">R-&gt;</option>
@@ -417,30 +417,30 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envAmpLowVal[1]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpLowVal[1]" id="envAmpLowVal[1]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpVal[1]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpUpVal[1]" id="envAmpUpVal[1]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpLowTime[1]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpLowTime[1]" id="envAmpLowTime[1]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpTime[1]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpUpTime[1]" id="envAmpUpTime[1]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envAmpTotLowTime[1]" /> </td>
-					<td class="val total"> <span id="envAmpTotUpTime[1]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotLowTime[1]" id="envAmpTotLowTime[1]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotUpTime[1]" id="envAmpTotUpTime[1]" /> </td>
 					<td>1</td>
 				</tr>
 
-				<tr id="envTableTr[2]">
+				<tr aria-label="envTableTr[2]" id="envTableTr[2]">
 					<td>2</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[2]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envFreqLoop[2]" id="envFreqLoop[2]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="R">R-&gt;</option>
@@ -448,27 +448,27 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envFreqLowVal[2]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqLowVal[2]" id="envFreqLowVal[2]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpVal[2]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqUpVal[2]" id="envFreqUpVal[2]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqLowTime[2]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqLowTime[2]" id="envFreqLowTime[2]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpTime[2]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqUpTime[2]" id="envFreqUpTime[2]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envFreqTotLowTime[2]" /> </td>
-					<td class="val total"> <span id="envFreqTotUpTime[2]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotLowTime[2]" id="envFreqTotLowTime[2]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotUpTime[2]" id="envFreqTotUpTime[2]" /> </td>
 
 
 					<td class="val">
-						<select class="vceEdit" id="envAmpLoop[2]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envAmpLoop[2]" id="envAmpLoop[2]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -476,30 +476,30 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envAmpLowVal[2]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpLowVal[2]" id="envAmpLowVal[2]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpVal[2]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpUpVal[2]" id="envAmpUpVal[2]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpLowTime[2]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpLowTime[2]" id="envAmpLowTime[2]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpTime[2]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpUpTime[2]" id="envAmpUpTime[2]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envAmpTotLowTime[2]" /> </td>
-					<td class="val total"> <span id="envAmpTotUpTime[2]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotLowTime[2]" id="envAmpTotLowTime[2]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotUpTime[2]" id="envAmpTotUpTime[2]" /> </td>
 					<td>2</td>
 				</tr>
 
-				<tr id="envTableTr[3]">
+				<tr aria-label="envTableTr[3]" id="envTableTr[3]">
 					<td>3</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[3]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envFreqLoop[3]" id="envFreqLoop[3]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -507,27 +507,27 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envFreqLowVal[3]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqLowVal[3]" id="envFreqLowVal[3]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpVal[3]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqUpVal[3]" id="envFreqUpVal[3]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqLowTime[3]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqLowTime[3]" id="envFreqLowTime[3]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpTime[3]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqUpTime[3]" id="envFreqUpTime[3]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envFreqTotLowTime[3]" /> </td>
-					<td class="val total"> <span id="envFreqTotUpTime[3]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotLowTime[3]" id="envFreqTotLowTime[3]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotUpTime[3]" id="envFreqTotUpTime[3]" /> </td>
 
 
 					<td class="val">
-						<select class="vceEdit" id="envAmpLoop[3]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envAmpLoop[3]" id="envAmpLoop[3]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -535,30 +535,30 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envAmpLowVal[3]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpLowVal[3]" id="envAmpLowVal[3]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpVal[3]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpUpVal[3]" id="envAmpUpVal[3]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpLowTime[3]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpLowTime[3]" id="envAmpLowTime[3]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpTime[3]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpUpTime[3]" id="envAmpUpTime[3]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envAmpTotLowTime[3]" /> </td>
-					<td class="val total"> <span id="envAmpTotUpTime[3]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotLowTime[3]" id="envAmpTotLowTime[3]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotUpTime[3]" id="envAmpTotUpTime[3]" /> </td>
 					<td>3</td>
 				</tr>
 
-				<tr id="envTableTr[4]">
+				<tr aria-label="envTableTr[4]" id="envTableTr[4]">
 					<td>4</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[4]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envFreqLoop[4]" id="envFreqLoop[4]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -566,27 +566,27 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envFreqLowVal[4]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqLowVal[4]" id="envFreqLowVal[4]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpVal[4]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqUpVal[4]" id="envFreqUpVal[4]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqLowTime[4]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqLowTime[4]" id="envFreqLowTime[4]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpTime[4]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqUpTime[4]" id="envFreqUpTime[4]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envFreqTotLowTime[4]" /> </td>
-					<td class="val total"> <span id="envFreqTotUpTime[4]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotLowTime[4]" id="envFreqTotLowTime[4]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotUpTime[4]" id="envFreqTotUpTime[4]" /> </td>
 
 
 					<td class="val">
-						<select class="vceEdit" id="envAmpLoop[4]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envAmpLoop[4]" id="envAmpLoop[4]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -594,30 +594,30 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envAmpLowVal[4]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpLowVal[4]" id="envAmpLowVal[4]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpVal[4]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpUpVal[4]" id="envAmpUpVal[4]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpLowTime[4]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpLowTime[4]" id="envAmpLowTime[4]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpTime[4]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpUpTime[4]" id="envAmpUpTime[4]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envAmpTotLowTime[4]" /> </td>
-					<td class="val total"> <span id="envAmpTotUpTime[4]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotLowTime[4]" id="envAmpTotLowTime[4]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotUpTime[4]" id="envAmpTotUpTime[4]" /> </td>
 					<td>4</td>
 				</tr>
 
-				<tr  id="envTableTr[5]">
+				<tr  aria-label="envTableTr[5]" id="envTableTr[5]">
 					<td>5</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[5]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envFreqLoop[5]" id="envFreqLoop[5]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -625,27 +625,27 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envFreqLowVal[5]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqLowVal[5]" id="envFreqLowVal[5]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpVal[5]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqUpVal[5]" id="envFreqUpVal[5]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqLowTime[5]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqLowTime[5]" id="envFreqLowTime[5]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpTime[5]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqUpTime[5]" id="envFreqUpTime[5]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envFreqTotLowTime[5]" /> </td>
-					<td class="val total"> <span id="envFreqTotUpTime[5]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotLowTime[5]" id="envFreqTotLowTime[5]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotUpTime[5]" id="envFreqTotUpTime[5]" /> </td>
 
 
 					<td class="val">
-						<select class="vceEdit" id="envAmpLoop[5]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envAmpLoop[5]" id="envAmpLoop[5]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -653,30 +653,30 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envAmpLowVal[5]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpLowVal[5]" id="envAmpLowVal[5]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpVal[5]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpUpVal[5]" id="envAmpUpVal[5]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpLowTime[5]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpLowTime[5]" id="envAmpLowTime[5]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpTime[5]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpUpTime[5]" id="envAmpUpTime[5]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envAmpTotLowTime[5]" /> </td>
-					<td class="val total"> <span id="envAmpTotUpTime[5]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotLowTime[5]" id="envAmpTotLowTime[5]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotUpTime[5]" id="envAmpTotUpTime[5]" /> </td>
 					<td>5</td>
 				</tr>
 
-				<tr  id="envTableTr[6]">
+				<tr  aria-label="envTableTr[6]" id="envTableTr[6]">
 					<td>6</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[6]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envFreqLoop[6]" id="envFreqLoop[6]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -684,27 +684,27 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envFreqLowVal[6]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqLowVal[6]" id="envFreqLowVal[6]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpVal[6]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqUpVal[6]" id="envFreqUpVal[6]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqLowTime[6]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqLowTime[6]" id="envFreqLowTime[6]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpTime[6]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqUpTime[6]" id="envFreqUpTime[6]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envFreqTotLowTime[6]" /> </td>
-					<td class="val total"> <span id="envFreqTotUpTime[6]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotLowTime[6]" id="envFreqTotLowTime[6]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotUpTime[6]" id="envFreqTotUpTime[6]" /> </td>
 
 
 					<td class="val">
-						<select class="vceEdit" id="envAmpLoop[6]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envAmpLoop[6]" id="envAmpLoop[6]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -712,30 +712,30 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envAmpLowVal[6]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpLowVal[6]" id="envAmpLowVal[6]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpVal[6]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpUpVal[6]" id="envAmpUpVal[6]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpLowTime[6]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpLowTime[6]" id="envAmpLowTime[6]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpTime[6]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpUpTime[6]" id="envAmpUpTime[6]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envAmpTotLowTime[6]" /> </td>
-					<td class="val total"> <span id="envAmpTotUpTime[6]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotLowTime[6]" id="envAmpTotLowTime[6]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotUpTime[6]" id="envAmpTotUpTime[6]" /> </td>
 					<td>6</td>
 				</tr>
 
-				<tr  id="envTableTr[7]">
+				<tr  aria-label="envTableTr[7]" id="envTableTr[7]">
 					<td>7</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[7]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envFreqLoop[7]" id="envFreqLoop[7]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -743,27 +743,27 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envFreqLowVal[7]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqLowVal[7]" id="envFreqLowVal[7]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpVal[7]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqUpVal[7]" id="envFreqUpVal[7]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqLowTime[7]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqLowTime[7]" id="envFreqLowTime[7]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpTime[7]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqUpTime[7]" id="envFreqUpTime[7]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envFreqTotLowTime[7]" /> </td>
-					<td class="val total"> <span id="envFreqTotUpTime[7]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotLowTime[7]" id="envFreqTotLowTime[7]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotUpTime[7]" id="envFreqTotUpTime[7]" /> </td>
 
 
 					<td class="val">
-						<select class="vceEdit" id="envAmpLoop[7]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envAmpLoop[7]" id="envAmpLoop[7]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -771,30 +771,30 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envAmpLowVal[7]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpLowVal[7]" id="envAmpLowVal[7]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpVal[7]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpUpVal[7]" id="envAmpUpVal[7]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpLowTime[7]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpLowTime[7]" id="envAmpLowTime[7]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpTime[7]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpUpTime[7]" id="envAmpUpTime[7]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envAmpTotLowTime[7]" /> </td>
-					<td class="val total"> <span id="envAmpTotUpTime[7]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotLowTime[7]" id="envAmpTotLowTime[7]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotUpTime[7]" id="envAmpTotUpTime[7]" /> </td>
 					<td>7</td>
 				</tr>
 
-				<tr  id="envTableTr[8]">
+				<tr  aria-label="envTableTr[8]" id="envTableTr[8]">
 					<td>8</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[8]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envFreqLoop[8]" id="envFreqLoop[8]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -802,27 +802,27 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envFreqLowVal[8]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqLowVal[8]" id="envFreqLowVal[8]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpVal[8]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqUpVal[8]" id="envFreqUpVal[8]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqLowTime[8]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqLowTime[8]" id="envFreqLowTime[8]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpTime[8]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqUpTime[8]" id="envFreqUpTime[8]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envFreqTotLowTime[8]" /> </td>
-					<td class="val total"> <span id="envFreqTotUpTime[8]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotLowTime[8]" id="envFreqTotLowTime[8]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotUpTime[8]" id="envFreqTotUpTime[8]" /> </td>
 
 
 					<td class="val">
-						<select class="vceEdit" id="envAmpLoop[8]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envAmpLoop[8]" id="envAmpLoop[8]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -830,30 +830,30 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envAmpLowVal[8]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpLowVal[8]" id="envAmpLowVal[8]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpVal[8]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpUpVal[8]" id="envAmpUpVal[8]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpLowTime[8]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpLowTime[8]" id="envAmpLowTime[8]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpTime[8]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpUpTime[8]" id="envAmpUpTime[8]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envAmpTotLowTime[8]" /> </td>
-					<td class="val total"> <span id="envAmpTotUpTime[8]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotLowTime[8]" id="envAmpTotLowTime[8]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotUpTime[8]" id="envAmpTotUpTime[8]" /> </td>
 					<td>8</td>
 				</tr>
 
-				<tr  id="envTableTr[9]">
+				<tr  aria-label="envTableTr[9]" id="envTableTr[9]">
 					<td>9</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[9]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envFreqLoop[9]" id="envFreqLoop[9]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -861,27 +861,27 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envFreqLowVal[9]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqLowVal[9]" id="envFreqLowVal[9]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpVal[9]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqUpVal[9]" id="envFreqUpVal[9]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqLowTime[9]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqLowTime[9]" id="envFreqLowTime[9]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpTime[9]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqUpTime[9]" id="envFreqUpTime[9]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envFreqTotLowTime[9]" /> </td>
-					<td class="val total"> <span id="envFreqTotUpTime[9]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotLowTime[9]" id="envFreqTotLowTime[9]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotUpTime[9]" id="envFreqTotUpTime[9]" /> </td>
 
 
 					<td class="val">
-						<select class="vceEdit" id="envAmpLoop[9]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envAmpLoop[9]" id="envAmpLoop[9]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -889,30 +889,30 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envAmpLowVal[9]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpLowVal[9]" id="envAmpLowVal[9]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpVal[9]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpUpVal[9]" id="envAmpUpVal[9]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpLowTime[9]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpLowTime[9]" id="envAmpLowTime[9]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpTime[9]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpUpTime[9]" id="envAmpUpTime[9]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envAmpTotLowTime[9]" /> </td>
-					<td class="val total"> <span id="envAmpTotUpTime[9]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotLowTime[9]" id="envAmpTotLowTime[9]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotUpTime[9]" id="envAmpTotUpTime[9]" /> </td>
 					<td>9</td>
 				</tr>
 
-				<tr  id="envTableTr[10]">
+				<tr  aria-label="envTableTr[10]" id="envTableTr[10]">
 					<td>10</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[10]" onchange="viewVCE_envs.onchangeLoop(this)"
+						<select class="vceEdit" aria-label="envFreqLoop[10]" id="envFreqLoop[10]" onchange="viewVCE_envs.onchangeLoop(this)"
 							disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
@@ -921,27 +921,27 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envFreqLowVal[10]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqLowVal[10]" id="envFreqLowVal[10]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpVal[10]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqUpVal[10]" id="envFreqUpVal[10]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqLowTime[10]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqLowTime[10]" id="envFreqLowTime[10]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpTime[10]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqUpTime[10]" id="envFreqUpTime[10]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envFreqTotLowTime[10]" /> </td>
-					<td class="val total"> <span id="envFreqTotUpTime[10]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotLowTime[10]" id="envFreqTotLowTime[10]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotUpTime[10]" id="envFreqTotUpTime[10]" /> </td>
 
 
 					<td class="val">
-						<select class="vceEdit" id="envAmpLoop[10]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envAmpLoop[10]" id="envAmpLoop[10]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -949,30 +949,30 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envAmpLowVal[10]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpLowVal[10]" id="envAmpLowVal[10]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpVal[10]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpUpVal[10]" id="envAmpUpVal[10]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpLowTime[10]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpLowTime[10]" id="envAmpLowTime[10]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpTime[10]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpUpTime[10]" id="envAmpUpTime[10]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envAmpTotLowTime[10]" /> </td>
-					<td class="val total"> <span id="envAmpTotUpTime[10]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotLowTime[10]" id="envAmpTotLowTime[10]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotUpTime[10]" id="envAmpTotUpTime[10]" /> </td>
 					<td>10</td>
 				</tr>
 
-				<tr  id="envTableTr[11]">
+				<tr  aria-label="envTableTr[11]" id="envTableTr[11]">
 					<td>11</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[11]" onchange="viewVCE_envs.onchangeLoop(this)"
+						<select class="vceEdit" aria-label="envFreqLoop[11]" id="envFreqLoop[11]" onchange="viewVCE_envs.onchangeLoop(this)"
 							disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
@@ -981,27 +981,27 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envFreqLowVal[11]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqLowVal[11]" id="envFreqLowVal[11]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpVal[11]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqUpVal[11]" id="envFreqUpVal[11]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqLowTime[11]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqLowTime[11]" id="envFreqLowTime[11]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpTime[11]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqUpTime[11]" id="envFreqUpTime[11]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envFreqTotLowTime[11]" /> </td>
-					<td class="val total"> <span id="envFreqTotUpTime[11]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotLowTime[11]" id="envFreqTotLowTime[11]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotUpTime[11]" id="envFreqTotUpTime[11]" /> </td>
 
 
 					<td class="val">
-						<select class="vceEdit" id="envAmpLoop[11]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envAmpLoop[11]" id="envAmpLoop[11]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -1009,30 +1009,30 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envAmpLowVal[11]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpLowVal[11]" id="envAmpLowVal[11]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpVal[11]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpUpVal[11]" id="envAmpUpVal[11]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpLowTime[11]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpLowTime[11]" id="envAmpLowTime[11]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpTime[11]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpUpTime[11]" id="envAmpUpTime[11]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envAmpTotLowTime[11]" /> </td>
-					<td class="val total"> <span id="envAmpTotUpTime[11]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotLowTime[11]" id="envAmpTotLowTime[11]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotUpTime[11]" id="envAmpTotUpTime[11]" /> </td>
 					<td>11</td>
 				</tr>
 
-				<tr  id="envTableTr[12]">
+				<tr  aria-label="envTableTr[12]" id="envTableTr[12]">
 					<td>12</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[12]" onchange="viewVCE_envs.onchangeLoop(this)"
+						<select class="vceEdit" aria-label="envFreqLoop[12]" id="envFreqLoop[12]" onchange="viewVCE_envs.onchangeLoop(this)"
 							disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
@@ -1041,27 +1041,27 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envFreqLowVal[12]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqLowVal[12]" id="envFreqLowVal[12]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpVal[12]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqUpVal[12]" id="envFreqUpVal[12]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqLowTime[12]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqLowTime[12]" id="envFreqLowTime[12]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpTime[12]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqUpTime[12]" id="envFreqUpTime[12]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envFreqTotLowTime[12]" /> </td>
-					<td class="val total"> <span id="envFreqTotUpTime[12]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotLowTime[12]" id="envFreqTotLowTime[12]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotUpTime[12]" id="envFreqTotUpTime[12]" /> </td>
 
 
 					<td class="val">
-						<select class="vceEdit" id="envAmpLoop[12]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envAmpLoop[12]" id="envAmpLoop[12]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -1069,30 +1069,30 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envAmpLowVal[12]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpLowVal[12]" id="envAmpLowVal[12]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpVal[12]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpUpVal[12]" id="envAmpUpVal[12]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpLowTime[12]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpLowTime[12]" id="envAmpLowTime[12]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpTime[12]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpUpTime[12]" id="envAmpUpTime[12]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envAmpTotLowTime[12]" /> </td>
-					<td class="val total"> <span id="envAmpTotUpTime[12]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotLowTime[12]" id="envAmpTotLowTime[12]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotUpTime[12]" id="envAmpTotUpTime[12]" /> </td>
 					<td>12</td>
 				</tr>
 
-				<tr  id="envTableTr[13]">
+				<tr  aria-label="envTableTr[13]" id="envTableTr[13]">
 					<td>13</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[13]" onchange="viewVCE_envs.onchangeLoop(this)"
+						<select class="vceEdit" aria-label="envFreqLoop[13]" id="envFreqLoop[13]" onchange="viewVCE_envs.onchangeLoop(this)"
 							disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
@@ -1101,27 +1101,27 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envFreqLowVal[13]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqLowVal[13]" id="envFreqLowVal[13]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpVal[13]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqUpVal[13]" id="envFreqUpVal[13]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqLowTime[13]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqLowTime[13]" id="envFreqLowTime[13]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpTime[13]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqUpTime[13]" id="envFreqUpTime[13]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envFreqTotLowTime[13]" /> </td>
-					<td class="val total"> <span id="envFreqTotUpTime[13]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotLowTime[13]" id="envFreqTotLowTime[13]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotUpTime[13]" id="envFreqTotUpTime[13]" /> </td>
 
 
 					<td class="val">
-						<select class="vceEdit" id="envAmpLoop[13]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envAmpLoop[13]" id="envAmpLoop[13]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -1129,30 +1129,30 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envAmpLowVal[13]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpLowVal[13]" id="envAmpLowVal[13]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpVal[13]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpUpVal[13]" id="envAmpUpVal[13]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpLowTime[13]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpLowTime[13]" id="envAmpLowTime[13]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpTime[13]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpUpTime[13]" id="envAmpUpTime[13]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envAmpTotLowTime[13]" /> </td>
-					<td class="val total"> <span id="envAmpTotUpTime[13]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotLowTime[13]" id="envAmpTotLowTime[13]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotUpTime[13]" id="envAmpTotUpTime[13]" /> </td>
 					<td>13</td>
 				</tr>
 
-				<tr  id="envTableTr[14]">
+				<tr  aria-label="envTableTr[14]" id="envTableTr[14]">
 					<td>14</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[14]" onchange="viewVCE_envs.onchangeLoop(this)"
+						<select class="vceEdit" aria-label="envFreqLoop[14]" id="envFreqLoop[14]" onchange="viewVCE_envs.onchangeLoop(this)"
 							disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
@@ -1161,27 +1161,27 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envFreqLowVal[14]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqLowVal[14]" id="envFreqLowVal[14]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpVal[14]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqUpVal[14]" id="envFreqUpVal[14]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqLowTime[14]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqLowTime[14]" id="envFreqLowTime[14]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpTime[14]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqUpTime[14]" id="envFreqUpTime[14]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envFreqTotLowTime[14]" /> </td>
-					<td class="val total"> <span id="envFreqTotUpTime[14]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotLowTime[14]" id="envFreqTotLowTime[14]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotUpTime[14]" id="envFreqTotUpTime[14]" /> </td>
 
 
 					<td class="val">
-						<select class="vceEdit" id="envAmpLoop[14]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envAmpLoop[14]" id="envAmpLoop[14]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -1189,30 +1189,30 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envAmpLowVal[14]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpLowVal[14]" id="envAmpLowVal[14]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpVal[14]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpUpVal[14]" id="envAmpUpVal[14]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpLowTime[14]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpLowTime[14]" id="envAmpLowTime[14]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpTime[14]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpUpTime[14]" id="envAmpUpTime[14]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envAmpTotLowTime[14]" /> </td>
-					<td class="val total"> <span id="envAmpTotUpTime[14]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotLowTime[14]" id="envAmpTotLowTime[14]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotUpTime[14]" id="envAmpTotUpTime[14]" /> </td>
 					<td>14</td>
 				</tr>
 
-				<tr  id="envTableTr[15]">
+				<tr  aria-label="envTableTr[15]" id="envTableTr[15]">
 					<td>15</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[15]" onchange="viewVCE_envs.onchangeLoop(this)"
+						<select class="vceEdit" aria-label="envFreqLoop[15]" id="envFreqLoop[15]" onchange="viewVCE_envs.onchangeLoop(this)"
 							disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
@@ -1221,27 +1221,27 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envFreqLowVal[15]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqLowVal[15]" id="envFreqLowVal[15]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpVal[15]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqUpVal[15]" id="envFreqUpVal[15]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqLowTime[15]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqLowTime[15]" id="envFreqLowTime[15]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpTime[15]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqUpTime[15]" id="envFreqUpTime[15]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envFreqTotLowTime[15]" /> </td>
-					<td class="val total"> <span id="envFreqTotUpTime[15]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotLowTime[15]" id="envFreqTotLowTime[15]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotUpTime[15]" id="envFreqTotUpTime[15]" /> </td>
 
 
 					<td class="val">
-						<select class="vceEdit" id="envAmpLoop[15]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envAmpLoop[15]" id="envAmpLoop[15]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -1249,30 +1249,30 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envAmpLowVal[15]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpLowVal[15]" id="envAmpLowVal[15]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpVal[15]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpUpVal[15]" id="envAmpUpVal[15]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpLowTime[15]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpLowTime[15]" id="envAmpLowTime[15]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpTime[15]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpUpTime[15]" id="envAmpUpTime[15]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envAmpTotLowTime[15]" /> </td>
-					<td class="val total"> <span id="envAmpTotUpTime[15]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotLowTime[15]" id="envAmpTotLowTime[15]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotUpTime[15]" id="envAmpTotUpTime[15]" /> </td>
 					<td>15</td>
 				</tr>
 
-				<tr  id="envTableTr[16]">
+				<tr  aria-label="envTableTr[16]" id="envTableTr[16]">
 					<td>16</td>
 					<td class="val">
-						<select class="vceEdit" id="envFreqLoop[16]" onchange="viewVCE_envs.onchangeLoop(this)"
+						<select class="vceEdit" aria-label="envFreqLoop[16]" id="envFreqLoop[16]" onchange="viewVCE_envs.onchangeLoop(this)"
 							disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
@@ -1281,27 +1281,27 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envFreqLowVal[16]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqLowVal[16]" id="envFreqLowVal[16]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpVal[16]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
+						<input aria-label="envFreqUpVal[16]" id="envFreqUpVal[16]" class="vceEdit vceNum spinPLAIN" type="text" min="-127" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqLowTime[16]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqLowTime[16]" id="envFreqLowTime[16]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envFreqUpTime[16]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
+						<input aria-label="envFreqUpTime[16]" id="envFreqUpTime[16]" class="vceEdit vceNum spinFreqTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envFreqTotLowTime[16]" /> </td>
-					<td class="val total"> <span id="envFreqTotUpTime[16]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotLowTime[16]" id="envFreqTotLowTime[16]" /> </td>
+					<td class="val total"> <span aria-label="envFreqTotUpTime[16]" id="envFreqTotUpTime[16]" /> </td>
 
 
 					<td class="val">
-						<select class="vceEdit" id="envAmpLoop[16]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
+						<select class="vceEdit" aria-label="envAmpLoop[16]" id="envAmpLoop[16]" onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
 							<option value="S">S-&gt;</option>
@@ -1309,43 +1309,43 @@
 						</select>
 					</td>
 					<td class="val">
-						<input id="envAmpLowVal[16]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpLowVal[16]" id="envAmpLowVal[16]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpVal[16]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
+						<input aria-label="envAmpUpVal[16]" id="envAmpUpVal[16]" class="vceEdit vceNum spinAmpEnv" type="text" min="55" max="127"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpLowTime[16]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpLowTime[16]" id="envAmpLowTime[16]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
 					<td class="val">
-						<input id="envAmpUpTime[16]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
+						<input aria-label="envAmpUpTime[16]" id="envAmpUpTime[16]" class="vceEdit vceNum spinAmpTime" type="text" min="0" max="84"
 							onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<td class="val total"> <span id="envAmpTotLowTime[16]" /> </td>
-					<td class="val total"> <span id="envAmpTotUpTime[16]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotLowTime[16]" id="envAmpTotLowTime[16]" /> </td>
+					<td class="val total"> <span aria-label="envAmpTotUpTime[16]" id="envAmpTotUpTime[16]" /> </td>
 					<td>16</td>
 				</tr>
 				<tr class="type1accel">
 					<td colspan="8">
 						<div style="margin-top: 5px" class="Freq">
-							Accel Low:&nbsp;&nbsp;<div class="spinwrapper"><input id="accelFreqLow" type='text' min=0
+							Accel Low:&nbsp;&nbsp;<div class="spinwrapper"><input aria-label="accelFreqLow" id="accelFreqLow" type='text' min=0
 									max=127 class="vceEdit vceNum spinPLAIN"
 									onchange=' viewVCE_envs.onchangeEnvAccel(this)' /></div>
-							&nbsp;Up:&nbsp;&nbsp;<div class="spinwrapper"><input id="accelFreqUp" type='text' min=0
+							&nbsp;Up:&nbsp;&nbsp;<div class="spinwrapper"><input aria-label="accelFreqUp" id="accelFreqUp" type='text' min=0
 									max=127 class="vceEdit vceNum spinPLAIN"
 									onchange='viewVCE_envs.onchangeEnvAccel(this)' /></div>
 						</div>
 					</td>
 					<td colspan="8">
 						<div style="margin-top: 5px;" class="Amp">
-							Accel Low:&nbsp;&nbsp;<div class="spinwrapper"><input id="accelAmpLow" type='text' min=0
+							Accel Low:&nbsp;&nbsp;<div class="spinwrapper"><input aria-label="accelAmpLow" id="accelAmpLow" type='text' min=0
 									max=127 class="vceEdit vceNum spinPLAIN"
 									onchange=' viewVCE_envs.onchangeEnvAccel(this)' />
 							</div>
-							&nbsp;Up:&nbsp;&nbsp;<div class="spinwrapper"><input id="accelAmpUp" type='text' min=0
+							&nbsp;Up:&nbsp;&nbsp;<div class="spinwrapper"><input aria-label="accelAmpUp" id="accelAmpUp" type='text' min=0
 									max=127 class="vceEdit vceNum spinPLAIN"
 									onchange='viewVCE_envs.onchangeEnvAccel(this)' /></div>
 						</div>
@@ -1358,12 +1358,12 @@
 					<td colspan="8">
 						<div style="margin-top: 5px;" class="AmpGain">
 							Gain Low:&nbsp;&nbsp;
-								<div class="spinwrapper"><input id="gainAmpLow" type='text' min=0
+								<div class="spinwrapper"><input aria-label="gainAmpLow" id="gainAmpLow" type='text' min=0
 																max=100 class="vceEdit vceNum spinPLAIN"
 																onchange='viewVCE_envs.onchangeGain(this)' />
 								</div>
 							&nbsp;Up:&nbsp;&nbsp;
-							<div class="spinwrapper"><input id="gainAmpUp" type='text' min=0
+							<div class="spinwrapper"><input aria-label="gainAmpUp" id="gainAmpUp" type='text' min=0
 															max=100 class="vceEdit vceNum spinPLAIN"
 															onchange='viewVCE_envs.onchangeGain(this)' />
 							</div>
@@ -1374,17 +1374,17 @@
 				<tr class="listplusminus">
 					<td colspan="8">
 						<div style="margin-top: 5px; float: left;">
-							<input id="del-freq-env-point" type='button' value='-'
+							<input aria-label="del-freq-env-point" id="del-freq-env-point" type='button' value='-'
 								onclick=' viewVCE_envs.changeEnvPoints("freq", -1)' />
-							<input id="add-freq-env-point" type='button' value='+'
+							<input aria-label="add-freq-env-point" id="add-freq-env-point" type='button' value='+'
 								onclick='viewVCE_envs.changeEnvPoints("freq", 1)' />
 						</div>
 					</td>
 					<td colspan="8">
 						<div style="margin-top: 5px; float: left;">
-							<input id="del-amp-env-point" type='button' value='-'
+							<input aria-label="del-amp-env-point" id="del-amp-env-point" type='button' value='-'
 								onclick=' viewVCE_envs.changeEnvPoints("amp", -1)' />
-							<input id="add-amp-env-point" type='button' value='+'
+							<input aria-label="add-amp-env-point" id="add-amp-env-point" type='button' value='+'
 								onclick='viewVCE_envs.changeEnvPoints("amp", 1)' />
 						</div>
 					</td>
@@ -1393,23 +1393,23 @@
 		</table>
 	</div>
 
-	<div id="vceFiltersTab" class="tab-pane fade ">
+	<div aria-label="vceFiltersTab" id="vceFiltersTab" class="tab-pane fade ">
 
 		Filter:&nbsp;
-		<select id="filterSelect"
+		<select aria-label="filterSelect" id="filterSelect"
 			onchange="viewVCE_filters.filtersChartUpdate(this.options[this.selectedIndex].value,this.options[this.selectedIndex].innerHTML,true)">
 			<option>Bf 1</option>
 			<option>Bf 2</option>
 		</select>
-		<div id="filterCopySelectDiv" style="display:inline-block;">
+		<div aria-label="filterCopySelectDiv" id="filterCopySelectDiv" style="display:inline-block;">
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copy From:&nbsp;
-			<select id="filterCopySelect"
+			<select aria-label="filterCopySelect" id="filterCopySelect"
 				onchange="viewVCE_filters.copyFrom(this.options[this.selectedIndex].value,this.options[this.selectedIndex].innerHTML)">
 				<option>Bf 1</option>
 				<option>Bf 2</option>
 			</select>
 		</div>
-		<canvas id="filtersChart" height="400" width="600" style="border:solid #666;"></canvas>
+		<canvas aria-label="filtersChart" id="filtersChart" height="400" width="600" style="border:solid #666;"></canvas>
 
 		<style>
 			#filterTable td {
@@ -1437,7 +1437,7 @@
 			}
 		</style>
 
-		<table id="filterTable" class="valTable">
+		<table aria-label="filterTable" id="filterTable" class="valTable">
 			<thead>
 				<tr>
 					<th>Index</th>
@@ -1465,12 +1465,12 @@
 
 				</tr>
 			</thead>
-			<tbody id="filterTableBody">
+			<tbody aria-label="filterTableBody" id="filterTableBody">
 				<tr>
 					<td>1</td>
 					<td>11</td>
 					<td class="val">
-						<input tabindex="101" class="vceEdit vceNum spinPLAIN" type="text" id="flt[1]" min="-64"
+						<input tabindex="101" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[1]" id="flt[1]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 
@@ -1479,7 +1479,7 @@
 					<td>9</td>
 					<td>72</td>
 					<td class="val">
-						<input tabindex="109" class="vceEdit vceNum spinPLAIN" type="text" id="flt[9]" min="-64"
+						<input tabindex="109" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[9]" id="flt[9]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 
@@ -1489,7 +1489,7 @@
 					<td>17</td>
 					<td>461</td>
 					<td class="val">
-						<input tabindex="117" class="vceEdit vceNum spinPLAIN" type="text" id="flt[17]" min="-64"
+						<input tabindex="117" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[17]" id="flt[17]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 
@@ -1499,7 +1499,7 @@
 					<td>25</td>
 					<td>2929</td>
 					<td class="val">
-						<input tabindex="125" class="vceEdit vceNum spinPLAIN" type="text" id="flt[25]" min="-64"
+						<input tabindex="125" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[25]" id="flt[25]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 				</tr>
@@ -1508,25 +1508,25 @@
 					<td>2</td>
 					<td>14</td>
 					<td class="val">
-						<input tabindex="102" class="vceEdit vceNum spinPLAIN" type="text" id="flt[2]" min="-64"
+						<input tabindex="102" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[2]" id="flt[2]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>10</td>
 					<td>91</td>
 					<td class="val">
-						<input tabindex="110" class="vceEdit vceNum spinPLAIN" type="text" id="flt[10]" min="-64"
+						<input tabindex="110" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[10]" id="flt[10]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>18</td>
 					<td>581</td>
 					<td class="val">
-						<input tabindex="118" class="vceEdit vceNum spinPLAIN" type="text" id="flt[18]" min="-64"
+						<input tabindex="118" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[18]" id="flt[18]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>26</td>
 					<td>3691</td>
 					<td class="val">
-						<input tabindex="126" class="vceEdit vceNum spinPLAIN" type="text" id="flt[26]" min="-64"
+						<input tabindex="126" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[26]" id="flt[26]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 				</tr>
@@ -1535,25 +1535,25 @@
 					<td>3</td>
 					<td>18</td>
 					<td class="val">
-						<input tabindex="103" class="vceEdit vceNum spinPLAIN" type="text" id="flt[3]" min="-64"
+						<input tabindex="103" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[3]" id="flt[3]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>11</td>
 					<td>115</td>
 					<td class="val">
-						<input tabindex="111" class="vceEdit vceNum spinPLAIN" type="text" id="flt[11]" min="-64"
+						<input tabindex="111" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[11]" id="flt[11]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>19</td>
 					<td>732</td>
 					<td class="val">
-						<input tabindex="119" class="vceEdit vceNum spinPLAIN" type="text" id="flt[19]" min="-64"
+						<input tabindex="119" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[19]" id="flt[19]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>27</td>
 					<td>4650</td>
 					<td class="val">
-						<input tabindex="127" class="vceEdit vceNum spinPLAIN" type="text" id="flt[27]" min="-64"
+						<input tabindex="127" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[27]" id="flt[27]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 				</tr>
@@ -1562,25 +1562,25 @@
 					<td>4</td>
 					<td>22</td>
 					<td class="val">
-						<input tabindex="104" class="vceEdit vceNum spinPLAIN" type="text" id="flt[4]" min="-64"
+						<input tabindex="104" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[4]" id="flt[4]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>12</td>
 					<td>145</td>
 					<td class="val">
-						<input tabindex="112" class="vceEdit vceNum spinPLAIN" type="text" id="flt[12]" min="-64"
+						<input tabindex="112" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[12]" id="flt[12]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>20</td>
 					<td>922</td>
 					<td class="val">
-						<input tabindex="120" class="vceEdit vceNum spinPLAIN" type="text" id="flt[20]" min="-64"
+						<input tabindex="120" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[20]" id="flt[20]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>28</td>
 					<td>5859</td>
 					<td class="val">
-						<input tabindex="128" class="vceEdit vceNum spinPLAIN" type="text" id="flt[28]" min="-64"
+						<input tabindex="128" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[28]" id="flt[28]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 				</tr>
@@ -1589,25 +1589,25 @@
 					<td>5</td>
 					<td>28</td>
 					<td class="val">
-						<input tabindex="105" class="vceEdit vceNum spinPLAIN" type="text" id="flt[5]" min="-64"
+						<input tabindex="105" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[5]" id="flt[5]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>13</td>
 					<td>183</td>
 					<td class="val">
-						<input tabindex="113" class="vceEdit vceNum spinPLAIN" type="text" id="flt[13]" min="-64"
+						<input tabindex="113" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[13]" id="flt[13]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>21</td>
 					<td>1162</td>
 					<td class="val">
-						<input tabindex="121" class="vceEdit vceNum spinPLAIN" type="text" id="flt[21]" min="-64"
+						<input tabindex="121" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[21]" id="flt[21]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>29</td>
 					<td>7382</td>
 					<td class="val">
-						<input tabindex="129" class="vceEdit vceNum spinPLAIN" type="text" id="flt[29]" min="-64"
+						<input tabindex="129" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[29]" id="flt[29]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 				</tr>
 
@@ -1615,25 +1615,25 @@
 					<td>6</td>
 					<td>36</td>
 					<td class="val">
-						<input tabindex="106" class="vceEdit vceNum spinPLAIN" type="text" id="flt[6]" min="-64"
+						<input tabindex="106" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[6]" id="flt[6]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>14</td>
 					<td>230</td>
 					<td class="val">
-						<input tabindex="114" class="vceEdit vceNum spinPLAIN" type="text" id="flt[14]" min="-64"
+						<input tabindex="114" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[14]" id="flt[14]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>22</td>
 					<td>1464</td>
 					<td class="val">
-						<input tabindex="122" class="vceEdit vceNum spinPLAIN" type="text" id="flt[22]" min="-64"
+						<input tabindex="122" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[22]" id="flt[22]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>30</td>
 					<td>9300</td>
 					<td class="val">
-						<input tabindex="130" class="vceEdit vceNum spinPLAIN" type="text" id="flt[30]" min="-64"
+						<input tabindex="130" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[30]" id="flt[30]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 				</tr>
@@ -1642,25 +1642,25 @@
 					<td>7</td>
 					<td>45</td>
 					<td class="val">
-						<input tabindex="107" class="vceEdit vceNum spinPLAIN" type="text" id="flt[7]" min="-64"
+						<input tabindex="107" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[7]" id="flt[7]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>15</td>
 					<td>290</td>
 					<td class="val">
-						<input tabindex="115" class="vceEdit vceNum spinPLAIN" type="text" id="flt[15]" min="-64"
+						<input tabindex="115" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[15]" id="flt[15]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>23</td>
 					<td>1845</td>
 					<td class="val">
-						<input tabindex="123" class="vceEdit vceNum spinPLAIN" type="text" id="flt[23]" min="-64"
+						<input tabindex="123" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[23]" id="flt[23]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>31</td>
 					<td>11718</td>
 					<td class="val">
-						<input tabindex="131" class="vceEdit vceNum spinPLAIN" type="text" id="flt[31]" min="-64"
+						<input tabindex="131" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[31]" id="flt[31]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 				</tr>
@@ -1669,25 +1669,25 @@
 					<td>8</td>
 					<td>57</td>
 					<td class="val">
-						<input tabindex="108" class="vceEdit vceNum spinPLAIN" type="text" id="flt[8]" min="-64"
+						<input tabindex="108" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[8]" id="flt[8]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>16</td>
 					<td>366</td>
 					<td class="val">
-						<input tabindex="116" class="vceEdit vceNum spinPLAIN" type="text" id="flt[16]" min="-64"
+						<input tabindex="116" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[16]" id="flt[16]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>24</td>
 					<td>2325</td>
 					<td class="val">
-						<input tabindex="124" class="vceEdit vceNum spinPLAIN" type="text" id="flt[24]" min="-64"
+						<input tabindex="124" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[24]" id="flt[24]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 					<td>32</td>
 					<td>14764</td>
 					<td class="val">
-						<input tabindex="132" class="vceEdit vceNum spinPLAIN" type="text" id="flt[32]" min="-64"
+						<input tabindex="132" class="vceEdit vceNum spinPLAIN" type="text" aria-label="flt[32]" id="flt[32]" min="-64"
 							max="63" onchange="viewVCE_filters.onchange(this,true)" disabled />
 					</td>
 				</tr>
@@ -1697,8 +1697,8 @@
 					<td colspan="6">
 						<div style="margin-top: 5px;" class="FilterGain">
 							Gain:&nbsp;&nbsp;
-	                                                <input id="gainFilterMinus" type='button' value='-' onclick=' viewVCE_filters.onchangeGain(this)' />
-	                                                <input id="gainFilterPlus" type='button' value='+' onclick=' viewVCE_filters.onchangeGain(this)' />
+	                                                <input aria-label="gainFilterMinus" id="gainFilterMinus" type='button' value='-' onclick=' viewVCE_filters.onchangeGain(this)' />
+	                                                <input aria-label="gainFilterPlus" id="gainFilterPlus" type='button' value='+' onclick=' viewVCE_filters.onchangeGain(this)' />
 						</div>
 					</td>
 
@@ -1709,10 +1709,10 @@
 
 	</div>
 
-	<div id="vceKeyEqTab" class="tab-pane fade ">
-		<canvas id="keyEqChart" height="400" width="600" style="border:solid #666;"></canvas>
+	<div aria-label="vceKeyEqTab" id="vceKeyEqTab" class="tab-pane fade ">
+		<canvas aria-label="keyEqChart" id="keyEqChart" height="400" width="600" style="border:solid #666;"></canvas>
 
-		<table id="keyEqTable" class="valTable">
+		<table aria-label="keyEqTable" id="keyEqTable" class="valTable">
 			<thead>
 				<tr>
 					<th>Index</th>
@@ -1740,12 +1740,12 @@
 
 				</tr>
 			</thead>
-			<tbody id="keyEqTableBody">
+			<tbody aria-label="keyEqTableBody" id="keyEqTableBody">
 				<tr>
 					<td>1</td>
 					<td>E1</td>
 					<td class="val">
-						<input tabindex="101" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[1]" min="-24"
+						<input tabindex="101" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[1]" id="keyeq[1]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 
@@ -1754,7 +1754,7 @@
 					<td>7</td>
 					<td>B3</td>
 					<td class="val">
-						<input tabindex="107" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[7]" min="-24"
+						<input tabindex="107" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[7]" id="keyeq[7]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 					<td rowspan="8" style="padding:10px;"></td>
@@ -1762,7 +1762,7 @@
 					<td>13</td>
 					<td>E4</td>
 					<td class="val">
-						<input tabindex="113" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[13]" min="-24"
+						<input tabindex="113" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[13]" id="keyeq[13]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 
@@ -1772,7 +1772,7 @@
 					<td>19</td>
 					<td>B6</td>
 					<td class="val">
-						<input tabindex="119" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[19]" min="-24"
+						<input tabindex="119" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[19]" id="keyeq[19]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 
@@ -1782,25 +1782,25 @@
 					<td>2</td>
 					<td>G#1</td>
 					<td class="val">
-						<input tabindex="102" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[2]" min="-24"
+						<input tabindex="102" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[2]" id="keyeq[2]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 					<td>8</td>
 					<td>D4</td>
 					<td class="val">
-						<input tabindex="108" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[8]" min="-24"
+						<input tabindex="108" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[8]" id="keyeq[8]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 					<td>14</td>
 					<td>G#5</td>
 					<td class="val">
-						<input tabindex="114" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[14]" min="-24"
+						<input tabindex="114" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[14]" id="keyeq[14]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 					<td>20</td>
 					<td>D7</td>
 					<td class="val">
-						<input tabindex="120" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[20]" min="-24"
+						<input tabindex="120" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[20]" id="keyeq[20]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 				</tr>
@@ -1809,25 +1809,25 @@
 					<td>3</td>
 					<td>B1</td>
 					<td class="val">
-						<input tabindex="103" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[3]" min="-24"
+						<input tabindex="103" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[3]" id="keyeq[3]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 					<td>9</td>
 					<td>E4</td>
 					<td class="val">
-						<input tabindex="109" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[9]" min="-24"
+						<input tabindex="109" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[9]" id="keyeq[9]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 					<td>15</td>
 					<td>B5</td>
 					<td class="val">
-						<input tabindex="115" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[15]" min="-24"
+						<input tabindex="115" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[15]" id="keyeq[15]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 					<td>21</td>
 					<td>E6</td>
 					<td class="val">
-						<input tabindex="121" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[21]" min="-24"
+						<input tabindex="121" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[21]" id="keyeq[21]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 				</tr>
@@ -1836,25 +1836,25 @@
 					<td>4</td>
 					<td>D3</td>
 					<td class="val">
-						<input tabindex="104" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[4]" min="-24"
+						<input tabindex="104" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[4]" id="keyeq[4]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 					<td>10</td>
 					<td>G#4</td>
 					<td class="val">
-						<input tabindex="110" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[10]" min="-24"
+						<input tabindex="110" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[10]" id="keyeq[10]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 					<td>16</td>
 					<td>D6</td>
 					<td class="val">
-						<input tabindex="116" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[16]" min="-24"
+						<input tabindex="116" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[16]" id="keyeq[16]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 					<td>22</td>
 					<td>G#7</td>
 					<td class="val">
-						<input tabindex="122" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[22]" min="-24"
+						<input tabindex="122" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[22]" id="keyeq[22]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 				</tr>
@@ -1863,25 +1863,25 @@
 					<td>5</td>
 					<td>E2</td>
 					<td class="val">
-						<input tabindex="105" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[5]" min="-24"
+						<input tabindex="105" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[5]" id="keyeq[5]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 					<td>11</td>
 					<td>B4</td>
 					<td class="val">
-						<input tabindex="111" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[11]" min="-24"
+						<input tabindex="111" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[11]" id="keyeq[11]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 					<td>17</td>
 					<td>E6</td>
 					<td class="val">
-						<input tabindex="117" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[17]" min="-24"
+						<input tabindex="117" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[17]" id="keyeq[17]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 					<td>23</td>
 					<td>B7</td>
 					<td class="val">
-						<input tabindex="123" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[23]" min="-24"
+						<input tabindex="123" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[23]" id="keyeq[23]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 				</tr>
@@ -1890,25 +1890,25 @@
 					<td>6</td>
 					<td>G#3</td>
 					<td class="val">
-						<input tabindex="106" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[6]" min="-24"
+						<input tabindex="106" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[6]" id="keyeq[6]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 					<td>12</td>
 					<td>D5</td>
 					<td class="val">
-						<input tabindex="112" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[12]" min="-24"
+						<input tabindex="112" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[12]" id="keyeq[12]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 					<td>18</td>
 					<td>G#6</td>
 					<td class="val">
-						<input tabindex="118" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[18]" min="-24"
+						<input tabindex="118" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[18]" id="keyeq[18]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 					<td>24</td>
 					<td>D8</td>
 					<td class="val">
-						<input tabindex="124" class="vceEdit vceNum spinPLAIN" type="text" id="keyeq[24]" min="-24"
+						<input tabindex="124" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyeq[24]" id="keyeq[24]" min="-24"
 							max="7" onchange="viewVCE_keyeq.onchange(this,true)" disabled />
 					</td>
 				</tr>
@@ -1918,9 +1918,9 @@
 
 	</div>
 
-	<div id="vceKeyPropTab" class="tab-pane fade ">
-		<canvas id="keyPropChart" height="400" width="600" style="border:solid #666;"></canvas>
-		<table id="keyPropTable" class="valTable">
+	<div aria-label="vceKeyPropTab" id="vceKeyPropTab" class="tab-pane fade ">
+		<canvas aria-label="keyPropChart" id="keyPropChart" height="400" width="600" style="border:solid #666;"></canvas>
+		<table aria-label="keyPropTable" id="keyPropTable" class="valTable">
 			<thead>
 				<tr>
 					<th>Index</th>
@@ -1948,12 +1948,12 @@
 
 				</tr>
 			</thead>
-			<tbody id="keyPropTableBody">
+			<tbody aria-label="keyPropTableBody" id="keyPropTableBody">
 				<tr>
 					<td>1</td>
 					<td>E1</td>
 					<td class="val">
-						<input tabindex="101" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[1]" min="0"
+						<input tabindex="101" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[1]" id="keyprop[1]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 
@@ -1962,7 +1962,7 @@
 					<td>7</td>
 					<td>B3</td>
 					<td class="val">
-						<input tabindex="107" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[7]" min="0"
+						<input tabindex="107" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[7]" id="keyprop[7]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 
@@ -1971,7 +1971,7 @@
 					<td>13</td>
 					<td>E4</td>
 					<td class="val">
-						<input tabindex="113" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[13]" min="0"
+						<input tabindex="113" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[13]" id="keyprop[13]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 
@@ -1981,7 +1981,7 @@
 					<td>19</td>
 					<td>B6</td>
 					<td class="val">
-						<input tabindex="119" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[19]" min="0"
+						<input tabindex="119" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[19]" id="keyprop[19]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 
@@ -1991,25 +1991,25 @@
 					<td>2</td>
 					<td>G#1</td>
 					<td class="val">
-						<input tabindex="102" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[2]" min="0"
+						<input tabindex="102" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[2]" id="keyprop[2]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 					<td>8</td>
 					<td>D4</td>
 					<td class="val">
-						<input tabindex="108" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[8]" min="0"
+						<input tabindex="108" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[8]" id="keyprop[8]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 					<td>14</td>
 					<td>G#5</td>
 					<td class="val">
-						<input tabindex="114" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[14]" min="0"
+						<input tabindex="114" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[14]" id="keyprop[14]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 					<td>20</td>
 					<td>D7</td>
 					<td class="val">
-						<input tabindex="120" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[20]" min="0"
+						<input tabindex="120" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[20]" id="keyprop[20]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 				</tr>
@@ -2018,25 +2018,25 @@
 					<td>3</td>
 					<td>B1</td>
 					<td class="val">
-						<input tabindex="103" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[3]" min="0"
+						<input tabindex="103" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[3]" id="keyprop[3]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 					<td>9</td>
 					<td>E4</td>
 					<td class="val">
-						<input tabindex="109" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[9]" min="0"
+						<input tabindex="109" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[9]" id="keyprop[9]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 					<td>15</td>
 					<td>B5</td>
 					<td class="val">
-						<input tabindex="115" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[15]" min="0"
+						<input tabindex="115" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[15]" id="keyprop[15]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 					<td>21</td>
 					<td>E6</td>
 					<td class="val">
-						<input tabindex="121" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[21]" min="0"
+						<input tabindex="121" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[21]" id="keyprop[21]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 				</tr>
@@ -2045,25 +2045,25 @@
 					<td>4</td>
 					<td>D3</td>
 					<td class="val">
-						<input tabindex="104" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[4]" min="0"
+						<input tabindex="104" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[4]" id="keyprop[4]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 					<td>10</td>
 					<td>G#4</td>
 					<td class="val">
-						<input tabindex="110" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[10]" min="0"
+						<input tabindex="110" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[10]" id="keyprop[10]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 					<td>16</td>
 					<td>D6</td>
 					<td class="val">
-						<input tabindex="116" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[16]" min="0"
+						<input tabindex="116" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[16]" id="keyprop[16]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 					<td>22</td>
 					<td>G#7</td>
 					<td class="val">
-						<input tabindex="122" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[22]" min="0"
+						<input tabindex="122" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[22]" id="keyprop[22]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 				</tr>
@@ -2072,25 +2072,25 @@
 					<td>5</td>
 					<td>E2</td>
 					<td class="val">
-						<input tabindex="105" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[5]" min="0"
+						<input tabindex="105" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[5]" id="keyprop[5]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 					<td>11</td>
 					<td>B4</td>
 					<td class="val">
-						<input tabindex="111" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[11]" min="0"
+						<input tabindex="111" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[11]" id="keyprop[11]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 					<td>17</td>
 					<td>E6</td>
 					<td class="val">
-						<input tabindex="117" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[17]" min="0"
+						<input tabindex="117" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[17]" id="keyprop[17]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 					<td>23</td>
 					<td>B7</td>
 					<td class="val">
-						<input tabindex="123" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[23]" min="0"
+						<input tabindex="123" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[23]" id="keyprop[23]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 				</tr>
@@ -2099,25 +2099,25 @@
 					<td>6</td>
 					<td>G#3</td>
 					<td class="val">
-						<input tabindex="106" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[6]" min="0"
+						<input tabindex="106" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[6]" id="keyprop[6]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 					<td>12</td>
 					<td>D5</td>
 					<td class="val">
-						<input tabindex="112" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[12]" min="0"
+						<input tabindex="112" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[12]" id="keyprop[12]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 					<td>18</td>
 					<td>G#6</td>
 					<td class="val">
-						<input tabindex="118" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[18]" min="0"
+						<input tabindex="118" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[18]" id="keyprop[18]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 					<td>24</td>
 					<td>D8</td>
 					<td class="val">
-						<input tabindex="124" class="vceEdit vceNum spinPLAIN" type="text" id="keyprop[24]" min="0"
+						<input tabindex="124" class="vceEdit vceNum spinPLAIN" type="text" aria-label="keyprop[24]" id="keyprop[24]" min="0"
 							max="32" onchange="viewVCE_keyprop.onchange(this,true)" disabled />
 					</td>
 				</tr>
@@ -2127,7 +2127,7 @@
 
 	</div>
 
-	<div id="vceDocTab" class="tab-pane fade ">
-		<div id="doctext" class="doctext"></div>
+	<div aria-label="vceDocTab" id="vceDocTab" class="tab-pane fade ">
+		<div aria-label="doctext" id="doctext" class="doctext"></div>
 	</div>
 </div>

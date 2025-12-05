@@ -138,8 +138,9 @@ export let index = {
         html = html +
             `
 		    <div class="form-check">
-                <input class="form-check-input" type="radio" name="chooseZeroconf1Radios" id="chooseZeroconf1Radio${
-                   i}" value="${i}" ${i == 0 ? 'checked' : ''}>
+                <input class="form-check-input" type="radio" name="chooseZeroconf1Radios"
+		aria-label="chooseZeroconf1Radio${i}" id="chooseZeroconf1Radio${i}" 
+                value="${i}" ${i == 0 ? 'checked' : ''}>
                 <label class="form-check-label" for="chooseZeroconf1Radio${i}">
                    ${choices1[i].InstanceName}${addr}
                 </label>
@@ -162,8 +163,9 @@ export let index = {
         html = html +
             `
 		    <div class="form-check">
-                <input class="form-check-input" type="radio" name="chooseZeroconf2Radios" id="chooseZeroconf2Radio${
-                   i}" value="${i}" ${i == 0 ? 'checked' : ''}>
+                <input class="form-check-input" type="radio" name="chooseZeroconf2Radios" 
+		 aria-label="chooseZeroconf2Radio${i}" id="chooseZeroconf2Radio${i}" 
+                 value="${i}" ${i == 0 ? 'checked' : ''}>
                 <label class="form-check-label" for="chooseZeroconf2Radio${i}">
                    ${choices2[i].InstanceName}${addr}
                 </label>

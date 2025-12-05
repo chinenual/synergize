@@ -516,16 +516,14 @@ export let viewVCE_voice = {
       let span;
       span = document.createElement('span');
       span.innerHTML =
-          `&nbsp;&nbsp;<span onclick="viewVCE_voice.toggleOsc(this)" class="vceEditToggleText" id="MUTE[${
-              osc + 1}]">M</span>`;
+          `&nbsp;&nbsp;<span onclick="viewVCE_voice.toggleOsc(this)" class="vceEditToggleText" aria-label="MUTE[${osc + 1}]" id="MUTE[${osc + 1}]">M</span>`;
       td.append(span);
       viewVCE_voice.sendToCSurface(null, `MUTE[${osc + 1}]`, 0)
 
       // Solo
       span = document.createElement('span');
       span.innerHTML =
-          `&nbsp;<span onclick="viewVCE_voice.toggleOsc(this)" class="vceEditToggleText" id="SOLO[${
-              osc + 1}]">S</span>`;
+          `&nbsp;<span onclick="viewVCE_voice.toggleOsc(this)" class="vceEditToggleText" aria-label="SOLO[${osc + 1}]" id="SOLO[${osc + 1}]">S</span>`;
       td.append(span);
       viewVCE_voice.sendToCSurface(null, `SOLO[${osc + 1}]`, 0)
 
@@ -535,8 +533,7 @@ export let viewVCE_voice = {
       let gain = viewVCE_envs.computeOscGain(osc, 2);
       td = document.createElement('td');
       td.innerHTML =
-          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinPLAIN" id="OscGain[${
-              osc + 1}]" 
+          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinPLAIN" aria-label="OscGain[${osc + 1}]" id="OscGain[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,undefined)" value="${
               gain}"
 			min="0" max="100"
@@ -592,15 +589,13 @@ export let viewVCE_voice = {
         // input control so we can get its value in the onchange function
         // without any special casing
         td.innerHTML =
-            `<div class="spinwrapper"><input type="text" class="vceNum vceEditDisabled" id="patchFOInputDSR[${
-                osc + 1}]" 
+            `<div class="spinwrapper"><input type="text" class="vceNum vceEditDisabled" aria-label="patchFOInputDSR[${osc + 1}]" id="patchFOInputDSR[${osc + 1}]" 
 				value="${
                 viewVCE_voice.NullablePatchRegisterToText('' + reg)}" 
 				disabled/></div>`;
       } else {
         td.innerHTML =
-            `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinNullablePatchReg" id="patchFOInputDSR[${
-                osc + 1}]" 
+            `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinNullablePatchReg" aria-label="patchFOInputDSR[${osc + 1}]" id="patchFOInputDSR[${osc + 1}]" 
 				onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToNullablePatchRegister)" value="${
                 viewVCE_voice.NullablePatchRegisterToText('' + reg)}" 
 				min="0" max="2"
@@ -616,8 +611,7 @@ export let viewVCE_voice = {
         reg = 0;
       }
       td.innerHTML =
-          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinNullablePatchReg" id="patchAdderInDSR[${
-              osc + 1}]" 
+          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinNullablePatchReg" aria-label="patchAdderInDSR[${osc + 1}]" id="patchAdderInDSR[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToNullablePatchRegister)" value="${
               viewVCE_voice.NullablePatchRegisterToText('' + reg)}" 
 			min="0" max="2"
@@ -627,8 +621,7 @@ export let viewVCE_voice = {
       //--- Patch O
       td = document.createElement('td');
       td.innerHTML =
-          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinPlain" id="patchOutputDSR[${
-              osc + 1}]" 
+          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinPlain" aria-label="patchOutputDSR[${osc + 1}]" id="patchOutputDSR[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,undefined)" value="${
               patchOutputDSR + 1}" 
 			min="1" max="2"
@@ -641,8 +634,7 @@ export let viewVCE_voice = {
       // of CSS would surely have a cleaner solution.
       td = document.createElement('td');
       td.innerHTML =
-          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinOHARM" id="OHARM[${
-              osc + 1}]" 
+          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinOHARM" aria-label="OHARM[${osc + 1}]" id="OHARM[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToOHARM)" value="${
               viewVCE_voice.OHARMToText(
                   viewVCE.vce.Envelopes[osc].FreqEnvelope.OHARM)}" 
@@ -656,8 +648,7 @@ export let viewVCE_voice = {
       //--- Detn
       td = document.createElement('td');
       td.innerHTML =
-          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinFDETUN" id="FDETUN[${
-              osc + 1}]" 
+          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinFDETUN" aria-label="FDETUN[${osc + 1}]" id="FDETUN[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToFDETUN)" value="${
               viewVCE_voice.FDETUNToText(
                   viewVCE.vce.Envelopes[osc].FreqEnvelope.FDETUN)}" 
@@ -676,7 +667,7 @@ export let viewVCE_voice = {
       td = document.createElement('td');
       td.innerHTML = wave;
       td.innerHTML =
-          `<select class="vceEdit" id="wkWAVE[${osc + 1}]" value="${wave}" 
+          `<select class="vceEdit" aria-label="wkWAVE[${osc + 1}]" id="wkWAVE[${osc + 1}]" value="${wave}" 
 			onchange="viewVCE_voice.onchange(this)" disabled/>
 			<option ${
               wave == 'Sin' ? 'selected' : ''} value="Sin">Sin</option>
@@ -693,7 +684,7 @@ export let viewVCE_voice = {
       // can't use disabled attr - bootstrap styling hides it - use javascript
       // hack to make it readonnly
       td.innerHTML =
-          `<input type="checkbox" id="wkKEYPROP[${osc + 1}]" value="true" 
+          `<input type="checkbox" aria-label="wkKEYPROP[${osc + 1}]" id="wkKEYPROP[${osc + 1}]" value="true" 
 			${keyprop ? ' checked ' : ''} 
 			onchange="viewVCE_voice.voicingMode ? viewVCE_voice.onchange(this) : (this.checked=!this.checked)"/>`;
       tr.appendChild(td);
@@ -709,7 +700,7 @@ export let viewVCE_voice = {
       td = document.createElement('td');
       td.innerHTML = wave;
       td.innerHTML =
-          `<select class="vceEdit" id="FILTER[${osc + 1}]" value="${filter}" 
+          `<select class="vceEdit" aria-label="FILTER[${osc + 1}]" id="FILTER[${osc + 1}]" value="${filter}" 
 					onchange="viewVCE_voice.onchange(this,viewVCE_voice.filterChanged)" disabled/>
 					<option ${
               filter == 0 ? 'selected' : ''} value="0"></option>
@@ -728,12 +719,12 @@ export let viewVCE_voice = {
     {
       let temp = document.createElement('template');
       temp.innerHTML =
-          `<tr class="listplusminus" id="oscPlusMinus" style="display:none;">
+          `<tr class="listplusminus" aria-label="oscPlusMinus" id="oscPlusMinus" style="display:none;">
 							    <td colspan="9">
 			    					<div style="margin-top: 5px; float: left;">
-				    					<input id="del-osc" type='button' value='-'
+				    					<input aria-label="del-osc" id="del-osc" type='button' value='-'
 										    onclick='viewVCE_voice.setNumOscillators(viewVCE.vce.Head.VOITAB)' />
-									    <input id="add-osc" type='button' value='+'
+									    <input aria-label="add-osc" id="add-osc" type='button' value='+'
 									   	    onclick='viewVCE_voice.setNumOscillators(viewVCE.vce.Head.VOITAB+2)' />
 								    </div>
 								</td>
