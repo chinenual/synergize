@@ -6,12 +6,12 @@
 name: "synergize"
 arch: ${GOARCH}
 platform: "linux"
-version: "0.1.0"
+version: "3.0.0-alpha1"
 section: "default"
 priority: "extra"
 maintainer: ${GIT_COMMITTER_NAME} <${GIT_COMMITTER_EMAIL}>
-description: "My Product Description"
-vendor: "My Company"
+description: "A portable voice editor/librarian for the DK Synergy"
+vendor: "Steve Tynor (Chinenual)"
 homepage: "https://wails.io"
 license: "MIT"
 release: "1"

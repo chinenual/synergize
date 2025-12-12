@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
-Name=My Product
-Comment=My Product Description
+Name=Synergize
+Comment=A portable voice editor/librarian for the DK Synergy
 # The Exec line includes %u to pass the URL to the application
 Exec=/usr/local/bin/synergize %u
 Terminal=false

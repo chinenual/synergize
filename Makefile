@@ -190,3 +190,14 @@ localdoc:
 .PHONY: clean
 clean:
 	rm -rf packages output bind_*.go *.log
+
+.PHONY: wails-compare
+wails-compare:
+	-rm -rf wails-compare/synergize
+	-mkdir wails-compare
+	cd wails-compare && wails3 init -n synergize -t vanilla -productversion $(VERSION) -productname Synergize \
+		-productidentifier com.chinenual.synergize \
+		-productdescription "A portable voice editor/librarian for the DK Synergy" \
+		-productcopyright "© 2021-2026, Steve Tynor (Chinenual)" -productcompany "Steve Tynor (Chinenual)"
+	cd wails-compare/synergize && find . -type f -not -iname "*.html" -exec diff -wu {} ../../{} \; >DIFF
+	cd wails-compare/synergize && find build -type f -not -iname "*.html" -exec diff -wu {} ../../{} \; >build.DIFF

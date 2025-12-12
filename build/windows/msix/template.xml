@@ -10,24 +10,24 @@
     <Installer
         Path="synergize"
         Arguments=""
-        InstallLocation="C:\Program Files\My Company\My Product">
+        InstallLocation="C:\Program Files\Steve Tynor (Chinenual)\Synergize">
     </Installer>
     <PackageInformation
-        PackageName="My Product"
-        PackageDisplayName="My Product"
-        PublisherName="CN=My Company"
-        PublisherDisplayName="My Company"
-        Version="0.1.0.0"
-        PackageDescription="My Product Description">
+        PackageName="Synergize"
+        PackageDisplayName="Synergize"
+        PublisherName="CN=Steve Tynor (Chinenual)"
+        PublisherDisplayName="Steve Tynor (Chinenual)"
+        Version="3.0.0-alpha1.0"
+        PackageDescription="A portable voice editor/librarian for the DK Synergy">
         <Capabilities>
             <Capability Name="runFullTrust" />
             
         </Capabilities>
         <Applications>
             <Application
-                Id="com.wails.synergize"
-                Description="My Product Description"
-                DisplayName="My Product"
+                Id="com.chinenual.synergize"
+                Description="A portable voice editor/librarian for the DK Synergy"
+                DisplayName="Synergize"
                 ExecutableName="synergize"
                 EntryPoint="Windows.FullTrustApplication">
                 
@@ -41,9 +41,9 @@
         </Dependencies>
         <Properties>
             <Framework>false</Framework>
-            <DisplayName>My Product</DisplayName>
-            <PublisherDisplayName>My Company</PublisherDisplayName>
-            <Description>My Product Description</Description>
+            <DisplayName>Synergize</DisplayName>
+            <PublisherDisplayName>Steve Tynor (Chinenual)</PublisherDisplayName>
+            <Description>A portable voice editor/librarian for the DK Synergy</Description>
             <Logo>Assets\AppIcon.png</Logo>
         </Properties>
     </PackageInformation>

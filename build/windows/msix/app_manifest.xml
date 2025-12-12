@@ -6,15 +6,15 @@
   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10">
   
   <Identity 
-    Name="com.wails.synergize"
-    Publisher="CN=My Company"
-    Version="0.1.0.0" 
+    Name="com.chinenual.synergize"
+    Publisher="CN=Steve Tynor (Chinenual)"
+    Version="3.0.0-alpha1.0" 
     ProcessorArchitecture="x64" />
   
   <Properties>
-    <DisplayName>My Product</DisplayName>
-    <PublisherDisplayName>My Company</PublisherDisplayName>
-    <Description>My Product Description</Description>
+    <DisplayName>Synergize</DisplayName>
+    <PublisherDisplayName>Steve Tynor (Chinenual)</PublisherDisplayName>
+    <Description>A portable voice editor/librarian for the DK Synergy</Description>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   
@@ -27,10 +27,10 @@
   </Resources>
   
   <Applications>
-    <Application Id="com.wails.synergize" Executable="synergize" EntryPoint="Windows.FullTrustApplication">
+    <Application Id="com.chinenual.synergize" Executable="synergize" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
-        DisplayName="My Product"
-        Description="My Product Description"
+        DisplayName="Synergize"
+        Description="A portable voice editor/librarian for the DK Synergy"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png">

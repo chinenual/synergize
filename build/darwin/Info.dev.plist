@@ -4,17 +4,17 @@
         <key>CFBundlePackageType</key>
             <string>APPL</string>
         <key>CFBundleName</key>
-            <string>My Product</string>
+            <string>Synergize</string>
         <key>CFBundleExecutable</key>
             <string>synergize</string>
         <key>CFBundleIdentifier</key>
-            <string>com.wails.synergize</string>
+            <string>com.chinenual.synergize</string>
         <key>CFBundleVersion</key>
-            <string>0.1.0</string>
+            <string>3.0.0-alpha1</string>
         <key>CFBundleGetInfoString</key>
             <string>This is a comment</string>
         <key>CFBundleShortVersionString</key>
-            <string>0.1.0</string>
+            <string>3.0.0-alpha1</string>
         <key>CFBundleIconFile</key>
             <string>icons</string>
         <key>LSMinimumSystemVersion</key>
@@ -22,7 +22,7 @@
         <key>NSHighResolutionCapable</key>
             <string>true</string>
         <key>NSHumanReadableCopyright</key>
-            <string>© now, My Company</string>
+            <string>© 2021-2026, Steve Tynor (Chinenual)</string>
         <key>NSAppTransportSecurity</key>
         <dict>
             <key>NSAllowsLocalNetworking</key>
