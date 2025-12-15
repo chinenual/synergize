@@ -1,4 +1,8 @@
 import {UIService} from '/bindings/github.com/chinenual/synergize';
+import {TouchSpin} from '@touchspin/core';
+import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
+// Import all of Bootstrap's JS
+import * as bootstrap from 'bootstrap';
 import {Chart} from 'chart.js';
 import _ from 'lodash';
 import * as nomnoml from 'nomnoml';
@@ -8,12 +12,6 @@ import {viewCRT} from './viewCRT';
 import {viewVCE} from './viewVCE';
 import {viewVCE_envs} from './viewVCE_envs';
 import {viewVCE_filters} from './viewVCE_filters';
-
-// Import all of Bootstrap's JS
-import * as bootstrap from 'bootstrap';
-
-import {TouchSpin} from '@touchspin/core';
-import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
 
 export let viewVCE_voice = {
   voicingMode: false,
@@ -227,14 +225,16 @@ export let viewVCE_voice = {
 
   testConversionFunctions: function() {
     let ok = true;
+    let result = [];
     for (let i = 0; i < 3; i++) {
       let str = viewVCE_voice.NullablePatchRegisterToText('' + i);
       let reverseStr = viewVCE_voice.TextToNullablePatchRegister(str);
       if (('' + i) != reverseStr) {
         ok = false;
-        console.log(
-            'ERROR: PatchReg ' + i + ' totext: ' + str + ' reversed to ' +
-            reverseStr)
+        let err = 'ERROR: PatchReg ' + i + ' totext: ' + str + ' reversed to ' +
+            reverseStr;
+        result.push(err);
+        console.log(err);
       }
     }
     for (let i = -12; i <= 30; i++) {
@@ -242,9 +242,10 @@ export let viewVCE_voice = {
       let reverseStr = viewVCE_voice.TextToOHARM(str);
       if (('' + i) != reverseStr) {
         ok = false;
-        console.log(
-            'ERROR: OHARM ' + i + ' totext: ' + str + ' reversed to ' +
-            reverseStr)
+        let err = 'ERROR: OHARM ' + i + ' totext: ' + str + ' reversed to ' +
+            reverseStr;
+        result.push(err);
+        console.log(err);
       }
     }
     for (let i = -63; i <= 63; i++) {
@@ -252,9 +253,10 @@ export let viewVCE_voice = {
       let reverseStr = viewVCE_voice.TextToFDETUN(str);
       if (('' + i) != reverseStr) {
         ok = false;
-        console.log(
-            'ERROR: FDETUN ' + i + ' totext: ' + str + ' reversed to ' +
-            reverseStr)
+        let err = 'ERROR: FDETUN ' + i + ' totext: ' + str + ' reversed to ' +
+            reverseStr;
+        result.push(err);
+        console.log(err);
       }
     }
     // if (val >= (-32 * 3) && val <= (32 * 3)) {
@@ -268,28 +270,31 @@ export let viewVCE_voice = {
     let v = viewVCE_voice.FDETUNToText(viewVCE_voice.TextToFDETUN('20'));
     if ('21' != v) {
       ok = false;
-      console.log(
-          'ERROR: FDETUN CASE B ' + 20 + ' rounded to ' + v + ' - expected ' +
-          21)
+      let err = 'ERROR: FDETUN CASE B ' + 20 + ' rounded to ' + v +
+          ' - expected ' + 21;
+      result.push(err);
+      console.log(err);
     }
     v = viewVCE_voice.FDETUNToText(viewVCE_voice.TextToFDETUN('247'));
     if ('246' != v) {
       ok = false;
-      console.log(
-          'ERROR: FDETUN CASE C ' + 247 + ' rounded to ' + v + ' - expected ' +
-          246)
+      let err = 'ERROR: FDETUN CASE C ' + 247 + ' rounded to ' + v +
+          ' - expected ' + 246;
+      result.push(err);
+      console.log(err);
     }
     v = viewVCE_voice.FDETUNToText(viewVCE_voice.TextToFDETUN('-205'));
     if ('-204' != v) {
       ok = false;
-      console.log(
-          'ERROR: FDETUN CASE D ' + -205 + ' rounded to ' + v + ' - expected ' +
-          -204)
+      let err = 'ERROR: FDETUN CASE D ' + -205 + ' rounded to ' + v +
+          ' - expected ' + -204;
+      result.push(err);
+      console.log(err);
     }
 
     console.log(
         'viewVCE_voice.testConversionFunctions: ' + (ok ? 'PASS' : 'FAIL'));
-    return ok;
+    return ok ? null : result;
   },
 
   onchangeDSR: async function(param, osc /*1-based*/, value) {
@@ -516,14 +521,16 @@ export let viewVCE_voice = {
       let span;
       span = document.createElement('span');
       span.innerHTML =
-          `&nbsp;&nbsp;<span onclick="viewVCE_voice.toggleOsc(this)" class="vceEditToggleText" aria-label="MUTE[${osc + 1}]" id="MUTE[${osc + 1}]">M</span>`;
+          `&nbsp;&nbsp;<span onclick="viewVCE_voice.toggleOsc(this)" class="vceEditToggleText" aria-label="MUTE[${
+              osc + 1}]" id="MUTE[${osc + 1}]">M</span>`;
       td.append(span);
       viewVCE_voice.sendToCSurface(null, `MUTE[${osc + 1}]`, 0)
 
       // Solo
       span = document.createElement('span');
       span.innerHTML =
-          `&nbsp;<span onclick="viewVCE_voice.toggleOsc(this)" class="vceEditToggleText" aria-label="SOLO[${osc + 1}]" id="SOLO[${osc + 1}]">S</span>`;
+          `&nbsp;<span onclick="viewVCE_voice.toggleOsc(this)" class="vceEditToggleText" aria-label="SOLO[${
+              osc + 1}]" id="SOLO[${osc + 1}]">S</span>`;
       td.append(span);
       viewVCE_voice.sendToCSurface(null, `SOLO[${osc + 1}]`, 0)
 
@@ -533,7 +540,8 @@ export let viewVCE_voice = {
       let gain = viewVCE_envs.computeOscGain(osc, 2);
       td = document.createElement('td');
       td.innerHTML =
-          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinPLAIN" aria-label="OscGain[${osc + 1}]" id="OscGain[${osc + 1}]" 
+          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinPLAIN" aria-label="OscGain[${
+              osc + 1}]" id="OscGain[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,undefined)" value="${
               gain}"
 			min="0" max="100"
@@ -589,13 +597,15 @@ export let viewVCE_voice = {
         // input control so we can get its value in the onchange function
         // without any special casing
         td.innerHTML =
-            `<div class="spinwrapper"><input type="text" class="vceNum vceEditDisabled" aria-label="patchFOInputDSR[${osc + 1}]" id="patchFOInputDSR[${osc + 1}]" 
+            `<div class="spinwrapper"><input type="text" class="vceNum vceEditDisabled" aria-label="patchFOInputDSR[${
+                osc + 1}]" id="patchFOInputDSR[${osc + 1}]" 
 				value="${
                 viewVCE_voice.NullablePatchRegisterToText('' + reg)}" 
 				disabled/></div>`;
       } else {
         td.innerHTML =
-            `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinNullablePatchReg" aria-label="patchFOInputDSR[${osc + 1}]" id="patchFOInputDSR[${osc + 1}]" 
+            `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinNullablePatchReg" aria-label="patchFOInputDSR[${
+                osc + 1}]" id="patchFOInputDSR[${osc + 1}]" 
 				onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToNullablePatchRegister)" value="${
                 viewVCE_voice.NullablePatchRegisterToText('' + reg)}" 
 				min="0" max="2"
@@ -611,7 +621,8 @@ export let viewVCE_voice = {
         reg = 0;
       }
       td.innerHTML =
-          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinNullablePatchReg" aria-label="patchAdderInDSR[${osc + 1}]" id="patchAdderInDSR[${osc + 1}]" 
+          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinNullablePatchReg" aria-label="patchAdderInDSR[${
+              osc + 1}]" id="patchAdderInDSR[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToNullablePatchRegister)" value="${
               viewVCE_voice.NullablePatchRegisterToText('' + reg)}" 
 			min="0" max="2"
@@ -621,7 +632,8 @@ export let viewVCE_voice = {
       //--- Patch O
       td = document.createElement('td');
       td.innerHTML =
-          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinPlain" aria-label="patchOutputDSR[${osc + 1}]" id="patchOutputDSR[${osc + 1}]" 
+          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinPlain" aria-label="patchOutputDSR[${
+              osc + 1}]" id="patchOutputDSR[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,undefined)" value="${
               patchOutputDSR + 1}" 
 			min="1" max="2"
@@ -634,7 +646,8 @@ export let viewVCE_voice = {
       // of CSS would surely have a cleaner solution.
       td = document.createElement('td');
       td.innerHTML =
-          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinOHARM" aria-label="OHARM[${osc + 1}]" id="OHARM[${osc + 1}]" 
+          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinOHARM" aria-label="OHARM[${
+              osc + 1}]" id="OHARM[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToOHARM)" value="${
               viewVCE_voice.OHARMToText(
                   viewVCE.vce.Envelopes[osc].FreqEnvelope.OHARM)}" 
@@ -648,7 +661,8 @@ export let viewVCE_voice = {
       //--- Detn
       td = document.createElement('td');
       td.innerHTML =
-          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinFDETUN" aria-label="FDETUN[${osc + 1}]" id="FDETUN[${osc + 1}]" 
+          `<div class="spinwrapper"><input type="text" class="vceEdit vceNum spinFDETUN" aria-label="FDETUN[${
+              osc + 1}]" id="FDETUN[${osc + 1}]" 
 			onchange="viewVCE_voice.onchange(this,undefined,viewVCE_voice.TextToFDETUN)" value="${
               viewVCE_voice.FDETUNToText(
                   viewVCE.vce.Envelopes[osc].FreqEnvelope.FDETUN)}" 
@@ -666,13 +680,13 @@ export let viewVCE_voice = {
       //--- Wave
       td = document.createElement('td');
       td.innerHTML = wave;
-      td.innerHTML =
-          `<select class="vceEdit" aria-label="wkWAVE[${osc + 1}]" id="wkWAVE[${osc + 1}]" value="${wave}" 
+      td.innerHTML = `<select class="vceEdit" aria-label="wkWAVE[${
+          osc + 1}]" id="wkWAVE[${osc + 1}]" value="${wave}" 
 			onchange="viewVCE_voice.onchange(this)" disabled/>
 			<option ${
-              wave == 'Sin' ? 'selected' : ''} value="Sin">Sin</option>
+          wave == 'Sin' ? 'selected' : ''} value="Sin">Sin</option>
 			<option ${
-              wave == 'Tri' ? 'selected' : ''} value="Tri">Tri</option>
+          wave == 'Tri' ? 'selected' : ''} value="Tri">Tri</option>
 			</select>
 			`;
       tr.appendChild(td);
@@ -683,8 +697,8 @@ export let viewVCE_voice = {
       td = document.createElement('td');
       // can't use disabled attr - bootstrap styling hides it - use javascript
       // hack to make it readonnly
-      td.innerHTML =
-          `<input type="checkbox" aria-label="wkKEYPROP[${osc + 1}]" id="wkKEYPROP[${osc + 1}]" value="true" 
+      td.innerHTML = `<input type="checkbox" aria-label="wkKEYPROP[${
+          osc + 1}]" id="wkKEYPROP[${osc + 1}]" value="true" 
 			${keyprop ? ' checked ' : ''} 
 			onchange="viewVCE_voice.voicingMode ? viewVCE_voice.onchange(this) : (this.checked=!this.checked)"/>`;
       tr.appendChild(td);
@@ -699,15 +713,15 @@ export let viewVCE_voice = {
                                      ('Af ' + -filter);
       td = document.createElement('td');
       td.innerHTML = wave;
-      td.innerHTML =
-          `<select class="vceEdit" aria-label="FILTER[${osc + 1}]" id="FILTER[${osc + 1}]" value="${filter}" 
+      td.innerHTML = `<select class="vceEdit" aria-label="FILTER[${
+          osc + 1}]" id="FILTER[${osc + 1}]" value="${filter}" 
 					onchange="viewVCE_voice.onchange(this,viewVCE_voice.filterChanged)" disabled/>
 					<option ${
-              filter == 0 ? 'selected' : ''} value="0"></option>
+          filter == 0 ? 'selected' : ''} value="0"></option>
 					<option ${
-              filter < 0 ? 'selected' : ''} value="-1">Af</option>
+          filter < 0 ? 'selected' : ''} value="-1">Af</option>
 					<option ${
-              filter > 0 ? 'selected' : ''} value="${osc + 1}">Bf</option>
+          filter > 0 ? 'selected' : ''} value="${osc + 1}">Bf</option>
 					</select>
 					`;
       tr.appendChild(td);
@@ -1059,7 +1073,9 @@ ${freqDAG}
       for (let osc = 0; osc < 16; osc++) {
         viewVCE_voice.MUTE[osc] = false;
         viewVCE_voice.SOLO[osc] = false;
-        document.querySelectorAll('.vceEditToggle').forEach(el => { el.classList.remove('on'); });
+        document.querySelectorAll('.vceEditToggle').forEach(el => {
+          el.classList.remove('on');
+        });
         viewVCE_voice.sendToCSurface(null, `MUTE[${osc + 1}]`, 0)
         viewVCE_voice.sendToCSurface(null, `MUTE[${osc + 1}]`, 0)
       }
@@ -1080,11 +1096,11 @@ ${freqDAG}
         spinner = TouchSpin(el, {
           renderer: Bootstrap5Renderer,
           verticalbuttons: true,
-          verticalup: '\u25b4',      //'\u25b2',
-          verticaldown: '\u25be',    //'\u25bc',
-          buttonup_txt: '\u25b4',    //'\u25b2',
-          buttondown_txt: '\u25be'   //'\u25bc',
-        });          
+          verticalup: '\u25b4',     //'\u25b2',
+          verticaldown: '\u25be',   //'\u25bc',
+          buttonup_txt: '\u25b4',   //'\u25b2',
+          buttondown_txt: '\u25be'  //'\u25bc',
+        });
       } else {
         spinner = TouchSpin(el, {
           renderer: Bootstrap5Renderer,
@@ -1093,10 +1109,10 @@ ${freqDAG}
           verticaldown: '\u25be',    //'\u25bc',
           buttonup_txt: '\u25b4',    //'\u25b2',
           buttondown_txt: '\u25be',  //'\u25bc',
-          callback_before_calculation: function (value) {
+          callback_before_calculation: function(value) {
             return callback_before(value);
           },
-          callback_after_calculation: function (value) {
+          callback_after_calculation: function(value) {
             return callback_after(value);
           }
         });
@@ -1113,11 +1129,10 @@ ${freqDAG}
       //       break;
       //   }
       // });
-    //   el.addEventListener('change:start', (event) => {
-    //    event.preventDefault();
-    //  })
-   });
-
+      //   el.addEventListener('change:start', (event) => {
+      //    event.preventDefault();
+      //  })
+    });
   },
 
   voicingModeVisuals: function() {
@@ -1128,29 +1143,32 @@ ${freqDAG}
     // XREF: converter mappings : these are duplicated in updateFromCSurface
     if (mode) {
       // CSS for styling the buttons when disabled is HARD.  So avoid it.
-      viewVCE_voice.touchspin_init(document.querySelectorAll('.vceNum.spinNullablePatchReg'),
-        viewVCE_voice.TextToNullablePatchRegister,
-        viewVCE_voice.NullablePatchRegisterToText);
-      
-      viewVCE_voice.touchspin_init(document.querySelectorAll('.vceNum.spinOHARM'),
-        viewVCE_voice.TextToOHARM,
-        viewVCE_voice.OHARMToText);
-      viewVCE_voice.touchspin_init(document.querySelectorAll('.vceNum.spinFDETUN'),
-        viewVCE_voice.TextToFDETUN,
-        viewVCE_voice.FDETUNToText);
-      viewVCE_voice.touchspin_init(document.querySelectorAll('.vceNum.spinAmpEnv'),
-        viewVCE_envs.TextToAmpEnvValue,
-        viewVCE_envs.AmpEnvValueToText);
-      viewVCE_voice.touchspin_init(document.querySelectorAll('.vceNum.spinAmpTime'),
-        viewVCE_envs.TextToAmpTimeValue,
-        viewVCE_envs.AmpTimeValueToText);
-      viewVCE_voice.touchspin_init(document.querySelectorAll('.vceNum.spinFreqTime'),
-        viewVCE_envs.TextToFreqTimeValue,
-        viewVCE_envs.FreqTimeValueToText);
+      viewVCE_voice.touchspin_init(
+          document.querySelectorAll('.vceNum.spinNullablePatchReg'),
+          viewVCE_voice.TextToNullablePatchRegister,
+          viewVCE_voice.NullablePatchRegisterToText);
+
+      viewVCE_voice.touchspin_init(
+          document.querySelectorAll('.vceNum.spinOHARM'),
+          viewVCE_voice.TextToOHARM, viewVCE_voice.OHARMToText);
+      viewVCE_voice.touchspin_init(
+          document.querySelectorAll('.vceNum.spinFDETUN'),
+          viewVCE_voice.TextToFDETUN, viewVCE_voice.FDETUNToText);
+      viewVCE_voice.touchspin_init(
+          document.querySelectorAll('.vceNum.spinAmpEnv'),
+          viewVCE_envs.TextToAmpEnvValue, viewVCE_envs.AmpEnvValueToText);
+      viewVCE_voice.touchspin_init(
+          document.querySelectorAll('.vceNum.spinAmpTime'),
+          viewVCE_envs.TextToAmpTimeValue, viewVCE_envs.AmpTimeValueToText);
+      viewVCE_voice.touchspin_init(
+          document.querySelectorAll('.vceNum.spinFreqTime'),
+          viewVCE_envs.TextToFreqTimeValue, viewVCE_envs.FreqTimeValueToText);
       // plain number variant:
-      viewVCE_voice.touchspin_init(document.querySelectorAll('.vceNum.spinPLAIN'), undefined, undefined);
+      viewVCE_voice.touchspin_init(
+          document.querySelectorAll('.vceNum.spinPLAIN'), undefined, undefined);
       // make any plain-text spans align:
-      document.querySelectorAll('.spinNOSPIN').forEach(el => { el.classList.add('spinNOSPIN-Enabled') });
+      document.querySelectorAll('.spinNOSPIN')
+          .forEach(el => {el.classList.add('spinNOSPIN-Enabled')});
     }
 
     // Load/Save menu items get disabled/enabled:
@@ -1177,11 +1195,17 @@ ${freqDAG}
       document.querySelector('#add-osc').classList.remove('disabled');
     }
 
-    document.querySelectorAll('.vceEdit').forEach(el => { el.disabled = !mode; });
+    document.querySelectorAll('.vceEdit').forEach(el => {
+      el.disabled = !mode;
+    });
     if (mode) {
-      document.querySelectorAll('.vceEditToggleText').forEach(el => { el.style.display = 'block'; });
+      document.querySelectorAll('.vceEditToggleText').forEach(el => {
+        el.style.display = 'block';
+      });
     } else {
-      document.querySelectorAll('.vceEditToggleText').forEach(el => { el.style.display = 'none'; });
+      document.querySelectorAll('.vceEditToggleText').forEach(el => {
+        el.style.display = 'none';
+      });
     }
     document.getElementById('voiceModeButtonImg').src =
         `static/images/red-button-${

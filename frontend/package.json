@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build:dev": "vite build --minify false --mode development",
-    "build": "vite build --level info --mode production",
+    "build": "vite build --mode production",
     "preview": "vite preview"
   },
   "dependencies": {

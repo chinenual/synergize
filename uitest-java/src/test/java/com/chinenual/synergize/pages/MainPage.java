@@ -48,4 +48,11 @@ public class MainPage {
         }
     }
 
+    public static WebElement helpButton() {
+        return driver.findElement(AppiumBy.accessibilityId("helpButton"));
+    }
+    
+    public static WebElement preferencesMenuItem() {
+        return driver.findElement(AppiumBy.accessibilityId("preferencesMenuItem"));
+    }
 }

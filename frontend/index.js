@@ -45,11 +45,13 @@ export let index = {
   },
 
   runUnitTests: function () {
-    if (viewVCE_voice.testConversionFunctions()) {
-      index.errorNotification("viewVCE_voice.testConversionFunctions failed");
+    let result = viewVCE_voice.testConversionFunctions();
+    if (result != null) {
+      index.errorNotification("viewVCE_voice.testConversionFunctions failed " + result);
     }
-    if (!viewVCE_envs.testConversionFunctions()) {
-      index.errorNotification("viewVCE_envs.testConversionFunctions failed");
+    result = viewVCE_envs.testConversionFunctions();
+    if (result != null) {
+      index.errorNotification("viewVCE_envs.testConversionFunctions failed " + result);
     }
   },
 

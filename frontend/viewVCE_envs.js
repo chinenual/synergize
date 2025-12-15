@@ -254,14 +254,16 @@ export let viewVCE_envs = {
 
   testConversionFunctions: function() {
     let ok = true;
+    let result = [];
     for (let i = 0; i <= 255; i++) {
       let scaled = viewVCE_envs.scaleFreqEnvValue(i);
       let unscaled = viewVCE_envs.unscaleFreqEnvValue(scaled);
       if (i != unscaled) {
         ok = false;
-        console.log(
-            'ERROR: freqEnvValue ' + i + ' totext: ' + scaled +
-            ' reversed to ' + unscaled)
+        let err = 'ERROR: freqEnvValue ' + i + ' totext: ' + scaled +
+            ' reversed to ' + unscaled;
+        result.push(err);
+        console.log(err);
       }
     }
     for (let i = 55; i <= 127; i++) {
@@ -269,9 +271,10 @@ export let viewVCE_envs = {
       let unscaled = viewVCE_envs.unscaleAmpEnvValue(scaled);
       if (i != unscaled) {
         ok = false;
-        console.log(
-            'ERROR: ampEnvValue ' + i + ' totext: ' + scaled + ' reversed to ' +
-            unscaled)
+        let err = 'ERROR: ampEnvValue ' + i + ' totext: ' + scaled +
+            ' reversed to ' + unscaled;
+        result.push(err);
+        console.log(err);
       }
     }
     for (let i = 0; i <= 79; i++) {
@@ -279,9 +282,10 @@ export let viewVCE_envs = {
       let unscaled = viewVCE_envs.unscaleFreqTimeValue(scaled);
       if (i != unscaled) {
         ok = false;
-        console.log(
-            'ERROR: ampTimeValue ' + i + ' totext: ' + scaled +
-            ' reversed to ' + unscaled)
+        let err = 'ERROR: ampTimeValue ' + i + ' totext: ' + scaled +
+            ' reversed to ' + unscaled;
+        result.push(err);
+        console.log(err);
       }
     }
     for (let i = 0; i <= 79; i++) {
@@ -289,9 +293,10 @@ export let viewVCE_envs = {
       let unscaled = viewVCE_envs.unscaleAmpTimeValue(scaled);
       if (i != unscaled) {
         ok = false;
-        console.log(
-            'ERROR: ampTimeValue ' + i + ' totext: ' + scaled +
-            ' reversed to ' + unscaled)
+        let err = 'ERROR: ampTimeValue ' + i + ' totext: ' + scaled +
+            ' reversed to ' + unscaled;
+        result.push(err);
+        console.log(err);
       }
     }
     // Spot check some values to ensure the forumlae are computing same
@@ -347,15 +352,16 @@ export let viewVCE_envs = {
         let scaled = expect.func(expect.arr[i][0]);
         if (scaled != expect.arr[i][1]) {
           ok = false;
-          console.log(
-              'ERROR: ' + expect.name + '(' + expect.arr[i][0] +
-              ') == ' + scaled + ', expected ' + expect.arr[i][1]);
+          let err = 'ERROR: ' + expect.name + '(' + expect.arr[i][0] +
+              ') == ' + scaled + ', expected ' + expect.arr[i][1];
+          result.push(err);
+          console.log(err);
         }
       }
     }
     console.log(
         'viewVCE_envs.testConversionFunctions: ' + (ok ? 'PASS' : 'FAIL'));
-    return ok;
+    return ok ? null : result;
   },
 
   unsetFloatVals: function() {
@@ -563,8 +569,10 @@ export let viewVCE_envs = {
       }
 
       if (osc == visibleOsc) {
-        document.querySelector('#gainAmpLow').value = viewVCE_envs.computeOscGain(osc, 0);
-        document.querySelector('#gainAmpUp').value = viewVCE_envs.computeOscGain(osc, 1);
+        document.querySelector('#gainAmpLow').value =
+            viewVCE_envs.computeOscGain(osc, 0);
+        document.querySelector('#gainAmpUp').value =
+            viewVCE_envs.computeOscGain(osc, 1);
       }
       // update the Voice tab
       document.getElementById(`OscGain[${osc + 1}]`).value =
@@ -757,22 +765,27 @@ export let viewVCE_envs = {
     if (env.ENVTYPE != 1 && env.SUSTAINPT > 0) {
       //$(`#env${envid}Loop\\[${env.SUSTAINPT}\\] option[value='S']`)
       //    .prop('selected', true);
-      document.querySelector(`#env${envid}Loop\\[${env.SUSTAINPT}\\]`).value = 'S';
+      document.querySelector(`#env${envid}Loop\\[${env.SUSTAINPT}\\]`).value =
+          'S';
     }
     if (env.ENVTYPE != 1 && env.LOOPPT > 0) {
       let v = env.ENVTYPE == 3 ? 'L' : 'R'
       //$(`#env${envid}Loop\\[${env.LOOPPT}\\] option[value='${v}']`)
       //    .prop('selected', true);
       document.querySelector(`#env${envid}Loop\\[${env.LOOPPT}\\]`).value = v;
-              }
+    }
 
     // only show accelleration values if type1 envelope
     if (env.ENVTYPE === 1) {
-      document.querySelectorAll(`.type1accel div.${envid}`).forEach(el => { el.style.display = 'block'; });
+      document.querySelectorAll(`.type1accel div.${envid}`).forEach(el => {
+        el.style.display = 'block';
+      });
       document.querySelector(`#accel${envid}Low`).value = env.SUSTAINPT;
       document.querySelector(`#accel${envid}Up`).value = env.LOOPPT;
     } else {
-      document.querySelectorAll(`.type1accel div.${envid}`).forEach(el => { el.style.display = 'none'; });
+      document.querySelectorAll(`.type1accel div.${envid}`).forEach(el => {
+        el.style.display = 'none';
+      });
     }
 
     console.log('resulting env: ' + envid);
@@ -835,8 +848,10 @@ export let viewVCE_envs = {
 
     // update the floatVal so gains work
     viewVCE_envs.unsetFloatVals();
-    document.querySelector('#gainAmpLow').value = viewVCE_envs.computeOscGain(toOsc - 1, 0);
-    document.querySelector('#gainAmpUp').value = viewVCE_envs.computeOscGain(toOsc - 1, 1);
+    document.querySelector('#gainAmpLow').value =
+        viewVCE_envs.computeOscGain(toOsc - 1, 0);
+    document.querySelector('#gainAmpUp').value =
+        viewVCE_envs.computeOscGain(toOsc - 1, 1);
     // update the Voice tab
     document.getElementById(`OscGain[${toOsc}]`).value =
         viewVCE_envs.computeOscGain(toOsc - 1, 2)
@@ -1001,7 +1016,8 @@ export let viewVCE_envs = {
           if (extraarg == undefined) {
             // update the floatVal so gains work
             viewVCE_envs.unsetFloatVals();
-            document.querySelector('#gainAmpLow').value = viewVCE_envs.computeOscGain(osc - 1, 0);
+            document.querySelector('#gainAmpLow').value =
+                viewVCE_envs.computeOscGain(osc - 1, 0);
             // update the Voice tab
             document.getElementById(`OscGain[${osc}]`).value =
                 viewVCE_envs.computeOscGain(osc - 1, 2)
@@ -1017,7 +1033,8 @@ export let viewVCE_envs = {
           if (extraarg == undefined) {
             // update the floatVal so gains work
             viewVCE_envs.unsetFloatVals();
-            document.querySelector('#gainAmpUp').value = viewVCE_envs.computeOscGain(osc - 1, 1);
+            document.querySelector('#gainAmpUp').value =
+                viewVCE_envs.computeOscGain(osc - 1, 1);
             document.getElementById(`OscGain[${osc}]`).value =
                 viewVCE_envs.computeOscGain(osc - 1, 2)
             console.log(
@@ -1301,13 +1318,16 @@ export let viewVCE_envs = {
         null, `num-amp-env-points`, envelopes.AmpEnvelope.NPOINTS);
 
     // clear old values:
-    document.querySelector('#envTable td.val input').value ='';
+    document.querySelector('#envTable td.val input').value = '';
     document.querySelector('#envTable td.total span').innerHTML = ('');
     // clear the loop points
     document.querySelector(`#envTable select option[value='']`).selected = true;
-    document.querySelector(`#envTable select option[value='L']`).selected = false;
-    document.querySelector(`#envTable select option[value='S']`).selected = false;
-    document.querySelector(`#envTable select option[value='R']`).selected = false;
+    document.querySelector(`#envTable select option[value='L']`).selected =
+        false;
+    document.querySelector(`#envTable select option[value='S']`).selected =
+        false;
+    document.querySelector(`#envTable select option[value='R']`).selected =
+        false;
 
     // fill in freq env data:
 
@@ -1323,19 +1343,24 @@ export let viewVCE_envs = {
     for (let i = 0; i < 16; i++) {
       // completely hide the rows for rows not used by either envelope
       let tr = document.querySelector(`#envTableTr\\[${(i + 1)}\\]`);
-      console.log('tr',i, tr)
+      console.log('tr', i, tr)
       if (i <
           Math.max(
               envelopes.FreqEnvelope.NPOINTS, envelopes.AmpEnvelope.NPOINTS)) {
         tr.style.display = 'block';
-      } else {
+      }
+      else {
         tr.style.display = 'hide';
       }
     }
     if (viewVCE_voice.voicingMode) {
-      document.querySelectorAll('.listplusminus div').forEach(el => { el.style.display = 'block'; });
+      document.querySelectorAll('.listplusminus div').forEach(el => {
+        el.style.display = 'block';
+      });
     } else {
-      document.querySelectorAll('.listplusminus div').forEach(el => { el.style.display = 'none'; });
+      document.querySelectorAll('.listplusminus div').forEach(el => {
+        el.style.display = 'none';
+      });
     }
     viewVCE_voice.sendToCSurface(
         null, `num-freq-env-points`, envelopes.FreqEnvelope.NPOINTS);
@@ -1344,9 +1369,13 @@ export let viewVCE_envs = {
 
     // only show accelleration values if type1 envelope
     if (envelopes.FreqEnvelope.ENVTYPE === 1) {
-      document.querySelectorAll('.type1accel div.Freq').forEach(el => { el.style.display = 'block'; });
-      document.querySelector('#accelFreqLow').value=envelopes.FreqEnvelope.SUSTAINPT;
-      document.querySelector('#accelFreqUp').value=envelopes.FreqEnvelope.LOOPPT;
+      document.querySelectorAll('.type1accel div.Freq').forEach(el => {
+        el.style.display = 'block';
+      });
+      document.querySelector('#accelFreqLow').value =
+          envelopes.FreqEnvelope.SUSTAINPT;
+      document.querySelector('#accelFreqUp').value =
+          envelopes.FreqEnvelope.LOOPPT;
       viewVCE_voice.sendToCSurface(null, `freq-env-accel-visible`, 1);
       if (animate) {
         viewVCE_voice.sendToCSurface(
@@ -1355,7 +1384,9 @@ export let viewVCE_envs = {
             null, `accelFreqUp`, envelopes.FreqEnvelope.LOOPPT);
       }
     } else {
-      document.querySelectorAll('.type1accel div.Freq').forEach(el => { el.style.display = 'none'; });
+      document.querySelectorAll('.type1accel div.Freq').forEach(el => {
+        el.style.display = 'none';
+      });
       viewVCE_voice.sendToCSurface(null, `freq-env-accel-visible`, 0);
       if (animate) {
         viewVCE_voice.sendToCSurface(null, `accelFreqLow`, 0);
@@ -1364,9 +1395,13 @@ export let viewVCE_envs = {
     }
     // only show accelleration values if type1 envelope
     if (envelopes.AmpEnvelope.ENVTYPE === 1) {
-      document.querySelectorAll('.type1accel div.Amp').forEach(el => { el.style.display = 'block'; });
-      document.querySelector('#accelAmpLow').value=envelopes.AmpEnvelope.SUSTAINPT;
-      document.querySelector('#accelAmpUp').value-envelopes.AmpEnvelope.LOOPPT;
+      document.querySelectorAll('.type1accel div.Amp').forEach(el => {
+        el.style.display = 'block';
+      });
+      document.querySelector('#accelAmpLow').value =
+          envelopes.AmpEnvelope.SUSTAINPT;
+      document.querySelector('#accelAmpUp').value -
+          envelopes.AmpEnvelope.LOOPPT;
       viewVCE_voice.sendToCSurface(null, `amp-env-accel-visible`, 1);
       if (animate) {
         viewVCE_voice.sendToCSurface(
@@ -1375,31 +1410,42 @@ export let viewVCE_envs = {
             null, `accelAmpUp`, envelopes.AmpEnvelope.LOOPPT);
       }
     } else {
-      document.querySelectorAll('.type1accel div.Amp').forEach(el => { el.style.display = 'none'; });
+      document.querySelectorAll('.type1accel div.Amp').forEach(el => {
+        el.style.display = 'none';
+      });
       viewVCE_voice.sendToCSurface(null, `amp-env-accel-visible`, 0);
       if (animate) {
         viewVCE_voice.sendToCSurface(null, `accelAmpLow`, 0);
         viewVCE_voice.sendToCSurface(null, `accelAmpUp`, 0);
       }
     }
-    document.querySelector('#gainAmpLow').value=viewVCE_envs.computeOscGain(oscIndex, 0);
-    document.querySelector('#gainAmpUp').value=viewVCE_envs.computeOscGain(oscIndex, 1);
+    document.querySelector('#gainAmpLow').value =
+        viewVCE_envs.computeOscGain(oscIndex, 0);
+    document.querySelector('#gainAmpUp').value =
+        viewVCE_envs.computeOscGain(oscIndex, 1);
     if (animate) {
       console.log(
-          'GAIN TO CS: ' + document.querySelector('#gainAmpLow').value + ' and ' +
-          document.querySelector('#gainAmpUp').value)
-      viewVCE_voice.sendToCSurface(null, `gainAmpLow`, document.querySelector('#gainAmpLow').value);
-      viewVCE_voice.sendToCSurface(null, `gainAmpUp`, document.querySelector('#gainAmpUp').value);
+          'GAIN TO CS: ' + document.querySelector('#gainAmpLow').value +
+          ' and ' + document.querySelector('#gainAmpUp').value)
+      viewVCE_voice.sendToCSurface(
+          null, `gainAmpLow`, document.querySelector('#gainAmpLow').value);
+      viewVCE_voice.sendToCSurface(
+          null, `gainAmpUp`, document.querySelector('#gainAmpUp').value);
     }
 
     for (let i = envelopes.FreqEnvelope.NPOINTS; i < 16; i++) {
-      document.querySelector(`#envFreqLoop\\[${i + 1}\\]`).style.display = 'none';
-      document.querySelector(`#envFreqLowVal\\[${i + 1}\\]`).style.display = 'none';
-      document.querySelector(`#envFreqUpVal\\[${i + 1}\\]`).style.display = 'none';
+      document.querySelector(`#envFreqLoop\\[${i + 1}\\]`).style.display =
+          'none';
+      document.querySelector(`#envFreqLowVal\\[${i + 1}\\]`).style.display =
+          'none';
+      document.querySelector(`#envFreqUpVal\\[${i + 1}\\]`).style.display =
+          'none';
       if (i != 0) {
         // no xxxTime[1] on the display
-        document.querySelector(`#envFreqLowTime\\[${i + 1}\\]`).style.display = 'none';
-        document.querySelector(`#envFreqUpTime\\[${i + 1}\\]`).style.display = 'none';
+        document.querySelector(`#envFreqLowTime\\[${i + 1}\\]`).style.display =
+            'none';
+        document.querySelector(`#envFreqUpTime\\[${i + 1}\\]`).style.display =
+            'none';
       }
       if (animate) {
         viewVCE_voice.sendToCSurface(null, `envFreqLowVal[${i + 1}]`, 0);
@@ -1412,13 +1458,18 @@ export let viewVCE_envs = {
       }
     }
     for (let i = 0; i < envelopes.FreqEnvelope.NPOINTS; i++) {
-      document.querySelector(`#envFreqLoop\\[${i + 1}\\]`).style.display = 'block';
-      document.querySelector(`#envFreqLowVal\\[${i + 1}\\]`).style.display = 'block';
-      document.querySelector(`#envFreqUpVal\\[${i + 1}\\]`).style.display = 'block';
+      document.querySelector(`#envFreqLoop\\[${i + 1}\\]`).style.display =
+          'block';
+      document.querySelector(`#envFreqLowVal\\[${i + 1}\\]`).style.display =
+          'block';
+      document.querySelector(`#envFreqUpVal\\[${i + 1}\\]`).style.display =
+          'block';
       if (i != 0) {
         // no xxxTime[1] on the display
-        document.querySelector(`#envFreqLowTime\\[${i + 1}\\]`).style.display = 'block';
-        document.querySelector(`#envFreqUpTime\\[${i + 1}\\]`).style.display = 'block';
+        document.querySelector(`#envFreqLowTime\\[${i + 1}\\]`).style.display =
+            'block';
+        document.querySelector(`#envFreqUpTime\\[${i + 1}\\]`).style.display =
+            'block';
       }
       // table is logically in groups of 4
       let freqLow = viewVCE_envs.scaleFreqEnvValue(
@@ -1502,11 +1553,16 @@ export let viewVCE_envs = {
     for (let i = envelopes.FreqEnvelope.NPOINTS; i < 16; i++) {
       // hide unused rows
 
-      document.querySelector(`#envAmpLoop\\[${i + 1}\\]`).style.display = 'none';
-      document.querySelector(`#envAmpLowVal\\[${i + 1}\\]`).style.display = 'none';
-      document.querySelector(`#envAmpUpVal\\[${i + 1}\\]`).style.display = 'none';
-      document.querySelector(`#envAmpLowTime\\[${i + 1}\\]`).style.display = 'none';
-      document.querySelector(`#envAmpUpTime\\[${i + 1}\\]`).style.display = 'none';
+      document.querySelector(`#envAmpLoop\\[${i + 1}\\]`).style.display =
+          'none';
+      document.querySelector(`#envAmpLowVal\\[${i + 1}\\]`).style.display =
+          'none';
+      document.querySelector(`#envAmpUpVal\\[${i + 1}\\]`).style.display =
+          'none';
+      document.querySelector(`#envAmpLowTime\\[${i + 1}\\]`).style.display =
+          'none';
+      document.querySelector(`#envAmpUpTime\\[${i + 1}\\]`).style.display =
+          'none';
 
       if (animate) {
         viewVCE_voice.sendToCSurface(null, `envAmpLowVal[${i + 1}]`, 0);
@@ -1522,11 +1578,16 @@ export let viewVCE_envs = {
     datasets[ampUpIdx].data.push({x: 0, y: 0});
 
     for (let i = 0; i < envelopes.AmpEnvelope.NPOINTS; i++) {
-      document.querySelector(`#envAmpLoop\\[${i + 1}\\]`).style.display = 'block';
-      document.querySelector(`#envAmpLowVal\\[${i + 1}\\]`).style.display = 'block';
-      document.querySelector(`#envAmpUpVal\\[${i + 1}\\]`).style.display = 'block';
-      document.querySelector(`#envAmpLowTime\\[${i + 1}\\]`).style.display = 'block';
-      document.querySelector(`#envAmpUpTime\\[${i + 1}\\]`).style.display = 'block';
+      document.querySelector(`#envAmpLoop\\[${i + 1}\\]`).style.display =
+          'block';
+      document.querySelector(`#envAmpLowVal\\[${i + 1}\\]`).style.display =
+          'block';
+      document.querySelector(`#envAmpUpVal\\[${i + 1}\\]`).style.display =
+          'block';
+      document.querySelector(`#envAmpLowTime\\[${i + 1}\\]`).style.display =
+          'block';
+      document.querySelector(`#envAmpUpTime\\[${i + 1}\\]`).style.display =
+          'block';
 
       // table is logically in groups of 4.
       // "j" accounts for the difference in column index due to the

@@ -5,6 +5,8 @@ import io.appium.java_client.mac.Mac2Driver;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 
 import java.io.File;
+import org.junit.jupiter.api.ClassOrderer;
+import org.junit.jupiter.api.TestClassOrder;
 import org.junit.platform.suite.api.AfterSuite;
 import org.junit.platform.suite.api.BeforeSuite;
 import org.junit.platform.suite.api.SelectPackages;
@@ -28,7 +30,7 @@ public class IntegrationTestSuite {
             System.out.println("Started Appium service: " + service.getUrl());
 
             DesiredCapabilities capabilities = new DesiredCapabilities();
-            String path = new File("../bin/Synergize.dev.app").getCanonicalPath();
+            String path = new File("../bin/Synergize.app").getCanonicalPath();
             String[] args = {"-MOCKSYNIO", "-SERIALVERBOSE"};
             System.out.println("APP PATH: " + path);
             capabilities.setCapability("appium:appPath", path);

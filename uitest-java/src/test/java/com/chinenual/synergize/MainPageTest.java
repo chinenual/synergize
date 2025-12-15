@@ -2,12 +2,15 @@ package com.chinenual.synergize;
 
 import com.chinenual.synergize.pages.MainPage;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.TestMethodOrder;
 
+@DisplayName("MainPageTest display name")
+@Order(1)
 @TestMethodOrder(OrderAnnotation.class)
 public class MainPageTest {
 
