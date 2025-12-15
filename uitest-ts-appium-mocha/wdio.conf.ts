@@ -56,7 +56,8 @@ export const config: WebdriverIO.Config = {
     capabilities: [{
         platformName: 'Mac',
         'appium:automationName': 'Mac2',
-        'appium:appPath': resolve('../bin/Synergize.dev.app')
+        'appium:appPath': resolve('../bin/Synergize.dev.app'),
+        'appium:arguments': ['-MOCKSYNIO','-SERIALVERBOSE']
     }],
 
     //
