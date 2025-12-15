@@ -10,6 +10,7 @@ import {syn2midi} from './syn2midi';
 import {viewCRT} from './viewCRT';
 import {viewVCE} from './viewVCE';
 import {viewVCE_voice} from './viewVCE_voice';
+import {viewVCE_envs} from './viewVCE_envs';
 
 // Import bootstrap custom CSS
 import './scss/styles.scss'
@@ -38,7 +39,18 @@ export let index = {
     index.updateConnectionStatus('', '')
     // Explore default path
     index.explore();
+
+    index.runUnitTests();
     /*})*/
+  },
+
+  runUnitTests: function () {
+    if (viewVCE_voice.testConversionFunctions()) {
+      index.errorNotification("viewVCE_voice.testConversionFunctions failed");
+    }
+    if (!viewVCE_envs.testConversionFunctions()) {
+      index.errorNotification("viewVCE_envs.testConversionFunctions failed");
+    }
   },
 
   browserOpenURL: function(url) {
