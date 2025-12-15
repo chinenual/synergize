@@ -1,5 +1,6 @@
 package com.chinenual.synergize;
 
+import com.chinenual.synergize.pages.MainPage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -11,6 +12,7 @@ import io.appium.java_client.service.local.AppiumDriverLocalService;
 
 import java.io.File;
 import java.net.URI;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.openqa.selenium.NoSuchElementException;
@@ -33,11 +35,12 @@ public class IntegrationTest {
             System.out.println("Started Appium service: " + service.getUrl());
 
             DesiredCapabilities capabilities = new DesiredCapabilities();
-            String path = new File("../../bin/Synergize.dev.app").getCanonicalPath();
+            String path = new File("../bin/Synergize.dev.app").getCanonicalPath();
             String[] args = {"-MOCKSYNIO", "-SERIALVERBOSE"};
             System.out.println("APP PATH: " + path);
             capabilities.setCapability("appium:appPath", path);
             capabilities.setCapability("appium:arguments", args);
+            capabilities.setCapability("appium:bundleId", "com.chinenual.synergize");
 
             driver = new Mac2Driver(capabilities);
 
@@ -50,32 +53,28 @@ public class IntegrationTest {
         }
     }
 
-    String getChildText(WebElement el) {
-        String result = "";
-        for (WebElement child : el.findElements(AppiumBy.xpath("./child::*"))) {
-            result += child.getText();
+    @AfterAll
+    public static void teardown() {
+        if (driver != null) {
+            driver.quit();
         }
-        System.out.println("**** INNER TEXT: /"+result+"/");
-        return result;
     }
 
     @Test
     @Order(1)
+    public void initialPageTitle() {
+        Assertions.assertEquals("Synergize", MainPage.pageTitle());
+    }
+    
+    @Test
+    @Order(2)
     public void initialSynergyStatus() {
-        WebElement el = driver.findElement(AppiumBy.accessibilityId("synergyName"));
-        Assertions.assertEquals("not connected", getChildText(el));
+        Assertions.assertEquals("not connected", MainPage.synergyStatus());
     }
 
     @Test
-    @Order(2)
+    @Order(3)
     public void initialControlSurfaceStatus() {
-        try {
-            WebElement el = driver.findElement(AppiumBy.accessibilityId("controlSurfaceName"));
-            Assertions.assertEquals("", getChildText(el));
-        }
-        catch (NoSuchElementException exc) {
-        // expected when the text is empty
-        // NOP
-        }
+        Assertions.assertEquals("", MainPage.controlSurfaceStatus());
     }
 }
