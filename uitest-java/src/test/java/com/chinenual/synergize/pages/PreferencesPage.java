@@ -21,4 +21,11 @@ public class PreferencesPage {
         return el.getText();
     }
              
+    public static WebElement libraryPathInput() {
+        return driver.findElement(AppiumBy.accessibilityId("libraryPath"));
+    }
+
+    public static WebElement saveButton() {
+        return driver.findElement(AppiumBy.accessibilityId("saveButton"));
+    }
 }

@@ -47,6 +47,15 @@ public class MainPage {
             return "";
         }
     }
+    public static String pathText() {
+        try {
+            WebElement el = driver.findElement(AppiumBy.accessibilityId("path"));
+            return getChildText(el);
+        } catch (NoSuchElementException exc) {
+            // expected when the text is empty - XCUI tree seems to omit the element of the text is empty
+            return "";
+        }
+    }
 
     public static WebElement helpButton() {
         return driver.findElement(AppiumBy.accessibilityId("helpButton"));

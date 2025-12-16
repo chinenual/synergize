@@ -8,9 +8,10 @@ import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-@DisplayName("MainPageTest display name")
 @Order(1)
+@ExtendWith(ScreenshotOnFailureExtension.class)
 @TestMethodOrder(OrderAnnotation.class)
 public class MainPageTest {
 
