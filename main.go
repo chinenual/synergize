@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"io/ioutil"
 
 	"github.com/chinenual/synergize/seq"
@@ -26,14 +27,13 @@ var (
 
 // Application Vars
 var (
-	port              = flag.String("port", getDefaultPort(), "the serial device")
-	baud              = flag.Uint("baud", getDefaultBaud(), "the serial baud rate")
-	vst               = flag.Uint("vst", 0, "port for the VST instrument")
-	serial            = flag.Bool("serial", false, "use the serial port even if a VST is available")
+	port     = flag.String("port", getDefaultPort(), "the serial device")
+	baud     = flag.Uint("baud", getDefaultBaud(), "the serial baud rate")
+	vst      = flag.Uint("vst", 0, "port for the VST instrument")
+	serial   = flag.Bool("serial", false, "use the serial port even if a VST is available")
+	loglevel = flag.String("loglevel", "INFO", "Set log level (DEBUG,INFO,WARN or ERROR)")
+	// "testing" params:
 	record            = flag.String("RECORD", "", "capture bytes to <record>.in and <record>.out")
-	uitest            = flag.Int("UITEST", 0, "alter startup to support automated testing (specifies listening port)")
-	loglevel          = flag.String("loglevel", "INFO", "Set log level (DEBUG,INFO,WARN or ERROR)")
-	provisionOnly     = flag.Bool("PROVISION", false, "run the provisioner and then exit")
 	serialVerboseFlag = flag.Bool("SERIALVERBOSE", false, "Show each byte operation through the serial port")
 	verboseOscIn      = flag.Bool("OSCINVERBOSE", false, "Show OSC input events")
 	verboseOscOut     = flag.Bool("OSCOUTVERBOSE", false, "Show OSC output events")
@@ -48,8 +48,8 @@ var (
 	loadsyn           = flag.String("LOADSYN", "", "load the named SYN file into Synergy")
 	convertsyn        = flag.String("SYN2MIDI", "", "Convert sequencer events from the named SYN file to MIDI")
 	tempoBPM          = flag.Float64("SYN2MIDI-BPM", 120.0, "Tempo for converted MIDI files")
-
-	synver = flag.Bool("SYNVER", false, "Print the firmware version of the connected Synergy")
+	cwd               = flag.String("CWD", "", "Change the working directory of the app")
+	synver            = flag.Bool("SYNVER", false, "Print the firmware version of the connected Synergy")
 
 	AppVersion string
 	OsVersion  string
@@ -112,6 +112,11 @@ func setVersion() {
 
 // platform specific config to ensure logs and preferences go to reasonable locations
 func getWorkingDirectory() (path string) {
+	if *cwd != "" {
+		if err := os.Chdir(*cwd); err != nil {
+			fmt.Printf("ERROR: Could not chdir to %s: %v\n", *cwd, err)
+		}
+	}
 	// don't do this if we are running from the source tree
 	_, err := os.Stat("bundler.json")
 	if !os.IsNotExist(err) {
