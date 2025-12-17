@@ -462,9 +462,9 @@ export let index = {
     document.getElementById('VCEfiles').appendChild(div)
   },
   explore: async function(path) {
+    console.log('explore:', path);
     if (path == undefined) path = '';
     try {
-      console.log('explore:', path);
       let exploration = await UIService.Explore(path);
       console.log('exploration:', exploration);
 
