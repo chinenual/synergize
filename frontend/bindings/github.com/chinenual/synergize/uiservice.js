@@ -195,6 +195,30 @@ export function LoadSYN(path) {
 }
 
 /**
+ * @param {any[]} args
+ * @returns {$CancellablePromise<void>}
+ */
+export function LogError(...args) {
+    return $Call.ByID(1725473971, args);
+}
+
+/**
+ * @param {any[]} args
+ * @returns {$CancellablePromise<void>}
+ */
+export function LogInfo(...args) {
+    return $Call.ByID(1324428591, args);
+}
+
+/**
+ * @param {any[]} args
+ * @returns {$CancellablePromise<void>}
+ */
+export function LogWarn(...args) {
+    return $Call.ByID(3857120939, args);
+}
+
+/**
  * @param {string} path
  * @returns {$CancellablePromise<data$0.CRT>}
  */

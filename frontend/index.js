@@ -18,13 +18,37 @@ import './scss/styles.scss'
 // Import all of Bootstrap's JS
 import * as bootstrap from 'bootstrap';
 
+// hook the console log to log both to the browser console, but also to the backend
+const orig_consoleLog = console.log;
+const orig_consoleInfo= console.info;
+const orig_consoleWarn = console.warn;
+const orig_consoleError = console.error;
+function redirectConsole() {
+  console.log = function (...args) {
+    orig_consoleLog(...args);
+    UIService.LogInfo("LOG", args);
+  }
+  console.info = function (...args) {
+    orig_consoleInfo(...args);
+    UIService.LogInfo("INFO", args);
+  }
+  console.warn = function (...args) {
+    orig_consoleWarn(...args);
+    UIService.LogWarn("WARN", args);
+  }
+  console.error = function (...args) {
+    orig_consoleError(...args);
+    UIService.LogError("ERROR", args);
+  }
+}
+redirectConsole();
+
 export let index = {
   DEBOUNCE_WAIT_SHORT: 50,
   DEBOUNCE_WAIT: 250,
 
-  init: function() {
-    console.log('dx2syn', dx2syn);
-
+  init: function () {
+    console.log("TOP OF INIT");
     dx2syn.init();
     syn2midi.init();
     // make sure external web links open in system browser - not the

@@ -33,6 +33,21 @@ type ConnectionStatusResponse struct {
 	ControlSurfaceName string
 }
 
+func (s *UIService) LogInfo(args ...interface{}) {
+	logger.Infof("JS CONSOLE: %v\n", args)
+	return
+}
+
+func (s *UIService) LogWarn(args ...interface{}) {
+	logger.Warnf("JS CONSOLE: %v\n", args)
+	return
+}
+
+func (s *UIService) LogError(args ...interface{}) {
+	logger.Errorf("JS CONSOLE: %v\n", args)
+	return
+}
+
 func (s *UIService) GetVersion() (version string, newVersionAvailable bool, err error) {
 	version = AppVersion
 	newVersionAvailable = CheckForNewVersion(false, io.SynergyConnectionType(), osc.ControlSurfaceConfigured())
