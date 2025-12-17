@@ -9,6 +9,10 @@ permalink: /docs/release-notes
 
 # Release Notes
 
+## 3.0.0-alpha1
+
+* Technology refresh.  Changes the underlying graphics system to use Webview (via Wails) instead of Electron (via astilectron).  Other dependencies updated to latest versions.
+
 ## 2.6.2
 
 * Fixes [issue #82](https://github.com/chinenual/synergize/issues/82):

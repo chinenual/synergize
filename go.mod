@@ -3,8 +3,6 @@ module github.com/chinenual/synergize
 go 1.24.0
 
 require (
-	github.com/asticode/go-astilectron v0.27.0
-	github.com/asticode/go-astilectron-bootstrap v0.4.14
 	github.com/chinenual/dnssd v1.1.2
 	github.com/hypebeast/go-osc v0.0.0-20200115085105-85fee7fed692
 	github.com/jacobsa/go-serial v0.0.0-20180131005756-15cf729a72d4
@@ -19,8 +17,6 @@ require (
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
-require github.com/asticode/go-astikit v0.29.1 // indirect
-
 require github.com/wailsapp/wails/v3 v3.0.0-alpha.44
 
 require (
@@ -28,9 +24,6 @@ require (
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.1.6 // indirect
 	github.com/adrg/xdg v0.5.3 // indirect
-	github.com/akavel/rsrc v0.8.0 // indirect
-	github.com/asticode/go-astilectron-bundler v0.7.12 // indirect
-	github.com/asticode/go-bindata v1.0.0 // indirect
 	github.com/bep/debounce v1.2.1 // indirect
 	github.com/cloudflare/circl v1.6.0 // indirect
 	github.com/cyphar/filepath-securejoin v0.4.1 // indirect
@@ -59,7 +52,6 @@ require (
 	github.com/pjbgf/sha1cd v0.3.2 // indirect
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
-	github.com/sam-kamerer/go-plister v1.2.0 // indirect
 	github.com/samber/lo v1.49.1 // indirect
 	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3 // indirect
 	github.com/skeema/knownhosts v1.3.1 // indirect

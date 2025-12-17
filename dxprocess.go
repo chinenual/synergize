@@ -2,10 +2,7 @@ package main
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
-	"github.com/asticode/go-astilectron"
-	bootstrap "github.com/asticode/go-astilectron-bootstrap"
 	"io"
 	"os"
 	"os/exec"
@@ -87,47 +84,18 @@ func _slurpLog(pipe io.ReadCloser) {
 	_finishToUI(msg)
 }
 
-var astilectronWindow *astilectron.Window
-
-func dx2synRegisterBridge(w *astilectron.Window) (err error) {
-	astilectronWindow = w
-	return
-}
-
 func _finishToUI(msg string) (err error) {
 	logger.Infof("dx2syn finished: %s\n", strings.TrimSpace(msg))
-	if astilectronWindow == nil {
-		return
-	}
-	var strval string
-	if err = bootstrap.SendMessage(astilectronWindow, "dx2synFinish", msg,
-		func(m *bootstrap.MessageIn) {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &strval); err != nil {
-				logger.Errorf(" _finishToUI failed to decode json response : %v\n", err)
-				return
-			}
-		}); err != nil {
-		return
+	if err = dx2synFinish(msg); err != nil {
+		logger.Error("error finishing log to frontend", err)
 	}
 	return
 }
 
 func _logToUI(line string) (err error) {
 	logger.Infof("dx2syn: %s\n", strings.TrimSpace(line))
-	if astilectronWindow == nil {
-		return
-	}
-	var strval string
-	if err = bootstrap.SendMessage(astilectronWindow, "dx2synAddProcessLog", line,
-		func(m *bootstrap.MessageIn) {
-			// Unmarshal payload
-			if err = json.Unmarshal(m.Payload, &strval); err != nil {
-				logger.Errorf(" _logToUI failed to decode json response : %v\n", err)
-				return
-			}
-		}); err != nil {
-		return
+	if err = dx2synAddProcessLog(line); err != nil {
+		logger.Error("error sending log to frontend", err)
 	}
 	return
 }

@@ -85,11 +85,6 @@ func (s *UIService) GetPreferences() (Os string, preferences Preferences, err er
 	return
 }
 
-func refreshNavPane(path string) {
-	wailsApp.Event.Emit("explore", path)
-	return
-}
-
 func (s *UIService) SavePreferences(preferences Preferences) (err error) {
 	logger.Info("INFO: SavePreferences called with ", preferences)
 	oldPath := prefsUserPreferences.LibraryPath
@@ -725,5 +720,23 @@ func explore(path string) (e Exploration, err error) {
 		}
 	}
 
+	return
+}
+
+//-----------------
+// Outbound messages from backend to front end:
+
+func refreshNavPane(path string) {
+	wailsApp.Event.Emit("explore", path)
+	return
+}
+
+func dx2synFinish(msg string) (err error) {
+	wailsApp.Event.Emit("dx2synFinish", msg)
+	return
+}
+
+func dx2synAddProcessLog(line string) (err error) {
+	wailsApp.Event.Emit("dx2synAddProcessLog", line)
 	return
 }

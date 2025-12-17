@@ -12,7 +12,7 @@ permalink: /docs/acknowledgements
 
 Synergize is free and open source software, which uses a number of other open source technologies. They include:
 
-* Quentin Renard's excellent Go library [Astilectron](https://github.com/asticode/go-astilectron) and its related bundler and bootstrap modules.
+* Lea Anthony's excellent Go/Webview frameword [Wails](https://github.com/wailsapp/wails)
 * Sebastian Ruml's Go [OSC library](https://github.com/hypebeast/go-osc).
 * The [Bootstrap](https://getbootstrap.com/) CSS framework
 * István Ujj-Mészáros's [Touchspin](https://github.com/istvan-ujjmeszaros/bootstrap-touchspin).
@@ -20,7 +20,6 @@ Synergize is free and open source software, which uses a number of other open so
 * Stefan S's [bonjour/zeroconf](https://github.com/grandcat/zeroconf) library.
 * Marc Rene Arns' [Go-MIDI](https://gitlab.com/gomidi/midi) library
 * Lodash's [debouncer](https://lodash.com/)
-* [Electron](https://electronjs.org)
 * [Chart.js](https://www.chartjs.org)
 * [JQuery](https://jquery.com/)
 
