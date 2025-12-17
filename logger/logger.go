@@ -55,7 +55,7 @@ func Init(logPath string, level slog.Level) {
 }
 
 func Printf(format string, v ...interface{}) {
-	os.Stderr.WriteString(fmt.Sprintf(format, v))
+	os.Stderr.WriteString(fmt.Sprintf(format, v...))
 }
 
 func Debug(v ...interface{}) {
@@ -66,7 +66,7 @@ func Debug(v ...interface{}) {
 	slog.Debug(msg)
 }
 func Debugf(format string, v ...interface{}) {
-	slog.Debug(fmt.Sprintf(format, v))
+	slog.Debug(fmt.Sprintf(format, v...))
 }
 
 func Info(v ...interface{}) {
@@ -77,7 +77,7 @@ func Info(v ...interface{}) {
 	slog.Info(msg)
 }
 func Infof(format string, v ...interface{}) {
-	slog.Info(fmt.Sprintf(format, v))
+	slog.Info(fmt.Sprintf(format, v...))
 }
 
 func Warn(v ...interface{}) {
@@ -88,7 +88,7 @@ func Warn(v ...interface{}) {
 	slog.Warn(msg)
 }
 func Warnf(format string, v ...interface{}) {
-	slog.Warn(fmt.Sprintf(format, v))
+	slog.Warn(fmt.Sprintf(format, v...))
 }
 
 func Error(v ...interface{}) {
@@ -99,5 +99,5 @@ func Error(v ...interface{}) {
 	slog.Error(msg)
 }
 func Errorf(format string, v ...interface{}) {
-	slog.Error(fmt.Sprintf(format, v))
+	slog.Error(fmt.Sprintf(format, v...))
 }
