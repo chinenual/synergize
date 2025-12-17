@@ -19,7 +19,7 @@ require (
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
-require github.com/asticode/go-astikit v0.29.1
+require github.com/asticode/go-astikit v0.29.1 // indirect
 
 require github.com/wailsapp/wails/v3 v3.0.0-alpha.44
 

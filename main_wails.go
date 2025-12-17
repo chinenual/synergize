@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"log"
 
+	"github.com/chinenual/synergize/logger"
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
@@ -37,6 +38,7 @@ func WailsMain() {
 		Services: []application.Service{
 			application.NewService(&UIService{}),
 		},
+		Logger: logger.SynergizeLogger,
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
 		},
