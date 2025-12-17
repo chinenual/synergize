@@ -1,5 +1,6 @@
 package com.chinenual.synergize;
 
+import io.appium.java_client.AppiumBy;
 import org.junit.jupiter.api.Assertions;
 import io.appium.java_client.mac.Mac2Driver;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
@@ -12,6 +13,9 @@ import org.junit.platform.suite.api.AfterSuite;
 import org.junit.platform.suite.api.BeforeSuite;
 import org.junit.platform.suite.api.SelectPackages;
 import org.junit.platform.suite.api.Suite;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
@@ -42,7 +46,7 @@ public class IntegrationTestSuite {
             capabilities.setCapability("appium:bundleId", "com.chinenual.synergize");
 
             driver = new Mac2Driver(capabilities);
-
+            
             String pageSource = driver.getPageSource();
             System.out.println("PAGE SOURCE: " + pageSource);
                         
@@ -55,12 +59,12 @@ public class IntegrationTestSuite {
 
     @AfterSuite
     public static void teardown() {
-        System.err.println("SLEEPING 20 min");
-        try {
-            Thread.sleep(Duration.ofMinutes(20));
-        } catch (InterruptedException ex) {
-            System.getLogger(IntegrationTestSuite.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-        }
+//        System.err.println("SLEEPING 20 min");
+//        try {
+//            Thread.sleep(Duration.ofMinutes(20));
+//        } catch (InterruptedException ex) {
+//            System.getLogger(IntegrationTestSuite.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+//        }
         if (driver != null) {
             driver.quit();
         }

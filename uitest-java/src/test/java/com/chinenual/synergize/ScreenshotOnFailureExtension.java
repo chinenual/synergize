@@ -4,19 +4,17 @@
  */
 package com.chinenual.synergize;
 
+import io.appium.java_client.AppiumBy;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.OpenOption;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
+import javax.imageio.ImageIO;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestWatcher;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebElement;
 
 /**
  *
@@ -27,15 +25,17 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
     @Override
     public void testAborted(ExtensionContext context, Throwable cause) {
         System.out.println("****** TEST ABORTED ****** " + context.getDisplayName() + (context.getExecutionException().isPresent() ? " true " : " false ") + cause.toString());
-        captureScreenshot(context);
+        captureWindowScreenshot(context);
     }
+
     @Override
     public void testFailed(ExtensionContext context, Throwable cause) {
         System.out.println("****** TEST FAILED ****** " + context.getDisplayName() + (context.getExecutionException().isPresent() ? " true " : " false ") + cause.toString());
-        captureScreenshot(context);
+        captureWindowScreenshot(context);
     }
 
-    private void captureScreenshot(ExtensionContext context) {
+
+    private void captureWindowScreenshot(ExtensionContext context) {
         System.out.println("****** CAPTURE SCREENSHOT ******");
         String testClassName = context.getTestClass().orElseThrow().getSimpleName(); // e.g., "LoginTests"
         String testMethodName = context.getTestMethod().orElseThrow().getName(); // e.g., "testInvalidCredentials"
@@ -43,18 +43,21 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
         String screenshotPath = String.format("screenshots/%s_%s_%s.png",
                 timestamp, testClassName, testMethodName);
 
+        WebElement el = IntegrationTestSuite.driver.findElement(AppiumBy.xpath("//XCUIElementTypeWindow"));
+
         try {
-            byte[] img = IntegrationTestSuite.driver.getScreenshotAs(OutputType.BYTES);
-            //File screenshotFile = ((TakesScreenshot) IntegrationTestSuite.driver).getScreenshotAs(OutputType.FILE);
-            //File destFile = new File(screenshotPath);
-            //copyFile(screenshotFile, destFile); // Save screenshot
-            //System.out.println("Screenshot saved to: " + destFile.getAbsolutePath());
-            Files.write(Path.of(screenshotPath), img, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            byte[] img = el.getScreenshotAs(OutputType.BYTES);
+            //byte[] img = IntegrationTestSuite.driver.getScreenshotAs(OutputType.BYTES);
+
+            BufferedImage fullImg = ImageIO.read(new ByteArrayInputStream(img));
+            ImageIO.write(fullImg, "png", new File(screenshotPath));
+
             System.out.println("*** Screenshot saved to: " + screenshotPath);
         } catch (Throwable ex) {
             System.err.println("Failed to capture screenshot: " + ex.getMessage());
 
         }
+
     }
 
 }
