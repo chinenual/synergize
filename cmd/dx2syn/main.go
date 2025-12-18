@@ -16,7 +16,7 @@ var sysexFlag = flag.String("sysex", "", "Pathname of the sysex file to parse")
 var verboseFlag = flag.Bool("verbose", false, "Verbose debugging")
 var statsFlag = flag.Bool("stats", false, "print statistics about the sysex - dont generate vce")
 
-//var stevealgoFlag = flag.Bool("stevealgo", false, "create 32 different vce's - one for each algo")
+// var stevealgoFlag = flag.Bool("stevealgo", false, "create 32 different vce's - one for each algo")
 var makecrtFlag = flag.String("makecrt", "", "Pathname of a directory containing VCEs")
 var algoFlag = flag.Int("algo", -1, "DX Algorithm Number")
 var loglevelFlag = flag.String("loglevel", "INFO", "Set log level (DEBUG,INFO,WARN or ERROR)")
@@ -30,7 +30,7 @@ func usage(msg string) {
 
 func main() {
 	flag.Parse()
-	logger.InitViaString("", *loglevelFlag)
+	logger.InitViaString("", "", *loglevelFlag)
 
 	if *makecrtFlag != "" {
 		if err := dx2syn.MakeCrt(*makecrtFlag, *verboseFlag); err != nil {

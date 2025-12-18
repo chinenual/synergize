@@ -38,7 +38,7 @@ func WailsMain() {
 		Services: []application.Service{
 			application.NewService(&UIService{}),
 		},
-		Logger: logger.SynergizeLogger,
+		Logger: logger.SynergizeWailsLogger,
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
 		},

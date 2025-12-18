@@ -140,9 +140,13 @@ func getWorkingDirectory() (path string) {
 }
 
 func mainInit() {
-	logger.InitViaString(getWorkingDirectory()+"/synergize.log", *loglevel)
+	logger.InitViaString(
+		getWorkingDirectory()+"/synergize.log",
+		getWorkingDirectory()+"/synergize-wails.log",
+		*loglevel)
 
 	setVersion()
+	logger.Infof("----------------------------------------")
 	logger.Infof("Running app version %s\n", AppVersion)
 	// log some info about the operating system.  This uses uname on linux and macos, and ver on windows, so info is limited.
 	// for windows, version reports via ver:
