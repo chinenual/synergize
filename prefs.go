@@ -25,7 +25,13 @@ type Preferences struct {
 	HTTPDebug bool
 }
 
-var preferencesPathname = getWorkingDirectory() + "/preferences.json"
+var preferencesPathname = ""
+
+func initPrefs() {
+	preferencesPathname = getWorkingDirectory() + "/preferences.json"
+	logger.Infof("initPrefs: %v\n", preferencesPathname)
+	prefsLoadPreferences()
+}
 
 var prefsUserPreferences = Preferences{
 	OscAutoConfig:     false,

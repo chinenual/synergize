@@ -46,7 +46,7 @@ public class IntegrationTestSuite {
             capabilities.setCapability("appium:bundleId", "com.chinenual.synergize");
 
             driver = new Mac2Driver(capabilities);
-            
+
             String pageSource = driver.getPageSource();
             System.out.println("PAGE SOURCE: " + pageSource);
                         

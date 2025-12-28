@@ -112,22 +112,18 @@ func setVersion() {
 
 // platform specific config to ensure logs and preferences go to reasonable locations
 func getWorkingDirectory() (path string) {
-	if *cwd != "" {
-		if err := os.Chdir(*cwd); err != nil {
-			fmt.Printf("ERROR: Could not chdir to %s: %v\n", *cwd, err)
-		}
-	}
 	// don't do this if we are running from the source tree
-	_, err := os.Stat("bundler.json")
+	_, err := os.Stat("Taskfile.yml")
 	if !os.IsNotExist(err) {
 		// running from source directory
-		path = "."
+
+		path, _ = filepath.Abs(".")
 		return
 	}
-	_, err = os.Stat("../bundler.json")
+	_, err = os.Stat("../Taskfile.yml")
 	if !os.IsNotExist(err) {
 		// running from uitest directory
-		path = "."
+		path, _ = filepath.Abs(".")
 		return
 	}
 
@@ -144,6 +140,7 @@ func mainInit() {
 		getWorkingDirectory()+"/synergize.log",
 		getWorkingDirectory()+"/synergize-wails.log",
 		*loglevel)
+	initPrefs()
 
 	setVersion()
 	logger.Infof("----------------------------------------")
@@ -166,7 +163,7 @@ func mainInit() {
 	} else {
 		OsVersion = gi.Core
 	}
-	logger.Infof("Operating environment: %#v\n", gi)
+	logger.Infof("Operating environment: %#v.  Working Diretory: %s\n", gi, getWorkingDirectory())
 }
 
 //func refreshNavPane(path string) {
@@ -211,6 +208,14 @@ func recordIo(f func(string) error, arg string) (err error) {
 func main() {
 	// Parse flags
 	flag.Parse()
+
+	// need to process the CWD arg right away before we start doing anything else
+	if *cwd != "" {
+		if err := os.Chdir(*cwd); err != nil {
+			fmt.Printf("ERROR: Could not chdir to %s: %v\n", *cwd, err)
+		}
+	}
+
 	mainInit()
 
 	// if we read something different off the command line, set it
@@ -325,6 +330,8 @@ func main() {
 	}
 
 	WailsMain()
+
+	refreshNavPane(prefsUserPreferences.LibraryPath)
 
 	// macOSMenus := []*astilectron.MenuItemOptions{{
 	// 	Label: astikit.StrPtr("Synergize"),
