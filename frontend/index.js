@@ -1,45 +1,45 @@
 // const { dialog } = require('electron').remote;
 //
 // let shell = require('electron').shell
+// Import bootstrap custom CSS
+import './scss/styles.scss'
+
 import {UIService} from '/bindings/github.com/chinenual/synergize';
 import * as wails from '@wailsio/runtime';
+// Import all of Bootstrap's JS
+import * as bootstrap from 'bootstrap';
 import {_} from 'lodash';
 
 import {dx2syn} from './dx2syn';
 import {syn2midi} from './syn2midi';
 import {viewCRT} from './viewCRT';
 import {viewVCE} from './viewVCE';
-import {viewVCE_voice} from './viewVCE_voice';
 import {viewVCE_envs} from './viewVCE_envs';
+import {viewVCE_voice} from './viewVCE_voice';
 
-// Import bootstrap custom CSS
-import './scss/styles.scss'
-
-// Import all of Bootstrap's JS
-import * as bootstrap from 'bootstrap';
-
-// hook the console log to log both to the browser console, but also to the backend
+// hook the console log to log both to the browser console, but also to the
+// backend
 const orig_consoleLog = console.log;
-const orig_consoleInfo= console.info;
+const orig_consoleInfo = console.info;
 const orig_consoleWarn = console.warn;
 const orig_consoleError = console.error;
 function redirectConsole() {
-  console.log = function (...args) {
+  console.log = function(...args) {
     orig_consoleLog(...args);
-    UIService.LogInfo("LOG", args);
-  }
-  console.info = function (...args) {
+    UIService.LogInfo('LOG', args);
+  };
+  console.info = function(...args) {
     orig_consoleInfo(...args);
-    UIService.LogInfo("INFO", args);
-  }
-  console.warn = function (...args) {
+    UIService.LogInfo('INFO', args);
+  };
+  console.warn = function(...args) {
     orig_consoleWarn(...args);
-    UIService.LogWarn("WARN", args);
-  }
-  console.error = function (...args) {
+    UIService.LogWarn('WARN', args);
+  };
+  console.error = function(...args) {
     orig_consoleError(...args);
-    UIService.LogError("ERROR", args);
-  }
+    UIService.LogError('ERROR', args);
+  };
 }
 redirectConsole();
 
@@ -47,11 +47,11 @@ export let index = {
   DEBOUNCE_WAIT_SHORT: 50,
   DEBOUNCE_WAIT: 250,
 
-  init: function () {
-    console.log("TOP OF INIT");
+  init: function() {
+    console.log('TOP OF INIT');
     dx2syn.init();
     syn2midi.init();
-    
+
     // init menus to default state
     index.updateConnectionStatus('', '')
 
@@ -62,14 +62,16 @@ export let index = {
     /*})*/
   },
 
-  runUnitTests: function () {
+  runUnitTests: function() {
     let result = viewVCE_voice.testConversionFunctions();
     if (result != null) {
-      index.errorNotification("viewVCE_voice.testConversionFunctions failed " + result);
+      index.errorNotification(
+          'viewVCE_voice.testConversionFunctions failed ' + result);
     }
     result = viewVCE_envs.testConversionFunctions();
     if (result != null) {
-      index.errorNotification("viewVCE_envs.testConversionFunctions failed " + result);
+      index.errorNotification(
+          'viewVCE_envs.testConversionFunctions failed ' + result);
     }
   },
 
@@ -108,8 +110,9 @@ export let index = {
     document.getElementById('confirmTitle').innerHTML = 'Confirm';
     document.getElementById('confirmText').innerHTML = message;
     document.getElementById('confirmOKButton').onclick = successCallback;
-    let modal = new bootstrap.Modal(document.getElementById('confirmModal'), {backdrop: 'static'});
-    console.log("modal", modal);
+    let modal = new bootstrap.Modal(
+        document.getElementById('confirmModal'), {backdrop: 'static'});
+    console.log('modal', modal);
     modal.show();
   },
 
@@ -121,7 +124,7 @@ export let index = {
     document.getElementById('alertTitle').innerHTML = 'Error';
     document.getElementById('alertText').innerHTML = message;
     let modal = new bootstrap.Modal(document.getElementById('alertModal'));
-    console.log("modal", modal);
+    console.log('modal', modal);
     modal.show();
   },
   infoNotification: function(message) {
@@ -171,7 +174,8 @@ export let index = {
             `
 		    <div class="form-check">
                 <input class="form-check-input" type="radio" name="chooseZeroconf1Radios"
-		aria-label="chooseZeroconf1Radio${i}" id="chooseZeroconf1Radio${i}" 
+		aria-label="chooseZeroconf1Radio${i}" id="chooseZeroconf1Radio${
+                   i}" 
                 value="${i}" ${i == 0 ? 'checked' : ''}>
                 <label class="form-check-label" for="chooseZeroconf1Radio${i}">
                    ${choices1[i].InstanceName}${addr}
@@ -196,7 +200,8 @@ export let index = {
             `
 		    <div class="form-check">
                 <input class="form-check-input" type="radio" name="chooseZeroconf2Radios" 
-		 aria-label="chooseZeroconf2Radio${i}" id="chooseZeroconf2Radio${i}" 
+		 aria-label="chooseZeroconf2Radio${
+                   i}" id="chooseZeroconf2Radio${i}" 
                  value="${i}" ${i == 0 ? 'checked' : ''}>
                 <label class="form-check-label" for="chooseZeroconf2Radio${i}">
                    ${choices2[i].InstanceName}${addr}
@@ -220,11 +225,15 @@ export let index = {
       let idx2 = null
       let selected2 = null
       if (choices1 != null && prompt1 != null) {
-        idx1 = parseInt(document.querySelector('#chooseZeroconf1Items input:checked').value, 10);
+        idx1 = parseInt(
+            document.querySelector('#chooseZeroconf1Items input:checked').value,
+            10);
         selected1 = choices1[idx1];
       }
       if (choices2 != null && prompt2 != null) {
-        idx2 = parseInt(document.querySelector('#chooseZeroconf2Items input:checked').value, 10);
+        idx2 = parseInt(
+            document.querySelector('#chooseZeroconf2Items input:checked').value,
+            10);
         selected2 = choices2[idx2];
       }
       console.log('Selected ' + idx1 + ' ' + idx2);
@@ -235,8 +244,9 @@ export let index = {
       onRescan();
     };
 
-    let modal = new bootstrap.Modal(document.getElementById('chooseZeroconfModal'), {backdrop: 'static'});
-    console.log("modal", modal);
+    let modal = new bootstrap.Modal(
+        document.getElementById('chooseZeroconfModal'), {backdrop: 'static'});
+    console.log('modal', modal);
     modal.show();
   },
 
@@ -546,7 +556,8 @@ export let index = {
       index.updateConnectionStatus(
           status.SynergyName, status.ControlSurfaceName);
       index.infoNotification('Disconnected Control Surface');
-      document.querySelector('#disableControlSurfaceMenuItem').classList.add('disabled');
+      document.querySelector('#disableControlSurfaceMenuItem')
+          .classList.add('disabled');
     } catch (exc) {
       index.spinnerOff();
       index.errorNotification(exc);
@@ -593,22 +604,28 @@ export let index = {
     document.getElementById('controlSurfaceName').innerHTML = csName;
     if (synergyName === null || synergyName === '') {
       document.getElementById('synergyName').innerHTML = 'not connected';
-      document.querySelector('#disconnectSynergyMenuItem').classList.add('disabled');
-      document.querySelector('#connectSynergyMenuItem').classList.remove('disabled');
+      document.querySelector('#disconnectSynergyMenuItem')
+          .classList.add('disabled');
+      document.querySelector('#connectSynergyMenuItem')
+          .classList.remove('disabled');
       document.getElementById('connectButtonImg').src =
           `static/images/grey-button-off-full.png`;
     } else {
-      document.querySelector('#disconnectSynergyMenuItem').classList.remove('disabled');
-      document.querySelector('#connectSynergyMenuItem').classList.add('disabled');
+      document.querySelector('#disconnectSynergyMenuItem')
+          .classList.remove('disabled');
+      document.querySelector('#connectSynergyMenuItem')
+          .classList.add('disabled');
       document.getElementById('connectButtonImg').src =
           `static/images/grey-button-on-full.png`;
     }
     if (csName === null || csName === '') {
       document.querySelector('#controlSurfaceStatus').style.display = 'none';
-      document.querySelector('#disconnectControlSurfaceMenuItem').classList.add('disabled');
+      document.querySelector('#disconnectControlSurfaceMenuItem')
+          .classList.add('disabled');
     } else {
       document.querySelector('#controlSurfaceStatus').style.display = 'block';
-      document.querySelector('#disconnectControlSurfaceMenuItem').classList.remove('disabled');
+      document.querySelector('#disconnectControlSurfaceMenuItem')
+          .classList.remove('disabled');
     }
   },
 
@@ -657,13 +674,22 @@ export let index = {
   },
 
   load: async function(url, eleId, callback) {
-    console.log('load ' + url + ' into ' + eleId + ' ' + document.querySelector(('#' + eleId)));
-    const r = await fetch(url);
-    const body = await r.text();
-    document.querySelector('#' + eleId).innerHTML = body;
-    if (callback != undefined) {
-      let element = document.getElementById(eleId);
-      callback(element);
+    console.log(
+        'load ' + url + ' into ' + eleId + ' ' +
+        document.querySelector(('#' + eleId)));
+    try {
+      const r = await fetch(url);
+      if (!r.ok) {
+        throw new Error(`URL: ${url}: Response status: ${r.status}`);
+      }
+      const body = await r.text();
+      document.querySelector('#' + eleId).innerHTML = body;
+      if (callback != undefined) {
+        let element = document.getElementById(eleId);
+        callback(element);
+      }
+    } catch (exc) {
+      console.log('ERROR: ', exc);
     }
 
     /*
@@ -710,10 +736,10 @@ export let index = {
     }
   },
 
-  // debounce a function separately for each "first" argument - we use this
-  // with first argument being the input ele being debounced - this allows
-  // each input to be independently debounced even if all using the same
-  // onchange function Adapted from:
+  // debounce a function separately for each "first" argument - we use
+  // this with first argument being the input ele being debounced -
+  // this allows each input to be independently debounced even if all
+  // using the same onchange function Adapted from:
   // https://github.com/lodash/lodash/issues/2403 and
   // https://stackoverflow.com/a/28795512
   debounceFirstArg: function(func, wait = 0, options = {}) {

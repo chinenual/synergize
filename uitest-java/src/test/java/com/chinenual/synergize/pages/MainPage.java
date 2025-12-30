@@ -13,15 +13,8 @@ import org.openqa.selenium.WebElement;
  *
  * @author tynor
  */
-public class MainPage {
+public class MainPage extends BasePage {
 
-    static String getChildText(WebElement el) {
-        String result = "";
-        for (WebElement child : el.findElements(AppiumBy.xpath("./child::*"))) {
-            result += child.getText();
-        }
-        return result;
-    }
 
     public static String pageTitle() {
         WebElement el = driver.findElement(AppiumBy.xpath("//XCUIElementTypeWindow"));

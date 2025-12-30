@@ -18,7 +18,10 @@ export default defineConfig({
 	    input: {
 		main: resolve(__dirname, 'index.html'),
 		prefs: resolve(__dirname, 'prefs.html'),
-		about: resolve(__dirname, 'about.html')
+		about: resolve(__dirname, 'about.html'),
+		diag: resolve(__dirname, 'diag.html'),
+		viewVCE: resolve(__dirname, 'viewVCE.html'),
+		viewCRT: resolve(__dirname, 'viewCRT.html')
 	    },
 	},
     },
