@@ -77,6 +77,8 @@ table {
 .headerContainer {
     height: 100%;
     width: 100%;
+    margin-left: 10px;
+    margin-right: 10px;
     /* simulate the inset, rounded main panel on the Synergy */
     border-radius: 20px 20px 20px 20px;
     -moz-border-radius: 20px 20px 20px 20px;
