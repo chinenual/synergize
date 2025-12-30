@@ -5,6 +5,9 @@ $font-size-base: 0.8;
 // Import all of Bootstrap's CSS
 @import "~bootstrap/scss/bootstrap";
 @import "@touchspin/renderer-bootstrap5/css";
+@include color-mode(dark) {
+  // CSS variable overrides here...
+}
 
 body {
     background-color: #222;
@@ -68,7 +71,7 @@ table {
     border-radius: 20px 20px 20px 20px;
     -moz-border-radius: 20px 20px 20px 20px;
     -webkit-border-radius: 20px 20px 20px 20px;
-    border: 3px groove #666;
+    border: 3px solid #666;
 }
 
 .headerContainer {
@@ -78,7 +81,7 @@ table {
     border-radius: 20px 20px 20px 20px;
     -moz-border-radius: 20px 20px 20px 20px;
     -webkit-border-radius: 20px 20px 20px 20px;
-    border: 3px groove #666;
+    border: 3px solid #666;
 }
 
 .connectionStatus {
