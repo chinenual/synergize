@@ -45,6 +45,11 @@ table {
     color: #fff;
 }
 
+.navbar-brand img {
+    position: relative;
+    top: 14px;
+}
+
 .topContainer {
     padding: 10px;
     margin: 0px;
@@ -91,16 +96,17 @@ table {
 .headerContainer {
     height: 100%;
     width: 100%;
-    margin-left: 10px;
-    margin-right: 10px;
+    //margin-left: 8px;
+    //margin-right: 8px;
     /* simulate the inset, rounded main panel on the Synergy */
     border-radius: 20px 20px 20px 20px;
     -moz-border-radius: 20px 20px 20px 20px;
     -webkit-border-radius: 20px 20px 20px 20px;
     border: 3px solid #666;
 
+    padding: 8px;
     display: grid;
-    grid-template-columns: 25% 12.5% 12.5% 12.5% 12.5% 25%
+    grid-template-columns: 250px 20px 110px 110px 110px 110px 1fr 200px;
 }
 
 .connectionStatus {
