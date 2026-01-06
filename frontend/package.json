@@ -12,10 +12,10 @@
   "dependencies": {
     "@popperjs/core": "^2.11.8",
     "@touchspin/core": "^5.0.1",
-    "@touchspin/renderer-bootstrap5": "^5.0.1",
+    "@touchspin/renderer-vanilla": "^5.0.1",
     "@wailsio/runtime": "latest",
-    "bootstrap": "^5.3.8",
     "chart.js": "^2.9.3",
+    "events": "^3.3.0",
     "graphre": "^0.1.3",
     "lodash": "^4.17.21",
     "nomnoml": "^1.7.0"

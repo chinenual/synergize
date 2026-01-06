@@ -8,11 +8,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
     plugins: [wails("./bindings")],
-    resolve: {
-	alias: {
-		'~bootstrap': resolve(__dirname, 'node_modules/bootstrap'),
-	}
-    },
     build: {
 	rollupOptions: {
 	    input: {

@@ -1,16 +1,15 @@
 // const { dialog } = require('electron').remote;
 //
 // let shell = require('electron').shell
-// Import bootstrap custom CSS
 import './scss/styles.scss'
 
 import {UIService} from '/bindings/github.com/chinenual/synergize';
 import * as wails from '@wailsio/runtime';
-// Import all of Bootstrap's JS
-import * as bootstrap from 'bootstrap';
 import {_} from 'lodash';
 
 import {dx2syn} from './dx2syn';
+// import Modal from 'modal-vanilla';
+import {closeModal, openModal} from './modal';
 import {syn2midi} from './syn2midi';
 import {viewCRT} from './viewCRT';
 import {viewVCE} from './viewVCE';
@@ -47,7 +46,7 @@ export let index = {
   DEBOUNCE_WAIT_SHORT: 50,
   DEBOUNCE_WAIT: 250,
 
-  init: function() {
+  init: function () {
     console.log('TOP OF INIT');
     dx2syn.init();
     syn2midi.init();
@@ -59,7 +58,6 @@ export let index = {
     index.explore();
 
     index.runUnitTests();
-    /*})*/
   },
 
   runUnitTests: function() {
@@ -110,22 +108,29 @@ export let index = {
     document.getElementById('confirmTitle').innerHTML = 'Confirm';
     document.getElementById('confirmText').innerHTML = message;
     document.getElementById('confirmOKButton').onclick = successCallback;
-    let modal = new bootstrap.Modal(
-        document.getElementById('confirmModal'), {backdrop: 'static'});
-    console.log('modal', modal);
-    modal.show();
+    //    let modal = new Modal({
+    //        el: document.getElementById('confirmModal'),
+    //       backdrop: 'static'
+    //      });
+    //    console.log('modal', modal);
+    //    modal.show();
+    openModal('confirmModal');
   },
 
   errorNotification: function(message) {
-    if (typeof message != 'string') {
-      message = JSON.stringify(message);
-    }
+    // if (typeof message != 'string') {
+    //   message = JSON.stringify(message);
+    // }
     console.log('ERROR NOTIFICATION: ' + message)
     document.getElementById('alertTitle').innerHTML = 'Error';
     document.getElementById('alertText').innerHTML = message;
-    let modal = new bootstrap.Modal(document.getElementById('alertModal'));
-    console.log('modal', modal);
-    modal.show();
+    //    let modal = new Modal({
+    //      el: document.getElementById('alertModal'),
+    //      backdrop: 'static'
+    //    });
+    //    console.log('modal', modal);
+    //    modal.show();
+    openModal('alertModal');
   },
   infoNotification: function(message) {
     if (typeof message != 'string') {
@@ -135,11 +140,16 @@ export let index = {
     document.getElementById('alertTitle').innerHTML = 'Info';
     document.getElementById('alertText').innerHTML = message;
     // Make alert messages hide themselves after 3s - no need to click
-    let modal = new bootstrap.Modal(document.getElementById('alertModal'));
+    //    let modal = new Modal({
+    //      el: document.getElementById('alertModal'),
+    //      backdrop: 'static'
+    //    });
     setTimeout(function() {
-      modal.hide();
+      //      modal.hide();
+      closeModal(document.getElementById('alertModal'));
     }, 3000);
-    modal.show();
+    //   modal.show();
+    openModal('alertModal');
   },
 
   chooseZeroconfService: function(
@@ -244,10 +254,13 @@ export let index = {
       onRescan();
     };
 
-    let modal = new bootstrap.Modal(
-        document.getElementById('chooseZeroconfModal'), {backdrop: 'static'});
-    console.log('modal', modal);
-    modal.show();
+    //    let modal = new Modal({
+    //      el: document.getElementById('chooseZeroconfModal'),
+    //      backdrop: 'static'
+    //    });
+    //    console.log('modal', modal);
+    //    modal.show();
+    openModal('chooseZeroconfModal');
   },
 
   saveSYNDialog: async function() {

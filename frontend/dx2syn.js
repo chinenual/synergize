@@ -1,9 +1,7 @@
 import {UIService} from '/bindings/github.com/chinenual/synergize';
 import * as wails from '@wailsio/runtime';
 import { index } from './index';
-
-// Import all of Bootstrap's JS
-import * as bootstrap from 'bootstrap';
+import { openModal, closeModal, updateModal } from '/modal';
 
 export let dx2syn = {
   init : function() {
@@ -89,10 +87,13 @@ export let dx2syn = {
           .setAttribute('disabled', 'disabled');
     };
 
-    let modal = new bootstrap.Modal(document.getElementById('subprocessModal'), {backdrop: 'static'});
-    console.log("modal", modal);
-    modal.show();
-    
+    // let modal = new modal_Vanilla.Modal({
+    //   el: document.getElementById('subprocessModal'),
+    //   backdrop: 'static'
+    // });
+    // console.log("modal", modal);
+    // modal.show();
+    openModal('subprocessModal')
 	  try {
 		  await UIService.Dx2synStart(path);
 	} catch (exc) {
@@ -116,9 +117,13 @@ export let dx2syn = {
     document.getElementById('logOutput').innerHTML =
         document.getElementById('logOutput').innerHTML + html;
     
-    let modal = new bootstrap.Modal(document.getElementById('subprocessModal'), {backdrop: 'static'});
-    console.log("modal", modal);
-    modal.handleUpdate();
+    // let modal = new modal_Vanilla.Modal({
+    //   el: document.getElementById('subprocessModal'),
+    //   backdrop: 'static'
+    // });
+    // console.log("modal", modal);
+    // modal.handleUpdate();
+    updateModal('subprocessModal');
   },
 };
 // for menus:

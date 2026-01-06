@@ -1,10 +1,8 @@
 import {UIService} from '/bindings/github.com/chinenual/synergize';
 import * as wails from '@wailsio/runtime';
+import { openModal, closeModal } from '/modal';
 
 import {index} from './index';
-
-// Import all of Bootstrap's JS
-import * as bootstrap from 'bootstrap';
 
 export let syn2midi = {
 
@@ -70,10 +68,13 @@ export let syn2midi = {
             buttons);
       }
     };
-    let modal = new bootstrap.Modal(document.getElementById('syn2midiModal'), {backdrop: 'static'});
-    console.log("modal", modal);
-    modal.show();
-    
+    // let modal = new modal_Vanilla.Modal({
+    //   el: document.getElementById('syn2midiModal'),
+    //   backdrop: 'static'
+    // });
+    // console.log("modal", modal);
+    // modal.show();
+    openModal('syn2midiModal')
   },
 
   getSynSequencerState: async function(path) {

@@ -2,23 +2,35 @@ $body-bg: #222;
 $body-color: #fff;
 $font-size-base: 0.8;
 
-// Import all of Bootstrap's CSS
-@import "~bootstrap/scss/bootstrap";
-@import "@touchspin/renderer-bootstrap5/css";
-@include color-mode(dark) {
-  // CSS variable overrides here...
+@import "@touchspin/renderer-vanilla/css";
+
+*,
+*::before,
+*::after {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 body {
     background-color: #222;
     color: #fff;
     font-size: 0.8rem;
+
+    margin: 0;
+    font-family: "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-weight: 400;
+    line-height: 1.5;
+    color: #fff;
+    text-align: left;
+    background-color: #222;
+
 }
+
 a {
     /* XREF: match yellow
-     * the bootstrap theme uses green links.  Use a color that matches the yellow we use in charts.
+     * Use a color that matches the yellow we use in charts.
      */
-    color: rgb(244,180,0);
+    color: rgb(244, 180, 0);
 }
 
 table {
@@ -34,10 +46,11 @@ table {
 }
 
 .topContainer {
-    padding: 10px; 
+    padding: 10px;
     margin: 0px;
-    max-width: 100%;
-    overflow-x: hidden; /* hack to get rid of scrollbar for a few unknown pixels*/
+    max-width: calc(width-10px);
+    overflow-x: hidden;
+    /* hack to get rid of scrollbar for a few unknown pixels*/
 }
 
 .headerSeparator {
@@ -45,6 +58,7 @@ table {
     margin: 10px;
     border-right: 1px solid #fff;
 }
+
 .mainSeparator {
     /* control width - override all the bootstrappiness */
     width: 40px;
@@ -52,14 +66,14 @@ table {
     max-width: 40px;
     -webkit-box-flex: 0;
     padding: 0px;
-    
+
     margin: 10px;
     border-right: 1px solid #fff;
 }
 
 .horizSeparator {
     width: 80%;
-    
+
     margin: 5px;
     border-bottom: 1px solid #fff;
 }
@@ -84,6 +98,9 @@ table {
     -moz-border-radius: 20px 20px 20px 20px;
     -webkit-border-radius: 20px 20px 20px 20px;
     border: 3px solid #666;
+
+    display: grid;
+    grid-template-columns: 25% 12.5% 12.5% 12.5% 12.5% 25%
 }
 
 .connectionStatus {
@@ -100,7 +117,7 @@ table {
 }
 
 .listplusminus div {
-    margin-top: 5px; 
+    margin-top: 5px;
     float: left;
 }
 
@@ -133,17 +150,18 @@ table {
 }
 
 .hiddenscroll {
-    overflow:hidden;
+    overflow: hidden;
 }
 
 .hiddenscroll:hover {
-    overflow:auto;
+    overflow: auto;
 }
 
 .file {
     cursor: pointer;
     padding: 3px;
 }
+
 .dir .fa {
     margin-right: 5px;
 }
@@ -169,20 +187,20 @@ table {
 hr {
     color: white;
 }
-	       
+
 ::-webkit-scrollbar {
     width: 9px;
 }
 
 ::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 4px rgba(200,200,200,1);
+    -webkit-box-shadow: inset 0 0 4px rgba(200, 200, 200, 1);
     border-radius: 7px;
 }
 
 ::-webkit-scrollbar-thumb {
     border-radius: 7px;
     background-color: #adb5bd;
-    -webkit-box-shadow: inset 0 0 4px rgba(90,90,90,0.7);
+    -webkit-box-shadow: inset 0 0 4px rgba(90, 90, 90, 0.7);
 }
 
 td.centered img {
@@ -190,6 +208,7 @@ td.centered img {
     margin-left: auto;
     margin-right: auto;
 }
+
 td.centered span {
     display: block;
     margin-left: auto;
@@ -212,33 +231,37 @@ td.centered span {
 }*/
 
 .dropdown-content {
-  display: none;
-  position: absolute;
-  top: 0;
-  left: 30;
-  background-color: #f1f1f1;
-  min-width: 160px;
-  width: fit-content;
-  overflow: auto;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 30;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    width: fit-content;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
 }
 
 .dropdown-content a {
-  color: black;
-  padding: 3px 16px;
-  text-decoration: none;
-  display: block;
+    color: black;
+    padding: 3px 16px;
+    text-decoration: none;
+    display: block;
 }
 
-.dropdown a:hover {background-color: #ddd;}
+.dropdown a:hover {
+    background-color: #ddd;
+}
 
 .dropdown a.disabled {
-    pointer-events:none;
-    opacity:0.6;    
+    pointer-events: none;
+    opacity: 0.6;
 }
 
-.show {display: block;}
+.show {
+    display: block;
+}
 
 
 .valTable td {
@@ -273,16 +296,22 @@ td.centered span {
     border-style: solid;
     border-radius: 5px;
 }
-.vceEditDisabled { /* inputs that are permanantely disabled, but rendered as inputs for consistency */
+
+.vceEditDisabled {
+    /* inputs that are permanantely disabled, but rendered as inputs for consistency */
     color: #fff;
     background-color: #222;
     border: none !important;
 }
+
 .vceNum {
     width: 3.5em;
 }
 
-input[disabled].vceEdit:hover, input[disabled].vceEdit:active, input[disabled].vceEdit:focus, .vceEdit:disabled  {
+input[disabled].vceEdit:hover,
+input[disabled].vceEdit:active,
+input[disabled].vceEdit:focus,
+.vceEdit:disabled {
     appearance: none !important;
     -webkit-appearance: none !important;
     outline: none !important;
@@ -305,6 +334,7 @@ input[disabled].vceEdit:hover, input[disabled].vceEdit:active, input[disabled].v
     text-align: center;
     width: 1.2em;
 }
+
 .vceEditToggleText.on {
     /* invert */
     color: #222;
@@ -319,15 +349,15 @@ input[disabled].vceEdit:hover, input[disabled].vceEdit:active, input[disabled].v
 }
 
 [data-touchspin-injected] input {
-     /* override bootstrappy css for the TouchSpin module */
-     flex-grow: 0 !important;
-     flex-shrink: 0 !important;
-     flex-basis: 3em !important;
-     height: 19px;
-     padding: 0px 0px;
-     font-size: inherit;
-     border-radius: 5px !important;
-/*
+    /* override bootstrappy css for the TouchSpin module */
+    flex-grow: 0 !important;
+    flex-shrink: 0 !important;
+    flex-basis: 3em !important;
+    height: 19px;
+    padding: 0px 0px;
+    font-size: inherit;
+    border-radius: 5px !important;
+    /*
      margin-left: 12px;
      margin-right: 12px;
      */
@@ -335,26 +365,28 @@ input[disabled].vceEdit:hover, input[disabled].vceEdit:active, input[disabled].v
 
 [data-touchspin-injected]:focus-within input,
 [data-touchspin-injected]:hover input {
-     border-radius: 0px !important;
-     margin-left: 0px !important;
-     margin-right: 0px !important;
+    border-radius: 0px !important;
+    margin-left: 0px !important;
+    margin-right: 0px !important;
 }
 
 [data-touchspin-injected] .btn {
-     display: none;
-     background-color: #222;
-     color: #fff;
-     border-color: #aaa;
-     padding: 0px 2px;
-     height: 19px;
-     font-size: inherit;
+    display: none;
+    background-color: #222;
+    color: #fff;
+    border-color: #aaa;
+    padding: 0px 2px;
+    height: 19px;
+    font-size: inherit;
 }
+
 /* hide spinner buttons unless focused */
 [data-touchspin-injected]:focus-within .btn,
 [data-touchspin-injected]:hover .btn {
     flex-basis: 12px;
-    display:block;
+    display: block;
 }
+
 /* hide spinner buttons unless focused */
 [data-touchspin-injected]:focus-within input,
 [data-touchspin-injected]:hover input {
@@ -384,29 +416,26 @@ span.spinNOSPIN-Enabled {
     bottom: 6;
     cursor: url(/static/images/s-resize.png) 16 16, auto;
 }
+
 .bootstrap-touchspin .input-group-btn-vertical .bootstrap-touchspin-up {
     top: 1;
     cursor: url(/static/images/n-resize.png) 16 16, auto;
 }
 
-.bootstrap-touchspin .bootstrap-touchspin-vertical-button-wrapper  {
-/* FOR DEBUGGING ONLY - make the spin buttons visible while wrestling with the CSS positioning: */
-        //background: red;
-        position: absolute;
-        width: 100%;
-        top: -4px;
-        // height: 30%;
-        // right: 0;
-        // left: 0;
+.bootstrap-touchspin .bootstrap-touchspin-vertical-button-wrapper {
+    /* FOR DEBUGGING ONLY - make the spin buttons visible while wrestling with the CSS positioning: */
+    //background: red;
+    position: absolute;
+    width: 100%;
+    top: -4px;
+    // height: 30%;
+    // right: 0;
+    // left: 0;
 }
 
 .input-group-text {
-        background-color: transparent;
+    background-color: transparent;
 }
-/*
-.bootstrap-touchspin .input-group-btn-vertical .bootstrap-touchspin-up {
-    top: -10;
-}*/
 
 .spinwrapper {
     width: 3.5em;
@@ -419,9 +448,11 @@ span.spinNOSPIN-Enabled {
 }
 
 /* darken preferences disabled */
-.form-control:disabled, .form-control[readonly] {
+.form-control:disabled,
+.form-control[readonly] {
     background-color: #aaa;
 }
+
 /* checkbox size override for Windows and LInux: */
 input[type="checkbox"].form-control {
     height: 1em;
@@ -436,4 +467,207 @@ input[type="checkbox"].form-control {
     font-size: 1.1rem;
     font-family: monospace;
     white-space: pre;
+}
+
+/*************
+ * Minimal CSS to style in similar way to the old bootstrap using same classes as bootstrap did 
+ ************/
+.btn {
+    display: inline-block;
+    font-weight: 400;
+    color: #fff;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #375a7f;
+    border-color: #375a7f;
+}
+
+.btn-secondary {
+    color: #fff;
+    background-color: #444;
+    border-color: #444;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+h1,
+.h1 {
+    font-size: 3rem;
+}
+
+h2,
+.h2 {
+    font-size: 2.5rem;
+}
+
+h3,
+.h3 {
+    font-size: 2rem;
+}
+
+h4,
+.h4 {
+    font-size: 1.40625rem;
+}
+
+h5,
+.h5 {
+    font-size: 1.171875rem;
+}
+
+h6,
+.h6 {
+    font-size: 0.9375rem;
+}
+
+.fade {
+  -webkit-transition: opacity 0.15s linear;
+  transition: opacity 0.15s linear;
+}
+
+/*************
+ * CSS to support modals. Adapted from https://jasonwatmore.com/post/2023/01/04/vanilla-js-css-modal-popup-dialog-tutorial-with-example 
+ * but using the existing bootstrap classnames.
+ *************/
+.modal {
+    /* modals are hidden by default */
+    display: none;
+
+    /* modal container fixed across whole screen */
+    position: fixed;
+    inset: 0;
+
+    /* z-index must be higher than everything else on the page */
+    z-index: 10000;
+
+    /* semi-transparent black background exposed by padding */
+    background-color: rgba(0, 0, 0, .75);
+    padding-top: 40px;
+    padding-left: 120px;
+    padding-right: 120px;
+
+    /* enables scrolling for tall modals */
+    overflow: auto;
+
+    //width: 100%;
+
+    /// ---------------
+    /// the following adapted from Bootstrap css:
+    -webkit-transition: -webkit-transform .3s ease-out;
+    -o-transition: -o-transform .3s ease-out;
+    transition: transform .3s ease-out;
+    /*
+    -webkit-transform: translate(0, -25%);
+    -ms-transform: translate(0, -25%);
+    -o-transform: translate(0, -25%);
+    transform: translate(0, -25%);
+*/
+}
+
+.modal-title {
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+
+.modal.open {
+    display: block;
+}
+
+.modal-body {
+    padding: 1rem;
+}
+
+.modal-header {
+    padding-top: 0;
+    padding-bottom: 1rem;
+    padding-left: 0;
+    padding-right: 0;
+    border-bottom: 1px solid #444;
+    border-top-left-radius: calc(0.3rem - 1px);
+}
+
+.modal-content {
+    padding: 20px;
+    background: #222;
+
+    /// ---------------
+    /// the following adapted from Bootstrap css:
+    //    position: relative;
+    //    background-color: #fff;
+    //    -webkit-background-clip: padding-box;
+    //    background-clip: padding-box;
+    border: 1px solid #444;
+    //border: 1px solid rgba(0, 0, 0, .2);
+    border-radius: 6px;
+
+}
+
+.modal-footer {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: end;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
+
+    padding-top: 0.75rem;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+
+    border-top: 1px solid #444;
+    border-bottom-right-radius: calc(0.3rem - 1px);
+    border-bottom-left-radius: calc(0.3rem - 1px);
+
+}
+
+.modal-footer>* {
+    margin: 0.25rem;
+}
+
+body.modal-open {
+    /* body overflow is hidden to hide main scrollbar when modal window is open */
+    overflow: hidden;
 }

@@ -1,8 +1,6 @@
 import {UIService} from '/bindings/github.com/chinenual/synergize';
 import {TouchSpin} from '@touchspin/core';
-import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
-// Import all of Bootstrap's JS
-import * as bootstrap from 'bootstrap';
+import VanillaRenderer from '@touchspin/renderer-vanilla';
 import {Chart} from 'chart.js';
 import _ from 'lodash';
 import * as nomnoml from 'nomnoml';
@@ -1094,7 +1092,7 @@ ${freqDAG}
       let spinner;
       if (callback_before === undefined) {
         spinner = TouchSpin(el, {
-          renderer: Bootstrap5Renderer,
+          renderer: VanillaRenderer,
           verticalbuttons: true,
           verticalup: '\u25b4',     //'\u25b2',
           verticaldown: '\u25be',   //'\u25bc',
@@ -1103,7 +1101,7 @@ ${freqDAG}
         });
       } else {
         spinner = TouchSpin(el, {
-          renderer: Bootstrap5Renderer,
+          renderer: VanillaRenderer,
           verticalbuttons: true,
           verticalup: '\u25b4',      //'\u25b2',
           verticaldown: '\u25be',    //'\u25bc',
