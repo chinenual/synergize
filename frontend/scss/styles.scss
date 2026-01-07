@@ -7,8 +7,8 @@ $font-size-base: 0.8;
 *,
 *::before,
 *::after {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 body {
@@ -66,8 +66,7 @@ table {
 
 .mainContainer {
     display: grid;
-    grid-template-columns: 231px 20px  1fr ;
-
+    grid-template-columns: 231px 20px 1fr;
 }
 
 .mainContent {
@@ -75,9 +74,16 @@ table {
     margin-left: 10px;
 }
 
-.fileList {
+.fileListContainer {
     margin: 10px;
+    //    max-height: 100%;
 }
+
+.fileList {
+    overflow-y: auto;
+    height: 100%;
+}
+
 .mainSeparator {
     margin: 10px;
     border-right: 1px solid #fff;
@@ -162,6 +168,10 @@ table {
     padding: 3px;
 }
 
+.dir:hover {
+    color: rgb(244, 180, 0);
+}
+
 .hiddenscroll {
     overflow: hidden;
 }
@@ -175,12 +185,24 @@ table {
     padding: 3px;
 }
 
+.file:hover {
+    color: rgb(244, 180, 0);
+}
+
 .dir .fa {
     margin-right: 5px;
 }
 
 .file .fa {
     margin-right: 10px;
+}
+
+.crt_voice {
+    cursor: pointer;
+}
+
+.crt_voice:hover {
+    color: rgb(244, 180, 0);
 }
 
 #path {
@@ -571,44 +593,48 @@ h6,
 }
 
 .fade {
-  -webkit-transition: opacity 0.15s linear;
-  transition: opacity 0.15s linear;
+    -webkit-transition: opacity 0.15s linear;
+    transition: opacity 0.15s linear;
 }
 
 /*************
 CSS to support tabs.  Adapted from https://github.com/martinacarter/vanilla-js-tabs/blob/main/tabs.html Uses
 bootstrap classnames to minimize HTML changes
  *************/
- .nav-pills {
+.nav-pills {
     display: flex;
     padding-left: 0;
     margin-top: 0;
     margin-bottom: 10px;
     list-style: none;
- }
-.nav-link[aria-selected="false"]{
+}
+
+.nav-link[aria-selected="false"] {
     color: #fff;
     background-color: #222;
-    border-radius:  0.25rem;
+    border-radius: 0.25rem;
     display: block;
     padding: 0.5rem 2rem;
     text-decoration: none;
     cursor: pointer;
-//    border: none !important;
+    //    border: none !important;
 }
-//.nav-link[aria-selected="false"]:hover{
-//    border: 1px solid #aaa !important;
-//}
-.nav-link[aria-selected="true"]{
+
+.nav-link[aria-selected="false"]:hover {
+    border: 1px solid #666 !important;
+}
+
+.nav-link[aria-selected="true"] {
     color: #fff;
     background-color: #375a7f;
-    border-radius:  0.25rem;
+    border-radius: 0.25rem;
     //border: red solid 1px;
     display: block;
     padding: 0.5rem 2rem;
     text-decoration: none;
     cursor: pointer;
 }
+
 /*************
  * CSS to support modals. Adapted from https://jasonwatmore.com/post/2023/01/04/vanilla-js-css-modal-popup-dialog-tutorial-with-example 
  * but using the existing bootstrap classnames.
