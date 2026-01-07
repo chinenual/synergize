@@ -16,8 +16,8 @@ export function tabsInit() {
                 panel.setAttribute('tabindex', '0');
         });
         
-        tabButtons.forEach((panel) => {
-                addEventListener('click', function (e) {
+        tabButtons.forEach((tab) => {
+                tab.addEventListener('click', function (e) {
                         const clickedTab = e.target;
 
                         e.preventDefault();

@@ -66,8 +66,13 @@ table {
 
 .mainContainer {
     display: grid;
-    grid-template-columns: 230px 20px  1fr ;
+    grid-template-columns: 231px 20px  1fr ;
 
+}
+
+.mainContent {
+    margin-top: 8px;
+    margin-left: 10px;
 }
 
 .fileList {
@@ -578,7 +583,7 @@ bootstrap classnames to minimize HTML changes
     display: flex;
     padding-left: 0;
     margin-top: 0;
-    margin-bottom: 0;
+    margin-bottom: 10px;
     list-style: none;
  }
 .nav-link[aria-selected="false"]{
@@ -589,11 +594,16 @@ bootstrap classnames to minimize HTML changes
     padding: 0.5rem 2rem;
     text-decoration: none;
     cursor: pointer;
+//    border: none !important;
 }
+//.nav-link[aria-selected="false"]:hover{
+//    border: 1px solid #aaa !important;
+//}
 .nav-link[aria-selected="true"]{
     color: #fff;
     background-color: #375a7f;
     border-radius:  0.25rem;
+    //border: red solid 1px;
     display: block;
     padding: 0.5rem 2rem;
     text-decoration: none;
