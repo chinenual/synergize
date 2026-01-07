@@ -59,19 +59,21 @@ table {
 }
 
 .headerSeparator {
-    height: 40px;
+    height: 50px;
     margin: 10px;
     border-right: 1px solid #fff;
 }
 
-.mainSeparator {
-    /* control width - override all the bootstrappiness */
-    width: 40px;
-    flex-grow: 0;
-    max-width: 40px;
-    -webkit-box-flex: 0;
-    padding: 0px;
+.mainContainer {
+    display: grid;
+    grid-template-columns: 230px 20px  1fr ;
 
+}
+
+.fileList {
+    margin: 10px;
+}
+.mainSeparator {
     margin: 10px;
     border-right: 1px solid #fff;
 }
@@ -106,7 +108,7 @@ table {
 
     padding: 8px;
     display: grid;
-    grid-template-columns: 250px 20px 110px 110px 110px 110px 1fr 200px;
+    grid-template-columns: 220px 20px 110px 110px 110px 110px 1fr 200px;
 }
 
 .connectionStatus {
