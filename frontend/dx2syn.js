@@ -1,7 +1,7 @@
 import {UIService} from '/bindings/github.com/chinenual/synergize';
 import * as wails from '@wailsio/runtime';
 import { index } from './index';
-import { openModal, closeModal, updateModal } from '/modal';
+import { openModal, updateModal } from '/modal';
 
 export let dx2syn = {
   init : function() {

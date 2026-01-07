@@ -6,6 +6,7 @@ import { viewVCE_filters } from './viewVCE_filters';
 import { viewVCE_keyeq } from './viewVCE_keyeq';
 import { viewVCE_keyprop } from './viewVCE_keyprop';
 import { viewVCE_voice } from './viewVCE_voice';
+import { tabsInit } from './tabs';
 
 export let viewVCE = {
   // flag to prevent programatic voice changes from triggering onchange updates
@@ -29,6 +30,7 @@ export let viewVCE = {
   init: function() {
     // no onchange events while we update input and text for the new voice
     viewVCE.supressOnchange = true;
+    tabsInit();
     // console.log('--- start viewVCE init');
     Chart.defaults.global.defaultFontColor = 'white';
     Chart.defaults.global.defaultFontSize = 14;
@@ -44,6 +46,7 @@ export let viewVCE = {
 
     viewVCE_voice.voicingModeVisuals();
 
+    
     // back to normal:
     viewVCE.supressOnchange = false;
     viewVCE_voice.sendToCSurface(null, 'voice-tab', 1);

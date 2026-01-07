@@ -1,6 +1,6 @@
 import {UIService} from '/bindings/github.com/chinenual/synergize';
 import * as wails from '@wailsio/runtime';
-import { openModal, closeModal } from '/modal';
+import { openModal } from '/modal';
 
 import {index} from './index';
 

@@ -12,7 +12,7 @@ export function closeModal() {
     document.body.classList.remove('modal-open');
 }
 
-// redraw - maybe not needed post-bootstrap
+// redraw - maybe not needed post-bootstrap.  TBD.
 export function updateModal(id) {
 }
 
