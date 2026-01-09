@@ -72,16 +72,19 @@ table {
 .mainContent {
     margin-top: 8px;
     margin-left: 10px;
+    border: green 1px solid;
 }
 
 .fileListContainer {
     margin: 10px;
     //    max-height: 100%;
+   border: red 1px solid;
 }
 
 .fileList {
     overflow-y: auto;
     height: 100%;
+   border: blue 3px solid;
 }
 
 .mainSeparator {
@@ -309,6 +312,19 @@ td.centered span {
     text-align: center;
 }
 
+table.envTable {
+    // 18 * 3em = 54em: 
+    width: 54em;
+    border: 1px purple solid;
+}
+
+.envTable th {
+    // match the td.val size
+    width: 3em;
+}
+.envTable td {
+    width: 3em;
+}
 .valTable td.val {
     color: #fff;
     width: 3em;
