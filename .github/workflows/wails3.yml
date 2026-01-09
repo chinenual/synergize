@@ -9,10 +9,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
-            goos: linux
-          - os: macos-latest
-            goos: darwin
+          //- os: ubuntu-latest
+          //  goos: linux
+          //- os: macos-latest
+          //  goos: darwin
           - os: windows-latest
             goos: windows
 
