@@ -1,4 +1,4 @@
-name: Build
+name: Wails3 Build
 
 on:
   push:
