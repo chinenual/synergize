@@ -1350,7 +1350,7 @@ export let viewVCE_envs = {
         tr.style.display = 'block';
       }
       else {
-        tr.style.display = 'hide';
+        tr.style.display = 'none';
       }
     }
     if (viewVCE_voice.voicingMode) {
