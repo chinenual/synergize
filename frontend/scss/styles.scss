@@ -41,6 +41,13 @@ table {
     padding-top: 0px;
 }
 
+.testTable th {
+border:yellow 1px solid;
+}
+.testTable td {
+border:green 1px solid;
+}
+
 .navbar-text {
     color: #fff;
 }
@@ -315,19 +322,20 @@ td.centered span {
 table.envTable {
     // 18 * 3em = 54em: 
     width: 54em;
-    border: 1px purple solid;
+    table-layout: fixed;
+    //border: 1px purple solid;
 }
 
 .envTable th {
     // match the td.val size
-    width: 3em;
+    //width: 4em;
 }
 .envTable td {
-    width: 3em;
+    //width: 4em;
 }
 .valTable td.val {
     color: #fff;
-    width: 3em;
+    //width: 3.5em;
 }
 
 .valTable td.total {

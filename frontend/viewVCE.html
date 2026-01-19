@@ -378,25 +378,24 @@
 				<canvas aria-label="envChart" id="envChart" style="border:solid #666;"></canvas>
 			</div>
 		</div>
-
 		<table aria-label="envTable" id="envTable" class="valTable envTable" >
 			<thead >
 				<tr>
-					<th colspan="9">Frequency</th>
+					<th class="val" colspan="9">Frequency</th>
 
-					<th colspan="9">Amplitude</th>
+					<th class="val" colspan="9">Amplitude</th>
 				</tr>
 				<tr>
-					<th style="border:yellow 1px solid;">x</th>
-					<th style="border:green 1px solid;">x</th>
+					<th class="val" style="border:yellow 1px solid;"></th>
+					<th style="border:green 1px solid;"></th>
 					<th style="border:blue 1px solid;" colspan="2">Value(%)</th>
 					<th colspan="2">Time(ms)</th>
 					<th colspan="2">Total Time</th>
 
-					<td rowspan="3" style="padding:10px;">x</td>
-					<td rowspan="3" style="border-left:1px solid #666;padding:10px;">x</td>
+					<td rowspan="3" style="padding:10px;"></td>
+					<td rowspan="3" style="border-left:1px solid #666;padding:10px;"></td>
 
-					<th>x</th>
+					<th></th>
 					<th colspan="2">Value(dB)</th>
 					<th colspan="2">Time(ms)</th>
 					<th colspan="2">Total Time</th>
@@ -428,9 +427,9 @@
 			</thead>
 			<tbody>
 				<tr aria-label="envTableTr[1]" id="envTableTr[1]">
-					<td style="border:yellow 1px solid;">1</td>
+					<td style="border:yellow 1px solid;"><div style="width:3.5em;">1</div></td>
 					<td style="border:green 1px solid;" class="val">
-						<select class="vceEdit" aria-label="envFreqLoop[1]" id="envFreqLoop[1]"
+						<select class="vceEdit" aria-label="envFreqLoop[1]" id="envFreqLoop[1]" style="width:3.5em;"
 							onchange="viewVCE_envs.onchangeLoop(this)" disabled>
 							<option value=""></option>
 							<option value="L">L-&gt;</option>
@@ -448,7 +447,7 @@
 							class="vceEdit vceNum spinPLAIN" type="text" min="-127"
 							max="127" onchange="viewVCE_envs.onchange(this)" disabled />
 					</td>
-					<!-- First row's freq time values are fixed at zero-->
+					<!-- First row's freq time values are fixed at zero -->
 					<td class="val">
 						0
 					</td>
