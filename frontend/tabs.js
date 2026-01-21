@@ -46,7 +46,8 @@ export function tabsInit() {
                 // next we'll set the active tab
                 clickedTab.setAttribute('aria-selected', true);
                 clickedTab.setAttribute('tabindex', '0');
-                clickedTab.focus();
+                // don't "focus".  this causes an unwanted blue border above and below the button which I can't figure out how to supress.
+                //clickedTab.focus();
 
                 // and then remove the hidden attribute from the corresponding active panel
                 activePanel.removeAttribute('hidden');
