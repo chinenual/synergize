@@ -42,10 +42,10 @@ table {
 }
 
 .testTable th {
-border:yellow 1px solid;
+border:#555 1px dashed;
 }
 .testTable td {
-border:green 1px solid;
+border: #555 1px dashed;
 }
 
 .navbar-text {
@@ -312,6 +312,19 @@ td.centered span {
 .valTable td {
     color: #aaa;
     text-align: center;
+}
+
+.valTable th div {
+    width: 3em;
+}
+.valTable td div {
+    width: 3em;
+}
+.valTable td input {
+    width: 3m;
+}
+.valTable td select {
+    width: 3em;
 }
 
 .valTable th {

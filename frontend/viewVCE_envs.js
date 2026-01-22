@@ -1319,7 +1319,7 @@ export let viewVCE_envs = {
 
     // clear old values:
     document.querySelector('#envTable td.val input').value = '';
-    document.querySelector('#envTable td.total span').innerHTML = ('');
+    document.querySelector('#envTable td.total div').innerHTML = ('');
     // clear the loop points
     document.querySelector(`#envTable select option[value='']`).selected = true;
     document.querySelector(`#envTable select option[value='L']`).selected =
