@@ -1347,7 +1347,7 @@ export let viewVCE_envs = {
       if (i <
           Math.max(
               envelopes.FreqEnvelope.NPOINTS, envelopes.AmpEnvelope.NPOINTS)) {
-        tr.style.display = 'block';
+        tr.style.display = 'table-row';
       }
       else {
         tr.style.display = 'none';
