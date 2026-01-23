@@ -1,0 +1,55 @@
+Synergy Voice Library                                  Voice Name: CATHERG
+
+
+                                               t = Timbre   a = Amplitude
+Oscillators   = 4
+Keys Playable = 8                          |                            tttt
+                                           |aaaaaaaaaaaaaaaaaaaaaaaaaaa*aaaa
+Vibrato Type  = Sine                       |
+Vibrato Depth = 0                        P |                          t
+Vibrato Rate  = 16                       R |
+Vibrato Delay = 1                        O |                         t
+                                         P |
+Transpose     = -12                      O |                        t
+                                         R |
+Voice Range   = FULL                     T |                       t
+                                         I |
+Voice Size    = 467                      O |                      t
+                                         N |
+Filters Used  = 8                          |                     t
+                                           |
+                                           |ttttttttttttttttttttt
+                                           |--------------------------------|
+                                                        VELOCITY
+
+
+
+
+
+Notes:
+
+This sound represents a cathedral organ that can be used for heavy organ
+solos in electronic rock styles, as well as some liturgical applications.
+The light touch lets the velocity control the upper "stops" of the organ,
+represented by upper footages. Playing with a more forced touch ( faster
+velocity ) will bring in massive lower footages and octaves that will
+be as powerful as a giant pipe organ. 
+
+Treatment of this sound can be important. A solid reverb and a bit of
+digital delay will enhance the sound of the organ, much like a large
+room and natural delay adds to the perceived sound of the real instrument.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
