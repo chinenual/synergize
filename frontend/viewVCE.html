@@ -386,7 +386,7 @@
 					<th colspan="9"><div style="width:100%;">Amplitude</div></th>
 				</tr>
 				<tr>
-					<th><div>N</div></th>
+					<th><div></div></th>
 					<th><div></div></th>
 					<th colspan="2"><div style="width:100%;">Value(%)</div></th>
 					<th colspan="2"><div style="width:100%;">Time(ms)</div></th>
@@ -1602,23 +1602,22 @@
 				
 				<tr class="type1accel">
 					<td colspan="8">
-						<div style="margin-top: 5px" class="Freq">
-							Accel Low:&nbsp;&nbsp;<div class="spinwrapper"><div><input
+						<div style="width:100%;border: red 1px solid;margin-top: 5px" class="Freq">
+							Accel Low:&nbsp;&nbsp;<div style="border: blue 1px solid" class="spinwrapper"><input
 									aria-label="accelFreqLow" id="accelFreqLow"
 									type='text' min=0 max=127
 									class="vceEdit vceNum spinPLAIN"
-									style="width:100%;" onchange=' viewVCE_envs.onchangeEnvAccel(this)' />
-							</div>
-							&nbsp;Up:&nbsp;&nbsp;<div class="spinwrapper"><div><input
+									style="width:100%;border: green 1px solid" onchange=' viewVCE_envs.onchangeEnvAccel(this)' />
+						    </div>
+							&nbsp;Up:&nbsp;&nbsp;<div class="spinwrapper"><input
 									aria-label="accelFreqUp" id="accelFreqUp"
 									type='text' min=0 max=127
 									class="vceEdit vceNum spinPLAIN"
 									onchange='viewVCE_envs.onchangeEnvAccel(this)' />
-							</div>
 						</div>
 					</td>
 					<td colspan="8">
-						<div style="margin-top: 5px;" class="Amp">
+						<div style="width:100%;margin-top: 5px;" class="Amp">
 							Accel Low:&nbsp;&nbsp;<div class="spinwrapper"><div><input
 									aria-label="accelAmpLow" id="accelAmpLow"
 									type='text' min=0 max=127
@@ -1639,15 +1638,15 @@
 					<td colspan="8">
 					</td>
 					<td colspan="8">
-						<div style="margin-top: 5px;" class="AmpGain">
+						<div style="width:100%;margin-top: 5px;" class="AmpGain">
 							Gain Low:&nbsp;&nbsp;
-							<div class="spinwrapper"><div><input aria-label="gainAmpLow"
+							<div class="spinwrapper"><input aria-label="gainAmpLow"
 									id="gainAmpLow" type='text' min=0 max=100
 									class="vceEdit vceNum spinPLAIN"
 									onchange='viewVCE_envs.onchangeGain(this)' />
 							</div>
 							&nbsp;Up:&nbsp;&nbsp;
-							<div class="spinwrapper"><div><input aria-label="gainAmpUp"
+							<div class="spinwrapper"><input aria-label="gainAmpUp"
 									id="gainAmpUp" type='text' min=0 max=100
 									class="vceEdit vceNum spinPLAIN"
 									onchange='viewVCE_envs.onchangeGain(this)' />
@@ -1658,7 +1657,7 @@
 				</tr>
 				<tr class="listplusminus">
 					<td colspan="8">
-						<div style="margin-top: 5px; float: left;">
+						<div style="width:100%;margin-top: 5px; float: left;">
 							<div><input aria-label="del-freq-env-point" id="del-freq-env-point"
 								type='button' value='-'
 								onclick=' viewVCE_envs.changeEnvPoints("freq", -1)' />
@@ -1668,7 +1667,7 @@
 						</div>
 					</td>
 					<td colspan="8">
-						<div style="margin-top: 5px; float: left;">
+						<div style="width:100%;margin-top: 5px; float: left;">
 							<div><input aria-label="del-amp-env-point" id="del-amp-env-point"
 								type='button' value='-'
 								onclick=' viewVCE_envs.changeEnvPoints("amp", -1)' />
