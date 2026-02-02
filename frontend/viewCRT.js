@@ -162,3 +162,6 @@ export let viewCRT = {
     viewCRT.reinit();
   }
 };
+
+// make the letiable visible to HTML:
+window.viewCRT = viewCRT;
