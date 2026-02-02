@@ -312,6 +312,23 @@ td.centered span {
     width: 25em;
 }
 
+#crt_tables table table  {
+    border-collapse: collapse;
+}
+#crt_tables table table td {
+    padding: 5px;
+    border-bottom: solid 1pt #444;
+}
+#crt_tables table table thead th {
+    padding: 5px;
+    border-top: solid 1pt #444;
+    border-bottom: solid 1pt #444;
+}
+#crt_tables table table tbody th {
+    padding: 5px;
+    border-bottom: solid 1pt #444;
+}
+
 .valTable td {
     color: #aaa;
     text-align: center;
