@@ -1,6 +1,7 @@
 package com.chinenual.synergize;
 
 import static com.chinenual.synergize.IntegrationTestSuite.driver;
+import com.chinenual.synergize.pages.CRTPage;
 import com.chinenual.synergize.pages.FileList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,11 +21,11 @@ import org.openqa.selenium.WebElement;
 @TestInstance(Lifecycle.PER_CLASS) 
 public class EditCRTTest {
 
-    @BeforeAll
-    public void init() {
-        String pageSource = driver.getPageSource();
-        System.out.println("PAGE SOURCE: " + pageSource);
-    }
+    //@BeforeAll
+    //public void init() {
+    //    String pageSource = driver.getPageSource();
+    //    System.out.println("PAGE SOURCE: " + pageSource);
+    //}
 
     @Test
     @Order(1)
@@ -32,12 +33,36 @@ public class EditCRTTest {
         WebElement el = FileList.fileLink("INTERNAL");
         el.click();
         Assertions.assertEquals("INTERNAL", FileList.crt_path());
+        
+        el = CRTPage.slotClearButton(1);
+        Assertions.assertNull(el, "clear buttons should be hidden");
+         el = CRTPage.slotAddButton(1);
+        Assertions.assertNull(el, "add buttons should be hidden");
     }
     
     @Test
     @Order(2)
-    public void forceFail() {
-       Assertions.assertEquals(true,false);
+    public void checkVoiceSlots() {
+            String pageSource = driver.getPageSource();
+            System.out.println("PAGE SOURCE: " + pageSource);
+                        
+       // sanity check a few slots:
+       Assertions.assertEquals("G7S", CRTPage.slotVoicename(1));
+       Assertions.assertEquals("HORNSXX", CRTPage.slotVoicename(2));
+       Assertions.assertEquals("RRHODES", CRTPage.slotVoicename(3));
+    }
+    
+    @Test
+    @Order(3)
+    public void enableEdit() {
+        WebElement el = CRTPage.editButton();
+        el.click();
+        
+        el = CRTPage.slotClearButton(1);
+        Assertions.assertNotNull(el, "clear buttons should be visible");
+         el = CRTPage.slotAddButton(1);
+        Assertions.assertNotNull(el, "add buttons should be visible");
+
     }
 
 }
