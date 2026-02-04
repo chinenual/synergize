@@ -142,3 +142,19 @@ func diffVCE(vce1, vce2 VCE) (same bool) {
 	same = diffObject(vce1.Filters, vce2.Filters, "Filters") && same
 	return same
 }
+
+// return true if same; false if different.  Log any diffs
+func diffCRT(crt1, crt2 CRT) (same bool) {
+	same = true
+	same = diffObject(crt1.Head, crt2.Head, "CRT Head") && same
+	if len(crt1.Voices) != len(crt2.Voices) {
+		same = false
+		fmt.Sprintf("different number of voices: %d and %d\n", len(crt1.Voices), len(crt2.Voices))
+		return
+	}
+	for i, v1 := range crt1.Voices {
+		v2 := crt2.Voices[i]
+		same = diffVCE(*v1, *v2) && same
+	}
+	return
+}

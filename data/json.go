@@ -37,20 +37,21 @@ type SpaceEncodedString [8]byte
 
 func (u *SpaceEncodedString) MarshalJSON() ([]byte, error) {
 	result := "\"" + string(u[:]) + "\""
-	//fmt.Printf("MARSHAL '%s' -> '%s'\n", u, result)
+	//fmt.Printf("MARSHAL '%s' -> '%s'\n", *u, result)
 	return []byte(result), nil
 }
 
 func (u *SpaceEncodedString) UnmarshalJSON(s []byte) error {
 	// Discard the leading and trailing '""
-	s = s[1:(len(s) - 2)]
+	var ss = s[1:(len(s) - 1)]
+	//fmt.Printf("UNMARSHAL XXX '%s' TRIM '%s'\n", string(s), string(ss))
 	for i := range u {
-		if i < len(s) {
-			u[i] = s[i]
+		if i < len(ss) {
+			u[i] = ss[i]
 		} else {
 			u[i] = ' '
 		}
 	}
-	//fmt.Printf("UNMARSHAL '%s' -> '%s'\n", s, u)
+	//fmt.Printf("UNMARSHAL '%s' -> '%s'\n", s, *u)
 	return nil
 }
