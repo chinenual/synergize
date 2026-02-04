@@ -1285,7 +1285,7 @@ ${freqDAG}
 
     console.log(
         'view VCE, CRT:' + viewCRT.crt_name +
-        ', VCE: ' + viewVCE.vce.Extra.VNAME_asString)
+        ', VCE: ' + viewVCE.vce.Head.VNAME)
 
     if (viewCRT.crt_name == null) {
       document.getElementById('backToCRT').hidden = true;
@@ -1420,13 +1420,17 @@ ${freqDAG}
 
     document.getElementById('vce_crt_name').innerHTML = viewCRT.crt_name;
     // do this last to help the uitest to not start testing too soon
-    let name = ''
-    for (let i = 0; i < viewVCE.vce.Head.VNAME.length; i++) {
-      name = name + String.fromCharCode(viewVCE.vce.Head.VNAME[i]);
-    }
+//    let name = ''
+//    for (let i = 0; i < viewVCE.vce.Head.VNAME.length; i++) {
+//      name = name + String.fromCharCode(viewVCE.vce.Head.VNAME[i]);
+//      console.log("code", viewVCE.vce.Head.VNAME[i], "name: ", name);
+//    }
+    let name = viewVCE.vce.Head.VNAME;
+    console.log("name: ", name);
+    name = name.replace(/ +$/g, ''); // trim trailing spaces for editing
+    console.log("name: ", name);
     document.getElementById('vce_name').innerHTML = name;
-    document.getElementById('VNAME').value =
-        name.replace(/ +$/g, '');  // trim trailing spaces for editing
+    document.getElementById('VNAME').value = name;
     console.log('--- finish viewVCE_voice init');
   },
 
