@@ -35,7 +35,7 @@ func (u *ArrayOfByte) UnmarshalJSON(b []byte) (err error) {
 
 type SpaceEncodedString [8]byte
 
-func (u *SpaceEncodedString) MarshalJSON() ([]byte, error) {
+func (u SpaceEncodedString) MarshalJSON() ([]byte, error) {
 	result := "\"" + string(u[:]) + "\""
 	//fmt.Printf("MARSHAL '%s' -> '%s'\n", *u, result)
 	return []byte(result), nil
