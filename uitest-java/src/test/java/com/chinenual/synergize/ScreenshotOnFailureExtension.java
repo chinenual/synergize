@@ -4,6 +4,7 @@
  */
 package com.chinenual.synergize;
 
+import static com.chinenual.synergize.IntegrationTestSuite.driver;
 import io.appium.java_client.AppiumBy;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -36,12 +37,17 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
 
 
     private void captureWindowScreenshot(ExtensionContext context) {
-        System.out.println("****** CAPTURE SCREENSHOT ******");
         String testClassName = context.getTestClass().orElseThrow().getSimpleName(); // e.g., "LoginTests"
         String testMethodName = context.getTestMethod().orElseThrow().getName(); // e.g., "testInvalidCredentials"
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String screenshotPath = String.format("screenshots/%s_%s_%s.png",
                 timestamp, testClassName, testMethodName);
+
+        System.out.println("****** CAPTURE SCREENSHOT ******");
+        String pageSource = driver.getPageSource();
+        System.out.println("PAGE SOURCE AT SCREENSHOT "+screenshotPath+": " + pageSource);
+
+
 
         WebElement el = IntegrationTestSuite.driver.findElement(AppiumBy.xpath("//XCUIElementTypeWindow"));
 
