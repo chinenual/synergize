@@ -288,6 +288,10 @@ td.centered span {
     z-index: 1;
 }
 
+// bootstrap class to simplify de-boostrapification
+.d-flex {
+    display: flex;
+}
 .dropdown-content a {
     color: black;
     padding: 3px 16px;
