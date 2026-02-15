@@ -496,9 +496,9 @@ span.spinNOSPIN-Enabled {
 }
 
 /* make the spin buttons appear inside the input -- just like a native select */
-.bootstrap-touchspin .input-group-btn-vertical .btn {
+.ts-vertical-wrapper .ts-btn {
     width: 7px;
-    right: 9px;
+//    right: 9px;
     //left: auto;
     /*top: -3;*/
     border: none;
@@ -506,27 +506,39 @@ span.spinNOSPIN-Enabled {
     height: 30%;
     font-size: 1rem;
     left: unset;
+    position: absolute;
 }
-
-.bootstrap-touchspin .input-group-btn-vertical .bootstrap-touchspin-down {
-    bottom: 6;
+.ts-btn--vertical:hover:not(:disabled) {
+    background-color: #111;
+}
+.ts-btn--vertical-down  {
+    //bottom: 6;
+    right: -7px;
+    top: 13px;
+    width: 7px;
+//    background: green;
+    color: white;
     cursor: url(/static/images/s-resize.png) 16 16, auto;
 }
 
-.bootstrap-touchspin .input-group-btn-vertical .bootstrap-touchspin-up {
-    top: 1;
+.ts-btn--vertical-up  {
+    top: 4px;
+    right: -7px;
+    width: 7px;
+//    background: red;
+    color: white;
     cursor: url(/static/images/n-resize.png) 16 16, auto;
 }
 
-.bootstrap-touchspin .bootstrap-touchspin-vertical-button-wrapper {
+.ts-vertical-wrapper {
     /* FOR DEBUGGING ONLY - make the spin buttons visible while wrestling with the CSS positioning: */
     //background: red;
     position: absolute;
     width: 100%;
     top: -4px;
-    // height: 30%;
-    // right: 0;
-    // left: 0;
+    height: 30%;
+    right: 0;
+    //left: 0;
 }
 
 .input-group-text {
