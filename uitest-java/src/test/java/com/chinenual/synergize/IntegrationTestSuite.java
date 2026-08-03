@@ -49,10 +49,15 @@ public class IntegrationTestSuite {
 
             String pageSource = driver.getPageSource();
             System.out.println("PAGE SOURCE: " + pageSource);
-                        
+
         } catch (Throwable exc) {
             System.err.println("ERROR: " + exc.toString());
             Assertions.fail(exc);
+            if (driver != null) {
+                
+                System.err.println("INFO: driver.quit()");
+                driver.quit();
+            }
             System.exit(1);
         }
     }
@@ -66,6 +71,7 @@ public class IntegrationTestSuite {
 //            System.getLogger(IntegrationTestSuite.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
 //        }
         if (driver != null) {
+            System.err.println("INFO: driver.quit()");
             driver.quit();
         }
     }

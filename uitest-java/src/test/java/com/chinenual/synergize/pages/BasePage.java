@@ -6,6 +6,7 @@ package com.chinenual.synergize.pages;
 
 import com.chinenual.synergize.IntegrationTestSuite;
 import io.appium.java_client.AppiumBy;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 /**
@@ -22,7 +23,16 @@ public class BasePage {
         return result;
     }
 
-    static void DUMP_PAGE() {
+    public static WebElement fileDialog() {
+        try {
+            WebElement el = IntegrationTestSuite.driver.findElement(AppiumBy.accessibilityId("open-panel"));
+            return el;
+        } catch (NoSuchElementException ex) {
+            return null;
+        }
+    }
+    
+    public static void DUMP_PAGE() {
         String pageSource = IntegrationTestSuite.driver.getPageSource();
         System.out.println("-----------------------------------\nPAGE SOURCE: " + pageSource + "\n-------------------------------");
 
