@@ -20,15 +20,16 @@ Unicode true
 ## The following information is taken from the wails_tools.nsh file, but they can be overwritten here.
 ####
 ## !define INFO_PROJECTNAME    "my-project" # Default "synergize"
-## !define INFO_COMPANYNAME    "My Company" # Default "Steve Tynor (Chinenual)"
-## !define INFO_PRODUCTNAME    "My Product Name" # Default "Synergize"
-## !define INFO_PRODUCTVERSION "1.0.0"     # Default "3.0.0-alpha1"
-## !define INFO_COPYRIGHT      "(c) Now, My Company" # Default "© 2021-2026, Steve Tynor (Chinenual)"
+## !define INFO_COMPANYNAME    "My Company" # Default "Chinenual"
+## !define INFO_PRODUCTNAME    "My Product Name" # Default "My Product"
+## !define INFO_PRODUCTVERSION "1.0.0"     # Default "0.1.0"
+## !define INFO_COPYRIGHT      "(c) Now, My Company" # Default "© 2026, Chinenual"
 ###
 ## !define PRODUCT_EXECUTABLE  "Application.exe"      # Default "${INFO_PROJECTNAME}.exe"
 ## !define UNINST_KEY_NAME     "UninstKeyInRegistry"  # Default "${INFO_COMPANYNAME}${INFO_PRODUCTNAME}"
 ####
 ## !define REQUEST_EXECUTION_LEVEL "admin"            # Default "admin"  see also https://nsis.sourceforge.io/Docs/Chapter4.html
+## !define WAILS_INSTALL_SCOPE     "user"             # Default "machine" - set to "user" for per-user install ($LOCALAPPDATA) without UAC prompt
 ####
 ## Include the wails tools
 ####
@@ -72,7 +73,11 @@ ManifestDPIAware true
 
 Name "${INFO_PRODUCTNAME}"
 OutFile "..\..\..\bin\${INFO_PROJECTNAME}-${ARCH}-installer.exe" # Name of the installer's file.
-InstallDir "$PROGRAMFILES64\${INFO_COMPANYNAME}\${INFO_PRODUCTNAME}" # Default installing folder ($PROGRAMFILES is Program Files folder).
+!if "${WAILS_INSTALL_SCOPE}" == "user"
+    InstallDir "$LOCALAPPDATA\Programs\${INFO_PRODUCTNAME}"
+!else
+    InstallDir "$PROGRAMFILES64\${INFO_COMPANYNAME}\${INFO_PRODUCTNAME}"
+!endif
 ShowInstDetails show # This will always show the installation details.
 
 Function .onInit

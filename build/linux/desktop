@@ -1,5 +1,5 @@
 [Desktop Entry]
-Version=1.0
+Version=3.0.0-alpha1
 Name=Synergize
 Comment=A portable voice editor/librarian for the DK Synergy
 # The Exec line includes %u to pass the URL to the application
